@@ -6,7 +6,7 @@ export const dbConnect = async () => {
     if (!MONGO_URI) throw new Error("Connect string not avilable");
     // console.log("connection strong-->", MONGO_URI);
     const dbConnectResposne = await mongoose.connect(MONGO_URI);
-    console.log("database connected successfully");
+    console.log("connected successfully with databse");
     if (!dbConnectResposne) throw new Error("Internal Server error");
   } catch (error) {
     console.error(error);
