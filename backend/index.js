@@ -4,7 +4,7 @@ import { dbConnect } from "./database/dbConnect.js";
 
 dotenv.config();
 
-dbConnect(); // no await here 👍
+dbConnect();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
