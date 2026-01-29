@@ -2,13 +2,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import { auth } from "./lib/auth.js";
-<<<<<<< HEAD
 import routes from "./routes/index.js";
-=======
-// import routes from "./routes/index.js";
-
-import { toNodeHandler } from "better-auth/node";
->>>>>>> prashikshya
 
 import { toNodeHandler } from "better-auth/node";
 
@@ -33,10 +27,6 @@ app.use((err, req, res, next) => {
 });
 
 // other APIs
-<<<<<<< HEAD
 app.use("/api/v1", routes);
-=======
-// app.use("/api/v1", routes);
->>>>>>> prashikshya
 
 export default app;
