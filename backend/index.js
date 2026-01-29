@@ -1,14 +1,23 @@
 import dotenv from "dotenv";
-import express from "express";
-import { dbConnect } from "./app/database/dbConnect.js";
-
 dotenv.config();
 
-dbConnect();
+import { dbConnect } from "./app/config/dbConnect.js";
 
-const app = express();
-const PORT = process.env.PORT || 4000;
+async function startServer() {
+  try {
+    await dbConnect();
 
-app.listen(PORT, () => {
-  console.log(`Server is live on PORT:${PORT}`);
-});
+    // Dynamically import app so it can use the initialized DB client
+    const { default: app } = await import("./app/app.js");
+
+    const PORT = process.env.PORT || 4000;
+    app.listen(PORT, () => {
+      console.log(`Server is live on PORT:${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+}
+
+startServer();
