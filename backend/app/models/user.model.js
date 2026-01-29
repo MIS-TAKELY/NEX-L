@@ -1,79 +1,23 @@
-import bcrypt from "bcrypt";
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: [true, "Name is required"],
-      trim: true,
-    },
-    email: {
-      type: String,
-      required: [true, "Email is required"],
-      unique: true,
-      lowercase: true,
-      trim: true,
-    },
-    password: {
-      type: String,
-      required: [true, "Password is required"],
-      minlength: [8, "Password must be at least 8 characters"],
-      select: false, 
-    },
-    role: {
-      type: String,
-      enum: ["student", "teacher", "admin"],
-      required: [true, "Role is required"],
-    },
-    profilePicture: {
-      type: String,
-      default: "",
-    },
-    bio: {
-      type: String,
-      default: "",
-    },
-    location: {
-      type: String,
-      default: "",
-    },
-    interests: [String], 
-    embedding: [Number], 
-    enrolledCourses: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Enrollment",
-      },
-    ],
-    createdCourses: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Course",
-      },
-    ],
-    badges: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Badge",
-      },
-    ],
-    resetPasswordToken: String,
-    resetPasswordExpire: Date,
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    role: { type: String, enum: ["student", "teacher", "admin"], default: "student" },
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true }
 );
 
+// Hash password before saving
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, 12);
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
   next();
 });
 
-userSchema.methods.comparePassword = async function (candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
-};
-
-module.exports = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+export default User; 
