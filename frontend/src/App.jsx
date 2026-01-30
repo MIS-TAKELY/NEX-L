@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 
 // STUDENT PAGES
 import Loading from "./components/student/Loading";
+import LandingPage from "./Pages/LandingPage";
 import CourseDetails from "./Pages/student/CourseDetails";
 import CoursesList from "./Pages/student/CoursesList";
 import Home from "./Pages/student/Home";
@@ -21,7 +22,8 @@ export default function App() {
   return (
     <Routes>
 
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/home" element={<Home />} />
       <Route path="/course-list" element={<CoursesList />} />
       <Route path="/course-list/:input" element={<CoursesList />} />
       <Route path="/course/:id" element={<CourseDetails />} />
