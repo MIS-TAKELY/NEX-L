@@ -4,8 +4,8 @@ const Hero = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="h-screen flex flex-col min-w-screen overflow-hidden relative">
-      <header className="relative flex-1 flex flex-col justify-center overflow-hidden">
+    <div className="min-h-screen flex flex-col min-w-full overflow-x-hidden relative">
+      <header className="relative flex-1 flex flex-col justify-center overflow-hidden min-h-[680px] h-[92vh] pb-10">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
           <img 
@@ -17,61 +17,70 @@ const Hero = () => {
         </div>
 
         {/* Centered Content */}
-        <div className="relative z-10 text-center text-white px-6 pt-24">
-          <h1 className="text-5xl lg:text-7xl font-bold mb-6 tracking-tight drop-shadow-2xl">
+        <div className="relative z-10 text-center text-white px-4 md:px-6 pt-20 lg:pt-16 pb-12">
+          <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 tracking-tight drop-shadow-2xl">
             NEXL: Elevate Your Learning
           </h1>
-          <p className="text-xl lg:text-2xl max-w-3xl mx-auto leading-relaxed text-white/90 drop-shadow-lg">
+          <p className="text-lg md:text-xl lg:text-2xl max-w-3xl mx-auto leading-relaxed text-white/90 drop-shadow-lg">
             Explore breathtaking courses, local culture, and unique learning experiences.
           </p>
         </div>
       </header>
 
       {/* Floating Action Card */}
-<div className="relative -mt-5 z-20 p-[0.75px]">
-<div className="relative -mt-10 z-20">
-
-          <div className="bg-white/95 backdrop-blur-md shadow-[0_30px_100px_rgba(0,0,0,0.4),0_10px_30px_rgba(0,0,0,0.2)] hover:shadow-[0_40px_120px_rgba(0,0,0,0.5),0_15px_40px_rgba(0,0,0,0.3)] hover:-translate-y-2 transition-all duration-500 px-8 lg:px-12 py-10 border border-primary border-4 border-primary rounded-4xl group">
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-end">
-              
-              <div className="md:col-span-2">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white shadow-xl group-hover:scale-110 transition-transform duration-500 ring-4 ring-white/10">
-                    📘
-                  </div>
-                  <div>
-                    <h3 className="text-2xl lg:text-4xl font-extrabold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                      Start Learning
-                    </h3>
-                    <p className="text-sm font-medium text-gray-500">
-                      Premium quality courses await you
-                    </p>
-                  </div>
+      <div className="relative z-20 px-4 md:px-12 -mt-4 md:-mt-12 lg:-mt-8 pb-12">
+        <div
+          className="
+            bg-white/95 backdrop-blur-md
+            shadow-[0_20px_60px_rgba(0,0,0,0.25)]
+            hover:shadow-[0_25px_70px_rgba(0,0,0,0.3)]
+            hover:-translate-y-1
+            transition-all duration-500
+            p-6 md:px-8 lg:px-12 md:py-10
+            border-4 border-primary
+            rounded-3xl
+            group
+          "
+        >
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-end">
+            
+            <div className="md:col-span-2">
+              <div className="flex items-center gap-3 mb-2 md:mb-3">
+                <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform duration-500 shrink-0">
+                  📘
+                </div>
+                <div>
+                  <h3 className="text-xl md:text-2xl lg:text-4xl font-extrabold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                    Start Learning
+                  </h3>
+                  <p className="text-xs md:text-sm font-medium text-gray-500">
+                    Premium quality courses await you
+                  </p>
                 </div>
               </div>
-
-              <select className="px-4 py-3 border-2 border-gray-200 rounded-xl">
-                <option>All Categories</option>
-                <option>Web Development</option>
-                <option>Data Science</option>
-                <option>Design</option>
-              </select>
-
-              <select className="px-4 py-3 border-2 border-gray-200 rounded-xl">
-                <option>All Levels</option>
-                <option>Beginner</option>
-                <option>Intermediate</option>
-                <option>Advanced</option>
-              </select>
-
-              <button
-                onClick={() => navigate('/course-list')}
-                className="px-8 py-4 bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl font-bold hover:scale-105 transition"
-              >
-                Search Courses 🔍
-              </button>
-
             </div>
+
+            <select className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary outline-none">
+              <option>All Categories</option>
+              <option>Web Development</option>
+              <option>Data Science</option>
+              <option>Design</option>
+            </select>
+
+            <select className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary outline-none">
+              <option>All Levels</option>
+              <option>Beginner</option>
+              <option>Intermediate</option>
+              <option>Advanced</option>
+            </select>
+
+            <button
+              onClick={() => navigate('/course-list')}
+              className="w-full px-8 py-3 md:py-4 bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl font-bold hover:scale-105 transition shadow-md"
+            >
+              Search
+            </button>
+
           </div>
         </div>
       </div>

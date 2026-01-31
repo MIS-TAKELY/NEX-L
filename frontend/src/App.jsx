@@ -5,6 +5,7 @@ import Loading from "./components/student/Loading";
 import LandingPage from "./Pages/LandingPage";
 import CourseDetails from "./Pages/student/CourseDetails";
 import CoursesList from "./Pages/student/CoursesList";
+import ForgotPassword from "./Pages/student/ForgotPassword";
 import Home from "./Pages/student/Home";
 import MyEnrollments from "./Pages/student/MyEnrollments";
 import Player from "./Pages/student/Player";
@@ -32,6 +33,7 @@ export default function App() {
       <Route path="/loading/:path" element={<Loading />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/login" element={<SignIn />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
 
 
       <Route path="/instructor" element={<Instructor />}>
