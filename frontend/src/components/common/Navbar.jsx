@@ -29,7 +29,9 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         <div className="hidden lg:flex space-x-6">
-          <button onClick={() => navigate('/home')} className="px-5 py-2 text-white/90 font-medium hover:text-white transition-colors">Student Page</button>
+          <button onClick={() => navigate('/')} className="px-5 py-2 text-white/90 font-medium hover:text-white transition-colors">Home</button>
+          <button onClick={() => navigate('/course-list')} className="px-5 py-2 text-white/90 font-medium hover:text-white transition-colors">Courses</button>
+          <button onClick={() => navigate('/home')} className="px-5 py-2 text-white/90 font-medium hover:text-white transition-colors">Student Dashboard</button>
           <button onClick={() => navigate('/login')} className="px-5 py-2 text-white/90 font-medium hover:text-white transition-colors">Sign In</button>
           <button onClick={() => navigate('/signup')} className={`px-6 py-2.5 rounded-full font-bold transition-all shadow-lg ${
             isScrolled

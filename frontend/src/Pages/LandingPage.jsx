@@ -1,6 +1,7 @@
 import Footer from '../components/common/Footer';
 import Navbar from '../components/common/Navbar';
 import SocialTopbar from '../components/common/SocialTopbar';
+import CoursesSection from '../components/landing/CoursesSection';
 import CTA from '../components/landing/CTA';
 import Features from '../components/landing/Features';
 import Hero from '../components/landing/Hero';
@@ -12,6 +13,7 @@ const LandingPage = () => {
       <Navbar />
       <Hero />
       <Features />
+      <CoursesSection />
       <CTA />
       <Footer />
     </div>

@@ -5,7 +5,7 @@ const Hero = () => {
 
   return (
     <div className="min-h-screen flex flex-col min-w-full overflow-x-hidden relative">
-      <header className="relative flex-1 flex flex-col justify-center overflow-hidden min-h-[680px] h-[92vh] pb-10">
+      <header className="relative flex-1 flex flex-col justify-center overflow-hidden min-h-[645px] h-[92vh] pb-10">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
           <img 
