@@ -1,16 +1,14 @@
 // Removed generic Input import to use standard input for full control
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import {
-  IconBrandFacebook,
-  IconBrandGithub,
-  IconBrandGoogle
-} from "@tabler/icons-react";
-import { useState } from 'react';
+import { Icon } from '@iconify/react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../../context/AppContext';
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const { login } = useContext(AppContext);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -19,6 +17,7 @@ const SignUp = () => {
     createNewPassword: '',
     confirmPassword: '',
   });
+  const [role, setRole] = useState('student');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,8 +25,19 @@ const SignUp = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Add registration logic here
+    console.log('Form submitted:', formData, 'Role:', role);
+    
+    // Store signup data temporarily for login
+    const signupData = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      role: role
+    };
+    localStorage.setItem('pendingSignup', JSON.stringify(signupData));
+    
+    // Mock signup - redirect to login page
+    navigate('/login');
   };
 
   return (
@@ -43,7 +53,7 @@ const SignUp = () => {
             onClick={() => navigate(-1)}
             className="absolute -top-32 left-0 flex items-center gap-2 text-primary-foreground/70 hover:text-primary-foreground transition-colors"
           >
-            ← go back
+            <Icon icon="solar:alt-arrow-left-linear" /> go back
           </button>
           
           <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-4">
@@ -76,9 +86,9 @@ const SignUp = () => {
               onClick={() => navigate(-1)}
               className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-6"
             >
-              ← go back
+              <Icon icon="solar:alt-arrow-left-linear" /> go back
             </button>
-            <h1 className="text-3xl font-bold text-primary">NEX-L</h1>
+            <h1 className="text-3xl font-bold text-primary">NEXL</h1>
           </div>
 
           <h2 className="text-xl font-bold text-foreground dark:text-neutral-200">
@@ -87,6 +97,35 @@ const SignUp = () => {
            <p className="mt-2 text-sm text-muted-foreground dark:text-neutral-300">
             Create your account to get started
           </p>
+
+          {/* Role Selection */}
+          <div className="mt-4">
+            <p className="text-sm font-medium text-gray-700 mb-3">I am a:</p>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setRole('student')}
+                className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${
+                  role === 'student'
+                    ? 'border-primary bg-primary/5 text-primary font-semibold'
+                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                }`}
+              >
+                <Icon icon="solar:userId-linear" /> Student
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole('instructor')}
+                className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${
+                  role === 'instructor'
+                    ? 'border-primary bg-primary/5 text-primary font-semibold'
+                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                }`}
+              >
+                <Icon icon="solar:teacher-linear" /> Instructor
+              </button>
+            </div>
+          </div>
 
            <form className="my-4" onSubmit={handleSubmit}>
              <div className="flex flex-col space-y-2">
@@ -136,7 +175,7 @@ const SignUp = () => {
               <button
                 className="group/btn shadow-input relative flex h-10 w-full items-center justify-start space-x-2 rounded-md bg-muted px-4 font-medium text-foreground dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
                 type="button">
-                <IconBrandGithub className="h-4 w-4 text-foreground dark:text-neutral-300" />
+                <Icon icon="logos:github-icon" className="h-4 w-4" />
                 <span className="text-sm text-muted-foreground dark:text-neutral-300">
                   GitHub
                 </span>   
@@ -144,20 +183,18 @@ const SignUp = () => {
               <button
                 className="group/btn shadow-input relative flex h-10 w-full items-center justify-start space-x-2 rounded-md bg-muted px-4 font-medium text-foreground dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
                 type="button">
-                <IconBrandGoogle className="h-4 w-4 text-foreground dark:text-neutral-300" />
+                <Icon icon="logos:google-icon" className="h-4 w-4" />
                 <span className="text-sm text-muted-foreground dark:text-neutral-300">
                   Google
                 </span>
-
               </button>
               <button
                 className="group/btn shadow-input relative flex h-10 w-full items-center justify-start space-x-2 rounded-md bg-muted px-4 font-medium text-foreground dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
                 type="button">
-                <IconBrandFacebook className="h-4 w-4 text-foreground dark:text-neutral-300" />
+                <Icon icon="logos:facebook" className="h-4 w-4" />
                 <span className="text-sm text-muted-foreground dark:text-neutral-300">
                   Facebook
                 </span>
-
               </button>
             </div>
           </form>
@@ -165,7 +202,7 @@ const SignUp = () => {
           <p className="text-center text-muted-foreground text-sm">
             Have an account?{' '}
             <button 
-              onClick={() => navigate('/signin')} 
+              onClick={() => navigate('/login')} 
               className="text-accent font-semibold hover:underline"
             >
               Sign in

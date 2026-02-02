@@ -1,19 +1,20 @@
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import {
-  IconBrandFacebook,
-  IconBrandGithub,
-  IconBrandGoogle
-} from "@tabler/icons-react";
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Icon } from '@iconify/react';
+import { useContext, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { AppContext } from '../../context/AppContext';
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useContext(AppContext);
+  
   const [formData, setFormData] = useState({
     identifier: '',
     password: '',
   });
+  const [role, setRole] = useState('student');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,8 +22,32 @@ const SignIn = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Login submitted:', formData);
-    // Add login logic here
+    console.log('Login submitted:', formData, role);
+    
+    // Retrieve stored signup data if available
+    const pendingSignup = localStorage.getItem('pendingSignup');
+    let userData = null;
+    
+    if (pendingSignup) {
+      const signupData = JSON.parse(pendingSignup);
+      // Use signup data if role matches
+      if (signupData.role === role) {
+        userData = {
+          firstName: signupData.firstName,
+          lastName: signupData.lastName,
+          email: signupData.email
+        };
+        // Clear the pending signup data
+        localStorage.removeItem('pendingSignup');
+      }
+    }
+    
+    // Call the global login function with user data
+    login(role, userData);
+
+    // Redirect to the intended page or dashboard
+    const from = location.state?.from?.pathname || `/${role}`;
+    navigate(from, { replace: true });
   };
 
   return (
@@ -38,7 +63,7 @@ const SignIn = () => {
             onClick={() => navigate(-1)}
             className="absolute -top-32 left-0 flex items-center gap-2 text-primary-foreground/70 hover:text-primary-foreground transition-colors"
           >
-            ← go back
+            <Icon icon="solar:alt-arrow-left-linear" /> go back
           </button>
           
           <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-4">
@@ -73,7 +98,7 @@ const SignIn = () => {
             >
               ← go back
             </button>
-            <h1 className="text-3xl font-bold text-primary">NEX-L</h1>
+            <h1 className="text-3xl font-bold text-primary">NEXL</h1>
           </div>
 
           <div className="text-left mb-6">
@@ -87,6 +112,27 @@ const SignIn = () => {
 
           <form onSubmit={handleSubmit} className="my-4">
             <div className="flex flex-col space-y-4">
+              <LabelInputContainer>
+                <Label className="text-base">Sign in as</Label>
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  {['student', 'instructor', 'admin'].map((r) => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => setRole(r)}
+                      className={cn(
+                        "py-2 px-3 rounded-lg text-xs font-bold transition-all border capitalize",
+                        role === r 
+                          ? "bg-primary text-white border-primary shadow-md" 
+                          : "bg-gray-50 text-gray-400 border-gray-200 hover:border-primary/50"
+                      )}
+                    >
+                      {r}
+                    </button>
+                  ))}
+                </div>
+              </LabelInputContainer>
+
               <LabelInputContainer>
                 <Label htmlFor="identifier" className="text-base">Email or Phone Number</Label>
                 <input 
@@ -129,32 +175,30 @@ const SignIn = () => {
             <div className="my-4 h-[1px] w-full bg-border" />
 
             <div className="flex flex-col space-y-4">
-               <button
-                 className="group/btn shadow-input relative flex h-9 w-full items-center justify-start space-x-2 rounded-md bg-muted px-4 font-medium text-foreground dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
-                 type="button">
-                 <IconBrandGithub className="h-4 w-4 text-foreground dark:text-neutral-300" />
-                 <span className="text-sm text-muted-foreground dark:text-neutral-300">
-                   GitHub
-                 </span>   
-               </button>
-               <button
-                 className="group/btn shadow-input relative flex h-9 w-full items-center justify-start space-x-2 rounded-md bg-muted px-4 font-medium text-foreground dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
-                 type="button">
-                 <IconBrandGoogle className="h-4 w-4 text-foreground dark:text-neutral-300" />
-                 <span className="text-sm text-muted-foreground dark:text-neutral-300">
-                   Google
-                 </span>
- 
-               </button>
-               <button
-                 className="group/btn shadow-input relative flex h-9 w-full items-center justify-start space-x-2 rounded-md bg-muted px-4 font-medium text-foreground dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
-                 type="button">
-                 <IconBrandFacebook className="h-4 w-4 text-foreground dark:text-neutral-300" />
-                 <span className="text-sm text-muted-foreground dark:text-neutral-300">
-                   Facebook
-                 </span>
- 
-               </button>
+                <button
+                  className="group/btn shadow-input relative flex h-9 w-full items-center justify-start space-x-2 rounded-md bg-muted px-4 font-medium text-foreground dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
+                  type="button">
+                  <Icon icon="logos:github-icon" className="h-4 w-4" />
+                  <span className="text-sm text-muted-foreground dark:text-neutral-300">
+                    GitHub
+                  </span>   
+                </button>
+                <button
+                  className="group/btn shadow-input relative flex h-9 w-full items-center justify-start space-x-2 rounded-md bg-muted px-4 font-medium text-foreground dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
+                  type="button">
+                  <Icon icon="logos:google-icon" className="h-4 w-4" />
+                  <span className="text-sm text-muted-foreground dark:text-neutral-300">
+                    Google
+                  </span>
+                </button>
+                <button
+                  className="group/btn shadow-input relative flex h-9 w-full items-center justify-start space-x-2 rounded-md bg-muted px-4 font-medium text-foreground dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
+                  type="button">
+                  <Icon icon="logos:facebook" className="h-4 w-4" />
+                  <span className="text-sm text-muted-foreground dark:text-neutral-300">
+                    Facebook
+                  </span>
+                </button>
             </div>
           </form>
 

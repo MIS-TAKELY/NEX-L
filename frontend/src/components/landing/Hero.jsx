@@ -76,7 +76,7 @@ const Hero = () => {
 
             <button
               onClick={() => navigate('/course-list')}
-              className="w-full px-8 py-3 md:py-4 bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl font-bold hover:scale-105 transition shadow-md"
+              className="w-full px-8 py-3 md:py-4 bg-primary text-white rounded-xl font-bold hover:bg-primary-hover transition shadow-md"
             >
               Search
             </button>

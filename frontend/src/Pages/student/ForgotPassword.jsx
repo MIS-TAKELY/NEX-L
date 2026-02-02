@@ -1,3 +1,4 @@
+import { Icon } from '@iconify/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,7 +15,7 @@ const ForgotPassword = () => {
   return (
     <div className="min-h-screen flex font-outfit">
       {/* Left Side - Dark Background with Text */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[#677691] relative flex-col justify-center px-12 md:px-20 text-white overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-primary relative flex-col justify-center px-12 md:px-20 text-white overflow-hidden">
         {/* Abstract lines decoration */}
         <div className="absolute bottom-20 left-20 w-48 h-48 border border-white/10 rounded-lg transform rotate-12" />
         <div className="absolute bottom-24 left-24 w-48 h-48 border border-white/10 rounded-lg transform rotate-12" />
@@ -24,7 +25,7 @@ const ForgotPassword = () => {
             onClick={() => navigate(-1)}
             className="absolute -top-32 left-0 flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
           >
-            ← go back
+            <Icon icon="solar:alt-arrow-left-linear" /> go back
           </button>
           
           <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-4">
@@ -57,9 +58,9 @@ const ForgotPassword = () => {
               onClick={() => navigate(-1)}
               className="flex items-center gap-2 text-gray-500 hover:text-[#677691] transition-colors mb-6"
             >
-              ← go back
+              <Icon icon="solar:alt-arrow-left-linear" /> go back
             </button>
-            <h1 className="text-3xl font-bold text-[#677691]">NEX-L</h1>
+            <h1 className="text-3xl font-bold text-primary">NEXL</h1>
           </div>
 
           <div className="text-left">
@@ -74,14 +75,14 @@ const ForgotPassword = () => {
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
                 placeholder="Email or Phone Number"
-                className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5] outline-none transition-all placeholder-gray-400 text-gray-900"
+                className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-all placeholder-gray-400 text-gray-900"
                 required
               />
             </div>
 
             <button
               type="submit"
-              className="w-full bg-[#4F46E5] text-white py-3.5 rounded-lg font-bold hover:bg-[#4338ca] transition-transform active:scale-[0.99] shadow-lg"
+              className="w-full bg-accent text-white py-3.5 rounded-lg font-bold hover:bg-accent/90 transition-transform active:scale-[0.99] shadow-lg shadow-accent/20"
             >
               Send Reset Link
             </button>
@@ -91,14 +92,14 @@ const ForgotPassword = () => {
             Remember your password?{' '}
             <button 
               onClick={() => navigate('/login')} 
-              className="text-[#4F46E5] font-semibold hover:underline"
+              className="text-accent font-semibold hover:underline"
             >
               Back to Sign In
             </button>
           </p>
           
           {/* Bottom Right Decoration */}
-           <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-[#677691] rounded-full hidden md:block opacity-20"></div>
+           <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary rounded-full hidden md:block opacity-20"></div>
         </div>
       </div>
     </div>

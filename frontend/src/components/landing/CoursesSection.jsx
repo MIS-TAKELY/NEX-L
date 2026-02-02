@@ -52,7 +52,7 @@ const CoursesSection = () => {
               Featured <span className="text-primary italic">Courses</span>
             </h2>
             <p className="text-lg text-gray-600">
-              Hand-picked courses to help you master the most in-demand skills.
+our popular courses rignt now!
             </p>
           </div>
         </div>

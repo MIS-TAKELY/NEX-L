@@ -1,4 +1,4 @@
-import { Search } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../../components/common/Footer';
@@ -92,7 +92,7 @@ const CoursesList = () => {
             </div>
             
             <div className="relative w-full md:w-96 group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={20} />
+              <Icon icon="solar:magnifer-linear" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={20} />
               <input 
                 type="text"
                 placeholder="Search courses (e.g. Python, MERN...)"
@@ -128,7 +128,9 @@ const CoursesList = () => {
               ))
             ) : (
                 <div className="text-center py-20 bg-white rounded-[2rem] border-2 border-dashed border-gray-200">
-                    <div className="text-6xl mb-4">🔍</div>
+                    <div className="text-6xl mb-4 text-gray-300">
+                        <Icon icon="solar:magnifer-linear" className="mx-auto" />
+                    </div>
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">No courses found</h3>
                     <p className="text-gray-500">Try searching for something else like "Web" or "DSA".</p>
                     <button 
