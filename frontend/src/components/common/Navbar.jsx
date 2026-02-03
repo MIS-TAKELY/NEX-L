@@ -1,8 +1,9 @@
 import { Icon } from "@iconify/react";
 import { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { AppContext } from "../../context/AppContext";
 import logo from "../../assets/logoo.png";
+import { AppContext } from "../../context/AppContext";
+import ProfileDropdown from "./ProfileDropdown";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ const Navbar = () => {
   return (
     <>
       <nav
-        className={`fixed left-0 right-0 flex justify-between items-center px-6 lg:px-12 py-4 z-40 transition-all duration-300 ${isScrolled
+        className={`fixed left-0 right-0 flex justify-between items-center px-6 lg:px-12 py-4 z-40 transition-all duration-300 ${isScrolled || location.pathname !== "/"
           ? "top-0 bg-primary shadow-lg"
           : "top-0 lg:top-6 bg-transparent"
           }`}
@@ -78,7 +79,7 @@ const Navbar = () => {
                 navigate(btn.path);
                 setActive(btn.path);
               }}
-              className={`px-5 py-2 text-white/90 font-medium relative transition-colors duration-300 hover:text-white group`}
+              className={`px-5 py-2 text-white/90 font-medium relative transition-colors duration-300 hover:cursor-pointer hover:text-white group`}
             >
               {btn.label}
               {/* Underline */}
@@ -97,7 +98,7 @@ const Navbar = () => {
                   navigate(dashboardPath);
                   setActive(dashboardPath);
                 }}
-                className={`px-5 py-2 text-white/90 font-medium relative transition-colors duration-300 hover:text-white group`}
+                className={`px-5 py-2 hover:cursor-pointer text-white/90 font-medium relative transition-colors duration-300 hover:text-white group`}
               >
                 Go to Dashboard
                 <span
@@ -105,14 +106,20 @@ const Navbar = () => {
                 ></span>
               </button>
 
-              {/* Logout button */}
-              <button
-                onClick={handleLogout}
-                className={`px-6 py-2.5 rounded-full font-bold transition-all shadow-lg bg-white text-primary hover:bg-gray-100 relative group flex items-center gap-2`}
-              >
-                <Icon icon="solar:logout-2-linear" className="h-4 w-4" />
-                Logout
-              </button>
+              {/* Cart Button - Only for Students */}
+              {userRole === 'student' && (
+                <button
+                  onClick={() => navigate('/cart')}
+                  className="w-10 h-10 rounded-full hover:cursor-pointer bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors relative"
+                >
+                  <Icon icon="solar:cart-large-2-bold-duotone" size={24} />
+                  {/* Optional Badge */}
+                  {/* <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white"></span> */}
+                </button>
+              )}
+
+              {/* Profile Dropdown */}
+              <ProfileDropdown />
             </>
           ) : (
             <>
@@ -122,7 +129,7 @@ const Navbar = () => {
                   navigate("/login");
                   setActive("/login");
                 }}
-                className={`px-5 py-2 text-white/90 font-medium relative transition-colors duration-300 hover:text-white group`}
+                className={`px-5 py-2 text-white/90 hover:cursor-pointer font-medium relative transition-colors duration-300 hover:text-white group`}
               >
                 Sign In
                 <span
@@ -136,11 +143,11 @@ const Navbar = () => {
                   navigate("/signup");
                   setActive("/signup");
                 }}
-                className={`px-6 py-2.5 rounded-full font-bold transition-all shadow-lg bg-white text-primary hover:bg-gray-100 relative group`}
+                className={`px-6 py-2.5 rounded-full hover:cursor-pointer font-bold transition-all shadow-lg bg-white text-primary hover:bg-gray-100 relative group`}
               >
                 Get Started
                 <span
-                  className={`absolute left-0 bottom-0 h-0.5 bg-primary transition-all duration-700 ease-out w-0 group-hover:w-full`}
+                  className={`absolute left-0 bottom-0 h-0.5 hover:cursor-pointer bg-primary transition-all duration-700 ease-out w-0 group-hover:w-full`}
                 ></span>
               </button>
             </>

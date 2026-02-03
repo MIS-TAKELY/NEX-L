@@ -1,5 +1,5 @@
-import { createContext, useState, useEffect } from "react";
-import { getSession, signOut as authSignOut } from "@/lib/auth.client";
+import { signOut as authSignOut, getSession } from "@/lib/auth.client";
+import { createContext, useEffect, useState } from "react";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AppContext = createContext();
@@ -12,8 +12,13 @@ export const AppContextProvider = ({ children }) => {
     localStorage.getItem('userRole') || null
   );
   const [userData, setUserData] = useState(() => {
-    const stored = localStorage.getItem('userData');
-    return stored ? JSON.parse(stored) : null;
+    try {
+      const stored = localStorage.getItem('userData');
+      return stored ? JSON.parse(stored) : null;
+    } catch (e) {
+      console.error("Failed to parse userData", e);
+      return null;
+    }
   });
   const [loading, setLoading] = useState(true);
 
@@ -55,6 +60,22 @@ export const AppContextProvider = ({ children }) => {
     verifySession();
   }, []);
 
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+
+  // Apply theme to document
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+  };
+
   const login = (role, data = null) => {
     setIsLoggedIn(true);
     setUserRole(role);
@@ -82,13 +103,53 @@ export const AppContextProvider = ({ children }) => {
     localStorage.removeItem('userData');
   };
 
+  const updateUserData = (newData) => {
+    const updatedUser = { ...userData, ...newData };
+    setUserData(updatedUser);
+    localStorage.setItem('userData', JSON.stringify(updatedUser));
+  };
+
+  // Cart Logic
+  const [cart, setCart] = useState(() => {
+    try {
+      const stored = localStorage.getItem('cart');
+      const parsed = stored ? JSON.parse(stored) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.error("Failed to parse cart from local storage", e);
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
+
+  const addToCart = (course) => {
+    setCart((prev) => {
+      if (prev.find((item) => item.id === course.id)) return prev;
+      return [...prev, course];
+    });
+  };
+
+  const removeFromCart = (courseId) => {
+    setCart((prev) => prev.filter((item) => item.id !== courseId));
+  };
+
   const value = {
     isLoggedIn,
     userRole,
     userData,
     loading,
+    theme,
+    setTheme,
+    toggleTheme,
     login,
-    logout
+    logout,
+    updateUserData,
+    cart,
+    addToCart,
+    removeFromCart
   };
 
   return (
