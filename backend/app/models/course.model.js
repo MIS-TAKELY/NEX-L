@@ -17,7 +17,7 @@ const courseSchema = new mongoose.Schema({
   },
   price: {
     type: Number,
-    default: 0, 
+    default: 0,
   },
   discountPrice: Number,
   isFree: {
@@ -30,10 +30,10 @@ const courseSchema = new mongoose.Schema({
     required: [true, 'Teacher is required'],
   },
   syllabus: {
-    type: String, 
+    type: String,
   },
   demoVideo: {
-    type: String, 
+    type: String,
   },
   sections: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -52,6 +52,9 @@ const courseSchema = new mongoose.Schema({
     ref: 'Review',
   }],
   embedding: [Number],
+  thumbnail: {
+    type: String,
+  },
   status: {
     type: String,
     enum: ['draft', 'published', 'archived'],
@@ -61,7 +64,7 @@ const courseSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-courseSchema.index({ title: 'text', description: 'text', tags: 1, category: 1 });
+courseSchema.index({ title: 'text', description: 'text', tags: 'text', category: 'text' });
 
 const Course = mongoose.model('Course', courseSchema);
 export default Course; 

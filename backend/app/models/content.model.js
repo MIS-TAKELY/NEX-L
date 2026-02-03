@@ -12,11 +12,11 @@ const contentSchema = new mongoose.Schema(
       required: true,
     },
     url: {
-      type: String, 
+      type: String,
       required: true,
     },
     summary: String,
-    duration: Number, 
+    duration: Number,
     section: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Section",
@@ -32,4 +32,4 @@ const contentSchema = new mongoose.Schema(
   },
 );
 
-module.exports = mongoose.model("Content", contentSchema);
+export default mongoose.model("Content", contentSchema);
