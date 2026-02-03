@@ -1,14 +1,16 @@
-import { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useContext } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { AppContext } from '@/context/AppContext';
-import { Plus, Trash2, Video, FileText, Upload, Film, ChevronDown, ChevronUp, Save } from 'lucide-react';
-import { createCourse, uploadMedia } from '@/apis/course.api';
+import { Plus, Trash2, Video, FileText, Upload, Film, ChevronDown, ChevronUp, Save, ArrowLeft } from 'lucide-react';
+import { getCourseById, updateCourse, uploadMedia } from '@/apis/course.api';
 
-const AddCourse = () => {
+const EditCourse = () => {
+    const { id } = useParams();
     const navigate = useNavigate();
     const { userData } = useContext(AppContext);
     const [loading, setLoading] = useState(false);
-    const [activeTab, setActiveTab] = useState('basic'); // basic, curriculum, settings
+    const [fetching, setFetching] = useState(true);
+    const [activeTab, setActiveTab] = useState('basic');
 
     const [formData, setFormData] = useState({
         title: '',
@@ -19,11 +21,54 @@ const AddCourse = () => {
         isFree: false,
         tags: [],
         sections: []
-        // sections structure: [{ title, order, contents: [{ title, type, url, ... }] }]
     });
 
     const [uploading, setUploading] = useState(false);
     const [tagsInput, setTagsInput] = useState('');
+    const [previews, setPreviews] = useState({
+        thumbnail: null,
+        lessonMedia: {} // { 'sIdx-cIdx': previewUrl }
+    });
+
+    // Cleanup object URLs to avoid memory leaks
+    useEffect(() => {
+        return () => {
+            if (previews.thumbnail && previews.thumbnail.startsWith('blob:')) {
+                URL.revokeObjectURL(previews.thumbnail);
+            }
+            Object.values(previews.lessonMedia).forEach(url => {
+                if (url.startsWith('blob:')) {
+                    URL.revokeObjectURL(url);
+                }
+            });
+        };
+    }, [previews]);
+
+    useEffect(() => {
+        const fetchCourse = async () => {
+            try {
+                const data = await getCourseById(id);
+                setFormData({
+                    ...data,
+                    price: data.price || '',
+                    tags: data.tags || [],
+                    sections: data.sections ? data.sections.map(sec => ({
+                        ...sec,
+                        isOpen: false // default to closed
+                    })) : []
+                });
+                setTagsInput(data.tags ? data.tags.join(', ') : '');
+            } catch (error) {
+                console.error("Failed to fetch course", error);
+                // alert("Failed to load course details.");
+                navigate('/instructor/courses');
+            } finally {
+                setFetching(false);
+            }
+        };
+
+        fetchCourse();
+    }, [id, navigate]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -56,10 +101,13 @@ const AddCourse = () => {
     };
 
     const toggleSection = (index) => {
-        const newSections = [...formData.sections];
-        newSections[index].isOpen = !newSections[index].isOpen;
-        setFormData({ ...formData, sections: newSections });
-    }
+        setFormData(prev => ({
+            ...prev,
+            sections: prev.sections.map((sec, i) =>
+                i === index ? { ...sec, isOpen: !sec.isOpen } : sec
+            )
+        }));
+    };
 
     const addContent = (sectionIndex) => {
         const newSections = [...formData.sections];
@@ -89,14 +137,27 @@ const AddCourse = () => {
         const file = e.target.files[0];
         if (!file) return;
 
+        // Set local preview
+        const localPreview = URL.createObjectURL(file);
+        const key = `${sectionIndex}-${contentIndex}`;
+        setPreviews(prev => ({
+            ...prev,
+            lessonMedia: { ...prev.lessonMedia, [key]: localPreview }
+        }));
+
         setUploading(true);
         try {
             const data = await uploadMedia(file);
             updateContent(sectionIndex, contentIndex, 'url', data.url);
-            // optionally set duration or other metadata from response if available
         } catch (error) {
             console.error("Upload failed", error);
-            alert("Upload failed. Please try again.");
+            // alert("Upload failed. Please try again.");
+            // Clear preview on failure if it wasn't already uploaded
+            setPreviews(prev => {
+                const newLessonMedia = { ...prev.lessonMedia };
+                delete newLessonMedia[key];
+                return { ...prev, lessonMedia: newLessonMedia };
+            });
         } finally {
             setUploading(false);
         }
@@ -105,12 +166,19 @@ const AddCourse = () => {
     const handleThumbnailUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
+
+        // Set local preview
+        const localPreview = URL.createObjectURL(file);
+        setPreviews(prev => ({ ...prev, thumbnail: localPreview }));
+
         setUploading(true);
         try {
             const data = await uploadMedia(file);
             setFormData(prev => ({ ...prev, thumbnail: data.url }));
         } catch (error) {
             console.error("Thumbnail upload failed", error);
+            // alert("Thumbnail upload failed. Please try again.");
+            setPreviews(prev => ({ ...prev, thumbnail: null }));
         } finally {
             setUploading(false);
         }
@@ -119,17 +187,10 @@ const AddCourse = () => {
     // --- Submit ---
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!userData || !userData.id) {
-            alert("You must be logged in to create a course");
-            return;
-        }
-
         setLoading(true);
         try {
             const payload = {
                 ...formData,
-                teacherId: userData.id,
-                // sanitize sections
                 sections: formData.sections.map((sec, idx) => ({
                     title: sec.title,
                     order: idx + 1,
@@ -142,21 +203,30 @@ const AddCourse = () => {
                 }))
             };
 
-            await createCourse(payload);
-            alert("Course created successfully!");
+            await updateCourse(id, payload);
+            // alert("Course updated successfully!");
             navigate('/instructor/courses');
         } catch (error) {
-            console.error("Failed to create course", error);
-            alert("Failed to create course. " + (error.message || ""));
+            console.error("Failed to update course", error);
+            // alert("Failed to update course. " + (error.message || ""));
         } finally {
             setLoading(false);
         }
     };
 
+    if (fetching) {
+        return <div className="p-8 text-center text-gray-500">Loading course data...</div>;
+    }
+
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8 min-h-screen">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-800">Create New Course</h1>
+                <div className="flex items-center gap-4">
+                    <button onClick={() => navigate('/instructor/courses')} className="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors">
+                        <ArrowLeft size={20} />
+                    </button>
+                    <h1 className="text-2xl font-bold text-gray-800">Edit Course</h1>
+                </div>
                 <div className="flex gap-2">
                     <button
                         type="button"
@@ -253,14 +323,14 @@ const AddCourse = () => {
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Thumbnail</label>
-                            {formData.thumbnail && (
-                                <img src={formData.thumbnail} alt="Thumbnail preview" className="w-full h-48 object-cover rounded-lg mb-2" />
+                            {(previews.thumbnail || formData.thumbnail) && (
+                                <img src={previews.thumbnail || formData.thumbnail} alt="Thumbnail preview" className="w-full h-48 object-cover rounded-lg mb-2" />
                             )}
                             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:bg-gray-50 transition-colors relative">
                                 <input type="file" onChange={handleThumbnailUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                                 <div className="flex flex-col items-center">
                                     <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                                    <p className="text-gray-500 text-sm">Upload Thumbnail</p>
+                                    <p className="text-gray-500 text-sm">Upload New Thumbnail</p>
                                 </div>
                             </div>
                         </div>
@@ -299,7 +369,7 @@ const AddCourse = () => {
 
                                 {section.isOpen && (
                                     <div className="space-y-3 pl-8">
-                                        {section.contents.map((content, cIdx) => (
+                                        {section.contents && Array.isArray(section.contents) && section.contents.map((content, cIdx) => (
                                             <div key={cIdx} className="bg-white p-3 rounded border border-gray-200 shadow-sm flex flex-col gap-3">
                                                 <div className="flex justify-between items-start">
                                                     <div className="flex-1 space-y-2">
@@ -320,14 +390,57 @@ const AddCourse = () => {
                                                                 <option value="pdf">PDF</option>
                                                                 <option value="article">Article</option>
                                                             </select>
-                                                            {content.url ? (
-                                                                <span className="text-xs text-green-600 flex items-center gap-1">
-                                                                    <Video size={12} /> Uploaded
-                                                                </span>
+                                                            {content.url || previews.lessonMedia[`${sIdx}-${cIdx}`] ? (
+                                                                <div className="flex flex-col gap-2 w-full">
+                                                                    <div className="flex items-center justify-between">
+                                                                        <span className="text-xs text-green-600 flex items-center gap-1">
+                                                                            <Video size={12} /> {content.url ? 'Uploaded' : 'Selected'}
+                                                                        </span>
+                                                                        {!content.url && uploading && <span className="text-xs text-blue-500 animate-pulse">Uploading...</span>}
+                                                                    </div>
+                                                                    {content.type === 'video' && (
+                                                                        <video
+                                                                            src={previews.lessonMedia[`${sIdx}-${cIdx}`] || content.url}
+                                                                            controls
+                                                                            className="w-full max-h-40 rounded bg-black"
+                                                                        />
+                                                                    )}
+                                                                    {content.type === 'pdf' && (content.url || previews.lessonMedia[`${sIdx}-${cIdx}`]) && (
+                                                                        <div className="flex items-center gap-2 p-2 bg-gray-50 rounded border text-xs text-gray-600">
+                                                                            <FileText size={14} />
+                                                                            <span className="truncate flex-1">
+                                                                                {content.url ? 'PDF Document' : 'Selected PDF'}
+                                                                            </span>
+                                                                            <a
+                                                                                href={previews.lessonMedia[`${sIdx}-${cIdx}`] || content.url}
+                                                                                target="_blank"
+                                                                                rel="noopener noreferrer"
+                                                                                className="text-blue-600 hover:underline"
+                                                                            >
+                                                                                View
+                                                                            </a>
+                                                                        </div>
+                                                                    )}
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            updateContent(sIdx, cIdx, 'url', '');
+                                                                            setPreviews(prev => {
+                                                                                const newLessonMedia = { ...prev.lessonMedia };
+                                                                                delete newLessonMedia[`${sIdx}-${cIdx}`];
+                                                                                return { ...prev, lessonMedia: newLessonMedia };
+                                                                            });
+                                                                        }}
+                                                                        className="text-xs text-red-500 hover:underline self-start"
+                                                                    >
+                                                                        Change File
+                                                                    </button>
+                                                                </div>
                                                             ) : (
                                                                 <div className="relative">
                                                                     <input
                                                                         type="file"
+                                                                        accept={content.type === 'video' ? 'video/*' : content.type === 'pdf' ? 'application/pdf' : '*'}
                                                                         onChange={(e) => handleFileUpload(e, sIdx, cIdx)}
                                                                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                                                     />
@@ -360,9 +473,9 @@ const AddCourse = () => {
                         disabled={loading || uploading}
                         className="bg-black text-white px-8 py-3 rounded-lg font-medium hover:bg-gray-900 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        {loading ? 'Creating...' : (
+                        {loading ? 'Saving...' : (
                             <>
-                                <Save size={18} /> Publish Course
+                                <Save size={18} /> Update Course
                             </>
                         )}
                     </button>
@@ -373,4 +486,4 @@ const AddCourse = () => {
     );
 };
 
-export default AddCourse;
+export default EditCourse;

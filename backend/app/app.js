@@ -1,16 +1,22 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
-import { auth } from "./lib/auth.js";
-import routes from "./routes/index.js";
 
-import { toNodeHandler } from "better-auth/node";
+import assignmentRouter from "../app/routes/assignment.routes.js";
+import authRouter from "../app/routes/auth.routes.js";
+import courseRouter from "../app/routes/course.routes.js";
+import lessonRouter from "../app/routes/lesson.routes.js";
+import testMail from "../app/routes/test-mail.routes.js";
+import userRouter from "../app/routes/user.routes.js";
+import uploadRouter from "../app/routes/upload.routes.js";
+
+// import { toNodeHandler } from "better-auth/node";
 
 const app = express();
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || true, // fallback to true (reflect origin) or a default URL
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173",],
     credentials: true,
   }),
 );
@@ -18,15 +24,28 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-app.all(/^\/api\/auth\/.*/, toNodeHandler(auth));
-
-// Error logger
-app.use((err, req, res, next) => {
-  console.error("ERROR:", err);
-  res.status(500).send("Internal Server Error");
-});
 
 // other APIs
-app.use("/api/v1", routes);
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/courses", courseRouter);
+app.use("/api/v1/lessons", lessonRouter);
+app.use("/api/v1/assignments", assignmentRouter);
+app.use("/api/v1/assignments", assignmentRouter);
+app.use("/api/v1/test-mail", testMail);
+app.use("/api/v1/upload", uploadRouter);
+
+// Error logger - MUST BE LAST
+app.use((err, req, res, next) => {
+  console.error("ERROR:", err);
+  res.status(err.status || 500).json({
+    message: err.message || "Internal Server Error",
+    error: {
+      message: err.message,
+      stack: err.stack,
+      ...(typeof err === 'object' ? err : {})
+    }
+  });
+});
 
 export default app;

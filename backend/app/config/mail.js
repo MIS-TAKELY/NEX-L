@@ -1,24 +1,21 @@
-const nodemailer = require("nodemailer");
+import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  service: "gmail", // Shortcut for Gmail's SMTP settings - see Well-Known Services
+  service: "gmail",
   auth: {
-    type: "OAuth2",
-    user: "me@gmail.com",
-    clientId: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    // refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+    user: process.env.MAIL_USER, // your gmail
+    pass: process.env.MAIL_PASS, // Gmail App Password (NOT your normal password)
   },
 });
 
 export async function sendEmail({ to, subject, Component, props }) {
-  //   const html = renderEmail(Component, props);
+  // const html = renderEmail(Component, props);
 
   await transporter.sendMail({
-    from: '"Your App" <your.email@gmail.com>',
+    from: `"Your App" <${process.env.MAIL_USER}>`,
     to,
     subject,
-    html: `hello`,
+    html: "hello",
   });
 
   console.log("Email sent to", to);

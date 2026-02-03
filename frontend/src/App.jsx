@@ -15,6 +15,7 @@ import StudentLayout from "./Pages/student/StudentLayout";
 
 // INSTRUCTOR PAGES
 import AddCourse from "./Pages/instructor/AddCourse";
+import EditCourse from "./Pages/instructor/EditCourse";
 import Analytics from "./Pages/instructor/Analytics";
 import Dashboard from "./Pages/instructor/Dashboard";
 import Instructor from "./Pages/instructor/Instructor";
@@ -75,6 +76,7 @@ export default function App() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="courses" element={<MyCourses />} />
         <Route path="add-course" element={<AddCourse />} />
+        <Route path="edit-course/:id" element={<EditCourse />} />
         <Route path="analytics" element={<Analytics />} />
         <Route path="messages" element={<Messages />} />
         <Route path="settings" element={<InstructorSettings />} />

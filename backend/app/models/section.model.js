@@ -17,11 +17,11 @@ const sectionSchema = new mongoose.Schema(
         ref: "Content",
       },
     ],
-    order: Number, 
+    order: Number,
   },
   {
     timestamps: true,
   },
 );
 
-module.exports = mongoose.model("Section", sectionSchema);
+export default mongoose.model("Section", sectionSchema);
