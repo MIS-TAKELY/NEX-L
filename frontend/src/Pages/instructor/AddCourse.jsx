@@ -94,7 +94,9 @@ const AddCourse = () => {
         <div>
              <label className="block text-sm font-medium text-gray-700 mb-2">Course Thumbnail</label>
              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer">
-                 <div className="text-4xl mb-2">📷</div>
+                 <div className="text-4xl mb-2 text-gray-400">
+                     <Icon icon="solar:camera-bold" />
+                 </div>
                  <p className="text-gray-500 text-sm">Click to upload or drag and drop</p>
                  <p className="text-xs text-gray-400 mt-1">SVG, PNG, JPG or GIF (max. 800x400px)</p>
                  <input type="file" className="hidden" />
