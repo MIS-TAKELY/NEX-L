@@ -61,7 +61,11 @@ const MyCourses = () => {
                   <tr key={course.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 font-medium text-gray-900">{course.name}</td>
                     <td className="px-6 py-4 text-center">{course.students}</td>
-                    <td className="px-6 py-4 text-center">⭐ {course.rating}</td>
+                    <td className="px-6 py-4 text-center">
+                        <span className="flex items-center justify-center gap-1">
+                            <Icon icon="solar:star-bold" className="text-orange-400" /> {course.rating}
+                        </span>
+                    </td>
                     <td className="px-6 py-4 text-center">
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                             course.status === 'Published' 
