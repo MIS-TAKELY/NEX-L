@@ -68,17 +68,17 @@ const Dashboard = () => {
                         <p className="text-xs text-gray-600 leading-relaxed mb-4">
                             Your Rate has increased because of your recent update activity. <span className="font-bold">Keep moving</span> forward and get more points!
                         </p>
-                         <div className="bg-white p-3 rounded-xl flex items-center justify-between shadow-sm cursor-pointer hover:shadow-md transition-shadow">
-                              <div className="flex items-center gap-3">
-                                  <span className="text-accent">
+                         {/* <div className="bg-white p-3 rounded-xl flex items-center justify-between shadow-sm cursor-pointer hover:shadow-md transition-shadow">
+                              <div className="flex items-center gap-3"> */}
+                                  {/* <span className="text-accent">
                                       <Icon icon="solar:globus-linear" />
-                                  </span>
-                                 <div className="text-xs text-gray-500 leading-tight">
+                                  </span> */}
+                                 {/* <div className="text-xs text-gray-500 leading-tight">
                                      Learn insights how to manage all <br/> aspects of your startup
-                                 </div>
-                             </div>
-                             <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white">▶</div>
-                        </div>
+                                 </div> */}
+                             {/* </div> */}
+                             {/* <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white">▶</div> */}
+                        {/* </div> */}
                     </div>
                 </div>
             </div>
@@ -122,9 +122,9 @@ const Dashboard = () => {
                     
                     <div className="space-y-6">
                         {[
-                            { name: "Bessie Cooper", status: "Online", score: "0", seed: "Bessie" },
-                            { name: "Albert Flores", status: "Online", score: "0", seed: "Albert" },
-                            { name: "Guy Hawkins", status: "0 minutes ago", score: "0", seed: "Guy" },
+                            { name: "Prashiksha Shrestha", status: "Online", score: "0", seed: "Bessie" },
+                            { name: "Sachin Sharma", status: "Online", score: "0", seed: "Albert" },
+                            { name: "Siddhant Dhungel", status: "Offline", score: "0", seed: "Guy" },
                         ].map((user, i) => (
                             <div key={i} className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
@@ -146,26 +146,26 @@ const Dashboard = () => {
                 </div>
 
                  {/* Top Performers - Targeting Region Placeholder */}
-                 <div className="bg-white rounded-[2.5rem] p-8 shadow-sm relative overflow-hidden">
+                 {/* <div className="bg-white rounded-[2.5rem] p-8 shadow-sm relative overflow-hidden">
                     <div className="flex justify-between items-start mb-4">
                         <h3 className="font-bold text-gray-800">Targeting by region</h3>
                     </div>
-                    
-                    {/* Map Placeholder */}
-                    <div className="w-full h-40 bg-gray-50 rounded-xl relative opacity-50 mt-4" style={{ backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)', backgroundSize: '10px 10px' }}>
+                     */}
+                    {/* Map Placeholder
+                    <div className="w-full h-40 bg-gray-50 rounded-xl relative opacity-50 mt-4" style={{ backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)', backgroundSize: '10px 10px' }}> */}
                         {/* Dot markers */}
-                        <div className="absolute top-1/4 left-1/4 w-3 h-3 bg-primary/20 rounded-full flex items-center justify-center animate-pulse">
+                        {/* <div className="absolute top-1/4 left-1/4 w-3 h-3 bg-primary/20 rounded-full flex items-center justify-center animate-pulse">
                             <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
                         </div>
                         <div className="absolute bottom-1/3 right-1/3 w-3 h-3 bg-primary/20 rounded-full flex items-center justify-center animate-pulse animation-delay-500">
                              <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
-                        </div>
+                        </div> */}
 
                          {/* Tooltip Card */}
-                         <div className="absolute top-4 right-8 bg-white p-2 rounded-lg shadow-lg flex items-center gap-2 border border-gray-100 animate-bounce">
-                             <div className="w-6 h-6 rounded bg-gray-200 overflow-hidden">
+                         {/* <div className="absolute top-4 right-8 bg-white p-2 rounded-lg shadow-lg flex items-center gap-2 border border-gray-100 animate-bounce">
+                             <div className="w-6 h-6 rounded bg-gray-200 overflow-hidden"> */}
                                  {/* Flag placeholder */}
-                                 <img src="https://flagcdn.com/w40/pl.png" alt="Poland" className="w-full h-full object-cover" />
+                                 {/* <img src="https://flagcdn.com/w40/pl.png" alt="Poland" className="w-full h-full object-cover" />
                              </div>
                              <div>
                                  <p className="text-xs font-bold">Poland</p>
@@ -173,7 +173,7 @@ const Dashboard = () => {
                              </div>
                          </div>
                     </div>
-                </div>
+                </div> */}
 
             </div>
         </div>

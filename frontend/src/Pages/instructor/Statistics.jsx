@@ -1,3 +1,4 @@
+import { Icon } from '@iconify/react';
 
 const Statistics = () => {
     return (
@@ -55,7 +56,7 @@ const Statistics = () => {
                         </div>
                         <span className="text-xs text-green-500 font-semibold">+0%</span>
                     </div>
-                    <h3 className="text-3xl font-bold text-gray-900">Rs 0</h3>
+                    <h3 className="text-3xl font-bold text-gray-900">Rs 1000</h3>
                     <p className="text-sm text-gray-500 mt-1">Total Revenue</p>
                 </div>
             </div>
@@ -102,7 +103,7 @@ const Statistics = () => {
                         <div className="relative w-48 h-48">
                             <div className="absolute inset-0 rounded-full border-[40px] border-gray-100"></div>
                             <div className="absolute inset-0 flex items-center justify-center flex-col">
-                                <p className="text-3xl font-bold text-gray-900">Rs 0</p>
+                                <p className="text-3xl font-bold text-gray-900">0</p>
                                 <p className="text-sm text-gray-500">Total</p>
                             </div>
                         </div>
@@ -121,14 +122,14 @@ const Statistics = () => {
                                 <div className="w-3 h-3 rounded-full bg-green-500"></div>
                                 <span className="text-sm text-gray-600">Subscriptions</span>
                             </div>
-                            <span className="text-sm font-semibold text-gray-900">Rs 0</span>
+                            <span className="text-sm font-semibold text-gray-900">Rs 3000</span>
                         </div>
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 rounded-full bg-purple-500"></div>
                                 <span className="text-sm text-gray-600">Other</span>
                             </div>
-                            <span className="text-sm font-semibold text-gray-900">Rs 0</span>
+                            <span className="text-sm font-semibold text-gray-900">Rs 2000</span>
                         </div>
                     </div>
                 </div>

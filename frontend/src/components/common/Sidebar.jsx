@@ -31,8 +31,7 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
       initial={false}
       animate={isExpanded ? 'expanded' : 'collapsed'}
       variants={sidebarVariants}
-      className={`h-screen bg-white border-r border-gray-100 flex flex-col p-4 shadow-sm shrink-0 overflow-hidden
-        ${role === 'admin' ? 'bg-zinc-900 border-zinc-800 text-zinc-400' : 'bg-white text-gray-500'}`}
+      className="h-screen bg-card border-r border-border flex flex-col p-4 shadow-sm shrink-0 overflow-hidden text-muted-foreground"
     >
       {/* Brand & Toggle */}
       <div className="flex items-center justify-between mb-10 overflow-hidden h-8">
@@ -46,7 +45,7 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
               onClick={() => navigate('/')}
             >
               <img src={logo} alt="NEXL" className="h-6 w-auto" />
-              <span className={`text-2xl font-bold tracking-tight ${role === 'admin' ? 'text-white' : 'text-primary'}`}>
+              <span className="text-2xl font-bold tracking-tight text-primary">
                 EXL
               </span>
              
@@ -65,8 +64,7 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
 
         <button 
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className={`p-1.5 rounded-lg border transition-colors hidden md:block
-            ${role === 'admin' ? 'border-zinc-800 bg-zinc-800 text-zinc-400 hover:text-white' : 'border-gray-100 bg-gray-50 text-gray-400 hover:text-primary'}`}
+          className="p-1.5 rounded-lg border border-border bg-muted/50 text-muted-foreground hover:text-primary transition-colors hidden md:block"
         >
           <Icon icon={isCollapsed ? "solar:alt-arrow-right-linear" : "solar:alt-arrow-left-linear"} size={18} />
         </button>
@@ -74,8 +72,7 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
 
       {/* Navigation */}
       <div className="flex-1 overflow-x-hidden">
-        <p className={`text-[10px] font-bold mb-4 uppercase tracking-wider whitespace-nowrap overflow-hidden
-          ${role === 'admin' ? 'text-zinc-600' : 'text-gray-400'}`}>
+        <p className="text-[10px] font-bold mb-4 uppercase tracking-wider whitespace-nowrap overflow-hidden text-muted-foreground/60">
           {isExpanded ? (role === 'admin' ? 'Admin Panel' : role === 'instructor' ? 'Instructor Panel' : 'Overview') : '•••'}
         </p>
         
@@ -87,8 +84,8 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group relative
                 ${isActive
-                  ? (role === 'admin' ? 'bg-primary/10 text-primary font-bold border-l-4 border-primary' : 'bg-gray-50 text-gray-900 font-bold border-l-4 border-primary')
-                  : (role === 'admin' ? 'text-zinc-400 hover:bg-zinc-800 hover:text-white' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900')
+                  ? 'bg-muted text-foreground font-bold border-l-4 border-primary'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 }`
               }
             >
@@ -113,7 +110,7 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
               
               {/* Tooltip for collapsed mode */}
               {!isExpanded && (
-                  <div className={`absolute left-full ml-4 px-2 py-1 rounded bg-gray-900 text-white text-xs invisible group-hover:visible whitespace-nowrap z-50 pointer-events-none`}>
+                  <div className={`absolute left-full ml-4 px-2 py-1 rounded bg-popover text-popover-foreground text-xs invisible group-hover:visible whitespace-nowrap z-50 pointer-events-none shadow-md border border-border`}>
                       {item.name}
                   </div>
               )}
@@ -137,9 +134,8 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
       </div>
 
       {/* Bottom Actions */}
-      <div className={`mt-auto pt-6 border-t ${role === 'admin' ? 'border-zinc-800' : 'border-gray-100'}`}>
-         <p className={`text-[10px] font-bold mb-4 uppercase tracking-wider whitespace-nowrap overflow-hidden
-           ${role === 'admin' ? 'text-zinc-600' : 'text-gray-400'}`}>
+      <div className="mt-auto pt-6 border-t border-border">
+         <p className="text-[10px] font-bold mb-4 uppercase tracking-wider whitespace-nowrap overflow-hidden text-muted-foreground/60">
            {isExpanded ? 'Settings' : '•••'}
          </p>
          
@@ -149,8 +145,8 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 relative group
                 ${isActive
-                  ? 'bg-gray-50 text-gray-900 font-bold'
-                  : (role === 'admin' ? 'text-zinc-400 hover:bg-zinc-800 hover:text-white' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900')
+                  ? 'bg-muted text-foreground font-bold'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 }`
               }
             >
@@ -168,13 +164,13 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
                   )}
                 </AnimatePresence>
                 {!isExpanded && (
-                    <div className="absolute left-full ml-4 px-2 py-1 rounded bg-gray-900 text-white text-xs invisible group-hover:visible whitespace-nowrap z-50">Settings</div>
+                    <div className="absolute left-full ml-4 px-2 py-1 rounded bg-popover text-popover-foreground text-xs invisible group-hover:visible whitespace-nowrap z-50 shadow-md border border-border">Settings</div>
                 )}
             </NavLink>
             
             <button 
                 onClick={handleLogout}
-                className="flex items-center gap-3 px-3 py-2 w-full text-red-500 hover:bg-red-50 rounded-xl transition-colors relative group"
+                className="flex items-center gap-3 px-3 py-2 w-full text-red-500 hover:bg-red-500/10 rounded-xl transition-colors relative group"
             >
                 <Icon icon="solar:logout-linear" size={20} />
                 <AnimatePresence>

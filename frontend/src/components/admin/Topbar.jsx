@@ -25,7 +25,7 @@ const AdminTopbar = () => {
             <p className="text-sm font-bold text-gray-900">Admin User</p>
             <p className="text-xs text-gray-500">Super Admin</p>
           </div>
-          <div className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center text-white overflow-hidden shadow-md">
+          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white overflow-hidden shadow-md">
             <Icon icon="solar:user-circle-bold-duotone" size={24} />
           </div>
         </div>

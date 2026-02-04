@@ -22,7 +22,7 @@ const Hero = () => {
             NEXL: Elevate Your Learning
           </h1>
           <p className="text-lg md:text-xl lg:text-2xl max-w-3xl mx-auto leading-relaxed text-white/90 drop-shadow-lg">
-            Explore breathtaking courses, local culture, and unique learning experiences.
+            Explore breathtaking courses and unique learning experiences.
           </p>
         </div>
       </header>

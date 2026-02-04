@@ -2,7 +2,7 @@ import { Icon } from '@iconify/react';
 
 const SocialTopbar = () => {
   return (
-    <div className="absolute top-0 left-0 right-0 bg-transparent text-white text-xs py-1 px-6 lg:px-12 z-50">
+    <div className="absolute top-0 left-0 right-0 bg-transparent text-white text-xs py-1 px-6 lg:px-12 z-50 bg-pink-500">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
           {/* <a href="#" className="hover:text-white/80 transition-colors">📧 Blogs</a>
