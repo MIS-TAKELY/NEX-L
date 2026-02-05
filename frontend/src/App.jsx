@@ -3,11 +3,13 @@ import { Route, Routes } from "react-router-dom";
 // STUDENT PAGES
 import Loading from "./components/student/Loading";
 import LandingPage from "./Pages/LandingPage";
+import Cart from "./Pages/student/Cart";
 import CourseDetails from "./Pages/student/CourseDetails";
 import CoursesList from "./Pages/student/CoursesList";
 import ForgotPassword from "./Pages/student/ForgotPassword";
 import Home from "./Pages/student/Home";
 import MyEnrollments from "./Pages/student/MyEnrollments";
+import PaymentGateway from "./Pages/student/PaymentGateway";
 import Player from "./Pages/student/Player";
 import SignIn from "./Pages/student/SignIn";
 import SignUp from "./Pages/student/SignUp";
@@ -15,9 +17,9 @@ import StudentLayout from "./Pages/student/StudentLayout";
 
 // INSTRUCTOR PAGES
 import AddCourse from "./Pages/instructor/AddCourse";
-import EditCourse from "./Pages/instructor/EditCourse";
 import Analytics from "./Pages/instructor/Analytics";
 import Dashboard from "./Pages/instructor/Dashboard";
+import EditCourse from "./Pages/instructor/EditCourse";
 import Instructor from "./Pages/instructor/Instructor";
 import Messages from "./Pages/instructor/Messages";
 import MyCourses from "./Pages/instructor/MyCourses";
@@ -40,9 +42,15 @@ export default function App() {
       <Route path="/course-list" element={<CoursesList />} />
       <Route path="/course-list/:input" element={<CoursesList />} />
       <Route path="/course/:id" element={<CourseDetails />} />
+      <Route path="/payment-gateway" element={<PaymentGateway />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/login" element={<SignIn />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/cart" element={
+        <ProtectedRoute allowedRoles={['student']}>
+          <Cart />
+        </ProtectedRoute>
+      } />
 
       {/* STUDENT ROUTES */}
       <Route path="/student" element={
@@ -54,6 +62,7 @@ export default function App() {
         <Route path="dashboard" element={<Home />} />
         <Route path="my-enrollments" element={<MyEnrollments />} />
         <Route path="player/:courseId" element={<Player />} />
+        <Route path="cart" element={<Cart />} />
       </Route>
 
       {/* Legacy support for /home redirecting or same element */}

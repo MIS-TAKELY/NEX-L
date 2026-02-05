@@ -1,21 +1,18 @@
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import logo from '../../assets/logoo.png';
-import { AppContext } from '../../context/AppContext';
+
 
 const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
   const navigate = useNavigate();
-  const { logout } = useContext(AppContext);
+
   
   // State: isCollapsed (manual toggle)
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+
 
   // Determine actual expanded state
   // It's expanded if not manually collapsed
@@ -31,11 +28,10 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
       initial={false}
       animate={isExpanded ? 'expanded' : 'collapsed'}
       variants={sidebarVariants}
-      className={`h-screen bg-white border-r border-gray-100 flex flex-col p-4 shadow-sm shrink-0 overflow-hidden
-        ${role === 'admin' ? 'bg-zinc-900 border-zinc-800 text-zinc-400' : 'bg-white text-gray-500'}`}
+      className="h-screen bg-card border-r border-border flex flex-col p-4 shadow-sm shrink-0 overflow-hidden text-muted-foreground"
     >
       {/* Brand & Toggle */}
-      <div className="flex items-center justify-between mb-10 overflow-hidden h-8">
+      <div className="flex items-center justify-between mb-10 overflow-visible h-8 relative">
         <AnimatePresence>
           {isExpanded && (
             <motion.div
@@ -46,7 +42,7 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
               onClick={() => navigate('/')}
             >
               <img src={logo} alt="NEXL" className="h-6 w-auto" />
-              <span className={`text-2xl font-bold tracking-tight ${role === 'admin' ? 'text-white' : 'text-primary'}`}>
+              <span className="text-2xl font-bold tracking-tight text-primary">
                 EXL
               </span>
              
@@ -63,19 +59,24 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
             />
         )}
 
-        <button 
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className={`p-1.5 rounded-lg border transition-colors hidden md:block
-            ${role === 'admin' ? 'border-zinc-800 bg-zinc-800 text-zinc-400 hover:text-white' : 'border-gray-100 bg-gray-50 text-gray-400 hover:text-primary'}`}
-        >
-          <Icon icon={isCollapsed ? "solar:alt-arrow-right-linear" : "solar:alt-arrow-left-linear"} size={18} />
-        </button>
+        <div className="group relative">
+          <button 
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors hidden md:block cursor-pointer"
+          >
+            <Icon icon="solar:sidebar-minimalistic-outline" size={20} />
+          </button>
+          
+          {/* Tooltip */}
+          <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded bg-popover text-popover-foreground text-xs invisible group-hover:visible whitespace-nowrap z-50 shadow-md border border-border">
+            {isCollapsed ? 'Open sidebar' : 'Close sidebar'}
+          </div>
+        </div>
       </div>
 
       {/* Navigation */}
       <div className="flex-1 overflow-x-hidden">
-        <p className={`text-[10px] font-bold mb-4 uppercase tracking-wider whitespace-nowrap overflow-hidden
-          ${role === 'admin' ? 'text-zinc-600' : 'text-gray-400'}`}>
+        <p className="text-[10px] font-bold mb-4 uppercase tracking-wider whitespace-nowrap overflow-hidden text-muted-foreground/60">
           {isExpanded ? (role === 'admin' ? 'Admin Panel' : role === 'instructor' ? 'Instructor Panel' : 'Overview') : '•••'}
         </p>
         
@@ -87,8 +88,8 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group relative
                 ${isActive
-                  ? (role === 'admin' ? 'bg-primary/10 text-primary font-bold border-l-4 border-primary' : 'bg-gray-50 text-gray-900 font-bold border-l-4 border-primary')
-                  : (role === 'admin' ? 'text-zinc-400 hover:bg-zinc-800 hover:text-white' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900')
+                  ? 'bg-muted text-foreground font-bold border-l-4 border-primary'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 }`
               }
             >
@@ -113,7 +114,7 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
               
               {/* Tooltip for collapsed mode */}
               {!isExpanded && (
-                  <div className={`absolute left-full ml-4 px-2 py-1 rounded bg-gray-900 text-white text-xs invisible group-hover:visible whitespace-nowrap z-50 pointer-events-none`}>
+                  <div className={`absolute left-full ml-4 px-2 py-1 rounded bg-popover text-popover-foreground text-xs invisible group-hover:visible whitespace-nowrap z-50 pointer-events-none shadow-md border border-border`}>
                       {item.name}
                   </div>
               )}
@@ -136,65 +137,7 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
         </AnimatePresence>
       </div>
 
-      {/* Bottom Actions */}
-      <div className={`mt-auto pt-6 border-t ${role === 'admin' ? 'border-zinc-800' : 'border-gray-100'}`}>
-         <p className={`text-[10px] font-bold mb-4 uppercase tracking-wider whitespace-nowrap overflow-hidden
-           ${role === 'admin' ? 'text-zinc-600' : 'text-gray-400'}`}>
-           {isExpanded ? 'Settings' : '•••'}
-         </p>
-         
-         <nav className="space-y-2">
-            <NavLink
-              to={role === 'instructor' ? "/instructor/settings" : "/settings"}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 relative group
-                ${isActive
-                  ? 'bg-gray-50 text-gray-900 font-bold'
-                  : (role === 'admin' ? 'text-zinc-400 hover:bg-zinc-800 hover:text-white' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900')
-                }`
-              }
-            >
-                <Icon icon="solar:settings-linear" size={20} />
-                <AnimatePresence>
-                  {isExpanded && (
-                    <motion.span
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="font-medium whitespace-nowrap"
-                    >
-                      Settings
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-                {!isExpanded && (
-                    <div className="absolute left-full ml-4 px-2 py-1 rounded bg-gray-900 text-white text-xs invisible group-hover:visible whitespace-nowrap z-50">Settings</div>
-                )}
-            </NavLink>
-            
-            <button 
-                onClick={handleLogout}
-                className="flex items-center gap-3 px-3 py-2 w-full text-red-500 hover:bg-red-50 rounded-xl transition-colors relative group"
-            >
-                <Icon icon="solar:logout-linear" size={20} />
-                <AnimatePresence>
-                  {isExpanded && (
-                    <motion.span
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="font-medium whitespace-nowrap"
-                    >
-                      Logout
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-                {!isExpanded && (
-                    <div className="absolute left-full ml-4 px-2 py-1 rounded bg-red-600 text-white text-xs invisible group-hover:visible whitespace-nowrap z-50">Logout</div>
-                )}
-            </button>
-         </nav>
-      </div>
+
     </motion.div>
   );
 };

@@ -2,9 +2,9 @@ import { useState } from 'react';
 
 const Settings = () => {
   const [formData, setFormData] = useState({
-    fullName: 'John Instructor',
-    email: 'john.instructor@nexl.com',
-    phone: '+1 234 567 8900',
+    fullName: 'pratiksha shrestha',
+    email: 'pratiksha.instructor@nexl.com',
+    phone: '9827093876',
     bio: 'Passionate educator with 10+ years of experience in web development.',
     notifications: {
       emailNotifications: true,

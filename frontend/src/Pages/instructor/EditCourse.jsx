@@ -1,8 +1,8 @@
-import { useState, useEffect, useContext } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { AppContext } from '@/context/AppContext';
-import { Plus, Trash2, Video, FileText, Upload, Film, ChevronDown, ChevronUp, Save, ArrowLeft } from 'lucide-react';
 import { getCourseById, updateCourse, uploadMedia } from '@/apis/course.api';
+import { ArrowLeft, ChevronDown, ChevronUp, FileText, Plus, Save, Trash2, Upload, Video } from 'lucide-react';
+import { useContext, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { AppContext } from '../../context/AppContext';
 
 const EditCourse = () => {
     const { id } = useParams();
