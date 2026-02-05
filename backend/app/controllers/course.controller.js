@@ -1,14 +1,23 @@
-import Course from "../models/course.model.js";
-import User from "../models/user.model.js";
-import Section from "../models/section.model.js";
 import Content from "../models/content.model.js";
-import Enrollment from "../models/enrollment.model.js";
+import Course from "../models/course.model.js";
+import Section from "../models/section.model.js";
+import User from "../models/user.model.js";
 import getEmbedding from "../utils/embedding.js";
 
 // Create a new course
 export const createCourse = async (req, res) => {
   try {
-    const { title, description, teacherId, tags, category, price, isFree, sections, thumbnail } = req.body;
+    const {
+      title,
+      description,
+      teacherId,
+      tags,
+      category,
+      price,
+      isFree,
+      sections,
+      thumbnail,
+    } = req.body;
 
     // Check if teacher exists
     const teacher = await User.findById(teacherId);
@@ -67,11 +76,11 @@ export const createCourse = async (req, res) => {
     }
 
     const populatedCourse = await Course.findById(course._id).populate({
-      path: 'sections',
+      path: "sections",
       populate: {
-        path: 'contents',
-        model: 'Content'
-      }
+        path: "contents",
+        model: "Content",
+      },
     });
 
     res.status(201).json(populatedCourse);
@@ -84,7 +93,7 @@ export const createCourse = async (req, res) => {
 export const getAllCourses = async (req, res) => {
   try {
     const courses = await Course.find()
-      .populate("teacher")      // matches schema
+      .populate("teacher") // matches schema
       .populate("enrollments"); // if you want to show enrolled students via enrollments
 
     res.json(courses);
@@ -97,21 +106,35 @@ export const getAllCourses = async (req, res) => {
 export const getCourseById = async (req, res) => {
   try {
     const course = await Course.findById(req.params.id)
-      .populate("teacher")
-      .populate("enrollments")
+      .select("-embedding")
       .populate({
-        path: 'sections',
+        path: "teacher",
+        select: "name email _id",
+      })
+      // .populate("enrollments")
+      .populate({
+        path: "sections",
         populate: {
-          path: 'contents',
-          model: 'Content'
-        }
+          path: "contents",
+          model: "Content",
+        },
       });
 
-    if (!course) return res.status(404).json({ message: "Course not found" });
+    if (!course)
+      return res
+        .status(404)
+        .json({ message: "Course not found", success: false });
 
-    res.json(course);
+    return res.status(200).json({
+      message: "Successfully fetched course using Id",
+      success: true,
+      data: course,
+    });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return res.status(500).json({
+      message: `unable to get course details using id ${err.message}`,
+      success: false,
+    });
   }
 };
 
@@ -159,7 +182,16 @@ export const getInstructorCourses = async (req, res) => {
 export const updateCourse = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, tags, category, price, isFree, sections, thumbnail } = req.body;
+    const {
+      title,
+      description,
+      tags,
+      category,
+      price,
+      isFree,
+      sections,
+      thumbnail,
+    } = req.body;
 
     const course = await Course.findById(id);
     if (!course) return res.status(404).json({ message: "Course not found" });
@@ -229,11 +261,11 @@ export const updateCourse = async (req, res) => {
     await course.save();
 
     const populatedCourse = await Course.findById(id).populate({
-      path: 'sections',
+      path: "sections",
       populate: {
-        path: 'contents',
-        model: 'Content'
-      }
+        path: "contents",
+        model: "Content",
+      },
     });
 
     res.json(populatedCourse);

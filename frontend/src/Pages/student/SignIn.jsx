@@ -1,7 +1,8 @@
 import { Label } from "@/components/ui/label";
 import { AppContext } from "@/context/AppContext";
-import { getSession, signIn } from "@/lib/auth.client";
+import { getSession, loginWithGoogle, loginWithGithub, signIn } from "@/lib/auth.client";
 import { cn } from "@/lib/utils";
+
 import { verifyEmail } from "@/utils/verify-email";
 import { Icon } from "@iconify/react";
 import { useContext, useState } from "react";
@@ -42,7 +43,7 @@ const SignIn = () => {
 
       if (session && session.user) {
         // Get role from backend session (secure, server-side role)
-        const userRole = session.user.role || 'student';
+        const userRole = session.user.role || "student";
 
         // Update AppContext with user data and role from backend
         login(userRole, session.user);
@@ -50,7 +51,7 @@ const SignIn = () => {
         console.log("Login success:", session);
 
         // Redirect based on role from backend
-        if (userRole === 'instructor') {
+        if (userRole === "instructor") {
           navigate("/instructor/dashboard", { replace: true });
         } else if (userRole === 'admin') {
           navigate("/admin/dashboard", { replace: true });
@@ -71,7 +72,7 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen flex font-outfit">
+    <div className="min-h-screen flex font-outfit overflow-hidden">
       {/* Left Side - Dark Background with Text */}
       <div className="hidden lg:flex lg:w-1/2 bg-primary relative flex-col justify-center px-12 md:px-20 text-primary-foreground overflow-hidden">
         {/* Abstract lines decoration */}

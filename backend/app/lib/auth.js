@@ -15,6 +15,13 @@ export const auth = betterAuth({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     },
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    },
+
+
+
   },
   trustedOrigins: [
     process.env.BETTER_AUTH_URL || "http://localhost:3000",
@@ -28,7 +35,7 @@ export const auth = betterAuth({
         type: "string",
         required: false,
         defaultValue: "student",
-        input: true, // Allow role to be set during signup
+        input: true,
       },
     },
   },
@@ -37,7 +44,64 @@ export const auth = betterAuth({
   session: {
     modelName: "session",
   },
+
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user, context) => {
+          console.log("--- databaseHooks: user.create.before ---");
+
+          // Read the pending_role cookie
+          const cookieHeader = context.request.headers.get("cookie");
+          const cookies = cookieHeader ? cookieHeader.split(";").reduce((acc, cookie) => {
+            const [name, value] = cookie.trim().split("=");
+            acc[name] = value;
+            return acc;
+          }, {}) : {};
+
+          const pendingRole = cookies["pending_role"];
+          console.log("Cookie pending_role found:", pendingRole);
+
+          if (pendingRole && (pendingRole === "student" || pendingRole === "instructor")) {
+            console.log(`Setting user role to ${pendingRole} from database hook`);
+            user.role = pendingRole;
+          } else {
+            console.log("No valid pending_role cookie, defaulting to student");
+            user.role = "student";
+          }
+
+          return {
+            data: user,
+          };
+        },
+      },
+      update: {
+        before: async ({ user, data, context }) => {
+          console.log("--- databaseHooks: user.update.before ---");
+
+          const cookieHeader = context.request.headers.get("cookie");
+          const cookies = cookieHeader ? cookieHeader.split(";").reduce((acc, cookie) => {
+            const [name, value] = cookie.trim().split("=");
+            acc[name] = value;
+            return acc;
+          }, {}) : {};
+
+          const pendingRole = cookies["pending_role"];
+          if (pendingRole && (pendingRole === "student" || pendingRole === "instructor")) {
+            console.log(`Updating existing user role to ${pendingRole} from database hook`);
+            data.role = pendingRole;
+          }
+
+          return {
+            data: data,
+          };
+        },
+      },
+    },
+  },
 });
+
+
 
 console.log(
   "Auth initialized with baseURL:",
