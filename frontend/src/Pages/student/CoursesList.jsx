@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../../components/common/Footer';
 import Navbar from '../../components/common/Navbar';
-import SocialTopbar from '../../components/common/SocialTopbar';
 import CourseCard from '../../components/landing/CourseCard';
 
 const CoursesList = () => {
@@ -76,7 +75,6 @@ const CoursesList = () => {
 
   return (
     <div className="flex flex-col min-h-screen font-outfit text-gray-800">
-      <SocialTopbar />
       <Navbar />
 
       <main className="flex-1 bg-gray-50 pt-32 pb-20">

@@ -1,8 +1,8 @@
-import { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AppContext } from '@/context/AppContext';
-import { Plus, Trash2, Video, FileText, Upload, Film, ChevronDown, ChevronUp, Save } from 'lucide-react';
 import { createCourse, uploadMedia } from '@/apis/course.api';
+import { ChevronDown, ChevronUp, Plus, Save, Trash2, Upload, Video } from 'lucide-react';
+import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../../context/AppContext';
 
 const AddCourse = () => {
     const navigate = useNavigate();

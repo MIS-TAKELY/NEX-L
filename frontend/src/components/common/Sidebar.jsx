@@ -1,21 +1,18 @@
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import logo from '../../assets/logoo.png';
-import { AppContext } from '../../context/AppContext';
+
 
 const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
   const navigate = useNavigate();
-  const { logout } = useContext(AppContext);
+
   
   // State: isCollapsed (manual toggle)
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+
 
   // Determine actual expanded state
   // It's expanded if not manually collapsed
@@ -34,7 +31,7 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
       className="h-screen bg-card border-r border-border flex flex-col p-4 shadow-sm shrink-0 overflow-hidden text-muted-foreground"
     >
       {/* Brand & Toggle */}
-      <div className="flex items-center justify-between mb-10 overflow-hidden h-8">
+      <div className="flex items-center justify-between mb-10 overflow-visible h-8 relative">
         <AnimatePresence>
           {isExpanded && (
             <motion.div
@@ -62,12 +59,19 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
             />
         )}
 
-        <button 
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-1.5 rounded-lg border border-border bg-muted/50 text-muted-foreground hover:text-primary transition-colors hidden md:block"
-        >
-          <Icon icon={isCollapsed ? "solar:alt-arrow-right-linear" : "solar:alt-arrow-left-linear"} size={18} />
-        </button>
+        <div className="group relative">
+          <button 
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors hidden md:block cursor-pointer"
+          >
+            <Icon icon="solar:sidebar-minimalistic-outline" size={20} />
+          </button>
+          
+          {/* Tooltip */}
+          <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded bg-popover text-popover-foreground text-xs invisible group-hover:visible whitespace-nowrap z-50 shadow-md border border-border">
+            {isCollapsed ? 'Open sidebar' : 'Close sidebar'}
+          </div>
+        </div>
       </div>
 
       {/* Navigation */}
@@ -133,64 +137,7 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
         </AnimatePresence>
       </div>
 
-      {/* Bottom Actions */}
-      <div className="mt-auto pt-6 border-t border-border">
-         <p className="text-[10px] font-bold mb-4 uppercase tracking-wider whitespace-nowrap overflow-hidden text-muted-foreground/60">
-           {isExpanded ? 'Settings' : '•••'}
-         </p>
-         
-         <nav className="space-y-2">
-            <NavLink
-              to={role === 'instructor' ? "/instructor/settings" : "/settings"}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 relative group
-                ${isActive
-                  ? 'bg-muted text-foreground font-bold'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                }`
-              }
-            >
-                <Icon icon="solar:settings-linear" size={20} />
-                <AnimatePresence>
-                  {isExpanded && (
-                    <motion.span
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="font-medium whitespace-nowrap"
-                    >
-                      Settings
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-                {!isExpanded && (
-                    <div className="absolute left-full ml-4 px-2 py-1 rounded bg-popover text-popover-foreground text-xs invisible group-hover:visible whitespace-nowrap z-50 shadow-md border border-border">Settings</div>
-                )}
-            </NavLink>
-            
-            <button 
-                onClick={handleLogout}
-                className="flex items-center gap-3 px-3 py-2 w-full text-red-500 hover:bg-red-500/10 rounded-xl transition-colors relative group"
-            >
-                <Icon icon="solar:logout-linear" size={20} />
-                <AnimatePresence>
-                  {isExpanded && (
-                    <motion.span
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="font-medium whitespace-nowrap"
-                    >
-                      Logout
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-                {!isExpanded && (
-                    <div className="absolute left-full ml-4 px-2 py-1 rounded bg-red-600 text-white text-xs invisible group-hover:visible whitespace-nowrap z-50">Logout</div>
-                )}
-            </button>
-         </nav>
-      </div>
+
     </motion.div>
   );
 };
