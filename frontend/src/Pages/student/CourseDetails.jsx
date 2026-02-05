@@ -194,7 +194,7 @@ const CourseDetails = () => {
                     <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-100 overflow-hidden relative">
                         <div className="absolute top-0 left-0 right-0 h-2 bg-accent"></div>
                         
-                        <h3 className="text-2xl font-bold text-gray-800 mb-2">Enroll Now</h3>
+                        <h3 className="text-2xl font-bold text-gray-800 mb-2">Enroll now</h3>
                         <p className="text-gray-500 text-sm mb-6">Select your preferred payment method.</p>
 
                         <div className="mb-4">
