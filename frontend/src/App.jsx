@@ -9,6 +9,7 @@ import CoursesList from "./Pages/student/CoursesList";
 import ForgotPassword from "./Pages/student/ForgotPassword";
 import Home from "./Pages/student/Home";
 import MyEnrollments from "./Pages/student/MyEnrollments";
+import PaymentGateway from "./Pages/student/PaymentGateway";
 import Player from "./Pages/student/Player";
 import SignIn from "./Pages/student/SignIn";
 import SignUp from "./Pages/student/SignUp";
@@ -41,6 +42,7 @@ export default function App() {
       <Route path="/course-list" element={<CoursesList />} />
       <Route path="/course-list/:input" element={<CoursesList />} />
       <Route path="/course/:id" element={<CourseDetails />} />
+      <Route path="/payment-gateway" element={<PaymentGateway />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/login" element={<SignIn />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />

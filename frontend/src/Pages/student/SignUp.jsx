@@ -1,11 +1,11 @@
 // Removed generic Input import to use standard input for full control
 import { Label } from "@/components/ui/label";
+import { getSession, signIn, signUp } from "@/lib/auth.client";
 import { cn } from "@/lib/utils";
 import { Icon } from '@iconify/react';
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
-import { signUp, signIn, getSession } from "@/lib/auth.client";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -196,7 +196,7 @@ const SignUp = () => {
 
               <LabelInputContainer>
                 <Label htmlFor="phoneNumber" className="text-sm">Phone Number</Label>
-                <input id="phoneNumber" name="phoneNumber" placeholder="9800000000" type="tel" value={formData.phoneNumber} onChange={handleChange} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" />
+                <input id="phoneNumber" name="phoneNumber" placeholder="9827093876" type="tel" value={formData.phoneNumber} onChange={handleChange} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" />
               </LabelInputContainer>
 
               <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">

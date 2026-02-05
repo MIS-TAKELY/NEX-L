@@ -4,7 +4,7 @@ const Settings = () => {
   const [formData, setFormData] = useState({
     fullName: 'pratiksha shrestha',
     email: 'pratiksha.instructor@nexl.com',
-    phone: '9800000000',
+    phone: '9827093876',
     bio: 'Passionate educator with 10+ years of experience in web development.',
     notifications: {
       emailNotifications: true,

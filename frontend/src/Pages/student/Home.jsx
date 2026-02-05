@@ -181,7 +181,7 @@ const Home = () => {
                                     <Icon icon="solar:user-circle-bold-duotone" size={24} />
                                 </div>
                                 <div>
-                                    <p className="text-sm font-bold text-foreground">Padhang Satrio</p>
+                                    <p className="text-sm font-bold text-foreground">Siddhant Dhungel</p>
                                     <p className="text-xs text-muted-foreground">2/16/2004</p>
                                 </div>
                             </div>
@@ -215,18 +215,18 @@ const Home = () => {
                     <p className="text-xs text-muted-foreground mb-6">Continue your learning to achieve your target!</p>
 
                     {/* Chart Placeholder */}
-                    <div className="bg-muted/50 rounded-2xl p-4 h-40 flex items-end justify-between px-2">
+                    {/* <div className="bg-muted/50 rounded-2xl p-4 h-40 flex items-end justify-between px-2">
                         <div className="w-4 bg-primary/20 rounded-t-lg h-1/3"></div>
                         <div className="w-4 bg-primary/40 rounded-t-lg h-1/2"></div>
                         <div className="w-4 bg-primary/20 rounded-t-lg h-1/4"></div>
                         <div className="w-4 bg-primary rounded-t-lg h-full shadow-lg shadow-primary/30"></div>
                         <div className="w-4 bg-primary/20 rounded-t-lg h-1/4"></div>
-                    </div>
-                    <div className="flex justify-between text-[10px] text-muted-foreground mt-2 px-1">
+                    </div> */}
+                    {/* <div className="flex justify-between text-[10px] text-muted-foreground mt-2 px-1">
                         <span>1-10 Aug</span>
                         <span>11-20 Aug</span>
                         <span>21-30 Aug</span>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Your Mentor */}

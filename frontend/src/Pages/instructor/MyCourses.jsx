@@ -1,8 +1,8 @@
-import { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AppContext } from '@/context/AppContext';
-import { getInstructorCourses, deleteCourse } from '@/apis/course.api';
+import { deleteCourse, getInstructorCourses } from '@/apis/course.api';
 import { Icon } from '@iconify/react';
+import { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../../context/AppContext';
 
 const MyCourses = () => {
     const navigate = useNavigate();

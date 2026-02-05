@@ -1,11 +1,11 @@
 import { Label } from "@/components/ui/label";
-import { AppContext } from "@/context/AppContext";
 import { getSession, signIn } from "@/lib/auth.client";
 import { cn } from "@/lib/utils";
 import { verifyEmail } from "@/utils/verify-email";
 import { Icon } from "@iconify/react";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AppContext } from "../../context/AppContext";
 
 const SignIn = () => {
   const navigate = useNavigate();
