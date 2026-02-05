@@ -10,3 +10,6 @@ router.post("/", createLesson);
 router.get("/:courseId", getLessonsByCourse);
 
 export default router;
+router.get("/", (req, res) => {
+  res.send("Lesson base route working ");
+});

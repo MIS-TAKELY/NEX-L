@@ -65,3 +65,4 @@ courseSchema.index({ title: 'text', description: 'text', tags: 1, category: 1 })
 
 const Course = mongoose.model('Course', courseSchema);
 export default Course; 
+ 
