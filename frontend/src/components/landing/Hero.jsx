@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -8,9 +8,9 @@ const Hero = () => {
       <header className="relative flex-1 flex flex-col justify-center overflow-hidden min-h-[645px] h-[92vh] pb-10">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
-          <img 
-            src="/hero-bg.png" 
-            alt="Learning Environment" 
+          <img
+            src="/hero-bg.png"
+            alt="Learning Environment"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70"></div>
@@ -22,7 +22,8 @@ const Hero = () => {
             NEXL: Elevate Your Learning
           </h1>
           <p className="text-lg md:text-xl lg:text-2xl max-w-3xl mx-auto leading-relaxed text-white/90 drop-shadow-lg">
-            Explore breathtaking courses and unique learning experiences.
+            Explore breathtaking courses, local culture, and unique learning
+            experiences.
           </p>
         </div>
       </header>
@@ -43,7 +44,6 @@ const Hero = () => {
           "
         >
           <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-end">
-            
             <div className="md:col-span-2">
               <div className="flex items-center gap-3 mb-2 md:mb-3">
                 <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform duration-500 shrink-0">
@@ -75,12 +75,11 @@ const Hero = () => {
             </select>
 
             <button
-              onClick={() => navigate('/course-list')}
+              onClick={() => navigate("/course-list")}
               className="w-full px-8 py-3 md:py-4 bg-primary text-white rounded-xl font-bold hover:bg-primary-hover transition shadow-md"
             >
               Search
             </button>
-
           </div>
         </div>
       </div>

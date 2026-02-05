@@ -17,7 +17,7 @@ if (typeof HF_TOKEN !== "string" || !HF_TOKEN.startsWith("hf_")) {
   process.exit(1);
 }
 
-const client = new InferenceClient(HF_TOKEN); // ← pass string directly
+const client = new InferenceClient(HF_TOKEN);
 
 console.log("Client initialized successfully");
 
@@ -34,7 +34,6 @@ async function getEmbedding(text) {
     console.log("Output length:", output.length);
 
     // Flatten to ensure it's a 1D array of numbers.
-    // Hugging Face featureExtraction often returns [[...]] for single inputs.
     const flatEmbedding = Array.isArray(output[0]) ? output[0] : output;
 
     return flatEmbedding;

@@ -1,3 +1,4 @@
+
 // Removed generic Input import to use standard input for full control
 import { Label } from "@/components/ui/label";
 import { getSession, signIn, signUp } from "@/lib/auth.client";
@@ -6,8 +7,10 @@ import { Icon } from '@iconify/react';
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
+import { signUp, signIn, getSession, loginWithGoogle, loginWithGithub } from "@/lib/auth.client";
 
 const SignUp = () => {
+
   const navigate = useNavigate();
   const { login } = useContext(AppContext);
   const [formData, setFormData] = useState({
@@ -92,7 +95,7 @@ const SignUp = () => {
   };
 
   return (
-    <div className="min-h-screen flex font-outfit">
+    <div className="min-h-screen flex font-outfit overflow-hidden">
       {/* Left Side - Dark Background with Text */}
       <div className="hidden lg:flex lg:w-1/2 bg-primary relative flex-col justify-center px-12 md:px-20 text-primary-foreground overflow-hidden">
         {/* Abstract lines decoration */}
@@ -230,16 +233,20 @@ const SignUp = () => {
 
             <div className="flex flex-col space-y-4">
               <button
+                onClick={() => loginWithGithub(role)}
                 className="group/btn shadow-input relative flex h-10 w-full items-center justify-start space-x-2 rounded-md bg-muted px-4 font-medium text-foreground dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
                 type="button">
+
                 <Icon icon="logos:github-icon" className="h-4 w-4" />
                 <span className="text-sm text-muted-foreground dark:text-neutral-300">
                   GitHub
                 </span>
               </button>
               <button
+                onClick={() => loginWithGoogle(role)}
                 className="group/btn shadow-input relative flex h-10 w-full items-center justify-start space-x-2 rounded-md bg-muted px-4 font-medium text-foreground dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
                 type="button">
+
                 <Icon icon="logos:google-icon" className="h-4 w-4" />
                 <span className="text-sm text-muted-foreground dark:text-neutral-300">
                   Google
