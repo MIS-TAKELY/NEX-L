@@ -1,13 +1,13 @@
 import { Label } from "@/components/ui/label";
 import { AppContext } from "@/context/AppContext";
-import { getSession, loginWithGoogle, loginWithGithub, signIn } from "@/lib/auth.client";
+import { getSession, signIn } from "@/lib/auth.client";
 import { cn } from "@/lib/utils";
 
 import { verifyEmail } from "@/utils/verify-email";
 import { Icon } from "@iconify/react";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AppContext } from "../../context/AppContext";
+// import { AppContext } from "../../context/AppContext";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -54,7 +54,7 @@ const SignIn = () => {
         // Redirect based on role from backend
         if (userRole === "instructor") {
           navigate("/instructor/dashboard", { replace: true });
-        }else {
+        } else {
           navigate("/student/dashboard", { replace: true });
         }
       } else {
@@ -122,9 +122,7 @@ const SignIn = () => {
           </div>
 
           <div className="text-left mb-6">
-            <h2 className="text-xl font-bold text-foreground">
-              Sign In
-            </h2>
+            <h2 className="text-xl font-bold text-foreground">Sign In</h2>
             <p className="mt-1 text-sm text-muted-foreground">
               Sign in to your account
             </p>
@@ -211,9 +209,11 @@ const SignIn = () => {
             </button>
 
             <div className="my-6 flex items-center gap-4">
-                <div className="h-[1px] flex-1 bg-border" />
-                <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest text-center">or continue with</span>
-                <div className="h-[1px] flex-1 bg-border" />
+              <div className="h-[1px] flex-1 bg-border" />
+              <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest text-center">
+                or continue with
+              </span>
+              <div className="h-[1px] flex-1 bg-border" />
             </div>
 
             <div className="grid grid-cols-3 gap-3">

@@ -62,9 +62,9 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
         <div className="group relative">
           <button 
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors hidden md:block cursor-pointer"
+            className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors hidden md:block cursor-pointer ml-2"
           >
-            <Icon icon="solar:sidebar-minimalistic-outline" size={20} />
+            <Icon icon="solar:sidebar-minimalistic-outline" className='' size={20} />
           </button>
           
           {/* Tooltip */}

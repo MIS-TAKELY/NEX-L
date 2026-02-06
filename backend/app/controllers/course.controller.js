@@ -93,8 +93,9 @@ export const createCourse = async (req, res) => {
 export const getAllCourses = async (req, res) => {
   try {
     const courses = await Course.find()
-      .populate("teacher") // matches schema
-      .populate("enrollments"); // if you want to show enrolled students via enrollments
+      .select("-embedding")
+      .populate("teacher"); // matches schema
+    // .populate("enrollments"); // if you want to show enrolled students via enrollments
 
     res.json(courses);
   } catch (err) {
