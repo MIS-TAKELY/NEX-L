@@ -1,13 +1,13 @@
 
 // Removed generic Input import to use standard input for full control
 import { Label } from "@/components/ui/label";
-import { getSession, signIn, signUp } from "@/lib/auth.client";
 import { cn } from "@/lib/utils";
 import { Icon } from '@iconify/react';
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
 import { signUp, signIn, getSession, loginWithGoogle, loginWithGithub } from "@/lib/auth.client";
+
 
 const SignUp = () => {
 
