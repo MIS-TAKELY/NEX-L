@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
 
 const CourseCard = ({ course }) => {
-// console.log("course-->",course)
+console.log("course-->",course)
 
   const navigate = useNavigate();
 
@@ -58,7 +58,7 @@ const CourseCard = ({ course }) => {
 
       <div className="mt-6 flex gap-3">
         <button 
-          onClick={() => navigate(`/course/${course.id}`)}
+          onClick={() => navigate(`/course/${course._id}`)}
           className="flex-1 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary-hover transition-all shadow-md active:scale-95 flex items-center justify-center gap-2 group"
         >
           View Course

@@ -60,6 +60,11 @@ const courseSchema = new mongoose.Schema({
     enum: ['draft', 'published', 'archived'],
     default: 'draft',
   },
+  courseType: {
+    type: String,
+    enum: ['full', 'syllabus'],
+    default: 'full',
+  },
 }, {
   timestamps: true,
 });

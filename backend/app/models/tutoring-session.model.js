@@ -30,4 +30,5 @@ const tutoringSessionSchema = new mongoose.Schema(
   },
 );
 
-module.exports = mongoose.model("TutoringSession", tutoringSessionSchema);
+const TutoringSession = mongoose.model("TutoringSession", tutoringSessionSchema);
+export default TutoringSession;

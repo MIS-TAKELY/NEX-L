@@ -2,6 +2,8 @@ import Content from "../models/content.model.js";
 import Course from "../models/course.model.js";
 import Section from "../models/section.model.js";
 import User from "../models/user.model.js";
+import Enrollment from "../models/enrollment.model.js";
+import Review from "../models/review.model.js";
 import getEmbedding from "../utils/embedding.js";
 
 // Create a new course
@@ -15,8 +17,10 @@ export const createCourse = async (req, res) => {
       category,
       price,
       isFree,
+      courseType,
       sections,
       thumbnail,
+      syllabus,
     } = req.body;
 
     // Check if teacher exists
@@ -46,6 +50,8 @@ export const createCourse = async (req, res) => {
       category,
       price,
       isFree,
+      courseType,
+      syllabus,
       embedding,
       thumbnail,
     });
@@ -188,10 +194,11 @@ export const updateCourse = async (req, res) => {
       description,
       tags,
       category,
-      price,
       isFree,
+      courseType,
       sections,
       thumbnail,
+      syllabus,
     } = req.body;
 
     const course = await Course.findById(id);
@@ -219,6 +226,8 @@ export const updateCourse = async (req, res) => {
     course.category = category || course.category;
     course.price = price !== undefined ? price : course.price;
     course.isFree = isFree !== undefined ? isFree : course.isFree;
+    course.courseType = courseType || course.courseType;
+    course.syllabus = syllabus !== undefined ? syllabus : course.syllabus;
     course.embedding = embedding;
     course.thumbnail = thumbnail !== undefined ? thumbnail : course.thumbnail;
 
