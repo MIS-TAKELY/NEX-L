@@ -27,4 +27,5 @@ const chatRoomSchema = new mongoose.Schema(
   },
 );
 
-module.exports = mongoose.model("ChatRoom", chatRoomSchema);
+const ChatRoom = mongoose.model("ChatRoom", chatRoomSchema);
+export default ChatRoom;

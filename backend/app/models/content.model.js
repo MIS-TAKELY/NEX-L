@@ -13,7 +13,6 @@ const contentSchema = new mongoose.Schema(
     },
     url: {
       type: String,
-      required: true,
     },
     summary: String,
     duration: Number,

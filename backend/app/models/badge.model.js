@@ -4,9 +4,9 @@ const badgeSchema = new mongoose.Schema(
   {
     name: String,
     description: String,
-    criteria: String, 
+    criteria: String,
     level: { type: String, enum: ["bronze", "silver", "gold"] },
-    image: String, 
+    image: String,
     course: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Course",
@@ -17,4 +17,5 @@ const badgeSchema = new mongoose.Schema(
   },
 );
 
-module.exports = mongoose.model("Badge", badgeSchema);
+const Badge = mongoose.model("Badge", badgeSchema);
+export default Badge;

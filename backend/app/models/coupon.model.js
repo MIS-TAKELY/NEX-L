@@ -8,7 +8,7 @@ const couponSchema = new mongoose.Schema(
       unique: true,
     },
     discount: {
-      type: Number, 
+      type: Number,
       required: true,
     },
     type: {
@@ -19,14 +19,14 @@ const couponSchema = new mongoose.Schema(
     course: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Course",
-      
+
     },
     expiry: Date,
     maxUses: Number,
     uses: { type: Number, default: 0 },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", 
+      ref: "User",
     },
   },
   {
@@ -34,4 +34,5 @@ const couponSchema = new mongoose.Schema(
   },
 );
 
-module.exports = mongoose.model("Coupon", couponSchema);
+const Coupon = mongoose.model("Coupon", couponSchema);
+export default Coupon;

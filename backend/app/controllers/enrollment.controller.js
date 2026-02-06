@@ -1,10 +1,4 @@
 import Enrollment from "../models/enrollment.model.js";
-import User from "../models/user.model.js";
-import Course from "../models/course.model.js";
-import Payment from "../models/payment.model.js"; // if you have payment model
-import Content from "../models/content.model.js";   // optional
-import Quiz from "../models/quiz.model.js";         // optional
-import Assignment from "../models/assignment.model.js"; // optional
 
 // Create a new enrollment
 export const createEnrollment = async (req, res) => {
@@ -79,7 +73,7 @@ export const updateProgress = async (req, res) => {
     const enrollment = await Enrollment.findByIdAndUpdate(
       req.params.id,
       { progress },
-      { new: true }
+      { new: true },
     );
 
     if (!enrollment)

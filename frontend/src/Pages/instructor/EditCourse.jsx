@@ -18,6 +18,8 @@ const EditCourse = () => {
         price: '',
         category: '',
         thumbnail: '',
+        syllabus: '',
+        courseType: 'full', // 'full' or 'syllabus'
         isFree: false,
         tags: [],
         sections: []
@@ -51,6 +53,8 @@ const EditCourse = () => {
                 setFormData({
                     ...data,
                     price: data.price || '',
+                    courseType: data.courseType || 'full',
+                    syllabus: data.syllabus || '',
                     tags: data.tags || [],
                     sections: data.sections ? data.sections.map(sec => ({
                         ...sec,
@@ -184,6 +188,20 @@ const EditCourse = () => {
         }
     }
 
+    const handleSyllabusUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setUploading(true);
+        try {
+            const data = await uploadMedia(file);
+            setFormData(prev => ({ ...prev, syllabus: data.url }));
+        } catch (error) {
+            console.error("Syllabus upload failed", error);
+        } finally {
+            setUploading(false);
+        }
+    };
+
     // --- Submit ---
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -220,12 +238,31 @@ const EditCourse = () => {
 
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8 min-h-screen">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <div className="flex items-center gap-4">
                     <button onClick={() => navigate('/instructor/courses')} className="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors">
                         <ArrowLeft size={20} />
                     </button>
-                    <h1 className="text-2xl font-bold text-gray-800">Edit Course</h1>
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-800">Edit Course</h1>
+                        <p className="text-sm text-gray-500 mt-1">Manage your course content and type.</p>
+                    </div>
+                </div>
+                <div className="flex bg-gray-100 p-1 rounded-xl">
+                    <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, courseType: 'full' }))}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${formData.courseType === 'full' ? 'bg-white text-black shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                    >
+                        Full Course
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, courseType: 'syllabus' }))}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${formData.courseType === 'syllabus' ? 'bg-white text-black shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                    >
+                        Syllabus Only
+                    </button>
                 </div>
                 <div className="flex gap-2">
                     <button
@@ -278,7 +315,7 @@ const EditCourse = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Price ($)</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Price (Rs)</label>
                                 <input
                                     type="number"
                                     name="price"
@@ -321,16 +358,35 @@ const EditCourse = () => {
                             />
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Thumbnail</label>
-                            {(previews.thumbnail || formData.thumbnail) && (
-                                <img src={previews.thumbnail || formData.thumbnail} alt="Thumbnail preview" className="w-full h-48 object-cover rounded-lg mb-2" />
-                            )}
-                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:bg-gray-50 transition-colors relative">
-                                <input type="file" onChange={handleThumbnailUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-                                <div className="flex flex-col items-center">
-                                    <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                                    <p className="text-gray-500 text-sm">Upload New Thumbnail</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Thumbnail</label>
+                                {(previews.thumbnail || formData.thumbnail) && (
+                                    <img src={previews.thumbnail || formData.thumbnail} alt="Thumbnail preview" className="w-full h-48 object-cover rounded-lg mb-2" />
+                                )}
+                                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:bg-gray-50 transition-colors relative">
+                                    <input type="file" onChange={handleThumbnailUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                                    <div className="flex flex-col items-center">
+                                        <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                                        <p className="text-gray-500 text-sm">Upload New Thumbnail</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Course Syllabus {formData.courseType === 'syllabus' ? <span className="text-red-500">*</span> : <span className="text-gray-400">(Optional)</span>}</label>
+                                {formData.syllabus && (
+                                    <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg mb-2 border border-blue-100">
+                                        <FileText className="text-blue-600" size={20} />
+                                        <span className="text-sm font-medium text-blue-800 truncate">Syllabus Uploaded</span>
+                                        <a href={formData.syllabus} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:underline ml-auto">View</a>
+                                    </div>
+                                )}
+                                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:bg-gray-50 transition-colors relative">
+                                    <input type="file" onChange={handleSyllabusUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                                    <div className="flex flex-col items-center">
+                                        <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                                        <p className="text-gray-500 text-sm">Upload Syllabus</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -445,7 +501,7 @@ const EditCourse = () => {
                                                                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                                                     />
                                                                     <button type="button" className="text-xs text-blue-600 hover:underline flex items-center gap-1">
-                                                                        <Upload size={12} /> Upload Media
+                                                                        <Upload size={12} /> {formData.courseType === 'syllabus' ? 'Upload Media (Optional)' : 'Upload Media'}
                                                                     </button>
                                                                 </div>
                                                             )}

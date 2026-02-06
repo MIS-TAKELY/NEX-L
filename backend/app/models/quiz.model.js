@@ -21,7 +21,7 @@ const quizSchema = new mongoose.Schema(
       ref: "Section",
     },
     questions: [questionSchema],
-    timeLimit: Number, 
+    timeLimit: Number,
     autoGrade: { type: Boolean, default: true },
   },
   {
@@ -29,4 +29,5 @@ const quizSchema = new mongoose.Schema(
   },
 );
 
-module.exports = mongoose.model("Quiz", quizSchema);
+const Quiz = mongoose.model("Quiz", quizSchema);
+export default Quiz;
