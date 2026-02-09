@@ -35,7 +35,7 @@ const Instructor = () => {
       path: "/instructor/messages",
     },
   ];
-
+// 
   const extraContent = (
     <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl p-4">
       <p className="text-[10px] font-bold text-muted-foreground/60 mb-3 uppercase tracking-wider">

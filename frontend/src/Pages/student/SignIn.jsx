@@ -1,13 +1,12 @@
 import { Label } from "@/components/ui/label";
 import { AppContext } from "@/context/AppContext";
-import { getSession, signIn } from "@/lib/auth.client";
+import { getSession, loginWithGithub, loginWithGoogle, signIn } from "@/lib/auth.client";
 import { cn } from "@/lib/utils";
 
 import { verifyEmail } from "@/utils/verify-email";
 import { Icon } from "@iconify/react";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { AppContext } from "../../context/AppContext";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -215,28 +214,24 @@ const SignIn = () => {
               </span>
               <div className="h-[1px] flex-1 bg-border" />
             </div>
-
-            <div className="grid grid-cols-3 gap-3">
-              <button
-                className="flex h-10 items-center justify-center rounded-md bg-card border border-border hover:bg-muted transition-colors"
-                type="button"
-              >
-                <Icon icon="logos:github-icon" className="h-5 w-5" />
-              </button>
-              <button
-                className="flex h-10 items-center justify-center rounded-md bg-card border border-border hover:bg-muted transition-colors"
-                type="button"
-              >
-                <Icon icon="logos:google-icon" className="h-5 w-5" />
-              </button>
-              <button
-                className="flex h-10 items-center justify-center rounded-md bg-card border border-border hover:bg-muted transition-colors"
-                type="button"
-              >
-                <Icon icon="logos:facebook" className="h-5 w-5" />
-              </button>
-            </div>
           </form>
+
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={() => loginWithGithub(role)}
+              className="flex h-10 items-center justify-center rounded-md bg-card border border-border hover:bg-muted transition-colors"
+              type="button"
+            >
+              <Icon icon="logos:github-icon" className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => loginWithGoogle(role)}
+              className="flex h-10 items-center justify-center rounded-md bg-card border border-border hover:bg-muted transition-colors"
+              type="button"
+            >
+              <Icon icon="logos:google-icon" className="h-5 w-5" />
+            </button>
+          </div>
 
           <p className="text-center text-muted-foreground text-sm mt-6">
             Don't have an account?{" "}

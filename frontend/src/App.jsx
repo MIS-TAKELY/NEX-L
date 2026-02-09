@@ -37,7 +37,6 @@ import ProtectedRoute from "./components/common/ProtectedRoute";
 export default function App() {
   return (
     <Routes>
-
       <Route path="/" element={<LandingPage />} />
       <Route path="/course-list" element={<CoursesList />} />
       <Route path="/course-list/:input" element={<CoursesList />} />
@@ -46,18 +45,24 @@ export default function App() {
       <Route path="/signup" element={<SignUp />} />
       <Route path="/login" element={<SignIn />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/cart" element={
-        <ProtectedRoute allowedRoles={['student']}>
-          <Cart />
-        </ProtectedRoute>
-      } />
+      <Route
+        path="/cart"
+        element={
+          <ProtectedRoute allowedRoles={["student"]}>
+            <Cart />
+          </ProtectedRoute>
+        }
+      />
 
       {/* STUDENT ROUTES */}
-      <Route path="/student" element={
-        <ProtectedRoute allowedRoles={['student']}>
-          <StudentLayout />
-        </ProtectedRoute>
-      }>
+      <Route
+        path="/student"
+        element={
+          <ProtectedRoute allowedRoles={["student"]}>
+            <StudentLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<Home />} />
         <Route path="dashboard" element={<Home />} />
         <Route path="my-enrollments" element={<MyEnrollments />} />
@@ -66,21 +71,26 @@ export default function App() {
       </Route>
 
       {/* Legacy support for /home redirecting or same element */}
-      <Route path="/home" element={
-        <ProtectedRoute allowedRoles={['student']}>
-          <StudentLayout />
-        </ProtectedRoute>
-      }>
+      <Route
+        path="/home"
+        element={
+          <ProtectedRoute allowedRoles={["student"]}>
+            <StudentLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<Home />} />
       </Route>
 
-
       {/* INSTRUCTOR ROUTES */}
-      <Route path="/instructor" element={
-        <ProtectedRoute allowedRoles={['instructor']}>
-          <Instructor />
-        </ProtectedRoute>
-      }>
+      <Route
+        path="/instructor"
+        element={
+          <ProtectedRoute allowedRoles={["instructor"]}>
+            <Instructor />
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<Dashboard />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="courses" element={<MyCourses />} />
@@ -93,11 +103,14 @@ export default function App() {
       </Route>
 
       {/* ADMIN ROUTES */}
-      <Route path="/admin" element={
-        <ProtectedRoute allowedRoles={['admin']}>
-          <AdminLayout />
-        </ProtectedRoute>
-      }>
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<AdminDashboard />} />
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="users" element={<AdminUsers />} />
