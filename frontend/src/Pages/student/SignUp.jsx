@@ -1,28 +1,31 @@
-
 // Removed generic Input import to use standard input for full control
 import { Label } from "@/components/ui/label";
+import {
+  getSession,
+  loginWithGithub,
+  loginWithGoogle,
+  signIn,
+  signUp,
+} from "@/lib/auth.client";
 import { cn } from "@/lib/utils";
-import { Icon } from '@iconify/react';
-import { useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AppContext } from '../../context/AppContext';
-import { signUp, signIn, getSession, loginWithGoogle, loginWithGithub } from "@/lib/auth.client";
-
+import { Icon } from "@iconify/react";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { AppContext } from "../../context/AppContext";
 
 const SignUp = () => {
-
   const navigate = useNavigate();
   const { login } = useContext(AppContext);
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phoneNumber: '',
-    createNewPassword: '',
-    confirmPassword: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    createNewPassword: "",
+    confirmPassword: "",
   });
-  const [role, setRole] = useState('student');
-  const [error, setError] = useState('');
+  const [role, setRole] = useState("student");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -31,7 +34,7 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     // Validate passwords match
@@ -71,23 +74,23 @@ const SignUp = () => {
         console.log("Signup and login success:", session);
 
         // Redirect based on role
-        if (userRole === 'instructor') {
+        if (userRole === "instructor") {
           navigate("/instructor/dashboard", { replace: true });
-        } else if (userRole === 'admin') {
+        } else if (userRole === "admin") {
           navigate("/admin/dashboard", { replace: true });
         } else {
           navigate("/student/dashboard", { replace: true });
         }
       } else {
         // Signup succeeded but login failed, redirect to login page
-        navigate('/login');
+        navigate("/login");
       }
     } catch (error) {
       console.error("Signup failed:", error);
       setError(
         error.response?.data?.message ||
-        error.message ||
-        "Sign up failed. Email may already be in use."
+          error.message ||
+          "Sign up failed. Email may already be in use.",
       );
     } finally {
       setLoading(false);
@@ -158,21 +161,23 @@ const SignUp = () => {
             <div className="flex gap-3">
               <button
                 type="button"
-                onClick={() => setRole('student')}
-                className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${role === 'student'
-                  ? 'border-primary bg-primary/5 text-primary font-semibold'
-                  : 'border-gray-200 text-gray-600 hover:border-gray-300'
-                  }`}
+                onClick={() => setRole("student")}
+                className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${
+                  role === "student"
+                    ? "border-primary bg-primary/5 text-primary font-semibold"
+                    : "border-gray-200 text-gray-600 hover:border-gray-300"
+                }`}
               >
                 <Icon icon="solar:userId-linear" /> Student
               </button>
               <button
                 type="button"
-                onClick={() => setRole('instructor')}
-                className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${role === 'instructor'
-                  ? 'border-primary bg-primary/5 text-primary font-semibold'
-                  : 'border-gray-200 text-gray-600 hover:border-gray-300'
-                  }`}
+                onClick={() => setRole("instructor")}
+                className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${
+                  role === "instructor"
+                    ? "border-primary bg-primary/5 text-primary font-semibold"
+                    : "border-gray-200 text-gray-600 hover:border-gray-300"
+                }`}
               >
                 <Icon icon="solar:teacher-linear" /> Instructor
               </button>
@@ -183,34 +188,100 @@ const SignUp = () => {
             <div className="flex flex-col space-y-2">
               <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
                 <LabelInputContainer>
-                  <Label htmlFor="firstName" className="text-sm">First name</Label>
-                  <input id="firstName" name="firstName" placeholder="first name" type="text" value={formData.firstName} onChange={handleChange} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" />
+                  <Label htmlFor="firstName" className="text-sm">
+                    First name
+                  </Label>
+                  <input
+                    id="firstName"
+                    name="firstName"
+                    placeholder="first name"
+                    type="text"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    required
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  />
                 </LabelInputContainer>
                 <LabelInputContainer>
-                  <Label htmlFor="lastName" className="text-sm">Last name</Label>
-                  <input id="lastName" name="lastName" placeholder="last name" type="text" value={formData.lastName} onChange={handleChange} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" />
+                  <Label htmlFor="lastName" className="text-sm">
+                    Last name
+                  </Label>
+                  <input
+                    id="lastName"
+                    name="lastName"
+                    placeholder="last name"
+                    type="text"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    required
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  />
                 </LabelInputContainer>
               </div>
 
               <LabelInputContainer>
-                <Label htmlFor="email" className="text-sm">Email Address</Label>
-                <input id="email" name="email" placeholder="123@gmail.com" type="email" value={formData.email} onChange={handleChange} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" />
+                <Label htmlFor="email" className="text-sm">
+                  Email Address
+                </Label>
+                <input
+                  id="email"
+                  name="email"
+                  placeholder="123@gmail.com"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                />
               </LabelInputContainer>
 
               <LabelInputContainer>
-                <Label htmlFor="phoneNumber" className="text-sm">Phone Number</Label>
-                <input id="phoneNumber" name="phoneNumber" placeholder="9827093876" type="tel" value={formData.phoneNumber} onChange={handleChange} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" />
+                <Label htmlFor="phoneNumber" className="text-sm">
+                  Phone Number
+                </Label>
+                <input
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  placeholder="9827093876"
+                  type="tel"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  required
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                />
               </LabelInputContainer>
 
               <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
                 <LabelInputContainer>
-                  <Label htmlFor="password" className="text-sm">Create NewPassword</Label>
-                  <input id="password" name="createNewPassword" placeholder="••••••••" type="password" value={formData.createNewPassword} onChange={handleChange} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" />
+                  <Label htmlFor="password" className="text-sm">
+                    Create NewPassword
+                  </Label>
+                  <input
+                    id="password"
+                    name="createNewPassword"
+                    placeholder="••••••••"
+                    type="password"
+                    value={formData.createNewPassword}
+                    onChange={handleChange}
+                    required
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  />
                 </LabelInputContainer>
 
                 <LabelInputContainer>
-                  <Label htmlFor="confirmPassword" className="text-sm">Confirm Password</Label>
-                  <input id="confirmPassword" name="confirmPassword" placeholder="••••••••" type="password" value={formData.confirmPassword} onChange={handleChange} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" />
+                  <Label htmlFor="confirmPassword" className="text-sm">
+                    Confirm Password
+                  </Label>
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    placeholder="••••••••"
+                    type="password"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    required
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  />
                 </LabelInputContainer>
               </div>
             </div>
@@ -235,8 +306,8 @@ const SignUp = () => {
               <button
                 onClick={() => loginWithGithub(role)}
                 className="group/btn shadow-input relative flex h-10 w-full items-center justify-start space-x-2 rounded-md bg-muted px-4 font-medium text-foreground dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
-                type="button">
-
+                type="button"
+              >
                 <Icon icon="logos:github-icon" className="h-4 w-4" />
                 <span className="text-sm text-muted-foreground dark:text-neutral-300">
                   GitHub
@@ -245,28 +316,28 @@ const SignUp = () => {
               <button
                 onClick={() => loginWithGoogle(role)}
                 className="group/btn shadow-input relative flex h-10 w-full items-center justify-start space-x-2 rounded-md bg-muted px-4 font-medium text-foreground dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
-                type="button">
-
+                type="button"
+              >
                 <Icon icon="logos:google-icon" className="h-4 w-4" />
                 <span className="text-sm text-muted-foreground dark:text-neutral-300">
                   Google
                 </span>
               </button>
-              <button
+              {/* <button
                 className="group/btn shadow-input relative flex h-10 w-full items-center justify-start space-x-2 rounded-md bg-muted px-4 font-medium text-foreground dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
                 type="button">
                 <Icon icon="logos:facebook" className="h-4 w-4" />
                 <span className="text-sm text-muted-foreground dark:text-neutral-300">
                   Facebook
                 </span>
-              </button>
+              </button> */}
             </div>
           </form>
 
           <p className="text-center text-muted-foreground text-sm">
-            Have an account?{' '}
+            Have an account?{" "}
             <button
-              onClick={() => navigate('/login')}
+              onClick={() => navigate("/login")}
               className="text-accent font-semibold hover:underline"
             >
               Sign in
@@ -281,11 +352,7 @@ const SignUp = () => {
   );
 };
 
-
-const LabelInputContainer = ({
-  children,
-  className
-}) => {
+const LabelInputContainer = ({ children, className }) => {
   return (
     <div className={cn("flex w-full flex-col space-y-2", className)}>
       {children}
