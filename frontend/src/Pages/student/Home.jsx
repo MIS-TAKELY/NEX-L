@@ -1,11 +1,11 @@
-import { Icon } from '@iconify/react';
-import { useContext, useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { Icon } from '@iconify/react';
 import { getAllCourses } from '../../apis/course.api';
-import { AppContext } from '../../context/AppContext';
 
 const Home = () => {
-    const { userData } = useContext(AppContext);
+    const { userData } = useSelector((state) => state.auth);
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();

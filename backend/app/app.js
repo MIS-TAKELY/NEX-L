@@ -9,6 +9,8 @@ import lessonRouter from "../app/routes/lesson.routes.js";
 import testMail from "../app/routes/test-mail.routes.js";
 import userRouter from "../app/routes/user.routes.js";
 import uploadRouter from "../app/routes/upload.routes.js";
+import paymentRouter from "../app/routes/payment.routes.js";
+import cartRouter from "../app/routes/cart.routes.js";
 
 // import { toNodeHandler } from "better-auth/node";
 
@@ -31,9 +33,10 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/courses", courseRouter);
 app.use("/api/v1/lessons", lessonRouter);
 app.use("/api/v1/assignments", assignmentRouter);
-app.use("/api/v1/assignments", assignmentRouter);
 app.use("/api/v1/test-mail", testMail);
 app.use("/api/v1/upload", uploadRouter);
+app.use("/api/v1/payments", paymentRouter);
+app.use("/api/v1/cart", cartRouter);
 
 // Error logger - MUST BE LAST
 app.use((err, req, res, next) => {

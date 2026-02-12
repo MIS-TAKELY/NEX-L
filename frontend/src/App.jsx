@@ -14,6 +14,9 @@ import Player from "./Pages/student/Player";
 import SignIn from "./Pages/student/SignIn";
 import SignUp from "./Pages/student/SignUp";
 import StudentLayout from "./Pages/student/StudentLayout";
+import PaymentSuccess from "./Pages/student/PaymentSuccess";
+import PaymentFailure from "./Pages/student/PaymentFailure";
+import PaymentMethodSelection from "./Pages/student/PaymentMethodSelection";
 
 // INSTRUCTOR PAGES
 import AddCourse from "./Pages/instructor/AddCourse";
@@ -32,9 +35,35 @@ import AdminCourses from "./Pages/admin/Courses";
 import AdminDashboard from "./Pages/admin/Dashboard";
 import AdminUsers from "./Pages/admin/Users";
 
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { getSession } from "@/lib/auth.client";
+import { setCredentials, setLoading } from "@/store/slices/authSlice";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 
 export default function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const verifySession = async () => {
+      try {
+        const session = await getSession();
+        if (session && session.user) {
+          const role = session.user.role || 'student';
+          // Serialize userData to avoid non-serializable value warning in Redux
+          const serializedUser = JSON.parse(JSON.stringify(session.user));
+          dispatch(setCredentials({ role, userData: serializedUser }));
+        } else {
+          dispatch(setLoading(false));
+        }
+      } catch (error) {
+        console.error("Session verification failed:", error);
+        dispatch(setLoading(false));
+      }
+    };
+
+    verifySession();
+  }, [dispatch]);
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
@@ -45,6 +74,9 @@ export default function App() {
       <Route path="/signup" element={<SignUp />} />
       <Route path="/login" element={<SignIn />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/payment-success" element={<PaymentSuccess />} />
+      <Route path="/payment-failure" element={<PaymentFailure />} />
+      <Route path="/payment-method-selection" element={<PaymentMethodSelection />} />
       <Route
         path="/cart"
         element={

@@ -21,6 +21,7 @@ export const createCourse = async (req, res) => {
       sections,
       thumbnail,
       syllabus,
+      status,
     } = req.body;
 
     // Check if teacher exists
@@ -54,6 +55,7 @@ export const createCourse = async (req, res) => {
       syllabus,
       embedding,
       thumbnail,
+      status,
     });
 
     // Handle nested sections if provided
@@ -199,6 +201,7 @@ export const updateCourse = async (req, res) => {
       sections,
       thumbnail,
       syllabus,
+      status,
     } = req.body;
 
     const course = await Course.findById(id);
@@ -230,6 +233,7 @@ export const updateCourse = async (req, res) => {
     course.syllabus = syllabus !== undefined ? syllabus : course.syllabus;
     course.embedding = embedding;
     course.thumbnail = thumbnail !== undefined ? thumbnail : course.thumbnail;
+    course.status = status || course.status;
 
     // Handle sections update
     if (sections && Array.isArray(sections)) {

@@ -1,14 +1,20 @@
 import { Icon } from "@iconify/react";
 import { useContext, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout as reduxLogout } from "@/store/slices/authSlice";
+import { useGetCartQuery } from "@/store/slices/cartApi";
 import logo from "../../assets/logoo.png";
-import { AppContext } from "../../context/AppContext";
 import ProfileDropdown from "./ProfileDropdown";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const location = useLocation(); // to track current page
-  const { isLoggedIn, userRole, logout } = useContext(AppContext);
+  const { isLoggedIn, userRole } = useSelector((state) => state.auth);
+  const { data: cartResp } = useGetCartQuery(undefined, { skip: !isLoggedIn || userRole !== 'student' });
+  const cartCount = cartResp?.data?.items?.length || 0;
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [active, setActive] = useState(location.pathname); // active button
@@ -36,7 +42,7 @@ const Navbar = () => {
 
   // Handle logout
   const handleLogout = async () => {
-    await logout();
+    dispatch(reduxLogout());
     navigate('/', { replace: true });
     setIsMobileMenuOpen(false);
   };
@@ -113,8 +119,11 @@ const Navbar = () => {
                   className="w-10 h-10 rounded-full hover:cursor-pointer bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors relative"
                 >
                   <Icon icon="solar:cart-large-2-bold-duotone" size={24} />
-                  {/* Optional Badge */}
-                  {/* <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white"></span> */}
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full border-2 border-primary flex items-center justify-center text-[10px] font-bold text-white">
+                      {cartCount}
+                    </span>
+                  )}
                 </button>
               )}
 

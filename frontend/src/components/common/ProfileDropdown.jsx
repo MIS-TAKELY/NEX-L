@@ -1,11 +1,15 @@
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppContext } from '../../context/AppContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout as reduxLogout, updateUser } from '@/store/slices/authSlice';
+import { setTheme as reduxSetTheme } from '@/store/slices/uiSlice';
 
 const ProfileDropdown = () => {
-    const { userData, logout, updateUserData, theme, setTheme } = useContext(AppContext);
+    const dispatch = useDispatch();
+    const { userData } = useSelector((state) => state.auth);
+    const { theme } = useSelector((state) => state.ui);
     const [isOpen, setIsOpen] = useState(false);
     const [view, setView] = useState('main'); // 'main' or 'display'
     const dropdownRef = useRef(null);
@@ -25,7 +29,7 @@ const ProfileDropdown = () => {
     }, []);
 
     const handleLogout = () => {
-        logout();
+        dispatch(reduxLogout());
         navigate('/login');
     };
 
@@ -34,7 +38,7 @@ const ProfileDropdown = () => {
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                updateUserData({ image: reader.result });
+                dispatch(updateUser({ image: reader.result }));
             };
             reader.readAsDataURL(file);
         }
@@ -88,17 +92,17 @@ const ProfileDropdown = () => {
                                                         <Icon icon="solar:user-circle-bold-duotone" size={40} className="text-muted-foreground" />
                                                     )}
                                                 </div>
-                                                <button 
+                                                <button
                                                     onClick={() => fileInputRef.current.click()}
                                                     className="absolute bottom-0 right-0 w-6 h-6 bg-card rounded-full shadow-md flex items-center justify-center text-foreground hover:text-primary transition-colors border border-border"
                                                 >
                                                     <Icon icon="solar:camera-bold" size={14} />
                                                 </button>
-                                                <input 
-                                                    type="file" 
-                                                    ref={fileInputRef} 
-                                                    className="hidden" 
-                                                    accept="image/*" 
+                                                <input
+                                                    type="file"
+                                                    ref={fileInputRef}
+                                                    className="hidden"
+                                                    accept="image/*"
                                                     onChange={handleImageChange}
                                                 />
                                             </div>
@@ -139,7 +143,7 @@ const ProfileDropdown = () => {
                                 <>
                                     {/* Display Sub-menu */}
                                     <div className="flex items-center gap-3 mb-4">
-                                        <button 
+                                        <button
                                             onClick={() => setView('main')}
                                             className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-foreground"
                                         >
@@ -159,11 +163,11 @@ const ProfileDropdown = () => {
                                                     <p className="text-[10px] text-muted-foreground font-medium tracking-tight">Standard white appearance</p>
                                                 </div>
                                             </div>
-                                            <input 
-                                                type="radio" 
-                                                name="theme" 
-                                                checked={theme === 'light'} 
-                                                onChange={() => setTheme('light')}
+                                            <input
+                                                type="radio"
+                                                name="theme"
+                                                checked={theme === 'light'}
+                                                onChange={() => dispatch(reduxSetTheme('light'))}
                                                 className="w-5 h-5 accent-primary cursor-pointer"
                                             />
                                         </div>
@@ -178,11 +182,11 @@ const ProfileDropdown = () => {
                                                     <p className="text-[10px] text-muted-foreground font-medium tracking-tight">Easy on the eyes</p>
                                                 </div>
                                             </div>
-                                            <input 
-                                                type="radio" 
-                                                name="theme" 
-                                                checked={theme === 'dark'} 
-                                                onChange={() => setTheme('dark')}
+                                            <input
+                                                type="radio"
+                                                name="theme"
+                                                checked={theme === 'dark'}
+                                                onChange={() => dispatch(reduxSetTheme('dark'))}
                                                 className="w-5 h-5 accent-primary cursor-pointer"
                                             />
                                         </div>

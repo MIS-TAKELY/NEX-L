@@ -1,12 +1,86 @@
 import { Icon } from '@iconify/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 
 const PaymentGateway = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { userData } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (!userData) {
+      navigate('/login?redirect=/payment-gateway' + window.location.search);
+    }
+  }, [userData, navigate]);
+
+
   const method = searchParams.get('method') || 'esewa';
-  const [showPassword, setShowPassword] = useState(false);
+  const amount = searchParams.get('amount') || 0;
+  const courseId = searchParams.get('courseId'); // Single course (legacy)
+  const courseIds = searchParams.get('courseIds')?.split(',') || (courseId ? [courseId] : []); // Multiple courses
+  const courseCount = courseIds.length;
+
+  const [loading, setLoading] = useState(false);
+
+  // eSewa payment requires a form post
+  const postToEsewa = (data) => {
+    const form = document.createElement('form');
+    form.setAttribute('method', 'POST');
+    form.setAttribute('action', 'https://rc-epay.esewa.com.np/api/epay/main/v2/form');
+
+    for (const key in data) {
+      const hiddenField = document.createElement('input');
+      hiddenField.setAttribute('type', 'hidden');
+      hiddenField.setAttribute('name', key);
+      hiddenField.setAttribute('value', data[key]);
+      form.appendChild(hiddenField);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+  };
+
+  const handlePayment = async (e) => {
+    e.preventDefault();
+    if (!userData || courseIds.length === 0) {
+      alert('Missing user or course information');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      if (method === 'esewa') {
+        const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/payments/esewa/initiate`, {
+          amount,
+          courseIds, // Send array of course IDs
+          courseId: courseIds[0], // Legacy support
+          userId: userData.id || userData._id
+        });
+
+        if (response.data.success) {
+          postToEsewa(response.data.paymentData);
+        }
+      } else if (method === 'khalti') {
+        const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/payments/khalti/initiate`, {
+          amount,
+          courseIds, // Send array of course IDs
+          courseId: courseIds[0], // Legacy support
+          userId: userData.id || userData._id
+        });
+
+        if (response.data.success && response.data.payment_url) {
+          window.location.href = response.data.payment_url;
+        }
+      }
+    } catch (error) {
+      console.error('Payment initiation failed', error);
+      alert('Failed to initiate payment. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Config based on method
   const config = {
@@ -49,95 +123,58 @@ const PaymentGateway = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4 font-sans">
-      
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden">
-        
-        {/* Header Strip */}
         <div className="h-1 w-full" style={{ backgroundColor: currentConfig.color }}></div>
-
         <div className="p-8">
-            {/* Logo Section */}
-            <div className="flex flex-col items-center mb-8">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                     <Icon icon={currentConfig.logoIcon} className="w-10 h-10" style={{ color: currentConfig.color }} />
-                     <span className="text-3xl font-bold" style={{ color: currentConfig.color }}>{currentConfig.logoText}</span>
-                </div>
-                {method === 'khalti' && <span className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">by IME</span>}
+          <div className="flex flex-col items-center mb-8">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Icon icon={currentConfig.logoIcon} className="w-10 h-10" style={{ color: currentConfig.color }} />
+              <span className="text-3xl font-bold" style={{ color: currentConfig.color }}>{currentConfig.logoText}</span>
             </div>
+            {method === 'khalti' && <span className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">by IME</span>}
+          </div>
 
-            {/* Instruction Text */}
-            <div className="text-center mb-8">
-                <p className="font-bold text-gray-700 text-sm mb-4">
-                    You will be redirected to your {currentConfig.name} account to complete your payment:
-                </p>
-                <ol className="text-xs text-gray-500 text-left space-y-1 ml-4 list-decimal">
-                    {currentConfig.instructions.map((inst, idx) => (
-                        <li key={idx}>{inst}</li>
-                    ))}
-                </ol>
-                <p className="text-xs font-bold text-gray-800 mt-4">
-                    *** Login with your {currentConfig.name} ID and Password ***
-                </p>
+          <div className="text-center mb-8">
+            <div className="bg-gray-100 p-4 rounded-lg mb-6">
+              <p className="text-sm text-gray-500 uppercase font-bold tracking-wider">Total Amount</p>
+              <p className="text-2xl font-black text-gray-800">Rs. {amount}</p>
+              {courseCount > 1 && (
+                <p className="text-xs text-gray-500 mt-2">{courseCount} courses</p>
+              )}
             </div>
+            <p className="font-bold text-gray-700 text-sm mb-4">
+              You will be redirected to your {currentConfig.name} account to complete your payment:
+            </p>
+            <ol className="text-xs text-gray-500 text-left space-y-1 ml-4 list-decimal">
+              {currentConfig.instructions.map((inst, idx) => (
+                <li key={idx}>{inst}</li>
+              ))}
+            </ol>
+          </div>
 
-            {/* Login Form */}
-            <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); alert('Payment Successful! (Simulation)'); navigate('/student/my-enrollments'); }}>
-                
-                <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Icon icon="solar:user-linear" className="text-gray-400" />
-                    </div>
-                    <input 
-                        type="text" 
-                        placeholder="Mobile or Email" 
-                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-all"
-                        style={{ '--tw-ring-color': currentConfig.color }}
-                    />
-                </div>
+          <button
+            onClick={handlePayment}
+            disabled={loading}
+            className="w-full py-4 text-white font-bold rounded-lg shadow-md hover:opacity-90 transition-all uppercase text-sm mt-6 flex items-center justify-center gap-2"
+            style={{ backgroundColor: currentConfig.color }}
+          >
+            {loading ? (
+              <Icon icon="eos-icons:loading" className="w-5 h-5" />
+            ) : (
+              `Pay with ${currentConfig.name}`
+            )}
+          </button>
 
-                <div className="relative">
-                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Icon icon="solar:lock-keyhole-linear" className="text-gray-400" />
-                    </div>
-                    <input 
-                        type={showPassword ? "text" : "password"} 
-                        placeholder="Password" 
-                        className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-all"
-                        style={{ '--tw-ring-color': currentConfig.color }}
-                    />
-                     <button 
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    >
-                        <Icon icon={showPassword ? "solar:eye-linear" : "solar:eye-closed-linear"} className="text-gray-400" />
-                    </button>
-                </div>
-
-                <button 
-                    type="submit" 
-                    className="w-full py-3 text-white font-bold rounded-lg shadow-md hover:opacity-90 transition-opacity uppercase text-sm mt-6"
-                    style={{ backgroundColor: method === 'khalti' ? '#5c2d91' : (method === 'esewa' ? '#60bb46' : '#dc1212ff') }}
-                >
-                    Login
-                </button>
-
-            </form>
-
-            <div className="mt-8 text-center">
-                 <p className="text-[10px] text-gray-400 font-bold">
-                     © 2026 {currentConfig.name}. All Rights Reserved.
-                 </p>
-            </div>
-
+          <div className="mt-8 text-center">
+            <p className="text-[10px] text-gray-400 font-bold">
+              © 2026 {currentConfig.name}. All Rights Reserved.
+            </p>
+          </div>
         </div>
       </div>
-    
-      {/* Back Button for Demo */}
       <button onClick={() => navigate(-1)} className="mt-8 text-gray-400 text-sm hover:text-gray-600 underline">
-          Cancel and Return
+        Cancel and Return
       </button>
-
     </div>
   );
 };
