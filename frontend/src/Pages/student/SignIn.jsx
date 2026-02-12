@@ -5,12 +5,14 @@ import { cn } from "@/lib/utils";
 
 import { verifyEmail } from "@/utils/verify-email";
 import { Icon } from "@iconify/react";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "@/store/slices/authSlice";
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const { login } = useContext(AppContext);
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -45,8 +47,10 @@ const SignIn = () => {
         // Get role from backend session (secure, server-side role)
         const userRole = session.user.role || "student";
 
-        // Update AppContext with user data and role from backend
-        login(userRole, session.user);
+        // Update Redux state with user data and role from backend
+        // Serialize userData to avoid non-serializable value warning in Redux
+        const serializedUser = JSON.parse(JSON.stringify(session.user));
+        dispatch(setCredentials({ role: userRole, userData: serializedUser }));
 
         console.log("Login success:", session);
 

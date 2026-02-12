@@ -1,11 +1,10 @@
-import { useContext } from "react";
 import { Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
 import ProfileDropdown from "../../components/common/ProfileDropdown";
 import Sidebar from "../../components/common/Sidebar";
-import { AppContext } from "../../context/AppContext";
 
 const Instructor = () => {
-  const { userData } = useContext(AppContext);
+  const { userData } = useSelector((state) => state.auth);
   const displayName = userData?.name || "Instructor";
 
   const menuItems = [
@@ -35,7 +34,7 @@ const Instructor = () => {
       path: "/instructor/messages",
     },
   ];
-// 
+  // 
   const extraContent = (
     <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl p-4">
       <p className="text-[10px] font-bold text-muted-foreground/60 mb-3 uppercase tracking-wider">

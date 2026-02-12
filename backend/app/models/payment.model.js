@@ -7,10 +7,14 @@ const paymentSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    courses: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Course",
+    }],
+    // Legacy support for single course payments
     course: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Course",
-      required: true,
     },
     amount: {
       type: Number,

@@ -1,9 +1,8 @@
-import { useContext } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { AppContext } from '../../context/AppContext';
+import { useSelector } from 'react-redux';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { isLoggedIn, userRole, loading } = useContext(AppContext);
+  const { isLoggedIn, userRole, loading } = useSelector((state) => state.auth);
   const location = useLocation();
 
   // Show loading state while verifying session

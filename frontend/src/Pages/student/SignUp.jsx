@@ -9,13 +9,14 @@ import {
 } from "@/lib/auth.client";
 import { cn } from "@/lib/utils";
 import { Icon } from "@iconify/react";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AppContext } from "../../context/AppContext";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "@/store/slices/authSlice";
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const { login } = useContext(AppContext);
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -68,8 +69,10 @@ const SignUp = () => {
         // Get role from backend session (more secure than client-side role)
         const userRole = session.user.role || role;
 
-        // Update AppContext with user data
-        login(userRole, session.user);
+        // Update Redux state with user data
+        // Serialize userData to avoid non-serializable value warning in Redux
+        const serializedUser = JSON.parse(JSON.stringify(session.user));
+        dispatch(setCredentials({ role: userRole, userData: serializedUser }));
 
         console.log("Signup and login success:", session);
 
@@ -89,8 +92,8 @@ const SignUp = () => {
       console.error("Signup failed:", error);
       setError(
         error.response?.data?.message ||
-          error.message ||
-          "Sign up failed. Email may already be in use.",
+        error.message ||
+        "Sign up failed. Email may already be in use.",
       );
     } finally {
       setLoading(false);
@@ -162,22 +165,20 @@ const SignUp = () => {
               <button
                 type="button"
                 onClick={() => setRole("student")}
-                className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${
-                  role === "student"
-                    ? "border-primary bg-primary/5 text-primary font-semibold"
-                    : "border-gray-200 text-gray-600 hover:border-gray-300"
-                }`}
+                className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${role === "student"
+                  ? "border-primary bg-primary/5 text-primary font-semibold"
+                  : "border-gray-200 text-gray-600 hover:border-gray-300"
+                  }`}
               >
                 <Icon icon="solar:userId-linear" /> Student
               </button>
               <button
                 type="button"
                 onClick={() => setRole("instructor")}
-                className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${
-                  role === "instructor"
-                    ? "border-primary bg-primary/5 text-primary font-semibold"
-                    : "border-gray-200 text-gray-600 hover:border-gray-300"
-                }`}
+                className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${role === "instructor"
+                  ? "border-primary bg-primary/5 text-primary font-semibold"
+                  : "border-gray-200 text-gray-600 hover:border-gray-300"
+                  }`}
               >
                 <Icon icon="solar:teacher-linear" /> Instructor
               </button>

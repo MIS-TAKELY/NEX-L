@@ -8,7 +8,7 @@ const contentSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["video", "pdf", "note", "link"],
+      enum: ["video", "pdf", "note", "link", "article", "mixed", "image", "file"],
       required: true,
     },
     url: {
@@ -21,6 +21,16 @@ const contentSchema = new mongoose.Schema(
       ref: "Section",
       required: true,
     },
+    resources: [
+      {
+        url: String,
+        type: { type: String }, // Explicitly define type within the object
+        name: String,
+        size: Number,
+        duration: Number,
+        thumbnail: String,
+      },
+    ],
     isPreview: {
       type: Boolean,
       default: false,

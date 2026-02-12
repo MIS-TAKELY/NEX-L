@@ -1,35 +1,43 @@
-import { getCourseById } from "@/apis/course.api";
 import { Icon } from "@iconify/react";
 import { FileText, PlayCircle } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useGetCourseByIdQuery } from "@/store/slices/courseApi";
+import { useAddToCartMutation, useGetCartQuery, useRemoveFromCartMutation } from "@/store/slices/cartApi";
+import { useSelector } from "react-redux";
 import Footer from "../../components/common/Footer";
 import Navbar from "../../components/common/Navbar";
 
 const CourseDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { isLoggedIn, userRole } = useSelector((state) => state.auth);
   const [selectedPayment, setSelectedPayment] = useState("esewa");
-  const [course, setCourse] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { data: courseResp, isLoading: loading } = useGetCourseByIdQuery(id);
+  const { data: cartResp } = useGetCartQuery(undefined, { skip: !isLoggedIn || userRole !== 'student' });
+  const [addToCartApi] = useAddToCartMutation();
+  const [removeFromCartApi] = useRemoveFromCartMutation();
 
-  useEffect(() => {
-    const fetchCourse = async () => {
-      try {
-        const response = await getCourseById(id);
-        if (response.success) {
-          setCourse(response.data);
-        } else {
-          console.error("Course fetch failed", response.message);
-        }
-      } catch (error) {
-        console.error("Failed to fetch course", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCourse();
-  }, [id]);
+  const course = courseResp?.data;
+  const cartItems = cartResp?.data?.items || [];
+  const isInCart = cartItems.some((item) => item.course._id === id);
+
+  const handleAddToCart = async () => {
+    try {
+      await addToCartApi({ courseId: id, course }).unwrap();
+    } catch (err) {
+      console.error("Failed to add to cart:", err);
+    }
+  };
+
+  const handleRemoveFromCart = async () => {
+    try {
+      await removeFromCartApi(id).unwrap();
+    } catch (err) {
+      console.error("Failed to remove from cart:", err);
+    }
+  };
 
   const faqs = [
     {
@@ -135,22 +143,43 @@ const CourseDetails = () => {
                         <div className="space-y-3">
                           {section.contents &&
                             section.contents.map((content, cIdx) => (
-                              <div
-                                key={cIdx}
-                                className="flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all"
-                              >
-                                <div className="flex items-center gap-3">
-                                  <PlayCircle
-                                    size={18}
-                                    className="text-gray-400"
-                                  />
-                                  <span className="text-gray-700 font-medium">
-                                    {content.title}
-                                  </span>
+                              <div key={cIdx} className="space-y-2">
+                                <div className="flex items-center gap-3 px-3 py-1 mt-2">
+                                  <span className="text-xs font-bold text-gray-300">LESSON {cIdx + 1}</span>
+                                  <span className="text-gray-800 font-bold text-sm truncate">{content.title}</span>
                                 </div>
-                                <span className="text-xs text-gray-400 font-bold uppercase">
-                                  {content.type}
-                                </span>
+
+                                {content.resources && content.resources.map((resource, rIdx) => (
+                                  <div
+                                    key={rIdx}
+                                    className="flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all border border-transparent hover:border-blue-100 group"
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      {resource.type === 'video' ? (
+                                        <PlayCircle size={18} className="text-blue-500" />
+                                      ) : resource.type === 'pdf' || resource.type === 'document' ? (
+                                        <FileText size={18} className="text-red-500" />
+                                      ) : resource.type === 'image' ? (
+                                        <Icon icon="solar:gallery-bold" className="text-green-500" width={18} />
+                                      ) : (
+                                        <Icon icon="solar:document-bold" className="text-gray-400" width={18} />
+                                      )}
+                                      <span className="text-gray-700 font-medium text-sm">
+                                        {resource.name || `Resource ${rIdx + 1}`}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                      {resource.duration > 0 && (
+                                        <span className="text-[10px] text-gray-400 font-medium">
+                                          {Math.floor(resource.duration / 60)}:{(resource.duration % 60).toString().padStart(2, '0')}
+                                        </span>
+                                      )}
+                                      <span className="text-[10px] text-gray-400 font-bold uppercase bg-white px-2 py-0.5 rounded border border-gray-100 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                                        {resource.type}
+                                      </span>
+                                    </div>
+                                  </div>
+                                ))}
                               </div>
                             ))}
                         </div>
@@ -221,11 +250,10 @@ const CourseDetails = () => {
                     <button
                       key={method.id}
                       onClick={() => setSelectedPayment(method.id)}
-                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${
-                        selectedPayment === method.id
-                          ? "border-primary bg-primary/5 shadow-inner"
-                          : "border-gray-100 hover:border-gray-200"
-                      }`}
+                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${selectedPayment === method.id
+                        ? "border-primary bg-primary/5 shadow-inner"
+                        : "border-gray-100 hover:border-gray-200"
+                        }`}
                     >
                       <Icon icon={method.icon} className="text-2xl" />
                       <span className="text-xs font-bold">{method.name}</span>
@@ -260,10 +288,36 @@ const CourseDetails = () => {
                   </div>
                 </div>
 
-                <button className="w-full bg-primary text-white py-4 rounded-2xl font-bold text-lg hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-3">
+                <button
+                  onClick={() => navigate(`/payment-gateway?method=${selectedPayment}&amount=${course.price}&courseId=${id}`)}
+                  className="w-full bg-primary text-white py-4 rounded-2xl font-bold text-lg hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-3"
+                >
                   Pay with {selectedPayment.toUpperCase()}
                   <Icon icon="solar:arrow-right-bold" />
                 </button>
+
+                {userRole === "student" && (
+                  <button
+                    onClick={isInCart ? handleRemoveFromCart : handleAddToCart}
+                    className={`w-full py-4 rounded-2xl font-bold text-lg transition-all border-2 flex items-center justify-center gap-3 mt-3
+                      ${isInCart
+                        ? "bg-white border-red-500 text-red-500 hover:bg-red-50"
+                        : "bg-white border-primary text-primary hover:bg-primary/5"
+                      }`}
+                  >
+                    {isInCart ? (
+                      <>
+                        <Icon icon="solar:trash-bin-trash-bold" />
+                        Remove from Cart
+                      </>
+                    ) : (
+                      <>
+                        <Icon icon="solar:cart-plus-bold" />
+                        Add to Cart
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
 
               {/* Features List */}
@@ -311,9 +365,8 @@ const AccordionItem = ({ title, content, colorClass }) => {
         <span className={`font-bold text-lg ${colorClass}`}>{title}</span>
         <Icon
           icon="solar:alt-arrow-down-bold"
-          className={`transition-transform duration-300 text-gray-400 ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={`transition-transform duration-300 text-gray-400 ${isOpen ? "rotate-180" : ""
+            }`}
         />
       </button>
 

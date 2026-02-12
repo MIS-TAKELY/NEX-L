@@ -1,46 +1,65 @@
-import { deleteCourse, getInstructorCourses } from '@/apis/course.api';
 import { Icon } from '@iconify/react';
-import { useContext, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppContext } from '../../context/AppContext';
+import { useSelector } from 'react-redux';
+import { useGetInstructorCoursesQuery, useDeleteCourseMutation } from '@/store/slices/courseApi';
+import ConfirmModal from '@/components/common/ConfirmModal';
+import { useToast } from '@/context/ToastContext';
 
 const MyCourses = () => {
     const navigate = useNavigate();
-    const { userData } = useContext(AppContext);
-    const [courses, setCourses] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { userData } = useSelector((state) => state.auth);
+    const { showToast } = useToast();
 
-    const fetchCourses = async () => {
-        if (!userData?.id) return;
+    const {
+        data: courses = [],
+        isLoading,
+        isError,
+        refetch
+    } = useGetInstructorCoursesQuery(userData?.id, {
+        skip: !userData?.id
+    });
+
+    const [deleteCourse] = useDeleteCourseMutation();
+
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const [courseToDelete, setCourseToDelete] = useState(null);
+
+    const handleDeleteClick = (id) => {
+        setCourseToDelete(id);
+        setIsConfirmOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!courseToDelete) return;
         try {
-            const data = await getInstructorCourses(userData.id);
-            setCourses(data);
+            await deleteCourse(courseToDelete).unwrap();
+            showToast("Course deleted successfully!", "success");
         } catch (error) {
-            console.error("Failed to fetch courses", error);
+            console.error("Failed to delete course", error);
+            showToast("Failed to delete course. " + (error.data?.message || error.message || ""), "error");
         } finally {
-            setLoading(false);
+            setCourseToDelete(null);
+            setIsConfirmOpen(false);
         }
     };
 
-    useEffect(() => {
-        fetchCourses();
-    }, [userData]);
-
-    const handleDelete = async (id) => {
-        if (window.confirm("Are you sure you want to delete this course? This will also delete all its sections and lessons.")) {
-            try {
-                await deleteCourse(id);
-                alert("Course deleted successfully!");
-                fetchCourses();
-            } catch (error) {
-                console.error("Failed to delete course", error);
-                alert("Failed to delete course. " + (error.message || ""));
-            }
-        }
-    };
-
-    if (loading) {
+    if (isLoading) {
         return <div className="p-8 text-center text-gray-500">Loading courses...</div>;
+    }
+
+    if (isError) {
+        return (
+            <div className="p-8 text-center">
+                <p className="text-red-500 mb-4">Failed to load courses</p>
+                <button
+                    onClick={refetch}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                    Retry
+                </button>
+            </div>
+        );
     }
 
     return (
@@ -83,7 +102,7 @@ const MyCourses = () => {
                                             {course.category}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 text-center">{course.isFree ? "Free" : `$${course.price}`}</td>
+                                    <td className="px-6 py-4 text-center">{course.isFree ? "Free" : `Rs ${course.price}`}</td>
                                     <td className="px-6 py-4 text-center">
                                         <button
                                             onClick={() => navigate(`/instructor/edit-course/${course._id}`)}
@@ -92,7 +111,7 @@ const MyCourses = () => {
                                             Edit
                                         </button>
                                         <button
-                                            onClick={() => handleDelete(course._id)}
+                                            onClick={() => handleDeleteClick(course._id)}
                                             className="text-red-600 hover:text-red-800"
                                         >
                                             Delete
@@ -110,6 +129,16 @@ const MyCourses = () => {
                     </tbody>
                 </table>
             </div>
+
+            <ConfirmModal
+                isOpen={isConfirmOpen}
+                onClose={() => setIsConfirmOpen(false)}
+                onConfirm={handleConfirmDelete}
+                title="Delete Course?"
+                message="Are you sure you want to delete this course? This will also delete all its sections and lessons. This action cannot be undone."
+                confirmText="Delete"
+                type="danger"
+            />
         </div>
     )
 }

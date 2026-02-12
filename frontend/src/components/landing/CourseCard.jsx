@@ -1,24 +1,36 @@
-import { Icon } from "@iconify/react";
-import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { AppContext } from "../../context/AppContext";
+import { Icon } from '@iconify/react';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useAddToCartMutation, useGetCartQuery, useRemoveFromCartMutation } from '../../store/slices/cartApi';
 
 const CourseCard = ({ course }) => {
-  console.log("course-->", course);
-
   const navigate = useNavigate();
+  const { isLoggedIn, userRole } = useSelector((state) => state.auth);
+  const [addToCartApi] = useAddToCartMutation();
+  const [removeFromCartApi] = useRemoveFromCartMutation();
+  const { data: cartResp } = useGetCartQuery(undefined, { skip: !isLoggedIn || userRole !== 'student' });
+  const cartItems = cartResp?.data?.items || [];
 
-  const context = useContext(AppContext);
-  const { userRole, addToCart, cart } = context || {};
-  const isInCart = Array.isArray(cart)
-    ? cart.some((item) => item.id === course.id)
-    : false;
+  const isInCart = cartItems.some((item) => item.course._id === course._id);
+
+  const handleToggleCart = async (e) => {
+    e.stopPropagation();
+    try {
+      if (isInCart) {
+        await removeFromCartApi(course._id).unwrap();
+      } else {
+        await addToCartApi({ courseId: course._id, course }).unwrap();
+      }
+    } catch (err) {
+      console.error(`Failed to ${isInCart ? 'remove from' : 'add to'} cart:`, err);
+    }
+  };
 
   return (
     <div className="group h-full flex flex-col bg-white dark:bg-zinc-900 rounded-[2rem] border-2 border-gray-100 dark:border-zinc-800 p-4 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5 hover:border-primary/20">
       <div className="relative h-48 mb-4 overflow-hidden rounded-2xl bg-gray-100">
         <img
-          src={course.thumbnail}
+          src={course.thumbnail || "https://via.placeholder.com/400x225?text=No+Thumbnail"}
           alt={course.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
@@ -73,23 +85,16 @@ const CourseCard = ({ course }) => {
 
         {userRole === "student" && (
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              if (isInCart) return;
-              addToCart(course);
-              alert("Course added to cart!");
-            }}
-            disabled={isInCart}
-            className={`px-4 rounded-xl font-bold transition-all shadow-md active:scale-95 flex items-center justify-center border-2 
-                ${
-                  isInCart
-                    ? "bg-green-500 border-green-500 text-white cursor-default"
-                    : "bg-white border-primary text-primary hover:bg-primary hover:text-white dark:bg-zinc-800 dark:text-white dark:border-zinc-700 dark:hover:bg-primary dark:hover:border-primary"
-                }`}
-            title={isInCart ? "Already in cart" : "Add to cart"}
+            onClick={handleToggleCart}
+            className={`px-4 rounded-xl font-bold transition-all shadow-md active:scale-95 flex items-center justify-center border-2
+                ${isInCart
+                ? "bg-red-500 border-red-500 text-white hover:bg-red-600"
+                : "bg-white border-primary text-primary hover:bg-primary hover:text-white dark:bg-zinc-800 dark:text-white dark:border-zinc-700 dark:hover:bg-primary dark:hover:border-primary"
+              }`}
+            title={isInCart ? "Remove from cart" : "Add to cart"}
           >
             {isInCart ? (
-              <Icon icon="solar:check-circle-bold" size={24} />
+              <Icon icon="solar:trash-bin-trash-bold" size={24} />
             ) : (
               <Icon icon="solar:cart-large-2-bold" size={24} />
             )}
