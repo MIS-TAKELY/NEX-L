@@ -46,7 +46,6 @@ export const auth = betterAuth({
   },
 
   cookieOptions: {
-    domain: process.env.NODE_ENV === "production" ? ".onrender.com" : undefined, // Adjust if using custom domain
     sameSite: "none",
     secure: true,
   },
