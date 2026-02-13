@@ -1,6 +1,38 @@
+import Course from "../models/course.model.js";
 import Enrollment from "../models/enrollment.model.js";
 
-// Create a new enrollment
+// Enroll in a course
+export const enrollInCourse = async (req, res) => {
+  try {
+    const { studentId, courseId, paymentId } = req.body;
+
+    // Check if already enrolled
+    const existingEnrollment = await Enrollment.findOne({ student: studentId, course: courseId });
+    if (existingEnrollment) {
+      return res.status(400).json({ message: "Student already enrolled in this course" });
+    }
+
+    const enrollment = new Enrollment({
+      student: studentId,
+      course: courseId,
+      payment: paymentId || null,
+    });
+
+    await enrollment.save();
+
+    // Also update course's enrollments array if it's used there
+    await Course.findByIdAndUpdate(courseId, {
+      $addToSet: { enrollments: studentId }
+    });
+
+    res.status(201).json({ message: "Enrollment successful", enrollment });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+// Create a new enrollment (Legacy/Internal)
 export const createEnrollment = async (req, res) => {
   try {
     const { studentId, courseId, paymentId } = req.body;
@@ -83,5 +115,25 @@ export const updateProgress = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Get all enrollments for a specific user
+export const getUserEnrollments = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const enrollments = await Enrollment.find({ student: userId })
+      .populate({
+        path: "course",
+        populate: {
+          path: "teacher",
+          select: "name email"
+        }
+      });
+
+    res.json(enrollments);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };

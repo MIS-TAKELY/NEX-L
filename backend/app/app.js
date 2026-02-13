@@ -11,6 +11,7 @@ import userRouter from "../app/routes/user.routes.js";
 import uploadRouter from "../app/routes/upload.routes.js";
 import paymentRouter from "../app/routes/payment.routes.js";
 import cartRouter from "../app/routes/cart.routes.js";
+import enrollmentRouter from "../app/routes/enrollment.routes.js";
 
 // import { toNodeHandler } from "better-auth/node";
 
@@ -37,6 +38,7 @@ app.use("/api/v1/test-mail", testMail);
 app.use("/api/v1/upload", uploadRouter);
 app.use("/api/v1/payments", paymentRouter);
 app.use("/api/v1/cart", cartRouter);
+app.use("/api/v1/enrollments", enrollmentRouter);
 
 // Error logger - MUST BE LAST
 app.use((err, req, res, next) => {
