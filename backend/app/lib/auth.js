@@ -40,6 +40,17 @@ export const auth = betterAuth({
     },
   },
 
+  advanced: {
+    crossSite: true,
+    trustProxy: true,
+  },
+
+  cookieOptions: {
+    domain: process.env.NODE_ENV === "production" ? ".onrender.com" : undefined, // Adjust if using custom domain
+    sameSite: "none",
+    secure: true,
+  },
+
   // Include role in session
   session: {
     modelName: "session",
