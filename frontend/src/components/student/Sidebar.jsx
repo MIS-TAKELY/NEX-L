@@ -2,7 +2,8 @@ import { NavLink } from 'react-router-dom';
 
 const StudentSidebar = () => {
   const menuItems = [
-    { name: 'Dashboard', icon: 'HH', path: '/home' },
+    { name: 'Dashboard', icon: 'HH', path: '/student/dashboard' },
+    { name: 'My Enrollments', icon: '🎓', path: '/student/my-enrollments' },
     { name: 'Inbox', icon: '✉️', path: '/inbox' },
     { name: 'Lesson', icon: '📖', path: '/lessons' },
     { name: 'Task', icon: '📝', path: '/tasks' },
@@ -17,7 +18,7 @@ const StudentSidebar = () => {
 
   return (
     <div className="w-64 bg-white min-h-screen border-r border-gray-100 flex flex-col p-6 hidden md:flex font-outfit">
-      
+
       {/* Brand */}
       <div className="flex items-center gap-3 mb-10 text-gray-900">
         <span className="text-2xl font-bold text-primary tracking-tight">NEX-L</span>
@@ -32,14 +33,13 @@ const StudentSidebar = () => {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                  isActive
-                    ? 'bg-gray-50 text-gray-900 font-bold border-l-4 border-primary'
-                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
+                  ? 'bg-gray-50 text-gray-900 font-bold border-l-4 border-primary'
+                  : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
                 }`
               }
             >
-             <span className="text-lg w-5">{item.icon === 'HH' ? '::' : item.icon}</span> {/* Dashboard Icon Placeholder */}
+              <span className="text-lg w-5">{item.icon === 'HH' ? '::' : item.icon}</span> {/* Dashboard Icon Placeholder */}
               <span className="font-medium">{item.name}</span>
             </NavLink>
           ))}
@@ -64,17 +64,17 @@ const StudentSidebar = () => {
 
       {/* Bottom Settings */}
       <div className="mt-auto pt-6 border-t border-gray-100">
-         <p className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-wider">Settings</p>
-         <nav className="space-y-2">
-            <button className="flex items-center gap-3 px-4 py-2 w-full text-gray-500 hover:text-gray-900 rounded-xl hover:bg-gray-50 transition-colors">
-                <span>⚙️</span>
-                <span className="font-medium">Setting</span>
-            </button>
-             <button className="flex items-center gap-3 px-4 py-2 w-full text-red-500 hover:bg-red-50 rounded-xl transition-colors">
-                <span>🚪</span>
-                <span className="font-medium">Logout</span>
-            </button>
-         </nav>
+        <p className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-wider">Settings</p>
+        <nav className="space-y-2">
+          <button className="flex items-center gap-3 px-4 py-2 w-full text-gray-500 hover:text-gray-900 rounded-xl hover:bg-gray-50 transition-colors">
+            <span>⚙️</span>
+            <span className="font-medium">Setting</span>
+          </button>
+          <button className="flex items-center gap-3 px-4 py-2 w-full text-red-500 hover:bg-red-50 rounded-xl transition-colors">
+            <span>🚪</span>
+            <span className="font-medium">Logout</span>
+          </button>
+        </nav>
       </div>
 
     </div>
