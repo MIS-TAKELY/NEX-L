@@ -2,6 +2,9 @@ import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
   baseURL: import.meta.env.VITE_BACKEND_URL + "/api/v1/auth",
+  fetchOptions: {
+    credentials: "include",
+  },
 });
 
 // Utility function to get current session
@@ -70,7 +73,7 @@ export const loginWithGoogle = async (role = "student") => {
 
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: `http://localhost:5173/${role}/dashboard`, // Dynamic redirect based on role
+      callbackURL: `${import.meta.env.VITE_FRONTEND_URL}/${role}/dashboard`, // Dynamic redirect based on role
     });
   } catch (error) {
     console.error("Google login failed:", error);
@@ -90,7 +93,7 @@ export const loginWithGithub = async (role = "student") => {
 
     await authClient.signIn.social({
       provider: "github",
-      callbackURL: `http://localhost:5173/${role}/dashboard`, // Dynamic redirect based on role
+      callbackURL: `${import.meta.env.VITE_FRONTEND_URL}/${role}/dashboard`, // Dynamic redirect based on role
     });
   } catch (error) {
     console.error("Github login failed:", error);

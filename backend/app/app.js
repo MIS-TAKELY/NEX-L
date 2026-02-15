@@ -11,14 +11,13 @@ import userRouter from "../app/routes/user.routes.js";
 import uploadRouter from "../app/routes/upload.routes.js";
 import paymentRouter from "../app/routes/payment.routes.js";
 import cartRouter from "../app/routes/cart.routes.js";
-
-// import { toNodeHandler } from "better-auth/node";
+import enrollmentRouter from "../app/routes/enrollment.routes.js";
 
 const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://127.0.0.1:5173",],
+    origin: [process.env.FRONTEND_URL, "http://localhost:5173", "http://127.0.0.1:5173"],
     credentials: true,
   }),
 );
@@ -26,6 +25,12 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+
+app.get("/favicon.ico", (req, res) => res.status(204).end());
+
+app.get("/", (req, res) => {
+  res.send("NEX-L Backend is live! Redirecting you to the frontend...");
+});
 
 // other APIs
 app.use("/api/v1/auth", authRouter);
@@ -37,6 +42,7 @@ app.use("/api/v1/test-mail", testMail);
 app.use("/api/v1/upload", uploadRouter);
 app.use("/api/v1/payments", paymentRouter);
 app.use("/api/v1/cart", cartRouter);
+app.use("/api/v1/enrollments", enrollmentRouter);
 
 // Error logger - MUST BE LAST
 app.use((err, req, res, next) => {

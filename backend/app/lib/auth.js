@@ -24,8 +24,8 @@ export const auth = betterAuth({
 
   },
   trustedOrigins: [
-    process.env.BETTER_AUTH_URL || "http://localhost:3000",
-    "http://localhost:5173",
+    process.env.BETTER_AUTH_URL,
+    process.env.FRONTEND_URL,
   ],
 
   // Add custom user fields for role management
@@ -38,6 +38,16 @@ export const auth = betterAuth({
         input: true,
       },
     },
+  },
+
+  advanced: {
+    crossSite: true,
+    trustProxy: true,
+  },
+
+  cookieOptions: {
+    sameSite: "none",
+    secure: true,
   },
 
   // Include role in session
@@ -108,6 +118,6 @@ console.log(
   process.env.BETTER_AUTH_URL + "/api/v1/auth",
 );
 console.log("Trusted Origins:", [
-  process.env.BETTER_AUTH_URL || "http://localhost:3000",
-  "http://localhost:5173",
+  process.env.BETTER_AUTH_URL,
+  process.env.FRONTEND_URL,
 ]);
