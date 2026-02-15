@@ -3,7 +3,9 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout as reduxLogout } from "@/store/slices/authSlice";
+
 import { useGetCartQuery } from "@/store/slices/cartApi";
+import { signOut } from "@/lib/auth.client";
 import logo from "../../assets/logoo.png";
 import ProfileDropdown from "./ProfileDropdown";
 
@@ -42,9 +44,16 @@ const Navbar = () => {
 
   // Handle logout
   const handleLogout = async () => {
-    dispatch(reduxLogout());
-    navigate('/', { replace: true });
-    setIsMobileMenuOpen(false);
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Logout failed", error);
+    } finally {
+      // Always clear local state
+      dispatch(reduxLogout());
+      navigate('/', { replace: true });
+      setIsMobileMenuOpen(false);
+    }
   };
 
   const desktopButtons = [

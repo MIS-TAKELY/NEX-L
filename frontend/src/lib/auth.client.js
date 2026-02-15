@@ -51,10 +51,25 @@ export const signIn = async (email, password) => {
 // Utility function to sign out
 export const signOut = async () => {
   try {
-    await authClient.signOut();
+    const { error } = await authClient.signOut();
+    if (error) {
+      throw error;
+    }
   } catch (error) {
-    console.error("Sign out failed:", error);
-    throw error;
+    console.warn("Client signOut failed, attempting manual fetch", error);
+    // Fallback manual fetch to ensure cookie clearance
+    try {
+      await fetch(import.meta.env.VITE_BACKEND_URL + "/api/v1/auth/sign-out", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+    } catch (manualError) {
+      console.error("Manual sign out failed:", manualError);
+      throw manualError;
+    }
   }
 };
 
