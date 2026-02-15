@@ -47,7 +47,7 @@ export const auth = betterAuth({
 
   cookieOptions: {
     sameSite: "none",
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
   },
 
   // Include role in session

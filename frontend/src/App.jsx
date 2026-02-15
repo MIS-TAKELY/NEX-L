@@ -38,7 +38,7 @@ import AdminUsers from "./Pages/admin/Users";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { getSession } from "@/lib/auth.client";
-import { setCredentials, setLoading } from "@/store/slices/authSlice";
+import { setCredentials, setLoading, logout } from "@/store/slices/authSlice";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 
 export default function App() {
@@ -54,10 +54,12 @@ export default function App() {
           const serializedUser = JSON.parse(JSON.stringify(session.user));
           dispatch(setCredentials({ role, userData: serializedUser }));
         } else {
+          dispatch(logout());
           dispatch(setLoading(false));
         }
       } catch (error) {
         console.error("Session verification failed:", error);
+        dispatch(logout());
         dispatch(setLoading(false));
       }
     };

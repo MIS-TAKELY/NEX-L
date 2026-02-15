@@ -4,7 +4,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout as reduxLogout, updateUser } from '@/store/slices/authSlice';
+
 import { setTheme as reduxSetTheme } from '@/store/slices/uiSlice';
+import { signOut } from '@/lib/auth.client';
 
 const ProfileDropdown = () => {
     const dispatch = useDispatch();
@@ -28,9 +30,15 @@ const ProfileDropdown = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const handleLogout = () => {
-        dispatch(reduxLogout());
-        navigate('/login');
+    const handleLogout = async () => {
+        try {
+            await signOut();
+        } catch (error) {
+            console.error("Logout failed", error);
+        } finally {
+            dispatch(reduxLogout());
+            navigate('/login');
+        }
     };
 
     const handleImageChange = (e) => {
