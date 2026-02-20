@@ -4,7 +4,10 @@ import Section from "../models/section.model.js";
 import User from "../models/user.model.js";
 import Enrollment from "../models/enrollment.model.js";
 import Review from "../models/review.model.js";
+import Cart from "../models/cart.model.js";
+import RecentlyViewed from "../models/recently-viewed.model.js";
 import getEmbedding from "../utils/embedding.js";
+import { cosineSimilarity, getAggregateVector } from "../utils/vector-utils.js";
 
 // Create a new course
 export const createCourse = async (req, res) => {
@@ -111,6 +114,176 @@ export const getAllCourses = async (req, res) => {
   }
 };
 
+// Record course view
+export const recordCourseView = async (req, res) => {
+  try {
+    const { courseId, userId } = req.body;
+    if (!courseId || !userId) {
+      return res.status(400).json({ message: "Course ID and User ID are required" });
+    }
+
+    // Update if exists, otherwise create
+    await RecentlyViewed.findOneAndUpdate(
+      { user: userId, course: courseId },
+      { viewedAt: Date.now() },
+      { upsert: true, new: true }
+    );
+
+    res.status(200).json({ success: true });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Get course sections (Trending, Recently Viewed, Recommendation, Top Deals)
+export const getCourseSections = async (req, res) => {
+  try {
+    const { userId } = req.query;
+
+    // 1. Trending: Recently added + Most bought (enrollments)
+    const trending = await Course.find({ status: "published" })
+      .select("-embedding")
+      .populate("teacher")
+      .sort({ createdAt: -1 })
+      .limit(8);
+    // Note: In a real app, you'd calculate a trend score based on recent enrollments.
+
+    // 2. Top Deals: Highest discount
+    const topDeals = await Course.aggregate([
+      { $match: { status: "published", discountPrice: { $exists: true, $ne: null } } },
+      {
+        $addFields: {
+          discountPercentage: {
+            $cond: [
+              { $gt: ["$price", 0] },
+              { $multiply: [{ $divide: [{ $subtract: ["$price", "$discountPrice"] }, "$price"] }, 100] },
+              0
+            ]
+          }
+        }
+      },
+      { $sort: { discountPercentage: -1 } },
+      { $limit: 8 }
+    ]);
+    // Populate teacher manually after aggregate if needed, or use $lookup
+    const populatedTopDeals = await Course.populate(topDeals, { path: "teacher" });
+
+    let recentlyViewed = [];
+    let recommendations = [];
+
+    if (userId) {
+      // 3. Recently Viewed
+      const recentViews = await RecentlyViewed.find({ user: userId })
+        .sort({ viewedAt: -1 })
+        .limit(8)
+        .populate({
+          path: "course",
+          populate: { path: "teacher" }
+        });
+      recentlyViewed = recentViews.map(rv => rv.course).filter(c => c != null);
+
+      // 4. Recommendation: Vector Similarity
+      // Get user's context (recently viewed, cart, enrolled)
+      const userViews = await RecentlyViewed.find({ user: userId }).populate("course");
+      const userCart = await Cart.findOne({ user: userId }).populate("items.course");
+      const userEnrollments = await Enrollment.find({ student: userId }).populate("course");
+
+      const relevantCourses = [
+        ...userViews.map(v => v.course),
+        ...(userCart ? userCart.items.map(i => i.course) : []),
+        ...userEnrollments.map(e => e.course)
+      ].filter(c => c && c.embedding && c.embedding.length > 0);
+
+      if (relevantCourses.length > 0) {
+        const userVector = getAggregateVector(relevantCourses.map(c => c.embedding));
+
+        // Find other courses (not already viewed/bought)
+        const viewedCourseIds = relevantCourses.map(c => c._id.toString());
+        const otherCourses = await Course.find({
+          status: "published",
+          _id: { $nin: viewedCourseIds },
+          embedding: { $exists: true, $not: { $size: 0 } }
+        });
+
+        const scoredCourses = otherCourses.map(course => ({
+          course,
+          similarity: cosineSimilarity(userVector, course.embedding)
+        }));
+
+        recommendations = scoredCourses
+          .sort((a, b) => b.similarity - a.similarity)
+          .slice(0, 8)
+          .map(item => {
+            const c = item.course.toObject();
+            delete c.embedding;
+            return c;
+          });
+
+        // Populate teacher for recommendations
+        recommendations = await Course.populate(recommendations, { path: "teacher" });
+      }
+    }
+
+    // Default recommendations if none found or not logged in
+    if (recommendations.length === 0) {
+      recommendations = await Course.find({ status: "published" })
+        .select("-embedding")
+        .populate("teacher")
+        .sort({ "ratings.average": -1 })
+        .limit(8);
+    }
+
+    res.json({
+      trending,
+      recentlyViewed,
+      recommendations,
+      topDeals: populatedTopDeals
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Search courses using vector similarity
+export const searchCoursesVector = async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q) {
+      return res.status(400).json({ message: "Search query is required" });
+    }
+
+    // 1. Generate embedding for the query
+    const queryVector = await getEmbedding(q);
+
+    // 2. Fetch all courses with embeddings
+    const courses = await Course.find({
+      embedding: { $exists: true, $not: { $size: 0 } }
+    }).populate("teacher");
+
+    // 3. Calculate similarity and score
+    const scoredCourses = courses.map(course => ({
+      course,
+      similarity: cosineSimilarity(queryVector, course.embedding)
+    }));
+
+    // 4. Sort and format results
+    const results = scoredCourses
+      .sort((a, b) => b.similarity - a.similarity)
+      .slice(0, 20) // Top 20 results
+      .map(item => {
+        const c = item.course.toObject();
+        delete c.embedding;
+        c.similarityScore = item.similarity;
+        return c;
+      });
+
+    res.json(results);
+  } catch (err) {
+    console.error("Vector search error:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // Get single course by ID
 export const getCourseById = async (req, res) => {
   try {
@@ -196,6 +369,7 @@ export const updateCourse = async (req, res) => {
       description,
       tags,
       category,
+      price,
       isFree,
       courseType,
       sections,

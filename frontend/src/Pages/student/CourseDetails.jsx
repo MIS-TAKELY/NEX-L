@@ -3,21 +3,29 @@ import { FileText, PlayCircle } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useGetCourseByIdQuery } from "@/store/slices/courseApi";
+import { useGetCourseByIdQuery, useRecordCourseViewMutation } from "@/store/slices/courseApi";
 import { useAddToCartMutation, useGetCartQuery, useRemoveFromCartMutation } from "@/store/slices/cartApi";
 import { useSelector } from "react-redux";
+import { useEffect } from "react";
 import Footer from "../../components/common/Footer";
 import Navbar from "../../components/common/Navbar";
 
 const CourseDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isLoggedIn, userRole } = useSelector((state) => state.auth);
+  const { isLoggedIn, userRole, userData } = useSelector((state) => state.auth);
   const [selectedPayment, setSelectedPayment] = useState("esewa");
   const { data: courseResp, isLoading: loading } = useGetCourseByIdQuery(id);
   const { data: cartResp } = useGetCartQuery(undefined, { skip: !isLoggedIn || userRole !== 'student' });
   const [addToCartApi] = useAddToCartMutation();
   const [removeFromCartApi] = useRemoveFromCartMutation();
+  const [recordCourseView] = useRecordCourseViewMutation();
+
+  useEffect(() => {
+    if (isLoggedIn && userRole === 'student' && id && userData?._id) {
+      recordCourseView({ courseId: id, userId: userData._id });
+    }
+  }, [id, isLoggedIn, userRole, userData?._id, recordCourseView]);
 
   const course = courseResp?.data;
   const cartItems = cartResp?.data?.items || [];
