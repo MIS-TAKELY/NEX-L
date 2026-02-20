@@ -45,6 +45,21 @@ export const courseApi = apiSlice.injectEndpoints({
                 { type: 'Course', id: 'LIST' },
             ],
         }),
+        getCourseSections: builder.query({
+            query: (userId) => `/courses/sections${userId ? `?userId=${userId}` : ''}`,
+            providesTags: [{ type: 'Course', id: 'LIST' }],
+        }),
+        recordCourseView: builder.mutation({
+            query: (payload) => ({
+                url: '/courses/record-view',
+                method: 'POST',
+                body: payload,
+            }),
+        }),
+        searchCoursesVector: builder.query({
+            query: (q) => `/courses/search?q=${encodeURIComponent(q)}`,
+            providesTags: [{ type: 'Course', id: 'LIST' }],
+        }),
     }),
 });
 
@@ -53,5 +68,8 @@ export const {
     useGetCourseByIdQuery,
     useUpdateCourseMutation,
     useCreateCourseMutation,
-    useDeleteCourseMutation
+    useDeleteCourseMutation,
+    useGetCourseSectionsQuery,
+    useRecordCourseViewMutation,
+    useSearchCoursesVectorQuery,
 } = courseApi;
