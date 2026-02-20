@@ -2,6 +2,8 @@ import { Route, Routes } from "react-router-dom";
 
 // STUDENT PAGES
 import Loading from "./components/student/Loading";
+import AboutPage from "./Pages/AboutPage";
+import ContactPage from "./Pages/ContactPage";
 import LandingPage from "./Pages/LandingPage";
 import Cart from "./Pages/student/Cart";
 import CourseDetails from "./Pages/student/CourseDetails";
@@ -9,14 +11,14 @@ import CoursesList from "./Pages/student/CoursesList";
 import ForgotPassword from "./Pages/student/ForgotPassword";
 import Home from "./Pages/student/Home";
 import MyEnrollments from "./Pages/student/MyEnrollments";
+import PaymentFailure from "./Pages/student/PaymentFailure";
 import PaymentGateway from "./Pages/student/PaymentGateway";
+import PaymentMethodSelection from "./Pages/student/PaymentMethodSelection";
+import PaymentSuccess from "./Pages/student/PaymentSuccess";
 import Player from "./Pages/student/Player";
 import SignIn from "./Pages/student/SignIn";
 import SignUp from "./Pages/student/SignUp";
 import StudentLayout from "./Pages/student/StudentLayout";
-import PaymentSuccess from "./Pages/student/PaymentSuccess";
-import PaymentFailure from "./Pages/student/PaymentFailure";
-import PaymentMethodSelection from "./Pages/student/PaymentMethodSelection";
 
 // INSTRUCTOR PAGES
 import AddCourse from "./Pages/instructor/AddCourse";
@@ -35,10 +37,10 @@ import AdminCourses from "./Pages/admin/Courses";
 import AdminDashboard from "./Pages/admin/Dashboard";
 import AdminUsers from "./Pages/admin/Users";
 
+import { getSession } from "@/lib/auth.client";
+import { logout, setCredentials, setLoading } from "@/store/slices/authSlice";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { getSession } from "@/lib/auth.client";
-import { setCredentials, setLoading, logout } from "@/store/slices/authSlice";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 
 export default function App() {
@@ -69,6 +71,8 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+      <Route path="/contact" element={<ContactPage />} />
+      <Route path="/about" element={<AboutPage />} />
       <Route path="/course-list" element={<CoursesList />} />
       <Route path="/course-list/:input" element={<CoursesList />} />
       <Route path="/course/:id" element={<CourseDetails />} />
