@@ -123,6 +123,15 @@ const Navbar = () => {
                 ></span>
               </button>
 
+              {/* Search Button */}
+              <button
+                onClick={() => navigate('/search')}
+                className="w-10 h-10 rounded-full hover:cursor-pointer bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+                title="Search courses"
+              >
+                <Icon icon="solar:magnifer-linear" size={24} />
+              </button>
+
               {/* Cart Button - Only for Students */}
               {userRole === 'student' && (
                 <button

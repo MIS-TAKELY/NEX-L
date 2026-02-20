@@ -244,42 +244,76 @@ export const getCourseSections = async (req, res) => {
   }
 };
 
-// Search courses using vector similarity
+// Search courses using vector similarity and filters
 export const searchCoursesVector = async (req, res) => {
   try {
-    const { q } = req.query;
-    if (!q) {
-      return res.status(400).json({ message: "Search query is required" });
+    const { q, category, level, minPrice, maxPrice } = req.query;
+    console.log(`[Search] Query: "${q}", Category: ${category}, Level: ${level}, Price: ${minPrice}-${maxPrice}`);
+
+    let queryVector = null;
+    if (q) {
+      // 1. Generate embedding for the query
+      queryVector = await getEmbedding(q);
+      console.log(`[Search] Generated query vector for: "${q}"`);
     }
 
-    // 1. Generate embedding for the query
-    const queryVector = await getEmbedding(q);
+    // 2. Build filter object
+    const filter = { status: "published" };
+    if (category) filter.category = category;
+    if (level) filter.level = level;
+    if (minPrice || maxPrice) {
+      filter.price = {};
+      if (minPrice && minPrice !== "all") filter.price.$gte = Number(minPrice);
+      if (maxPrice && maxPrice !== "all") filter.price.$lte = Number(maxPrice);
+    }
 
-    // 2. Fetch all courses with embeddings
-    const courses = await Course.find({
-      embedding: { $exists: true, $not: { $size: 0 } }
-    }).populate("teacher");
+    console.log(`[Search] Mongoose filter:`, JSON.stringify(filter));
 
-    // 3. Calculate similarity and score
-    const scoredCourses = courses.map(course => ({
-      course,
-      similarity: cosineSimilarity(queryVector, course.embedding)
-    }));
+    // 3. Fetch courses with filters - EXPLICITLY check embedding exists
+    const courses = await Course.find(filter).populate("teacher");
+    console.log(`[Search] Found ${courses.length} courses matching basic filters`);
 
-    // 4. Sort and format results
-    const results = scoredCourses
-      .sort((a, b) => b.similarity - a.similarity)
-      .slice(0, 20) // Top 20 results
-      .map(item => {
-        const c = item.course.toObject();
+    let results = [];
+
+    if (queryVector) {
+      // 4. Calculate similarity and score if query exists
+      const scoredCourses = courses
+        .filter(c => {
+          const hasEmbedding = c.embedding && c.embedding.length > 0;
+          if (!hasEmbedding) console.log(`[Search] Excluded course ${c.title} (no embedding)`);
+          return hasEmbedding;
+        })
+        .map(course => {
+          const similarity = cosineSimilarity(queryVector, course.embedding);
+          return { course, similarity };
+        });
+
+      // 5. Sort by similarity
+      results = scoredCourses
+        .sort((a, b) => b.similarity - a.similarity)
+        .slice(0, 20)
+        .map(item => {
+          const c = item.course.toObject();
+          delete c.embedding;
+          c.similarityScore = item.similarity;
+          return c;
+        });
+
+      if (results.length > 0) {
+        console.log(`[Search] Top similarity score: ${results[0].similarityScore} for "${results[0].title}"`);
+      }
+    } else {
+      // Switch to simple list if no search query
+      results = courses.map(course => {
+        const c = course.toObject();
         delete c.embedding;
-        c.similarityScore = item.similarity;
         return c;
       });
+    }
 
     res.json(results);
   } catch (err) {
-    console.error("Vector search error:", err);
+    console.error("[Search] error:", err);
     res.status(500).json({ message: err.message });
   }
 };
