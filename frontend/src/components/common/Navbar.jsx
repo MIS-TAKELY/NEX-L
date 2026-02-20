@@ -1,11 +1,11 @@
-import { Icon } from "@iconify/react";
-import { useContext, useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
 import { logout as reduxLogout } from "@/store/slices/authSlice";
+import { Icon } from "@iconify/react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import { useGetCartQuery } from "@/store/slices/cartApi";
 import { signOut } from "@/lib/auth.client";
+import { useGetCartQuery } from "@/store/slices/cartApi";
 import logo from "../../assets/logoo.png";
 import ProfileDropdown from "./ProfileDropdown";
 
@@ -59,6 +59,8 @@ const Navbar = () => {
   const desktopButtons = [
     { label: "Home", path: "/" },
     { label: "Courses", path: "/course-list" },
+    { label: "About Us", path: "/about" },
+    { label: "Contact Us", path: "/contact" },
   ];
 
   return (
@@ -119,6 +121,15 @@ const Navbar = () => {
                 <span
                   className={`absolute left-0 bottom-0 h-0.5 bg-white transition-all duration-700 ease-out w-0 group-hover:w-full`}
                 ></span>
+              </button>
+
+              {/* Search Button */}
+              <button
+                onClick={() => navigate('/search')}
+                className="w-10 h-10 rounded-full hover:cursor-pointer bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+                title="Search courses"
+              >
+                <Icon icon="solar:magnifer-linear" size={24} />
               </button>
 
               {/* Cart Button - Only for Students */}
@@ -218,6 +229,32 @@ const Navbar = () => {
           </>
         ) : (
           <>
+            <button
+              onClick={() => {
+                navigate("/about");
+                setActive("/about");
+                setIsMobileMenuOpen(false);
+              }}
+              className="text-white text-2xl font-medium relative group"
+            >
+              About Us
+              <span
+                className={`absolute left-0 -bottom-1 h-0.5 bg-white transition-all duration-700 ease-out w-0 group-hover:w-full`}
+              ></span>
+            </button>
+            <button
+              onClick={() => {
+                navigate("/contact");
+                setActive("/contact");
+                setIsMobileMenuOpen(false);
+              }}
+              className="text-white text-2xl font-medium relative group"
+            >
+              Contact Us
+              <span
+                className={`absolute left-0 -bottom-1 h-0.5 bg-white transition-all duration-700 ease-out w-0 group-hover:w-full`}
+              ></span>
+            </button>
             <button
               onClick={() => {
                 navigate("/login");

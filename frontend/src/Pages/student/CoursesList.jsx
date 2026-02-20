@@ -1,12 +1,15 @@
 import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useGetCourseSectionsQuery, useSearchCoursesVectorQuery } from "@/store/slices/courseApi";
 import Footer from "../../components/common/Footer";
 import Navbar from "../../components/common/Navbar";
 import CourseCard from "../../components/landing/CourseCard";
+import CourseSkeleton from "../../components/skeletons/CourseSkeleton";
 
 const CoursesList = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
@@ -55,6 +58,26 @@ const CoursesList = () => {
     );
   };
 
+  const renderSkeletons = (title) => (
+    <div className="mb-16">
+      <div className="flex flex-col mb-8">
+        <div className="h-10 bg-gray-200 rounded-lg w-64 mb-2 animate-pulse"></div>
+        <div className="h-4 bg-gray-100 rounded-lg w-48 animate-pulse"></div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {[1, 2, 4, 4].map((i) => (
+          <CourseSkeleton key={i} />
+        ))}
+      </div>
+    </div>
+  );
+
+  const handleSearch = (e) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen font-outfit text-gray-800">
       <Navbar />
@@ -64,13 +87,10 @@ const CoursesList = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16">
             <div>
               <h1 className="text-4xl md:text-5xl font-extrabold text-primary mb-2 leading-tight">
-                {isSearching ? 'Search' : 'Discover'} <span className="italic text-accent">{isSearching ? 'Results' : 'Knowledge'}</span>
+                Discover <span className="italic text-accent">Knowledge</span>
               </h1>
               <p className="text-gray-500 max-w-lg">
-                {isSearching
-                  ? `Found semantically similar courses for "${debouncedQuery}"`
-                  : 'Explore our curated collections of courses tailored for your success.'
-                }
+                Explore our curated collections of courses tailored for your success.
               </p>
             </div>
 
@@ -82,48 +102,31 @@ const CoursesList = () => {
               />
               <input
                 type="text"
-                placeholder="Semantic search (e.g. build apps, AI, design...)"
+                placeholder="Search for courses..."
                 className="w-full pl-12 pr-6 py-4 bg-white border-2 border-transparent focus:border-primary rounded-2xl shadow-sm outline-none transition-all text-lg"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleSearch}
               />
             </div>
           </div>
 
-          {(sectionsLoading || searchLoading) ? (
-            <div className="flex flex-col items-center justify-center py-24">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
-              <p className="text-gray-400 font-medium">
-                {searchLoading ? 'Calculating semantic similarity...' : 'Curating your feed...'}
-              </p>
-            </div>
+          {sectionsLoading ? (
+            <>
+              {renderSkeletons("Recently Viewed")}
+              {renderSkeletons("Recommendations")}
+            </>
           ) : (
             <>
-              {isSearching ? (
-                <>
-                  {searchResults && searchResults.length > 0 ? (
-                    renderSection(`Results for "${debouncedQuery}"`, searchResults)
-                  ) : (
-                    <div className="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-gray-200">
-                      <Icon icon="solar:document-grey-bold" className="mx-auto text-gray-200 mb-4" width={64} />
-                      <h3 className="text-2xl font-bold text-gray-400">No semantic matches found.</h3>
-                      <p className="text-gray-400 mt-2">Try a different phrase or descriptive sentence.</p>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <>
-                  {renderSection("Recently Viewed", sections.recentlyViewed, "Continue where you left off.")}
-                  {renderSection("Recommendations", sections.recommendations, "Hand-picked courses based on your interests.")}
-                  {renderSection("Trending", sections.trending, "The most popular and recently added courses.")}
-                  {renderSection("Top Deals", sections.topDeals, "Premium courses with exclusive discounts.")}
+              {renderSection("Recently Viewed", sections.recentlyViewed, "Continue where you left off.")}
+              {renderSection("Recommendations", sections.recommendations, "Hand-picked courses based on your interests.")}
+              {renderSection("Trending", sections.trending, "The most popular and recently added courses.")}
+              {renderSection("Top Deals", sections.topDeals, "Premium courses with exclusive discounts.")}
 
-                  {!sectionsLoading && Object.values(sections).every(arr => !arr || arr.length === 0) && (
-                    <div className="text-center py-20">
-                      <h3 className="text-2xl font-bold text-gray-400">No courses currently available.</h3>
-                    </div>
-                  )}
-                </>
+              {Object.values(sections).every(arr => !arr || arr.length === 0) && (
+                <div className="text-center py-20">
+                  <h3 className="text-2xl font-bold text-gray-400">No courses currently available.</h3>
+                </div>
               )}
             </>
           )}

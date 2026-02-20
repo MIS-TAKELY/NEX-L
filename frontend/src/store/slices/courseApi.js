@@ -57,7 +57,15 @@ export const courseApi = apiSlice.injectEndpoints({
             }),
         }),
         searchCoursesVector: builder.query({
-            query: (q) => `/courses/search?q=${encodeURIComponent(q)}`,
+            query: (params) => {
+                const searchParams = new URLSearchParams();
+                if (params.q) searchParams.append('q', params.q);
+                if (params.category) searchParams.append('category', params.category);
+                if (params.level) searchParams.append('level', params.level);
+                if (params.minPrice) searchParams.append('minPrice', params.minPrice);
+                if (params.maxPrice) searchParams.append('maxPrice', params.maxPrice);
+                return `/courses/search?${searchParams.toString()}`;
+            },
             providesTags: [{ type: 'Course', id: 'LIST' }],
         }),
     }),

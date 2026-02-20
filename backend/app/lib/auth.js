@@ -86,7 +86,7 @@ export const auth = betterAuth({
         },
       },
       update: {
-        before: async ({ user, data, context }) => {
+        before: async (data, context) => {
           console.log("--- databaseHooks: user.update.before ---");
 
           const cookieHeader = context.request.headers.get("cookie");
