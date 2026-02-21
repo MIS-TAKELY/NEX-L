@@ -3,19 +3,26 @@ import nodemailer from "nodemailer";
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.MAIL_USER, // your gmail
-    pass: process.env.MAIL_PASS, // Gmail App Password (NOT your normal password)
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS,
   },
 });
 
-export async function sendEmail({ to, subject, Component, props }) {
-  // const html = renderEmail(Component, props);
+// Verify connection configuration
+transporter.verify(function (error, success) {
+  if (error) {
+    console.error("Transporter connection error:", error);
+  } else {
+    console.log("Transporter is ready to take our messages");
+  }
+});
 
+export async function sendEmail({ to, subject, html }) {
   await transporter.sendMail({
-    from: `"Your App" <${process.env.MAIL_USER}>`,
+    from: `"NEX-L Support" <${process.env.MAIL_USER}>`,
     to,
     subject,
-    html: "hello",
+    html,
   });
 
   console.log("Email sent to", to);

@@ -95,6 +95,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
         {/* STUDENT ROUTES */}
         <Route
           path="/student"
