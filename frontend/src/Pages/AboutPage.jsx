@@ -68,7 +68,7 @@ const AboutPage = () => {
 
       {/* ── HERO ─────────────────────────────────────────── */}
       <div
-        className="relative w-full h-[420px] flex items-center justify-center overflow-hidden"
+        className="relative w-full h-105 flex items-center justify-center overflow-hidden"
         style={{
           background:
             "linear-gradient(135deg, #0d1f30 0%, #1B3452 50%, #2a4f78 100%)",
