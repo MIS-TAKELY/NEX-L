@@ -23,9 +23,9 @@ const ForgotPassword = () => {
         <div className="relative z-10 mb-20">
           <button 
             onClick={() => navigate(-1)}
-            className="absolute -top-32 left-0 flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+            className="absolute -top-32 left-0 flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all font-medium backdrop-blur-sm border border-white/20 shadow-sm"
           >
-            <Icon icon="solar:alt-arrow-left-linear" /> go back
+            <Icon icon="solar:alt-arrow-left-linear" className="w-5 h-5" /> go back
           </button>
           
           <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-4">
@@ -56,9 +56,9 @@ const ForgotPassword = () => {
            <div className="lg:hidden mb-8">
             <button 
               onClick={() => navigate(-1)}
-              className="flex items-center gap-2 text-gray-500 hover:text-[#677691] transition-colors mb-6"
+              className="flex items-center gap-2 px-4 py-2 bg-primary/5 hover:bg-primary/10 text-primary rounded-full transition-all font-medium mb-6 border border-primary/10"
             >
-              <Icon icon="solar:alt-arrow-left-linear" /> go back
+              <Icon icon="solar:alt-arrow-left-linear" className="w-5 h-5" /> go back
             </button>
             <h1 className="text-3xl font-bold text-primary">NEXL</h1>
           </div>

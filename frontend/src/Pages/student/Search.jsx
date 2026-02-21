@@ -29,7 +29,7 @@ const Search = () => {
         if (level) params.level = level;
         if (priceRange !== "all") params.priceRange = priceRange;
         setSearchParams(params, { replace: true });
-    }, [q, category, level, priceRange]);
+    }, [q, category, level, priceRange, setSearchParams]);
 
     const categories = ["Web Development", "Data Science", "Mobile Development", "Design", "Business"];
     const levels = ["Beginner", "Intermediate", "Advanced"];
