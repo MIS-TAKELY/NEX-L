@@ -95,7 +95,6 @@ export default function App() {
             </ProtectedRoute>
           }
         />
->>>>>>> 5bb20a5 (added:search page)
 
         {/* STUDENT ROUTES */}
         <Route

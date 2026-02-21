@@ -12,6 +12,7 @@ import uploadRouter from "../app/routes/upload.routes.js";
 import paymentRouter from "../app/routes/payment.routes.js";
 import cartRouter from "../app/routes/cart.routes.js";
 import enrollmentRouter from "../app/routes/enrollment.routes.js";
+import contactRouter from "../app/routes/contact.routes.js";
 
 const app = express();
 
@@ -43,6 +44,7 @@ app.use("/api/v1/upload", uploadRouter);
 app.use("/api/v1/payments", paymentRouter);
 app.use("/api/v1/cart", cartRouter);
 app.use("/api/v1/enrollments", enrollmentRouter);
+app.use("/api/v1/contact", contactRouter);
 
 // Error logger - MUST BE LAST
 app.use((err, req, res, next) => {

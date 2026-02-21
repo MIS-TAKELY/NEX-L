@@ -1,5 +1,7 @@
 import { CheckCircle, Mail, MapPin, Phone, Send } from "lucide-react";
 import { useState } from "react";
+import { useSendContactFormMutation } from "../../store/slices/contactApi";
+import { useToast } from "../../context/ToastContext";
 
 const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -9,20 +11,25 @@ const ContactSection = () => {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [sendContactForm, { isLoading: loading }] = useSendContactFormMutation();
+  const { showToast } = useToast();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    // Simulate async submission
-    setTimeout(() => {
-      setLoading(false);
-      setSubmitted(true);
-    }, 1200);
+    try {
+      const result = await sendContactForm(formData).unwrap();
+      if (result.success) {
+        setSubmitted(true);
+        showToast("Message sent successfully!", "success");
+      }
+    } catch (error) {
+      console.error("Failed to send message:", error);
+      showToast(error?.data?.message || "Failed to send message. Please try again.", "error");
+    }
   };
 
   const contactInfo = [
