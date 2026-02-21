@@ -143,7 +143,7 @@ const AboutPage = () => {
                   Empowering Minds,<br />Building Futures
                 </p>
                 <p className="text-white/60 text-xs">
-                  Since 2022 · Kathmandu, Nepal
+                  Since 2082 · Itahari, Nepal
                 </p>
               </div>
             </div>
@@ -155,9 +155,8 @@ const AboutPage = () => {
               Heritage &amp; Vision
             </h2>
             <p className="text-gray-500 leading-relaxed text-sm">
-              Our journey began in a small co-working space in Kathmandu with a team of five
-              passionate educators and developers. Today NEX-L serves tens of thousands of
-              learners and continues to grow — guided by the same values that sparked it all:
+              Our journey began in a small co-working space with
+              passionate developers guided by the  values that sparked it all:
               quality, inclusivity and impact.
             </p>
             <p className="text-gray-500 leading-relaxed text-sm mt-4">
@@ -216,7 +215,7 @@ const AboutPage = () => {
             <span className="inline-block px-4 py-1.5 mb-4 text-xs font-semibold tracking-widest uppercase rounded-full bg-primary/10 text-primary border border-primary/20">
               The People Behind NEX-L
             </span>
-            <h2 className="text-3xl font-bold text-gray-800">Leadership Insights</h2>
+            <h2 className="text-3xl font-bold text-gray-800">Team Members</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {team.map((member, i) => (
