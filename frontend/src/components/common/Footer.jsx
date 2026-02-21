@@ -14,7 +14,7 @@ const Footer = () => {
                              </div>
                             <div className='flex flex-col'>
                                 <span className="text-xl font-bold leading-none">NEXL</span>
-                                <span className='text-[10px] tracking-widest uppercase opacity-80'>Education</span>
+    
                             </div>
                         </div>
                         <p className="text-gray-300 text-sm leading-relaxed">
@@ -28,9 +28,7 @@ Empowering students across Nepal through modern learning experiences that combin
                         <ul className="space-y-4 text-gray-300 text-sm">
                             <li><a href="#" className="hover:text-white transition-colors">About NEXL</a></li>
                             <li><a href="#" className="hover:text-white transition-colors">LMS Platform</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Gallery</a></li>
                             <li><a href="#" className="hover:text-white transition-colors">Blogs</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Projects</a></li>
                             <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
                         </ul>
                     </div>
@@ -41,10 +39,11 @@ Empowering students across Nepal through modern learning experiences that combin
                         <ul className="space-y-4 text-gray-300 text-sm">
                             <li><a href="#" className="hover:text-white transition-colors">IT Courses & Training</a></li>
                             <li><a href="#" className="hover:text-white transition-colors">LMS System</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">School Management System</a></li>
+        
                             <li><a href="#" className="hover:text-white transition-colors">Web Development</a></li>
                             <li><a href="#" className="hover:text-white transition-colors">Mobile App Development</a></li>
                             <li><a href="#" className="hover:text-white transition-colors">Digital Marketing</a></li>
+                            <li><a href="#" className="hover:text-white transition-colors">Design</a></li>
                         </ul>
                     </div>
 
@@ -55,11 +54,11 @@ Empowering students across Nepal through modern learning experiences that combin
                             <ul className="space-y-4 text-gray-300 text-sm">
                                 <li className="flex items-center gap-3">
                                     <Icon icon="solar:letter-linear" className="text-accent" size={18} />
-                                    <span>hello@nexl.edu.np</span>
+                                    <span>nexl6911@gmail.com</span>
                                 </li>
                                 <li className="flex items-center gap-3">
                                     <Icon icon="solar:phone-calling-linear" className="text-accent" size={18} />
-                                    <span>+977 9827093876</span>
+                                    <span>+977 9800000000</span>
                                 </li>
                                 <li className="flex items-center gap-3">
                                     <Icon icon="solar:map-point-linear" className="text-accent" size={18} />
