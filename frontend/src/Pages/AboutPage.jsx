@@ -1,11 +1,11 @@
 import {
-    Award,
-    BookOpen,
-    Globe,
-    Heart,
-    Lightbulb,
-    Target,
-    Users,
+  Award,
+  BookOpen,
+  Globe,
+  Heart,
+  Lightbulb,
+  Target,
+  Users,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/common/Footer";
@@ -22,21 +22,21 @@ const stats = [
 const team = [
   {
     name: "Sachin Sharma",
-    role: "CEO & Co-Founder",
-    bio: "Visionary leader passionate about democratising quality education across Nepal and beyond.",
+    role: "Backend Developer",
+    bio: "Passionate about building scalable and robust backend systems to power NEX-L.",
     initials: "SS",
   },
   {
-    name: "Aarav Shrestha",
-    role: "Head of Curriculum",
-    bio: "Former professor with 15 years of experience designing impactful learning experiences.",
-    initials: "AS",
+    name: "Prashiksha Shrestha",
+    role: "Frontend Developer",
+    bio: "Creating intuitive, responsive, and engaging user experiences for our learners.",
+    initials: "PS",
   },
   {
-    name: "Priya Joshi",
-    role: "CTO",
-    bio: "Full-stack engineer who built NEX-L's platform from the ground up with a focus on performance.",
-    initials: "PJ",
+    name: "Sidhant Shungel",
+    role: "Backend Developer",
+    bio: "Developing secure and high-performance server-side applications.",
+    initials: "SS",
   },
 ];
 
@@ -68,7 +68,7 @@ const AboutPage = () => {
 
       {/* ── HERO ─────────────────────────────────────────── */}
       <div
-        className="relative w-full h-[420px] flex items-center justify-center overflow-hidden"
+        className="relative w-full h-105 flex items-center justify-center overflow-hidden"
         style={{
           background:
             "linear-gradient(135deg, #0d1f30 0%, #1B3452 50%, #2a4f78 100%)",
@@ -143,7 +143,7 @@ const AboutPage = () => {
                   Empowering Minds,<br />Building Futures
                 </p>
                 <p className="text-white/60 text-xs">
-                  Since 2022 · Kathmandu, Nepal
+                  Since 2082 · Itahari, Nepal
                 </p>
               </div>
             </div>
@@ -155,9 +155,8 @@ const AboutPage = () => {
               Heritage &amp; Vision
             </h2>
             <p className="text-gray-500 leading-relaxed text-sm">
-              Our journey began in a small co-working space in Kathmandu with a team of five
-              passionate educators and developers. Today NEX-L serves tens of thousands of
-              learners and continues to grow — guided by the same values that sparked it all:
+              Our journey began in a small co-working space with
+              passionate developers guided by the  values that sparked it all:
               quality, inclusivity and impact.
             </p>
             <p className="text-gray-500 leading-relaxed text-sm mt-4">
@@ -216,7 +215,7 @@ const AboutPage = () => {
             <span className="inline-block px-4 py-1.5 mb-4 text-xs font-semibold tracking-widest uppercase rounded-full bg-primary/10 text-primary border border-primary/20">
               The People Behind NEX-L
             </span>
-            <h2 className="text-3xl font-bold text-gray-800">Leadership Insights</h2>
+            <h2 className="text-3xl font-bold text-gray-800">Team Members</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {team.map((member, i) => (
