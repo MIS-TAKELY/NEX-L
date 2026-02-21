@@ -9,7 +9,8 @@ const CoursesSection = () => {
 
   const getCourses = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/v1/courses");
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+      const res = await axios.get(`${backendUrl}/api/v1/courses`);
       setCourses(res.data);
     } catch (error) {
       console.error(error);
