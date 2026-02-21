@@ -1,11 +1,11 @@
 import {
-    Award,
-    BookOpen,
-    Globe,
-    Heart,
-    Lightbulb,
-    Target,
-    Users,
+  Award,
+  BookOpen,
+  Globe,
+  Heart,
+  Lightbulb,
+  Target,
+  Users,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/common/Footer";
@@ -22,21 +22,21 @@ const stats = [
 const team = [
   {
     name: "Sachin Sharma",
-    role: "CEO & Co-Founder",
-    bio: "Visionary leader passionate about democratising quality education across Nepal and beyond.",
+    role: "Backend Developer",
+    bio: "Passionate about building scalable and robust backend systems to power NEX-L.",
     initials: "SS",
   },
   {
-    name: "Aarav Shrestha",
-    role: "Head of Curriculum",
-    bio: "Former professor with 15 years of experience designing impactful learning experiences.",
-    initials: "AS",
+    name: "Prashiksha Shrestha",
+    role: "Frontend Developer",
+    bio: "Creating intuitive, responsive, and engaging user experiences for our learners.",
+    initials: "PS",
   },
   {
-    name: "Priya Joshi",
-    role: "CTO",
-    bio: "Full-stack engineer who built NEX-L's platform from the ground up with a focus on performance.",
-    initials: "PJ",
+    name: "Sidhant Shungel",
+    role: "Backend Developer",
+    bio: "Developing secure and high-performance server-side applications.",
+    initials: "SS",
   },
 ];
 
