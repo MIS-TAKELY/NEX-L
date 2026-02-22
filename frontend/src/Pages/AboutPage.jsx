@@ -1,12 +1,13 @@
 import {
-  Award,
-  BookOpen,
-  Globe,
-  Heart,
-  Lightbulb,
-  Target,
-  Users,
+    Award,
+    BookOpen,
+    Globe,
+    Heart,
+    Lightbulb,
+    Target,
+    Users,
 } from "lucide-react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/common/Footer";
 import Navbar from "../components/common/Navbar";
@@ -62,6 +63,9 @@ const values = [
 const AboutPage = () => {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div className="min-h-screen bg-white font-outfit text-gray-800">
       <Navbar />

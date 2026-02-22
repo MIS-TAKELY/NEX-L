@@ -243,7 +243,7 @@ const SignUp = () => {
                 <input
                   id="phoneNumber"
                   name="phoneNumber"
-                  placeholder="9827093876"
+                  placeholder=""
                   type="tel"
                   value={formData.phoneNumber}
                   onChange={handleChange}
@@ -260,7 +260,7 @@ const SignUp = () => {
                   <input
                     id="password"
                     name="createNewPassword"
-                    placeholder="••••••••"
+                    placeholder=""
                     type="password"
                     value={formData.createNewPassword}
                     onChange={handleChange}
@@ -276,7 +276,7 @@ const SignUp = () => {
                   <input
                     id="confirmPassword"
                     name="confirmPassword"
-                    placeholder="••••••••"
+                    placeholder=""
                     type="password"
                     value={formData.confirmPassword}
                     onChange={handleChange}
