@@ -72,11 +72,15 @@ export const auth = betterAuth({
           const pendingRole = cookies["pending_role"];
           console.log("Cookie pending_role found:", pendingRole);
 
+          // Priority: 1) pending_role cookie (social login), 2) role from signup form, 3) default "student"
           if (pendingRole && (pendingRole === "student" || pendingRole === "instructor")) {
-            console.log(`Setting user role to ${pendingRole} from database hook`);
+            console.log(`Setting user role to ${pendingRole} from pending_role cookie (social login)`);
             user.role = pendingRole;
+          } else if (user.role && (user.role === "student" || user.role === "instructor")) {
+            console.log(`Keeping user role as ${user.role} from signup form`);
+            // user.role is already set correctly — no override needed
           } else {
-            console.log("No valid pending_role cookie, defaulting to student");
+            console.log("No valid role found from cookie or form, defaulting to student");
             user.role = "student";
           }
 
