@@ -1,11 +1,11 @@
 import {
-    Award,
-    BookOpen,
-    Globe,
-    Heart,
-    Lightbulb,
-    Target,
-    Users,
+  Award,
+  BookOpen,
+  Globe,
+  Heart,
+  Lightbulb,
+  Target,
+  Users,
 } from "lucide-react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -24,7 +24,7 @@ const team = [
   {
     name: "Sachin Sharma",
     role: "Backend Developer",
-    bio: "Passionate about building scalable and robust backend systems to power NEX-L.",
+    bio: "Passionate about building scalable and robust backend systems to power NEXL.",
     initials: "SS",
   },
   {
@@ -159,13 +159,12 @@ const AboutPage = () => {
               Heritage &amp; Vision
             </h2>
             <p className="text-gray-500 leading-relaxed text-sm">
-              Our journey began in a small co-working space with
-              passionate developers guided by the  values that sparked it all:
-              quality, inclusivity and impact.
+             NEXL was born in a small co-working space, built by passionate developers united by a shared commitment to quality, inclusivity, and lasting impact.
+
+
             </p>
             <p className="text-gray-500 leading-relaxed text-sm mt-4">
-              We envision a Nepal where skill gaps no longer determine someone's future, and
-              where lifelong learning is the norm rather than the exception.
+              We imagine a Nepal where opportunities are not limited by skill gaps, and where continuous learning empowers individuals to grow, adapt, and succeed throughout their lives.
             </p>
           </div>
         </div>
@@ -217,7 +216,7 @@ const AboutPage = () => {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <span className="inline-block px-4 py-1.5 mb-4 text-xs font-semibold tracking-widest uppercase rounded-full bg-primary/10 text-primary border border-primary/20">
-              The People Behind NEX-L
+              The People Behind NEXL
             </span>
             <h2 className="text-3xl font-bold text-gray-800">Team Members</h2>
           </div>
@@ -249,7 +248,7 @@ const AboutPage = () => {
             Ready to Start Learning?
           </h2>
           <p className="text-white/70 mb-8">
-            Join thousands of learners already building their future with NEX-L.
+            Join thousands of learners already building their future with NEXL.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
