@@ -86,13 +86,15 @@ export const createCourse = async (req, res) => {
       await course.save();
     }
 
-    const populatedCourse = await Course.findById(course._id).populate({
-      path: "sections",
-      populate: {
-        path: "contents",
-        model: "Content",
-      },
-    });
+    const populatedCourse = await Course.findById(course._id)
+      .populate("teacher")
+      .populate({
+        path: "sections",
+        populate: {
+          path: "contents",
+          model: "Content",
+        },
+      });
 
     res.status(201).json(populatedCourse);
   } catch (err) {
@@ -482,13 +484,15 @@ export const updateCourse = async (req, res) => {
 
     await course.save();
 
-    const populatedCourse = await Course.findById(id).populate({
-      path: "sections",
-      populate: {
-        path: "contents",
-        model: "Content",
-      },
-    });
+    const populatedCourse = await Course.findById(id)
+      .populate("teacher")
+      .populate({
+        path: "sections",
+        populate: {
+          path: "contents",
+          model: "Content",
+        },
+      });
 
     res.json(populatedCourse);
   } catch (err) {
