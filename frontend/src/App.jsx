@@ -1,12 +1,13 @@
-import { Route, Routes } from "react-router-dom";
-import { useEffect, lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { useDispatch } from "react-redux";
+import { Route, Routes } from "react-router-dom";
 
 // STUDENT PAGES
 import Loading from "./components/student/Loading";
 import AboutPage from "./Pages/AboutPage";
 import ContactPage from "./Pages/ContactPage";
 import LandingPage from "./Pages/LandingPage";
+import PrivacyPolicy from "./Pages/PrivacyPolicy";
 import Cart from "./Pages/student/Cart";
 import CourseDetails from "./Pages/student/CourseDetails";
 import ForgotPassword from "./Pages/student/ForgotPassword";
@@ -42,7 +43,7 @@ import AdminDashboard from "./Pages/admin/Dashboard";
 import AdminUsers from "./Pages/admin/Users";
 
 import { getSession } from "@/lib/auth.client";
-import { setCredentials, setLoading, logout } from "@/store/slices/authSlice";
+import { logout, setCredentials, setLoading } from "@/store/slices/authSlice";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 
 export default function App() {
@@ -76,6 +77,7 @@ export default function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/course-list" element={<CoursesList />} />
         <Route path="/course-list/:input" element={<CoursesList />} />
         <Route path="/search" element={<Search />} />
