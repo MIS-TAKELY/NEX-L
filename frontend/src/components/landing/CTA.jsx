@@ -5,7 +5,7 @@ const CTA = () => {
 
   return (
     <div className="flex justify-center items-center py-20 px-4">
-      <div className="max-w-4xl w-full bg-white dark:bg-zinc-900 rounded-[2rem] border-2 border-primary/5 p-8 sm:p-12 text-center relative overflow-hidden shadow-2xl shadow-primary/5">
+      <div className="max-w-4xl w-full bg-white dark:bg-zinc-900 rounded-2xl border-2 border-primary/5 p-8 sm:p-12 text-center relative overflow-hidden shadow-2xl shadow-primary/5">
         {/* Subtle decorative background element */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none" />
         
@@ -18,7 +18,7 @@ const CTA = () => {
           </p>
           <button 
             onClick={() => navigate('/signup')} 
-            className="px-12 py-4 bg-primary text-white rounded-full font-bold hover:bg-primary-hover transition-all shadow-xl shadow-primary/20 hover:shadow-primary/40 active:scale-95 transform tracking-wide"
+            className="px-12 py-4 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover transition-all shadow-xl shadow-primary/20 hover:shadow-primary/40 active:scale-95 transform tracking-wide"
           >
             Sign Up Now
           </button>

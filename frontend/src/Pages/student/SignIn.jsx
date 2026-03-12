@@ -141,7 +141,7 @@ const SignIn = () => {
                       type="button"
                       onClick={() => setRole(r)}
                       className={cn(
-                        "py-2 px-3 rounded-lg text-xs font-bold transition-all border capitalize",
+                        "py-2 px-3 rounded-md text-xs font-bold transition-all border capitalize",
                         role === r
                           ? "bg-primary text-white border-primary shadow-md"
                           : "bg-muted text-muted-foreground border-border hover:border-primary/50",
@@ -203,7 +203,7 @@ const SignIn = () => {
             </div>
 
             <button
-              className="relative block h-10 w-full rounded-md bg-primary text-white font-medium shadow-md hover:bg-primary/90 transition-all disabled:opacity-50"
+              className="relative block h-10 w-full rounded-lg bg-primary text-white font-medium shadow-md hover:bg-primary/90 transition-all disabled:opacity-50"
               type="submit"
               disabled={loading}
             >

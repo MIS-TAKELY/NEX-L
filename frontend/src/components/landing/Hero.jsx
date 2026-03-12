@@ -39,7 +39,7 @@ const Hero = () => {
             transition-all duration-500
             p-6 md:px-8 lg:px-12 md:py-10
             border-4 border-primary
-            rounded-3xl
+            rounded-2xl
             group
           "
         >
@@ -60,14 +60,14 @@ const Hero = () => {
               </div>
             </div>
 
-            <select className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary outline-none">
+            <select className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary outline-none">
               <option>All Categories</option>
               <option>Web Development</option>
               <option>Data Science</option>
               <option>Design</option>
             </select>
 
-            <select className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary outline-none">
+            <select className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary outline-none">
               <option>All Levels</option>
               <option>Beginner</option>
               <option>Intermediate</option>
@@ -76,7 +76,7 @@ const Hero = () => {
 
             <button
               onClick={() => navigate("/course-list")}
-              className="w-full px-8 py-3 md:py-4 bg-primary text-white rounded-xl font-bold hover:bg-primary-hover transition shadow-md"
+              className="w-full px-8 py-3 md:py-4 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover transition shadow-md"
             >
               Search
             </button>

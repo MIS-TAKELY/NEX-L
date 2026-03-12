@@ -77,7 +77,7 @@ const Cart = () => {
           <p className="text-gray-600 dark:text-zinc-400 mb-8">Add some courses to get started!</p>
           <button
             onClick={() => navigate('/course-list')}
-            className="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary-hover transition-all shadow-md"
+            className="px-8 py-3 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover transition-all shadow-md"
           >
             Browse Courses
           </button>
@@ -123,7 +123,7 @@ const Cart = () => {
                       <img
                         src={item.course.thumbnail}
                         alt={item.course.title}
-                        className="w-32 h-32 object-cover rounded-xl"
+                        className="w-32 h-32 object-cover rounded-lg"
                       />
                     </div>
 
@@ -140,7 +140,7 @@ const Cart = () => {
                         </div>
                         <button
                           onClick={() => handleRemove(item.course._id)}
-                          className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                          className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
                           title="Remove from cart"
                         >
                           <Icon icon="solar:trash-bin-trash-bold" size={24} />
@@ -219,7 +219,7 @@ const Cart = () => {
               <button
                 onClick={handleCheckout}
                 disabled={selectedCourses.length === 0}
-                className={`w-full py-4 rounded-xl font-bold transition-all shadow-md mb-3 ${selectedCourses.length === 0
+                className={`w-full py-4 rounded-lg font-bold transition-all shadow-md mb-3 ${selectedCourses.length === 0
                     ? 'bg-gray-300 dark:bg-zinc-700 text-gray-500 dark:text-zinc-500 cursor-not-allowed'
                     : 'bg-primary text-white hover:bg-primary-hover'
                   }`}
@@ -232,7 +232,7 @@ const Cart = () => {
 
               <button
                 onClick={() => navigate('/course-list')}
-                className="w-full py-4 bg-white dark:bg-zinc-800 border-2 border-primary text-primary rounded-xl font-bold hover:bg-primary hover:text-white dark:hover:bg-primary transition-all"
+                className="w-full py-4 bg-white dark:bg-zinc-800 border-2 border-primary text-primary rounded-lg font-bold hover:bg-primary hover:text-white dark:hover:bg-primary transition-all"
               >
                 Continue Shopping
               </button>

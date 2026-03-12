@@ -77,9 +77,9 @@ const ContactSection = () => {
             {contactInfo.map((item, idx) => (
               <div
                 key={idx}
-                className="flex items-start gap-4 p-5 rounded-2xl bg-primary/5 border border-primary/15 hover:bg-primary/10 transition-all duration-300"
+                className="flex items-start gap-4 p-5 rounded-xl bg-primary/5 border border-primary/15 hover:bg-primary/10 transition-all duration-300"
               >
-                <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center text-primary">
+                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/15 flex items-center justify-center text-primary">
                   {item.icon}
                 </div>
                 <div>
@@ -100,7 +100,7 @@ const ContactSection = () => {
           </div>
 
           {/* Form Panel */}
-          <div className="lg:col-span-3 bg-white rounded-3xl shadow-2xl p-8 md:p-10">
+          <div className="lg:col-span-3 bg-white rounded-2xl shadow-2xl p-8 md:p-10">
             {submitted ? (
               <div className="flex flex-col items-center justify-center h-full py-12 gap-4 text-center">
                 <CheckCircle className="w-16 h-16 text-primary" />
@@ -116,7 +116,7 @@ const ContactSection = () => {
                     setSubmitted(false);
                     setFormData({ name: "", email: "", subject: "", message: "" });
                   }}
-                  className="mt-4 px-6 py-2.5 rounded-xl bg-primary text-white font-semibold hover:bg-primary-hover transition-colors duration-200"
+                  className="mt-4 px-6 py-2.5 rounded-lg bg-primary text-white font-semibold hover:bg-primary-hover transition-colors duration-200"
                 >
                   Send Another
                 </button>
@@ -149,7 +149,7 @@ const ContactSection = () => {
                       onChange={handleChange}
                       required
                       placeholder="john@example.com"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:border-primary focus:outline-none transition-colors duration-200"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-gray-800 placeholder-gray-400 focus:border-primary focus:outline-none transition-colors duration-200"
                     />
                   </div>
                 </div>
@@ -165,7 +165,7 @@ const ContactSection = () => {
                     onChange={handleChange}
                     required
                     placeholder="How can we help you?"
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:border-primary focus:outline-none transition-colors duration-200"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-gray-800 placeholder-gray-400 focus:border-primary focus:outline-none transition-colors duration-200"
                   />
                 </div>
 
@@ -180,14 +180,14 @@ const ContactSection = () => {
                     required
                     rows={5}
                     placeholder="Tell us more about your query..."
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:border-primary focus:outline-none transition-colors duration-200 resize-none"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-gray-800 placeholder-gray-400 focus:border-primary focus:outline-none transition-colors duration-200 resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-primary text-white rounded-xl font-bold hover:bg-primary-hover active:scale-[0.98] transition-all duration-200 shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover active:scale-[0.98] transition-all duration-200 shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>

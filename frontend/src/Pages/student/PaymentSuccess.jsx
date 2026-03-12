@@ -109,7 +109,7 @@ const PaymentSuccess = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center p-6 font-sans text-slate-800">
-            <div className="bg-white p-12 rounded-[3.5rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.08)] max-w-xl w-full text-center border border-slate-50">
+            <div className="bg-white p-12 rounded-2xl shadow-[0_40px_100px_-20px_rgba(0,0,0,0.08)] max-w-xl w-full text-center border border-slate-50">
                 {verifying ? (
                     <div className="py-16">
                         <div className="w-24 h-24 mx-auto mb-10 relative">
@@ -133,7 +133,7 @@ const PaymentSuccess = () => {
                             </div>
                             <button
                                 onClick={() => navigate('/student/my-enrollments')}
-                                className="w-full py-6 bg-slate-900 text-white font-black rounded-3xl hover:bg-black transition-all transform active:scale-95 shadow-2xl shadow-slate-200"
+                                className="w-full py-6 bg-slate-900 text-white font-black rounded-lg hover:bg-black transition-all transform active:scale-95 shadow-2xl shadow-slate-200"
                             >
                                 START LEARNING NOW
                             </button>
@@ -146,7 +146,7 @@ const PaymentSuccess = () => {
                         </div>
                         <h2 className="text-4xl font-black mb-6 tracking-tighter">Verification Issue</h2>
 
-                        <div className="bg-slate-50 p-8 rounded-[2.5rem] mb-10 text-left border border-slate-100 shadow-inner overflow-hidden">
+                        <div className="bg-slate-50 p-8 rounded-2xl mb-10 text-left border border-slate-100 shadow-inner overflow-hidden">
                             <div className="flex items-center gap-2 mb-6">
                                 <span className="px-3 py-1 bg-red-100 text-red-600 text-[10px] font-black rounded-full uppercase tracking-widest">Diagnostic Report</span>
                             </div>
@@ -156,7 +156,7 @@ const PaymentSuccess = () => {
                             </p>
 
                             <div className="space-y-4">
-                                <div className="bg-white/60 p-6 rounded-3xl border border-slate-200 shadow-sm">
+                                <div className="bg-white/60 p-6 rounded-2xl border border-slate-200 shadow-sm">
                                     <p className="text-[10px] font-black text-slate-300 uppercase mb-3 tracking-widest">Technical Data</p>
                                     <pre className="text-[11px] font-mono text-slate-500 max-h-64 overflow-y-auto whitespace-pre-wrap leading-relaxed">
                                         {JSON.stringify(errorDetails || { info: 'No details available' }, null, 2)}
@@ -174,7 +174,7 @@ const PaymentSuccess = () => {
                         <div className="flex flex-col gap-4">
                             <button
                                 onClick={() => window.location.reload()}
-                                className="w-full py-6 bg-blue-600 text-white font-bold rounded-[1.5rem] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100"
+                                className="w-full py-6 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all shadow-xl shadow-blue-100"
                             >
                                 Try Refreshing
                             </button>
