@@ -34,7 +34,7 @@ const team = [
     initials: "PS",
   },
   {
-    name: "Sidhant Shungel",
+    name: "Sidhant Dhungel",
     role: "Backend Developer",
     bio: "Developing secure and high-performance server-side applications.",
     initials: "SS",

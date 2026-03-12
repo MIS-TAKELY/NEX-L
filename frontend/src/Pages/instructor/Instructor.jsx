@@ -1,5 +1,5 @@
-import { Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Outlet } from "react-router-dom";
 import ProfileDropdown from "../../components/common/ProfileDropdown";
 import Sidebar from "../../components/common/Sidebar";
 
@@ -32,6 +32,11 @@ const Instructor = () => {
       name: "Messages",
       icon: "solar:chat-round-dots-linear",
       path: "/instructor/messages",
+    },
+    {
+      name: "Settings",
+      icon: "solar:settings-bold-duotone",
+      path: "/instructor/settings",
     },
   ];
   // 

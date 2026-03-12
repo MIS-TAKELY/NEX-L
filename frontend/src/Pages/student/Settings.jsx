@@ -3,10 +3,10 @@ import { Icon } from '@iconify/react';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-const InstructorSettings = () => {
+const StudentSettings = () => {
   const dispatch = useDispatch();
   const { userData } = useSelector((state) => state.auth);
-
+  
   const [name, setName] = useState(userData?.name || '');
   const [email, setEmail] = useState(userData?.email || '');
   const [imagePreview, setImagePreview] = useState(userData?.image || null);
@@ -38,33 +38,33 @@ const InstructorSettings = () => {
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto font-outfit w-full">
+    <div className="p-8 max-w-4xl mx-auto font-outfit w-full animation-fade-in">
       <div className="mb-8 flex items-center gap-4">
         <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
           <Icon icon="solar:settings-bold-duotone" size={28} />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Account Settings</h1>
-          <p className="text-muted-foreground mt-1">Manage your profile information and account details.</p>
+          <h1 className="text-3xl font-bold text-gray-900">Account Settings</h1>
+          <p className="text-gray-500 mt-1">Manage your profile information and account details.</p>
         </div>
       </div>
 
-      <div className="bg-card rounded-3xl border border-border shadow-sm p-8 transition-all hover:shadow-md">
+      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 transition-all hover:shadow-md">
         <form onSubmit={handleSave} className="space-y-8">
-
+          
           {/* Profile Photo Section */}
           <div className="flex flex-col gap-4">
-            <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+            <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
               <Icon icon="solar:camera-outline" className="text-primary" size={24} />
               Profile Photo
             </h3>
-            <div className="flex items-center gap-6 bg-muted/50 p-6 rounded-2xl border border-border">
+            <div className="flex items-center gap-6 bg-gray-50 p-6 rounded-2xl border border-gray-100">
               <div className="relative group cursor-pointer" onClick={() => fileInputRef.current.click()}>
-                <div className="w-24 h-24 rounded-full bg-card border-4 border-background shadow-md overflow-hidden flex items-center justify-center group-hover:border-primary/20 transition-all">
+                <div className="w-24 h-24 rounded-full bg-white border-4 border-white shadow-md overflow-hidden flex items-center justify-center group-hover:border-primary/20 transition-all">
                   {imagePreview ? (
                     <img src={imagePreview} alt="Profile preview" className="w-full h-full object-cover" />
                   ) : (
-                    <Icon icon="solar:user-circle-bold-duotone" size={48} className="text-muted-foreground" />
+                    <Icon icon="solar:user-circle-bold-duotone" size={48} className="text-gray-400" />
                   )}
                 </div>
                 <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -79,8 +79,8 @@ const InstructorSettings = () => {
                 />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-bold text-foreground mb-1">Upload a new photo</p>
-                <p className="text-xs text-muted-foreground mb-4 max-w-sm">
+                <p className="text-sm font-bold text-gray-900 mb-1">Upload a new photo</p>
+                <p className="text-xs text-gray-500 mb-4 max-w-sm">
                   Recommended size is 256x256px. Supported formats: JPG, PNG, or GIF. Max size 2MB.
                 </p>
                 <button
@@ -94,43 +94,43 @@ const InstructorSettings = () => {
             </div>
           </div>
 
-          <div className="w-full h-px bg-border"></div>
+          <div className="w-full h-px bg-gray-100"></div>
 
           {/* Personal Information Section */}
           <div className="flex flex-col gap-4">
-            <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+            <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
               <Icon icon="solar:user-id-outline" className="text-primary" size={24} />
               Personal Information
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-muted/50 p-6 rounded-2xl border border-border">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-6 rounded-2xl border border-gray-100">
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-bold text-foreground/80">Full Name</label>
+                <label className="text-sm font-bold text-gray-700">Full Name</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
                     <Icon icon="solar:user-bold-duotone" size={20} />
                   </div>
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 bg-card rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm text-foreground"
+                    className="w-full pl-11 pr-4 py-3 bg-white rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
                     placeholder="Enter your full name"
                     required
                   />
                 </div>
               </div>
-
+              
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-bold text-foreground/80">Email Address</label>
+                <label className="text-sm font-bold text-gray-700">Email Address</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
                     <Icon icon="solar:letter-bold-duotone" size={20} />
                   </div>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 bg-card rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm text-foreground"
+                    className="w-full pl-11 pr-4 py-3 bg-white rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
                     placeholder="Enter your email address"
                     required
                   />
@@ -139,7 +139,7 @@ const InstructorSettings = () => {
             </div>
           </div>
 
-          <div className="flex justify-end pt-6 border-t border-border">
+          <div className="flex justify-end pt-6 border-t border-gray-100">
             <button
               type="submit"
               className="flex items-center gap-2 px-8 py-3.5 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/25 hover:bg-primary/90 hover:-translate-y-0.5 active:translate-y-0 transition-all"
@@ -154,4 +154,4 @@ const InstructorSettings = () => {
   );
 };
 
-export default InstructorSettings;
+export default StudentSettings;

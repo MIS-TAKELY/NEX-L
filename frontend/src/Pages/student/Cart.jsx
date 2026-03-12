@@ -234,7 +234,7 @@ const Cart = () => {
                 onClick={() => navigate('/course-list')}
                 className="w-full py-4 bg-white dark:bg-zinc-800 border-2 border-primary text-primary rounded-xl font-bold hover:bg-primary hover:text-white dark:hover:bg-primary transition-all"
               >
-                Continue Shopping
+                Add More Courses
               </button>
             </div>
           </div>

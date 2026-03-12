@@ -66,10 +66,10 @@ const StudentSidebar = () => {
       <div className="mt-auto pt-6 border-t border-gray-100">
         <p className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-wider">Settings</p>
         <nav className="space-y-2">
-          <button className="flex items-center gap-3 px-4 py-2 w-full text-gray-500 hover:text-gray-900 rounded-xl hover:bg-gray-50 transition-colors">
+          <NavLink to="/student/settings" className={({ isActive }) => `flex items-center gap-3 px-4 py-2 w-full rounded-xl transition-colors ${isActive ? 'bg-gray-50 text-gray-900 font-bold border-l-4 border-primary' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}>
             <span>⚙️</span>
-            <span className="font-medium">Setting</span>
-          </button>
+            <span className="font-medium">Settings</span>
+          </NavLink>
           <button className="flex items-center gap-3 px-4 py-2 w-full text-red-500 hover:bg-red-50 rounded-xl transition-colors">
             <span>🚪</span>
             <span className="font-medium">Logout</span>
