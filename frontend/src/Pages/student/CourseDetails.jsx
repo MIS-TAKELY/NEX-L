@@ -91,7 +91,7 @@ const CourseDetails = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Left Column - Course Details & Syllabus */}
           <div className="lg:col-span-2 space-y-12">
-            <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 mt-13">
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 mt-13">
               <h1 className="text-4xl font-extrabold text-primary mb-2">
                 {course.title}
               </h1>
@@ -102,7 +102,7 @@ const CourseDetails = () => {
 
             {/* Syllabus Document Section (if available) */}
             {course.syllabus && (
-              <section className="bg-blue-50 rounded-3xl p-8 border border-blue-100 shadow-sm">
+              <section className="bg-blue-50 rounded-2xl p-8 border border-blue-100 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <FileText className="text-blue-600" size={32} />
@@ -129,7 +129,7 @@ const CourseDetails = () => {
 
             {/* Course Curriculum Section */}
             {course.sections && course.sections.length > 0 && (
-              <section className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
+              <section className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
                 <div className="flex items-center gap-4 mb-8">
                   <h2
                     className="text-3xl font-bold text-gray-800"
@@ -200,7 +200,7 @@ const CourseDetails = () => {
             )}
 
             {/* Description Section */}
-            <section className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
+            <section className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">
                 Description
               </h2>
@@ -238,7 +238,7 @@ const CourseDetails = () => {
 
           {/* Right Column - Enrollment / Payment Sidebar */}
           <div className="lg:col-span-1">
-            <div className="sticky top-24 bg-white rounded-3xl p-8 shadow-xl border border-gray-50">
+            <div className="sticky top-24 bg-white rounded-2xl p-8 shadow-xl border border-gray-50">
               <div className="mb-8">
                 <h3 className="text-xl font-bold text-gray-800 mb-2">
                   Enroll Now

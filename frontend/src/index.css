@@ -7,11 +7,13 @@
 
 @theme {
   --color-primary: #1B3452;
-  --color-secondary: #F8FAFC;
-  --color-accent: #4F46E5;
   --color-primary-hover: #14263D;
   --color-primary-light: #2F4A6D;
+  --color-secondary: #F8FAFC;
+  --color-accent: #4F46E5;
   --color-accent-soft: #E0E7FF;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
 }
 
 *{
@@ -21,7 +23,7 @@
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   color: rgb(8, 8, 8);
-  --radius: 0.625rem;
+  --radius: 0.5rem;
   --background: #F8FAFC;
   --foreground: #0F172A;
   --card: #FFFFFF;

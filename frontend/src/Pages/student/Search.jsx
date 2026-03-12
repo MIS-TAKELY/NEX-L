@@ -43,7 +43,7 @@ const Search = () => {
                     <div className="flex flex-col lg:flex-row gap-8">
                         {/* Sidebar Filters */}
                         <aside className="w-full lg:w-80 space-y-8">
-                            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                                 <h3 className="text-xl font-bold text-primary mb-6 flex items-center gap-2">
                                     <Icon icon="solar:filter-bold-duotone" className="text-accent" />
                                     Filters
@@ -126,7 +126,7 @@ const Search = () => {
                                 <input
                                     type="text"
                                     placeholder="Search for anything..."
-                                    className="w-full pl-16 pr-6 py-5 bg-white border-2 border-transparent focus:border-primary rounded-[2rem] shadow-sm outline-none transition-all text-xl"
+                                    className="w-full pl-16 pr-6 py-5 bg-white border-2 border-transparent focus:border-primary rounded-2xl shadow-sm outline-none transition-all text-xl"
                                     value={q}
                                     onChange={(e) => setQ(e.target.value)}
                                 />
@@ -135,7 +135,7 @@ const Search = () => {
                             {isFetching ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                                     {[1, 2, 3, 4, 5, 6].map((i) => (
-                                        <CourseSkeleton key={i} />
+                                        <CourseSkeleton key={`skeleton-${i}`} />
                                     ))}
                                 </div>
                             ) : (

@@ -27,8 +27,8 @@ const CourseCard = ({ course }) => {
   };
 
   return (
-    <div className="group h-full flex flex-col bg-white dark:bg-zinc-900 rounded-[2rem] border-2 border-gray-100 dark:border-zinc-800 p-4 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5 hover:border-primary/20">
-      <div className="relative h-48 mb-4 overflow-hidden rounded-2xl bg-gray-100">
+    <div className="group h-full flex flex-col bg-white dark:bg-zinc-900 rounded-2xl border-2 border-gray-100 dark:border-zinc-800 p-4 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5 hover:border-primary/20">
+      <div className="relative h-48 mb-4 overflow-hidden rounded-xl bg-gray-100">
         <img
           src={course.thumbnail || "https://via.placeholder.com/400x225?text=No+Thumbnail"}
           alt={course.title}
@@ -75,7 +75,7 @@ const CourseCard = ({ course }) => {
       <div className="mt-6 flex gap-3">
         <button
           onClick={() => navigate(`/course/${course._id}`)}
-          className="flex-1 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary-hover transition-all shadow-md active:scale-95 flex items-center justify-center gap-2 group"
+          className="flex-1 py-3 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover transition-all shadow-md active:scale-95 flex items-center justify-center gap-2 group"
         >
           View Course
           <span className="group-hover:translate-x-1 transition-transform">
@@ -86,7 +86,7 @@ const CourseCard = ({ course }) => {
         {userRole === "student" && (
           <button
             onClick={handleToggleCart}
-            className={`px-4 rounded-xl font-bold transition-all shadow-md active:scale-95 flex items-center justify-center border-2
+            className={`px-4 rounded-lg font-bold transition-all shadow-md active:scale-95 flex items-center justify-center border-2
                 ${isInCart
                 ? "bg-red-500 border-red-500 text-white hover:bg-red-600"
                 : "bg-white border-primary text-primary hover:bg-primary hover:text-white dark:bg-zinc-800 dark:text-white dark:border-zinc-700 dark:hover:bg-primary dark:hover:border-primary"
