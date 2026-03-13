@@ -1,5 +1,7 @@
 import Payment from "../models/payment.model.js";
 import Enrollment from "../models/enrollment.model.js";
+import Coupon from "../models/coupon.model.js";
+import Course from "../models/course.model.js";
 import axios from "axios";
 import crypto from "crypto";
 
@@ -25,7 +27,35 @@ export const initiateEsewaPayment = async (req, res) => {
         const courseCount = coursesArray.length;
         const transactionId = `ESEWA-${Date.now()}-${userId}-${courseCount}C`;
 
-        console.log("ESEWA INITIATE:", { transactionId, amount: numAmount, courseCount });
+        let discountAmount = 0;
+        let couponId = null;
+        const { couponCode } = req.body;
+
+        if (couponCode) {
+            const coupon = await Coupon.findOne({ code: couponCode });
+            if (coupon) {
+                // Check if coupon.course is in coursesArray
+                const isApplicable = coursesArray.some(id => id.toString() === coupon.course.toString());
+                
+                if (isApplicable) {
+                    // Check expiry and uses
+                    const now = new Date();
+                    if ((!coupon.expiry || coupon.expiry > now) && (!coupon.maxUses || coupon.uses < coupon.maxUses)) {
+                        const course = await Course.findById(coupon.course);
+                        if (course) {
+                            if (coupon.type === "percentage") {
+                                discountAmount = (course.price * coupon.discount) / 100;
+                            } else {
+                                discountAmount = coupon.discount;
+                            }
+                            couponId = coupon._id;
+                        }
+                    }
+                }
+            }
+        }
+
+        console.log("ESEWA INITIATE:", { transactionId, amount: numAmount, courseCount, discountAmount });
 
         // Create Payment record with courses array
         const payment = new Payment({
@@ -33,6 +63,8 @@ export const initiateEsewaPayment = async (req, res) => {
             courses: coursesArray,
             course: courseId, // Legacy support
             amount: numAmount,
+            discountAmount,
+            couponUsed: couponId,
             gateway: "esewa",
             transactionId,
             status: "pending",
@@ -127,6 +159,11 @@ export const verifyEsewaPayment = async (req, res) => {
                 }
             }
 
+            // Increment coupon usage if applies
+            if (payment.couponUsed) {
+                await Coupon.findByIdAndUpdate(payment.couponUsed, { $inc: { uses: 1 } });
+            }
+
             console.log(`ESEWA VERIFY: Created ${coursesToEnroll.length} enrollment(s)`);
 
             res.json({ success: true, payment });
@@ -161,11 +198,38 @@ export const initiateKhaltiPayment = async (req, res) => {
         const courseCount = coursesArray.length;
         const transactionId = `KHALTI-${Date.now()}-${userId}-${courseCount}C`;
 
+        let discountAmount = 0;
+        let couponId = null;
+        const { couponCode } = req.body;
+
+        if (couponCode) {
+            const coupon = await Coupon.findOne({ code: couponCode });
+            if (coupon) {
+                const isApplicable = coursesArray.some(id => id.toString() === coupon.course.toString());
+                if (isApplicable) {
+                    const now = new Date();
+                    if ((!coupon.expiry || coupon.expiry > now) && (!coupon.maxUses || coupon.uses < coupon.maxUses)) {
+                        const course = await Course.findById(coupon.course);
+                        if (course) {
+                            if (coupon.type === "percentage") {
+                                discountAmount = (course.price * coupon.discount) / 100;
+                            } else {
+                                discountAmount = coupon.discount;
+                            }
+                            couponId = coupon._id;
+                        }
+                    }
+                }
+            }
+        }
+
         const payment = new Payment({
             user: userId,
             courses: coursesArray,
             course: courseId, // Legacy support
             amount,
+            discountAmount,
+            couponUsed: couponId,
             gateway: "khalti",
             transactionId,
             status: "pending"
@@ -285,6 +349,11 @@ export const verifyKhaltiPayment = async (req, res) => {
                         payment: payment._id,
                     });
                 }
+            }
+
+            // Increment coupon usage if applies
+            if (payment.couponUsed) {
+                await Coupon.findByIdAndUpdate(payment.couponUsed, { $inc: { uses: 1 } });
             }
 
             console.log(`KHALTI VERIFY: Created ${coursesToEnroll.length} enrollment(s)`);

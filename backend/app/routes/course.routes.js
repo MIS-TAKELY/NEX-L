@@ -9,6 +9,7 @@ import {
   getInstructorCourses,
   updateCourse,
   deleteCourse,
+  generateContent,
 } from "../controllers/course.controller.js";
 
 const router = express.Router();
@@ -22,5 +23,6 @@ router.get("/instructor/:teacherId", getInstructorCourses);
 router.get("/:id", getCourseById);
 router.put("/:id", updateCourse);
 router.delete("/:id", deleteCourse);
+router.post("/generate-content", generateContent);
 
 export default router;

@@ -7,6 +7,7 @@ import Section from "../models/section.model.js";
 import User from "../models/user.model.js";
 import getEmbedding from "../utils/embedding.js";
 import { cosineSimilarity, getAggregateVector } from "../utils/vector-utils.js";
+import { generateCourseContent as generateAIContent } from "../utils/ai-generator.js";
 
 // Create a new course
 export const createCourse = async (req, res) => {
@@ -23,6 +24,7 @@ export const createCourse = async (req, res) => {
       sections,
       thumbnail,
       syllabus,
+      demoVideo,
       status,
     } = req.body;
 
@@ -55,6 +57,7 @@ export const createCourse = async (req, res) => {
       isFree,
       courseType,
       syllabus,
+      demoVideo,
       embedding,
       thumbnail,
       status,
@@ -461,6 +464,7 @@ export const updateCourse = async (req, res) => {
       sections,
       thumbnail,
       syllabus,
+      demoVideo,
       status,
     } = req.body;
 
@@ -491,6 +495,7 @@ export const updateCourse = async (req, res) => {
     course.isFree = isFree !== undefined ? isFree : course.isFree;
     course.courseType = courseType || course.courseType;
     course.syllabus = syllabus !== undefined ? syllabus : course.syllabus;
+    course.demoVideo = demoVideo !== undefined ? demoVideo : course.demoVideo;
     course.embedding = embedding;
     course.thumbnail = thumbnail !== undefined ? thumbnail : course.thumbnail;
     course.status = status || course.status;
@@ -570,5 +575,26 @@ export const deleteCourse = async (req, res) => {
     res.json({ message: "Course deleted successfully" });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+// Generate course content using AI
+export const generateContent = async (req, res) => {
+  try {
+    const { title } = req.body;
+    if (!title) {
+      return res.status(400).json({ message: "Title is required", success: false });
+    }
+
+    const content = await generateAIContent(title);
+    res.status(200).json({
+      success: true,
+      data: content,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: `Failed to generate AI content: ${err.message}`,
+      success: false,
+    });
   }
 };
