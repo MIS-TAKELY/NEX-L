@@ -612,7 +612,7 @@ const EditCourse = () => {
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl mx-auto">
+            <form onSubmit={(e) => e.preventDefault()} className="space-y-8 max-w-4xl mx-auto">
                 <AnimatePresence mode="wait">
                     {/* Step 1: Basic Information */}
                     {currentStep === 1 && (
@@ -1443,7 +1443,8 @@ const EditCourse = () => {
                             </button>
                         ) : (
                             <button
-                                type="submit"
+                                type="button"
+                                onClick={handleSubmit}
                                 disabled={loading || Object.values(uploadingFiles).some(Boolean)}
                                 className="bg-blue-600 text-white px-10 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 active:scale-95 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
