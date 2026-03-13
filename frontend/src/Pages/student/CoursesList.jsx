@@ -24,12 +24,11 @@ const CoursesList = () => {
 
   const { userData, isLoggedIn } = useSelector((state) => state.auth);
   const { data: sectionsResp, isLoading: sectionsLoading } = useGetCourseSectionsQuery(
-    isLoggedIn ? userData?._id : undefined,
-    { skip: debouncedQuery.length > 0 }
+    isLoggedIn ? userData?._id : undefined
   );
 
   const { data: searchResults, isFetching: searchLoading } = useSearchCoursesVectorQuery(
-    debouncedQuery,
+    { q: debouncedQuery },
     { skip: debouncedQuery.length < 2 }
   );
 
@@ -65,8 +64,8 @@ const CoursesList = () => {
         <div className="h-4 bg-gray-100 rounded-lg w-48 animate-pulse"></div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {[1, 2, 4, 4].map((i) => (
-          <CourseSkeleton key={i} />
+        {[1, 2, 3, 4].map((i) => (
+          <CourseSkeleton key={`skeleton-${title}-${i}`} />
         ))}
       </div>
     </div>
@@ -111,21 +110,54 @@ const CoursesList = () => {
             </div>
           </div>
 
-          {sectionsLoading ? (
-            <>
-              {renderSkeletons("Recently Viewed")}
-              {renderSkeletons("Recommendations")}
-            </>
+          {isSearching ? (
+            <div className="space-y-4">
+              {searchLoading ? (
+                renderSkeletons("Search Results")
+              ) : (
+                <>
+                  {renderSection(`Results for "${debouncedQuery}"`, searchResults, `Found ${searchResults?.length || 0} best matches.`)}
+                  {!searchResults?.length && !searchLoading && (
+                    <div className="text-center py-20">
+                      <h3 className="text-2xl font-bold text-gray-400">No courses matching your search.</h3>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
           ) : (
             <>
-              {renderSection("Recently Viewed", sections.recentlyViewed, "Continue where you left off.")}
-              {renderSection("Recommendations", sections.recommendations, "Hand-picked courses based on your interests.")}
-              {renderSection("Trending", sections.trending, "The most popular and recently added courses.")}
-              {renderSection("Top Deals", sections.topDeals, "Premium courses with exclusive discounts.")}
+              {sectionsLoading ? (
+                <div className="space-y-16">
+                  {["Recently Viewed", "Recommendations"].map((title) => (
+                    <div key={title} className="mb-16">
+                      <div className="flex flex-col mb-8">
+                        <div className="h-10 bg-gray-200 rounded-lg w-64 mb-2 animate-pulse"></div>
+                        <div className="h-4 bg-gray-100 rounded-lg w-48 animate-pulse"></div>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {[1, 2, 3, 4].map((i) => (
+                          <CourseSkeleton key={`skeleton-${title}-${i}`} />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {renderSection("Recently Viewed", sections.recentlyViewed, "Continue where you left off.")}
+                  {renderSection("Recommendations", sections.recommendations, "Hand-picked courses based on your interests.")}
+                  {renderSection("Trending", sections.trending, "The most popular and recently added courses.")}
+                  {renderSection("Top Deals", sections.topdeals, "Premium courses with exclusive discounts.")}
 
-              {Object.values(sections).every(arr => !arr || arr.length === 0) && (
-                <div className="text-center py-20">
-                  <h3 className="text-2xl font-bold text-gray-400">No courses currently available.</h3>
+                  {(!sections.recentlyViewed?.length &&
+                    !sections.recommendations?.length &&
+                    !sections.trending?.length &&
+                    !sections.topdeals?.length) && (
+                      <div className="text-center py-20">
+                        <h3 className="text-2xl font-bold text-gray-400">No courses currently available.</h3>
+                      </div>
+                    )}
                 </div>
               )}
             </>

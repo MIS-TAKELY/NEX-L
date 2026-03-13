@@ -172,7 +172,7 @@ const Navbar = () => {
                   navigate("/signup");
                   setActive("/signup");
                 }}
-                className={`px-6 py-2.5 rounded-full hover:cursor-pointer font-bold transition-all shadow-lg bg-white text-primary hover:bg-gray-100 relative group`}
+                className={`px-6 py-2.5 rounded-lg hover:cursor-pointer font-bold transition-all shadow-lg bg-white text-primary hover:bg-gray-100 relative group`}
               >
                 Get Started
                 <span
@@ -221,7 +221,7 @@ const Navbar = () => {
             </button>
             <button
               onClick={handleLogout}
-              className="bg-white text-primary px-8 py-3 rounded-full text-xl font-bold shadow-lg relative group flex items-center gap-2"
+              className="bg-white text-primary px-8 py-3 rounded-lg text-xl font-bold shadow-lg relative group flex items-center gap-2"
             >
               <Icon icon="solar:logout-2-linear" className="h-5 w-5" />
               Logout
@@ -274,7 +274,7 @@ const Navbar = () => {
                 setActive("/signup");
                 setIsMobileMenuOpen(false);
               }}
-              className="bg-white text-primary px-8 py-3 rounded-full text-xl font-bold shadow-lg relative group"
+              className="bg-white text-primary px-8 py-3 rounded-lg text-xl font-bold shadow-lg relative group"
             >
               Get Started
               <span

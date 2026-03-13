@@ -1,6 +1,6 @@
 const CourseSkeleton = () => {
     return (
-        <div className="h-full flex flex-col bg-white dark:bg-zinc-900 rounded-[2rem] border-2 border-gray-100 dark:border-zinc-800 p-4 animate-pulse">
+        <div className="h-full flex flex-col bg-white dark:bg-zinc-900 rounded-2xl border-2 border-gray-100 dark:border-zinc-800 p-4 animate-pulse">
             {/* Thumbnail Skeleton */}
             <div className="relative h-48 mb-4 overflow-hidden rounded-2xl bg-gray-200 dark:bg-zinc-800"></div>
 
@@ -27,10 +27,9 @@ const CourseSkeleton = () => {
                 </div>
             </div>
 
-            {/* Button Skeleton */}
             <div className="mt-6 flex gap-3">
-                <div className="flex-1 h-12 bg-gray-200 dark:bg-zinc-800 rounded-xl"></div>
-                <div className="w-12 h-12 bg-gray-200 dark:bg-zinc-800 rounded-xl"></div>
+                <div className="flex-1 h-12 bg-gray-200 dark:bg-zinc-800 rounded-lg"></div>
+                <div className="w-12 h-12 bg-gray-200 dark:bg-zinc-800 rounded-lg"></div>
             </div>
         </div>
     );

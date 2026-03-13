@@ -123,7 +123,7 @@ const AboutPage = () => {
             </p>
             <button
               onClick={() => navigate("/course-list")}
-              className="mt-6 px-6 py-2.5 bg-primary text-white rounded-xl font-semibold text-sm hover:bg-primary-hover transition-colors duration-200 shadow-md"
+              className="mt-6 px-6 py-2.5 bg-primary text-white rounded-lg font-semibold text-sm hover:bg-primary-hover transition-colors duration-200 shadow-md"
             >
               Explore Courses
             </button>
@@ -132,7 +132,7 @@ const AboutPage = () => {
           {/* centre image card */}
           <div className="lg:col-span-1 flex justify-center">
             <div
-              className="w-full max-w-xs rounded-3xl overflow-hidden shadow-2xl"
+              className="w-full max-w-xs rounded-2xl overflow-hidden shadow-2xl"
               style={{
                 background:
                   "linear-gradient(160deg, #1B3452 0%, #2a4f78 60%, #3a6fa0 100%)",
@@ -175,7 +175,7 @@ const AboutPage = () => {
         <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-8">
           {stats.map((s, i) => (
             <div key={i} className="flex flex-col items-center text-center gap-2">
-              <div className="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center text-white">
+              <div className="w-14 h-14 rounded-xl bg-white/15 flex items-center justify-center text-white">
                 {s.icon}
               </div>
               <p className="text-3xl font-bold text-white">{s.value}</p>
@@ -198,9 +198,9 @@ const AboutPage = () => {
             {values.map((v, i) => (
               <div
                 key={i}
-                className="bg-white rounded-2xl p-7 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300"
+                className="bg-white rounded-xl p-7 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300"
               >
-                <div className="w-11 h-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4">
+                <div className="w-11 h-11 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-4">
                   {v.icon}
                 </div>
                 <h3 className="font-bold text-gray-800 mb-2">{v.title}</h3>
@@ -224,7 +224,7 @@ const AboutPage = () => {
             {team.map((member, i) => (
               <div
                 key={i}
-                className="bg-white rounded-2xl p-7 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300 flex flex-col items-center text-center"
+                className="bg-white rounded-xl p-7 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300 flex flex-col items-center text-center"
               >
                 {/* avatar */}
                 <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center text-white text-2xl font-bold mb-4 shadow-lg">
@@ -253,13 +253,13 @@ const AboutPage = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => navigate("/signup")}
-              className="px-8 py-3 bg-white text-primary font-bold rounded-full hover:bg-gray-100 transition-colors duration-200 shadow-md"
+              className="px-8 py-3 bg-white text-primary font-bold rounded-lg hover:bg-gray-100 transition-colors duration-200 shadow-md"
             >
               Get Started Free
             </button>
             <button
               onClick={() => navigate("/contact")}
-              className="px-8 py-3 border-2 border-white/40 text-white font-semibold rounded-full hover:bg-white/10 transition-colors duration-200"
+              className="px-8 py-3 border-2 border-white/40 text-white font-semibold rounded-lg hover:bg-white/10 transition-colors duration-200"
             >
               Contact Us
             </button>

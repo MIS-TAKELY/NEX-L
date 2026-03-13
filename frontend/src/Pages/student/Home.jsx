@@ -46,7 +46,7 @@ const Home = () => {
             {/* Middle Column - Main Content */}
             <div className="flex-1 flex flex-col gap-8">
                 {/* Banner Section */}
-                <div className="bg-primary rounded-[2rem] p-8 md:p-10 text-white relative overflow-hidden shadow-lg shadow-primary/20 shrink-0">
+                <div className="bg-primary rounded-2xl p-8 md:p-10 text-white relative overflow-hidden shadow-lg shadow-primary/20 shrink-0">
                     {/* Decorative Elements */}
                     <div className="absolute top-0 right-0 p-10 opacity-20">
                         <Icon icon="solar:magic-stick-3-bold" className="text-9xl" />
@@ -55,7 +55,7 @@ const Home = () => {
                     <div className="relative z-10 max-w-lg cursor-pointer" onClick={() => navigate("/course-list")}>
                         <p className="text-blue-100 text-xs font-bold tracking-widest uppercase mb-2">Learning Platform</p>
                         <h1 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">NEXL: Elevate Your Learning</h1>
-                        <button className="bg-white text-primary hover:bg-gray-100 px-8 py-3 rounded-full font-bold text-sm transition-transform active:scale-95 flex items-center gap-2">
+                        <button className="bg-white text-primary hover:bg-gray-100 px-8 py-3 rounded-lg font-bold text-sm transition-transform active:scale-95 flex items-center gap-2">
                             Explore Courses
                             <span className="bg-primary text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
                                 <Icon icon="solar:alt-arrow-right-linear" />
@@ -114,7 +114,7 @@ const Home = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {loading ? (
                             [1, 2].map((_, i) => (
-                                <div key={i} className="bg-card p-4 rounded-3xl border border-border animate-pulse">
+                                <div key={i} className="bg-card p-4 rounded-2xl border border-border animate-pulse">
                                     <div className="h-40 bg-muted rounded-2xl mb-4"></div>
                                     <div className="h-4 w-20 bg-muted rounded mb-2"></div>
                                     <div className="h-6 w-full bg-muted rounded mb-4"></div>
@@ -129,7 +129,7 @@ const Home = () => {
                             ))
                         ) : courses.length > 0 ? (
                             courses.slice(0, 2).map((course) => (
-                                <div key={course._id} className="bg-card p-4 rounded-3xl border border-border hover:shadow-xl transition-all group">
+                                <div key={course._id} className="bg-card p-4 rounded-2xl border border-border hover:shadow-xl transition-all group">
                                     <div className="h-40 bg-muted rounded-2xl mb-4 relative overflow-hidden">
                                         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${course.thumbnail || "https://images.unsplash.com/photo-1593720213428-28a5b9e94613?q=80&w=500&auto=format&fit=crop"})` }}></div>
                                         <div className="absolute top-3 right-3 bg-white/30 backdrop-blur-md p-2 rounded-full text-white cursor-pointer hover:bg-white/50 flex items-center justify-center">
@@ -156,7 +156,7 @@ const Home = () => {
                                 </div>
                             ))
                         ) : (
-                            <div className="col-span-2 text-center py-8 text-muted-foreground bg-card rounded-3xl border border-border">
+                            <div className="col-span-2 text-center py-8 text-muted-foreground bg-card rounded-2xl border border-border">
                                 No courses available to watch.
                             </div>
                         )}
@@ -199,7 +199,7 @@ const Home = () => {
                 {/* Statistic Card */}
                 <h3 className="text-xl font-bold text-foreground">Statistic</h3>
 
-                <div className="bg-card rounded-[2rem] p-6 border border-border shadow-sm text-center">
+                <div className="bg-card rounded-2xl p-6 border border-border shadow-sm text-center">
                     <div className="relative inline-block mb-4">
                         <div className="w-24 h-24 rounded-full p-1 border-2 border-dashed border-primary/40 flex items-center justify-center">
                             <div className="w-full h-full rounded-full bg-muted flex items-center justify-center text-primary">
@@ -238,7 +238,7 @@ const Home = () => {
                         </button>
                     </div>
 
-                    <div className="bg-card rounded-[2rem] p-6 border border-border shadow-sm space-y-6">
+                    <div className="bg-card rounded-2xl p-6 border border-border shadow-sm space-y-6">
                         {loading ? (
                             [1, 2].map((_, i) => (
                                 <div key={i} className="flex items-center gap-3 animate-pulse">

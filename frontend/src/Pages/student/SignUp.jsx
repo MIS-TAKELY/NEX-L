@@ -165,7 +165,7 @@ const SignUp = () => {
               <button
                 type="button"
                 onClick={() => setRole("student")}
-                className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${role === "student"
+                className={`flex-1 px-4 py-3 rounded-lg border-2 transition-all flex items-center justify-center gap-2 ${role === "student"
                   ? "border-primary bg-primary/5 text-primary font-semibold"
                   : "border-gray-200 text-gray-600 hover:border-gray-300"
                   }`}
@@ -175,7 +175,7 @@ const SignUp = () => {
               <button
                 type="button"
                 onClick={() => setRole("instructor")}
-                className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${role === "instructor"
+                className={`flex-1 px-4 py-3 rounded-lg border-2 transition-all flex items-center justify-center gap-2 ${role === "instructor"
                   ? "border-primary bg-primary/5 text-primary font-semibold"
                   : "border-gray-200 text-gray-600 hover:border-gray-300"
                   }`}
@@ -294,7 +294,7 @@ const SignUp = () => {
             )}
 
             <button
-              className="group/btn relative block h-9 w-full rounded-md bg-primary text-primary-foreground font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-800 dark:from-zinc-900 dark:to-zinc-900 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset] mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group/btn relative block h-9 w-full rounded-lg bg-primary text-primary-foreground font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-800 dark:from-zinc-900 dark:to-zinc-900 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset] mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
               type="submit"
               disabled={loading}
             >
