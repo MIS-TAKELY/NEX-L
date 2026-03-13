@@ -68,6 +68,13 @@ export const courseApi = apiSlice.injectEndpoints({
             },
             providesTags: [{ type: 'Course', id: 'LIST' }],
         }),
+        generateContent: builder.mutation({
+            query: (payload) => ({
+                url: '/courses/generate-content',
+                method: 'POST',
+                body: payload,
+            }),
+        }),
     }),
 });
 
@@ -80,4 +87,5 @@ export const {
     useGetCourseSectionsQuery,
     useRecordCourseViewMutation,
     useSearchCoursesVectorQuery,
+    useGenerateContentMutation,
 } = courseApi;

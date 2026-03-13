@@ -1,4 +1,5 @@
 import { uploadMedia } from "@/apis/course.api";
+import { createCoupon } from "@/apis/coupon.api";
 import UploadStatusOverlay from "@/components/instructor/UploadStatusOverlay";
 
 import {
@@ -18,18 +19,21 @@ import {
   Trash2,
   Upload,
   Video,
+  Ticket,
+  Sparkles,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useCreateCourseMutation } from "@/store/slices/courseApi";
+import { useCreateCourseMutation, useGenerateContentMutation } from "@/store/slices/courseApi";
 import { useToast } from "../../context/ToastContext";
 
 const steps = [
   { id: 1, title: "Basic Information", desc: "Title, Price, Category" },
   { id: 2, title: "Course Media", desc: "Thumbnail & Syllabus" },
   { id: 3, title: "Curriculum", desc: "Sections & Lessons" },
+  { id: 4, title: "Coupons", desc: "Discount Codes" },
 ];
 
 const AddCourse = () => {
@@ -37,6 +41,7 @@ const AddCourse = () => {
   const { userData } = useSelector((state) => state.auth);
   const { showToast } = useToast();
   const [createCourseFetch] = useCreateCourseMutation();
+  const [generateContent, { isLoading: generatingAI }] = useGenerateContentMutation();
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [uploadingFiles, setUploadingFiles] = useState({}); // Track individual file uploads
@@ -50,11 +55,14 @@ const AddCourse = () => {
     category: "",
     thumbnail: "",
     syllabus: "",
+    demoVideo: "",
     courseType: "full",
     isFree: false,
     tags: [],
     sections: [],
+    coupons: [],
   });
+  const [uploadingDemoVideo, setUploadingDemoVideo] = useState(false);
 
   const [tagsInput, setTagsInput] = useState("");
 
@@ -248,6 +256,34 @@ const AddCourse = () => {
     setFormData({ ...formData, sections: newSections });
   };
 
+  // --- Coupon Handlers ---
+  const addCoupon = () => {
+    setFormData((prev) => ({
+      ...prev,
+      coupons: [
+        ...prev.coupons,
+        {
+          code: "",
+          discount: "",
+          type: "percentage",
+          expiry: "",
+          maxUses: "",
+        },
+      ],
+    }));
+  };
+
+  const updateCouponField = (index, field, value) => {
+    const newCoupons = [...formData.coupons];
+    newCoupons[index][field] = value;
+    setFormData({ ...formData, coupons: newCoupons });
+  };
+
+  const removeCoupon = (index) => {
+    const newCoupons = formData.coupons.filter((_, i) => i !== index);
+    setFormData({ ...formData, coupons: newCoupons });
+  };
+
   // --- File Upload Handlers ---
   const handleThumbnailUpload = async (e) => {
     const file = e.target.files[0];
@@ -272,6 +308,22 @@ const AddCourse = () => {
     } catch (error) {
       console.error("Syllabus upload failed", error);
       showToast("Syllabus upload failed", "error");
+    }
+  };
+
+  const handleDemoVideoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploadingDemoVideo(true);
+    try {
+      const data = await uploadMedia(file);
+      setFormData((prev) => ({ ...prev, demoVideo: data.url }));
+      showToast("Demo video uploaded!", "success");
+    } catch (error) {
+      console.error("Demo video upload failed", error);
+      showToast("Demo video upload failed", "error");
+    } finally {
+      setUploadingDemoVideo(false);
     }
   };
 
@@ -316,7 +368,27 @@ const AddCourse = () => {
         })),
       };
 
-      await createCourseFetch(payload).unwrap();
+      const result = await createCourseFetch(payload).unwrap();
+      const courseId = result._id || result.data?._id;
+
+      // Create coupons if any
+      if (formData.coupons && formData.coupons.length > 0 && courseId) {
+        for (const coupon of formData.coupons) {
+          if (coupon.code && coupon.discount) {
+            try {
+              await createCoupon({
+                ...coupon,
+                courseId,
+                teacherId: userData.id
+              });
+            } catch (couponErr) {
+              console.error("Failed to create coupon:", couponErr);
+              // We won't block the whole process if one coupon fails
+            }
+          }
+        }
+      }
+
       showToast("Course created successfully!", "success");
       navigate("/instructor/courses");
     } catch (error) {
@@ -501,10 +573,44 @@ const AddCourse = () => {
               className="space-y-6"
             >
               <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-6">
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                    Course Title <span className="text-red-500">*</span>
-                  </label>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="block text-sm font-bold text-gray-700 uppercase tracking-wide">
+                      Course Title <span className="text-red-500">*</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (!formData.title) {
+                          showToast("Please enter a title first", "error");
+                          return;
+                        }
+                        try {
+                          const result = await generateContent({ title: formData.title }).unwrap();
+                          if (result.success) {
+                            setFormData(prev => ({
+                              ...prev,
+                              description: result.data.description,
+                              category: result.data.category,
+                              tags: result.data.tags
+                            }));
+                            setTagsInput(result.data.tags.join(", "));
+                            showToast("AI content generated!", "success");
+                          }
+                        } catch (err) {
+                          showToast("Failed to generate AI content", "error");
+                        }
+                      }}
+                      disabled={generatingAI}
+                      className="flex items-center gap-2 text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors"
+                    >
+                      {generatingAI ? (
+                        <Loader2 size={14} className="animate-spin" />
+                      ) : (
+                        <Sparkles size={14} />
+                      )}
+                      Magic Fill
+                    </button>
+                  </div>
                   <input
                     type="text"
                     name="title"
@@ -514,7 +620,6 @@ const AddCourse = () => {
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                     required
                   />
-                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -744,6 +849,74 @@ const AddCourse = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Demo / Preview Video */}
+              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 uppercase tracking-wide">
+                      Demo / Preview Video
+                      <span className="ml-2 text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100 uppercase normal-case tracking-normal">Optional</span>
+                    </label>
+                    <p className="text-xs text-gray-400 mt-1 font-medium">Free preview video to attract students before they purchase</p>
+                  </div>
+                  {formData.demoVideo && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, demoVideo: "" }))}
+                      className="text-xs font-bold text-red-400 hover:text-red-600 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-all"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+
+                {formData.demoVideo ? (
+                  <div className="relative rounded-2xl overflow-hidden border border-gray-100 bg-black shadow-sm aspect-video">
+                    <video
+                      src={formData.demoVideo}
+                      controls
+                      className="w-full h-full object-contain"
+                    />
+                    <span className="absolute top-3 left-3 bg-green-500 text-white text-[10px] font-black px-2 py-1 rounded-lg uppercase tracking-wider shadow">
+                      Preview Ready
+                    </span>
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <div
+                      className={`aspect-video rounded-2xl overflow-hidden border-2 border-dashed flex flex-col items-center justify-center p-8 transition-all ${
+                        uploadingDemoVideo
+                          ? "border-blue-300 bg-blue-50/40"
+                          : "border-gray-200 hover:border-blue-300 hover:bg-gray-50"
+                      }`}
+                    >
+                      <input
+                        type="file"
+                        onChange={handleDemoVideoUpload}
+                        className="absolute inset-0 opacity-0 cursor-pointer"
+                        accept="video/*"
+                        disabled={uploadingDemoVideo}
+                      />
+                      {uploadingDemoVideo ? (
+                        <>
+                          <Loader2 size={36} className="text-blue-500 animate-spin mb-3" />
+                          <p className="text-sm font-bold text-blue-600">Uploading preview video...</p>
+                          <p className="text-xs text-blue-400 mt-1">This may take a moment for large files</p>
+                        </>
+                      ) : (
+                        <>
+                          <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                            <Video size={28} className="text-gray-400" />
+                          </div>
+                          <p className="text-sm font-bold text-gray-500">Upload preview video</p>
+                          <p className="text-xs text-gray-400 mt-1">MP4, WebM or MOV — shown free to all students</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
@@ -1115,6 +1288,132 @@ const AddCourse = () => {
                     >
                       Initialize First Section
                     </button>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Step 4: Coupons */}
+          {currentStep === 4 && (
+            <motion.div
+              key="step4"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-6"
+            >
+              <div className="flex justify-between items-center mb-2">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-800 tracking-tight">
+                    Discount Coupons
+                  </h2>
+                  <p className="text-xs text-gray-500 mt-1 font-medium">
+                    Create promotional offers for your students
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={addCoupon}
+                  className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl hover:bg-blue-700 font-bold transition-all shadow-lg shadow-blue-200 active:scale-95"
+                >
+                  <Plus size={18} /> Add Coupon
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {formData.coupons.map((coupon, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4 relative group"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => removeCoupon(idx)}
+                      className="absolute top-4 right-4 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">
+                          Coupon Code
+                        </label>
+                        <div className="relative">
+                          <Ticket size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                          <input
+                            type="text"
+                            placeholder="E.g. WELCOME50"
+                            value={coupon.code}
+                            onChange={(e) => updateCouponField(idx, "code", e.target.value.toUpperCase())}
+                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-100 focus:ring-2 focus:ring-blue-500 outline-none font-bold text-gray-700 transition-all shadow-sm"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">
+                            Discount
+                          </label>
+                          <input
+                            type="number"
+                            placeholder="Amount"
+                            value={coupon.discount}
+                            onChange={(e) => updateCouponField(idx, "discount", e.target.value)}
+                            className="w-full px-4 py-2.5 rounded-xl border border-gray-100 focus:ring-2 focus:ring-blue-500 outline-none font-bold text-gray-700 transition-all shadow-sm"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">
+                            Type
+                          </label>
+                          <select
+                            value={coupon.type}
+                            onChange={(e) => updateCouponField(idx, "type", e.target.value)}
+                            className="w-full px-4 py-2.5 rounded-xl border border-gray-100 focus:ring-2 focus:ring-blue-500 outline-none font-bold text-gray-700 transition-all bg-white shadow-sm appearance-none"
+                          >
+                            <option value="percentage">% Percentage</option>
+                            <option value="fixed">Fixed Amount</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">
+                          Expiry Date (Optional)
+                        </label>
+                        <input
+                          type="date"
+                          value={coupon.expiry}
+                          onChange={(e) => updateCouponField(idx, "expiry", e.target.value)}
+                          className="w-full px-4 py-2.5 rounded-xl border border-gray-100 focus:ring-2 focus:ring-blue-500 outline-none font-bold text-gray-700 transition-all shadow-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">
+                          Max Uses (Optional)
+                        </label>
+                        <input
+                          type="number"
+                          placeholder="Unlimited if empty"
+                          value={coupon.maxUses}
+                          onChange={(e) => updateCouponField(idx, "maxUses", e.target.value)}
+                          className="w-full px-4 py-2.5 rounded-xl border border-gray-100 focus:ring-2 focus:ring-blue-500 outline-none font-bold text-gray-700 transition-all shadow-sm"
+                        />
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+
+                {formData.coupons.length === 0 && (
+                  <div className="text-center py-12 bg-gray-50/50 rounded-2xl border-2 border-dashed border-gray-100">
+                    <p className="text-sm text-gray-400 font-medium">No coupons added yet. This is optional.</p>
                   </div>
                 )}
               </div>

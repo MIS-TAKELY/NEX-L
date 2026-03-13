@@ -7,6 +7,8 @@ import { useGetCourseByIdQuery, useRecordCourseViewMutation } from "@/store/slic
 import { useAddToCartMutation, useGetCartQuery, useRemoveFromCartMutation } from "@/store/slices/cartApi";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
+import { validateCoupon } from "../../apis/coupon.api";
+import { useToast } from "../../context/ToastContext";
 import Footer from "../../components/common/Footer";
 import Navbar from "../../components/common/Navbar";
 
@@ -20,6 +22,13 @@ const CourseDetails = () => {
   const [addToCartApi] = useAddToCartMutation();
   const [removeFromCartApi] = useRemoveFromCartMutation();
   const [recordCourseView] = useRecordCourseViewMutation();
+  const { showToast } = useToast();
+
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [finalPrice, setFinalPrice] = useState(0);
 
   useEffect(() => {
     if (isLoggedIn && userRole === 'student' && id && userData?._id) {
@@ -28,6 +37,12 @@ const CourseDetails = () => {
   }, [id, isLoggedIn, userRole, userData?._id, recordCourseView]);
 
   const course = courseResp?.data;
+
+  useEffect(() => {
+    if (course) {
+      setFinalPrice(course.price || 0);
+    }
+  }, [course]);
   const cartItems = cartResp?.data?.items || [];
   const isInCart = cartItems.some((item) => item.course._id === id);
 
@@ -44,6 +59,32 @@ const CourseDetails = () => {
       await removeFromCartApi(id).unwrap();
     } catch (err) {
       console.error("Failed to remove from cart:", err);
+    }
+  };
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setIsVerifying(true);
+    try {
+      const result = await validateCoupon(couponCode, id);
+      if (result.valid) {
+        setAppliedCoupon({ ...result, code: couponCode });
+        let discount = 0;
+        if (result.type === "percentage") {
+          discount = (course.price * result.discount) / 100;
+        } else {
+          discount = result.discount;
+        }
+        setDiscountAmount(discount);
+        setFinalPrice(course.price - discount);
+        showToast("Coupon applied!", "success");
+      } else {
+        showToast(result.message || "Invalid coupon", "error");
+      }
+    } catch (err) {
+      showToast(err.message || "Failed to validate coupon", "error");
+    } finally {
+      setIsVerifying(false);
     }
   };
 
@@ -99,6 +140,29 @@ const CourseDetails = () => {
                 Master the skills with our comprehensive curriculum.
               </p>
             </div>
+
+            {/* Demo / Preview Video Section */}
+            {course.demoVideo && (
+              <section className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+                <div className="relative aspect-video bg-black">
+                  <video
+                    src={course.demoVideo}
+                    controls
+                    className="w-full h-full object-contain"
+                    poster={course.thumbnail || undefined}
+                  />
+                  <span className="absolute top-3 left-3 bg-blue-600 text-white text-xs font-black px-3 py-1 rounded-full shadow-lg flex items-center gap-1.5">
+                    <PlayCircle size={14} />
+                    Free Preview
+                  </span>
+                </div>
+                <div className="px-6 py-4 border-t border-gray-50">
+                  <p className="text-sm text-gray-500 font-medium">
+                    Watch this free preview before enrolling — get a feel for the teaching style and course content.
+                  </p>
+                </div>
+              </section>
+            )}
 
             {/* Syllabus Document Section (if available) */}
             {course.syllabus && (
@@ -282,22 +346,69 @@ const CourseDetails = () => {
                   <span className="text-gray-500">Service Charge</span>
                   <span className="text-gray-400">Rs. 0</span>
                 </div>
+                {/* Coupon Section */}
+                <div className="py-4 border-t border-gray-100 mt-2">
+                  <label className="text-xs font-bold text-gray-500 uppercase mb-2 block">
+                    Have a coupon?
+                  </label>
+                  {!appliedCoupon ? (
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="Coupon Code"
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                        className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-primary font-bold uppercase"
+                      />
+                      <button
+                        onClick={handleApplyCoupon}
+                        disabled={isVerifying || !couponCode}
+                        className="bg-primary/10 text-primary px-4 py-2 rounded-xl font-bold text-xs hover:bg-primary hover:text-white transition-all disabled:opacity-50"
+                      >
+                        {isVerifying ? "..." : "Apply"}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex justify-between items-center bg-green-50 p-2 rounded-xl border border-green-100">
+                      <span className="text-xs font-bold text-green-700">
+                        {appliedCoupon.code} Applied
+                      </span>
+                      <button
+                        onClick={() => {
+                          setAppliedCoupon(null);
+                          setDiscountAmount(0);
+                          setFinalPrice(course.price);
+                        }}
+                        className="text-[10px] font-bold text-red-500 hover:underline"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  )}
+                </div>
+
                 <div className="mb-6 flex justify-between items-center py-4 border-t border-gray-100">
                   <span className="text-gray-500 font-medium">
                     Total Amount
                   </span>
                   <div className="text-right">
                     <span className="block text-2xl font-extrabold text-primary">
-                      Rs. {course.price || 0}
+                      Rs. {finalPrice || 0}
                     </span>
-                    <span className="text-gray-400 line-through text-xs">
-                      Rs. {((course.price || 0) * 1.5).toLocaleString()}
-                    </span>
+                    {discountAmount > 0 ? (
+                      <span className="text-green-600 font-bold text-[10px]">
+                        Saved Rs. {discountAmount}
+                      </span>
+                    ) : (
+                      <span className="text-gray-400 line-through text-xs">
+                        Rs. {((course.price || 0) * 1.5).toLocaleString()}
+                      </span>
+                    )}
                   </div>
                 </div>
 
                 <button
-                  onClick={() => navigate(`/payment-gateway?method=${selectedPayment}&amount=${course.price}&courseId=${id}`)}
+                  onClick={() => navigate(`/payment-gateway?method=${selectedPayment}&amount=${finalPrice}&courseId=${id}${appliedCoupon ? `&couponCode=${appliedCoupon.code}` : ""}`)}
                   className="w-full bg-primary text-white py-4 rounded-2xl font-bold text-lg hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-3"
                 >
                   Pay with {selectedPayment.toUpperCase()}
