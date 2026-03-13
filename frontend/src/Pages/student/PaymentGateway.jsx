@@ -21,6 +21,7 @@ const PaymentGateway = () => {
   const courseId = searchParams.get('courseId'); // Single course (legacy)
   const courseIds = searchParams.get('courseIds')?.split(',') || (courseId ? [courseId] : []); // Multiple courses
   const courseCount = courseIds.length;
+  const couponCode = searchParams.get('couponCode');
 
   const [loading, setLoading] = useState(false);
 
@@ -56,7 +57,8 @@ const PaymentGateway = () => {
           amount,
           courseIds, // Send array of course IDs
           courseId: courseIds[0], // Legacy support
-          userId: userData.id || userData._id
+          userId: userData.id || userData._id,
+          couponCode: couponCode || undefined
         });
 
         if (response.data.success) {
@@ -67,7 +69,8 @@ const PaymentGateway = () => {
           amount,
           courseIds, // Send array of course IDs
           courseId: courseIds[0], // Legacy support
-          userId: userData.id || userData._id
+          userId: userData.id || userData._id,
+          couponCode: couponCode || undefined
         });
 
         if (response.data.success && response.data.payment_url) {
