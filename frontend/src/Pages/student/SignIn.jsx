@@ -19,6 +19,7 @@ const SignIn = () => {
   const [role, setRole] = useState("student");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -173,16 +174,28 @@ const SignIn = () => {
                 <Label htmlFor="password" className="text-base text-foreground">
                   Password
                 </Label>
-                <input
-                  id="password"
-                  name="password"
-                  placeholder="••••••••"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  className="flex h-9 w-full rounded-md border border-input bg-card px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
-                />
+                <div className="relative">
+                  <input
+                    id="password"
+                    name="password"
+                    placeholder="••••••••"
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    className="flex h-12 w-full rounded-xl border border-[#e8ecef] bg-[#f5f7f9] px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9ba3af] hover:text-foreground transition-colors p-1 flex items-center justify-center"
+                  >
+                    <Icon
+                      icon={showPassword ? "mdi:eye-outline" : "mdi:eye-off-outline"}
+                      className="w-5 h-5 opacity-70"
+                    />
+                  </button>
+                </div>
               </LabelInputContainer>
             </div>
 

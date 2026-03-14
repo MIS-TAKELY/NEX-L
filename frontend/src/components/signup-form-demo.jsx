@@ -6,9 +6,15 @@ import {
   IconBrandGithub,
   IconBrandGoogle,
   IconBrandOnlyfans,
+  IconEye,
+  IconEyeOff,
 } from "@tabler/icons-react";
+import { useState } from "react";
 
 export default function SignupFormDemo() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showTwitterPassword, setShowTwitterPassword] = useState(false);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted");
@@ -41,11 +47,29 @@ export default function SignupFormDemo() {
         </LabelInputContainer>
         <LabelInputContainer className="mb-4">
           <Label htmlFor="password">Password</Label>
-          <Input id="password" placeholder="••••••••" type="password" />
+          <div className="relative">
+            <Input id="password" placeholder="••••••••" type={showPassword ? "text" : "password"} className="pr-10" />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {showPassword ? <IconEye className="w-4 h-4" /> : <IconEyeOff className="w-4 h-4" />}
+            </button>
+          </div>
         </LabelInputContainer>
         <LabelInputContainer className="mb-8">
           <Label htmlFor="twitterpassword">Your twitter password</Label>
-          <Input id="twitterpassword" placeholder="••••••••" type="twitterpassword" />
+          <div className="relative">
+            <Input id="twitterpassword" placeholder="••••••••" type={showTwitterPassword ? "text" : "password"} className="pr-10" />
+            <button
+              type="button"
+              onClick={() => setShowTwitterPassword(!showTwitterPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {showTwitterPassword ? <IconEye className="w-4 h-4" /> : <IconEyeOff className="w-4 h-4" />}
+            </button>
+          </div>
         </LabelInputContainer>
 
         <button

@@ -28,6 +28,8 @@ const SignUp = () => {
   const [role, setRole] = useState("student");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -257,32 +259,56 @@ const SignUp = () => {
                   <Label htmlFor="password" className="text-sm">
                     Create NewPassword
                   </Label>
-                  <input
-                    id="password"
-                    name="createNewPassword"
-                    placeholder=""
-                    type="password"
-                    value={formData.createNewPassword}
-                    onChange={handleChange}
-                    required
-                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                  />
+                  <div className="relative">
+                      <input
+                        id="password"
+                        name="createNewPassword"
+                        placeholder=""
+                        type={showPassword ? "text" : "password"}
+                        value={formData.createNewPassword}
+                        onChange={handleChange}
+                        required
+                        className="flex h-12 w-full rounded-xl border border-[#e8ecef] bg-[#f5f7f9] px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9ba3af] hover:text-foreground transition-colors p-1 flex items-center justify-center"
+                      >
+                        <Icon
+                          icon={showPassword ? "mdi:eye-outline" : "mdi:eye-off-outline"}
+                          className="w-5 h-5 opacity-70"
+                        />
+                      </button>
+                  </div>
                 </LabelInputContainer>
 
                 <LabelInputContainer>
                   <Label htmlFor="confirmPassword" className="text-sm">
                     Confirm Password
                   </Label>
-                  <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    placeholder=""
-                    type="password"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    required
-                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                  />
+                  <div className="relative">
+                      <input
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        placeholder=""
+                        type={showConfirmPassword ? "text" : "password"}
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        required
+                        className="flex h-12 w-full rounded-xl border border-[#e8ecef] bg-[#f5f7f9] px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9ba3af] hover:text-foreground transition-colors p-1 flex items-center justify-center"
+                      >
+                        <Icon
+                          icon={showConfirmPassword ? "mdi:eye-outline" : "mdi:eye-off-outline"}
+                          className="w-5 h-5 opacity-70"
+                        />
+                      </button>
+                  </div>
                 </LabelInputContainer>
               </div>
             </div>
