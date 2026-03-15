@@ -14,6 +14,8 @@ import cartRouter from "../app/routes/cart.routes.js";
 import enrollmentRouter from "../app/routes/enrollment.routes.js";
 import contactRouter from "../app/routes/contact.routes.js";
 import couponRouter from "../app/routes/coupon.routes.js";
+import quizRouter from "../app/routes/quiz.routes.js";
+import streamRouter from "../app/routes/stream.routes.js";
 
 const app = express();
 
@@ -47,6 +49,8 @@ app.use("/api/v1/cart", cartRouter);
 app.use("/api/v1/enrollments", enrollmentRouter);
 app.use("/api/v1/contact", contactRouter);
 app.use("/api/v1/coupons", couponRouter);
+app.use("/api/v1/quizzes", quizRouter);
+app.use("/api/v1/stream", streamRouter);
 
 // Error logger - MUST BE LAST
 app.use((err, req, res, next) => {

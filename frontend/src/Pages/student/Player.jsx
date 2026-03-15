@@ -4,6 +4,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getCourseById } from '../../apis/course.api';
 import SectionList from '../../components/student/SectionList';
 import Loading from '../../components/student/Loading';
+import QuizPlayer from './QuizPlayer';
+import AssignmentPlayer from './AssignmentPlayer';
+import StudentChat from '../../components/student/StudentChat';
+import CourseGroupChat from '../../components/student/CourseGroupChat';
+import { useStream } from '../../context/StreamContext';
 
 const Player = () => {
   const { courseId } = useParams();
@@ -14,6 +19,9 @@ const Player = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  // Communication panel: null | 'dm' | 'group'
+  const [commPanel, setCommPanel] = useState(null);
+  const { chatClient } = useStream();
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -124,11 +132,27 @@ const Player = () => {
       case 'article':
         return (
           <div className="prose prose-lg dark:prose-invert max-w-none bg-white dark:bg-zinc-900 p-8 md:p-12 rounded-[3rem] border border-gray-100 dark:border-zinc-800 shadow-sm">
-            <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-8 italic">{activeResource.name || activeLesson?.title}</h1>
+            <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-8 italic">{activeResource?.name || activeLesson?.title}</h1>
             <div className="text-gray-700 dark:text-zinc-300 whitespace-pre-wrap leading-relaxed font-medium italic">
               {activeLesson?.description || activeLesson?.summary || "No description provided."}
             </div>
           </div>
+        );
+      case 'quiz':
+        return (
+            <QuizPlayer 
+                quizData={activeLesson?.quizData} 
+                courseId={courseId}
+                contentId={activeLesson?._id}
+            />
+        );
+      case 'assignment':
+        return (
+            <AssignmentPlayer 
+                assignmentData={activeLesson?.assignmentData} 
+                courseId={courseId}
+                contentId={activeLesson?._id}
+            />
         );
       default:
         return (
@@ -213,8 +237,56 @@ const Player = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <button className="px-5 py-2.5 bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-300 rounded-xl font-bold text-sm hover:bg-gray-200 dark:hover:bg-zinc-700 transition-all flex items-center gap-2 shadow-sm">
+          <div className="flex items-center gap-2">
+            {/* Live Stream button */}
+            <button
+              onClick={() => navigate(`/student/live/${courseId}`)}
+              title="Watch Live Class"
+              className="p-2.5 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 transition-all flex items-center gap-1.5 text-xs font-bold"
+            >
+              <Icon icon="solar:play-stream-bold-duotone" className="w-4 h-4" />
+              <span className="hidden sm:inline">Live</span>
+            </button>
+
+            {/* Video Call button */}
+            <button
+              onClick={() => navigate(`/student/video-call/${courseId}`)}
+              title="Video Call Teacher"
+              className="p-2.5 bg-blue-50 text-blue-500 rounded-xl hover:bg-blue-100 transition-all flex items-center gap-1.5 text-xs font-bold"
+            >
+              <Icon icon="solar:video-frame-play-bold-duotone" className="w-4 h-4" />
+              <span className="hidden sm:inline">Call</span>
+            </button>
+
+            {/* Group Chat button */}
+            <button
+              onClick={() => setCommPanel(commPanel === 'group' ? null : 'group')}
+              title="Group Chat"
+              className={`p-2.5 rounded-xl transition-all flex items-center gap-1.5 text-xs font-bold ${
+                commPanel === 'group'
+                  ? 'bg-primary text-white shadow-lg shadow-primary/25'
+                  : 'bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-300 hover:bg-gray-200'
+              }`}
+            >
+              <Icon icon="solar:users-group-rounded-bold-duotone" className="w-4 h-4" />
+              <span className="hidden sm:inline">Group</span>
+            </button>
+
+            {/* DM Chat button */}
+            <button
+              onClick={() => setCommPanel(commPanel === 'dm' ? null : 'dm')}
+              title="Chat with Teacher"
+              className={`p-2.5 rounded-xl transition-all flex items-center gap-1.5 text-xs font-bold ${
+                commPanel === 'dm'
+                  ? 'bg-primary text-white shadow-lg shadow-primary/25'
+                  : 'bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-300 hover:bg-gray-200'
+              }`}
+            >
+              <Icon icon="solar:chat-round-dots-bold-duotone" className="w-4 h-4" />
+              <span className="hidden sm:inline">Chat</span>
+            </button>
+
+            <button className="px-4 py-2.5 bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-300 rounded-xl font-bold text-sm hover:bg-gray-200 dark:hover:bg-zinc-700 transition-all flex items-center gap-2 shadow-sm">
               Resources <Icon icon="solar:download-minimalistic-linear" />
             </button>
           </div>
@@ -227,6 +299,18 @@ const Player = () => {
           </div>
         </div>
       </main>
+
+      {/* Communication Panel (right slide-in) */}
+      {commPanel && (
+        <aside className="w-full max-w-sm flex flex-col border-l border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 h-full flex-shrink-0">
+          {commPanel === 'dm' && (
+            <StudentChat courseId={courseId} onClose={() => setCommPanel(null)} />
+          )}
+          {commPanel === 'group' && (
+            <CourseGroupChat courseId={courseId} onClose={() => setCommPanel(null)} />
+          )}
+        </aside>
+      )}
     </div>
   );
 };

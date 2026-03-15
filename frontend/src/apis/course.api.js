@@ -90,3 +90,48 @@ export const getAllCourses = async () => {
     }
 };
 
+// --- Quizzes & Assignments ---
+export const createQuiz = async (quizData) => {
+    try {
+        const response = await axios.post(`${API_URL}/quizzes`, quizData, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
+
+export const createAssignment = async (assignmentData) => {
+    try {
+        const response = await axios.post(`${API_URL}/assignments`, assignmentData, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
+
+export const submitQuizAttempt = async (quizId, submissionData) => {
+    try {
+        const response = await axios.post(`${API_URL}/quizzes/${quizId}/submit`, submissionData, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
+
+export const submitAssignment = async (assignmentId, submissionData) => {
+    try {
+        const response = await axios.post(`${API_URL}/assignments/${assignmentId}/submit`, submissionData, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
+

@@ -13,7 +13,7 @@ router.get("/pre-social", (req, res) => {
         res.cookie("pending_role", role, {
             httpOnly: false, // Allow client side to verify if needed, but primary use is backend
             secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            sameSite: "none",
             maxAge: 3600000, // 1 hour
         });
     }

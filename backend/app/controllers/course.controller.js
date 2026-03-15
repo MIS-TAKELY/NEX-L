@@ -5,6 +5,8 @@ import Enrollment from "../models/enrollment.model.js";
 import RecentlyViewed from "../models/recently-viewed.model.js";
 import Section from "../models/section.model.js";
 import User from "../models/user.model.js";
+import Quiz from "../models/quiz.model.js";
+import Assignment from "../models/assignment.model.js";
 import getEmbedding from "../utils/embedding.js";
 import { cosineSimilarity, getAggregateVector } from "../utils/vector-utils.js";
 import { generateCourseContent as generateAIContent } from "../utils/ai-generator.js";
@@ -76,9 +78,39 @@ export const createCourse = async (req, res) => {
 
         if (sectionData.contents && Array.isArray(sectionData.contents)) {
           for (const contentData of sectionData.contents) {
+            let quizId = contentData.quizId || null;
+            let assignmentId = contentData.assignmentId || null;
+
+            if (contentData.type === 'quiz' && contentData.quizData) {
+               if (quizId) {
+                 await Quiz.findByIdAndUpdate(quizId, { ...contentData.quizData, title: contentData.title });
+               } else {
+                 const quiz = await Quiz.create({ ...contentData.quizData, title: contentData.title, course: course._id, section: section._id });
+                 quizId = quiz._id;
+               }
+            }
+
+            if (contentData.type === 'assignment' && contentData.assignmentData) {
+               if (assignmentId) {
+                 await Assignment.findByIdAndUpdate(assignmentId, { ...contentData.assignmentData, title: contentData.title, description: contentData.description });
+               } else {
+                 const assignment = await Assignment.create({ ...contentData.assignmentData, title: contentData.title, description: contentData.description, course: course._id });
+                 assignmentId = assignment._id;
+               }
+            }
+
             const content = await Content.create({
-              ...contentData,
+              title: contentData.title,
+              type: contentData.type,
+              url: contentData.url,
+              summary: contentData.summary,
+              description: contentData.description,
+              duration: contentData.duration,
+              resources: contentData.resources,
+              isPreview: contentData.isPreview,
               section: section._id,
+              quiz: quizId,
+              assignment: assignmentId
             });
             section.contents.push(content._id);
           }
@@ -524,9 +556,39 @@ export const updateCourse = async (req, res) => {
 
         if (sectionData.contents && Array.isArray(sectionData.contents)) {
           for (const contentData of sectionData.contents) {
+            let quizId = contentData.quizId || null;
+            let assignmentId = contentData.assignmentId || null;
+
+            if (contentData.type === 'quiz' && contentData.quizData) {
+               if (quizId) {
+                 await Quiz.findByIdAndUpdate(quizId, { ...contentData.quizData, title: contentData.title });
+               } else {
+                 const quiz = await Quiz.create({ ...contentData.quizData, title: contentData.title, course: course._id, section: section._id });
+                 quizId = quiz._id;
+               }
+            }
+
+            if (contentData.type === 'assignment' && contentData.assignmentData) {
+               if (assignmentId) {
+                 await Assignment.findByIdAndUpdate(assignmentId, { ...contentData.assignmentData, title: contentData.title, description: contentData.description });
+               } else {
+                 const assignment = await Assignment.create({ ...contentData.assignmentData, title: contentData.title, description: contentData.description, course: course._id });
+                 assignmentId = assignment._id;
+               }
+            }
+
             const content = await Content.create({
-              ...contentData,
+              title: contentData.title,
+              type: contentData.type,
+              url: contentData.url,
+              summary: contentData.summary,
+              description: contentData.description,
+              duration: contentData.duration,
+              resources: contentData.resources,
+              isPreview: contentData.isPreview,
               section: section._id,
+              quiz: quizId,
+              assignment: assignmentId
             });
             section.contents.push(content._id);
           }

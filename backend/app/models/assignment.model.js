@@ -9,7 +9,8 @@ const assignmentSchema = new mongoose.Schema(
     submissions: [
       {
         student: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-        fileUrl: { type: String, required: true },
+        fileUrl: { type: String },
+        text: { type: String },
         grade: { type: Number, default: null },
         submittedAt: { type: Date, default: Date.now },
       },

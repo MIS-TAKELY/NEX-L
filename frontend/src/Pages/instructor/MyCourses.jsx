@@ -105,6 +105,14 @@ const MyCourses = () => {
                                     <td className="px-6 py-4 text-center">{course.isFree ? "Free" : `Rs ${course.price}`}</td>
                                     <td className="px-6 py-4 text-center">
                                         <button
+                                            onClick={() => navigate(`/instructor/livestream/${course._id}`)}
+                                            title="Start Live Stream"
+                                            className="text-red-500 hover:text-red-700 mr-3 inline-flex items-center gap-1"
+                                        >
+                                            <Icon icon="solar:play-stream-bold-duotone" className="w-4 h-4" />
+                                            Live
+                                        </button>
+                                        <button
                                             onClick={() => navigate(`/instructor/edit-course/${course._id}`)}
                                             className="text-blue-600 hover:text-blue-800 mr-3"
                                         >
