@@ -8,14 +8,10 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Verify connection configuration
-transporter.verify(function (error, success) {
-  if (error) {
-    console.error("Transporter connection error:", error);
-  } else {
-    console.log("Transporter is ready to take our messages");
-  }
-});
+// Verify connection configuration - non-blocking to avoid startup timeouts on Render
+transporter.verify()
+  .then(() => console.log("Transporter is ready to take our messages"))
+  .catch((error) => console.warn("Transporter connection warning (Check SMTP ports on Render):", error.message));
 
 export async function sendEmail({ to, subject, html }) {
   await transporter.sendMail({

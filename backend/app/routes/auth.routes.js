@@ -5,27 +5,18 @@ import { auth } from "../lib/auth.js";
 
 const router = express.Router();
 
-router.use((req, res, next) => {
-    console.log(`[Auth Route Debug] Path: ${req.path}, Cookies: ${Object.keys(req.cookies || {}).join(", ") || "none"}`);
-    next();
-});
-
-router.get("/pre-social", (req, res) => {
+router.get("/", (req, res) => {
     const { role } = req.query;
-    console.log(`--- /pre-social called with role: ${role} ---`);
     if (role) {
-
         res.cookie("pending_role", role, {
             httpOnly: false,
             secure: true,
             sameSite: "none",
-            path: "/", // Scoped to root
+            path: "/",
             maxAge: 3600000, 
         });
     }
     res.status(200).send({ success: true, role });
 });
-
-router.use(toNodeHandler(auth));
 
 export default router;
