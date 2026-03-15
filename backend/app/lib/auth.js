@@ -3,9 +3,7 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client } from "../config/dbConnect.js";
 
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL?.includes("/api/v1/auth") 
-    ? process.env.BETTER_AUTH_URL 
-    : (process.env.BETTER_AUTH_URL || "http://localhost:3000") + "/api/v1/auth",
+  baseURL: (process.env.BETTER_AUTH_URL || "http://localhost:3000").replace(/\/+$/, "") + "/api/v1/auth",
   secret: process.env.BETTER_AUTH_SECRET,
 
   database: mongodbAdapter(client.db()),
@@ -47,7 +45,8 @@ export const auth = betterAuth({
     trustProxy: true,
     defaultCookieAttributes: {
       sameSite: "none",
-      secure: true, // Force secure for SameSite=None to work in cross-site setups (Render/Vercel)
+      secure: true, 
+      path: "/", // Ensure cookies are available globally on the domain
     },
   },
 
