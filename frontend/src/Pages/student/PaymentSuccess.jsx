@@ -126,7 +126,7 @@ const PaymentSuccess = () => {
                             <Icon icon="solar:check-circle-bold" className="w-16 h-16 text-green-500" />
                         </div>
                         <h2 className="text-5xl font-black mb-4 tracking-tighter">You're In!</h2>
-                        <p className="text-slate-500 font-bold mb-12">Your payment was confirmed. Welcome to the Nex-L family.</p>
+                        <p className="text-slate-500 font-bold mb-12">Your payment was confirmed. Welcome to the NEXL family.</p>
                         <div className="relative">
                             <div className="absolute -top-6 left-0 right-0 h-1.5 bg-slate-100 rounded-full overflow-hidden">
                                 <div className="h-full bg-blue-600 animate-[progress_3s_linear]"></div>

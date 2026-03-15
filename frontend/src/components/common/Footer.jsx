@@ -9,14 +9,13 @@ const Footer = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
                     {/* Column 1: About */}
                     <div className="space-y-6">
-                        <div className="flex items-center gap-2">
-                             <div className="bg-white p-1 rounded-sm">
-                                <img src={logo} alt="NEXL" className="h-8 w-8 object-contain" />
-                             </div>
-                            <div className='flex flex-col'>
-                                <span className="text-xl font-bold leading-none">NEXL</span>
-    
-                            </div>
+                        <div className="flex items-center gap-1">
+                            <img
+                                src={logo}
+                                alt="NEXL"
+                                className="h-8 w-auto brightness-0 invert"
+                            />
+                            <span className="text-2xl font-bold text-white">EXL</span>
                         </div>
                         <p className="text-gray-300 text-sm leading-relaxed">
 Empowering students across Nepal through modern learning experiences that combine academics, skill development, and future readiness in one accessible platform.

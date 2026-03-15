@@ -58,7 +58,7 @@ const CourseCard = ({ course }) => {
           <div>
             <p className="text-xs text-gray-400 font-medium">Instructor</p>
             <p className="text-sm font-bold text-gray-800 dark:text-zinc-200">
-              {course?.teacher?.name || "NEX-L Instructor"}
+              {course?.teacher?.name || "NEXL Instructor"}
             </p>
           </div>
           <div className="text-right">

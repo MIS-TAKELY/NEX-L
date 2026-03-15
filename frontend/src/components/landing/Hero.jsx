@@ -43,31 +43,29 @@ const Hero = () => {
             group
           "
         >
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-end">
-            <div className="md:col-span-2">
-              <div className="flex items-center gap-3 mb-2 md:mb-3">
-                <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform duration-500 shrink-0">
-                  📘
-                </div>
-                <div>
-                  <h3 className="text-xl md:text-2xl lg:text-4xl font-extrabold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                    Start Learning
-                  </h3>
-                  <p className="text-xs md:text-sm font-medium text-gray-500">
-                    Premium quality courses await you
-                  </p>
-                </div>
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
+            <div className="w-full md:w-auto flex items-center justify-start gap-4 md:mr-4">
+              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform duration-500 shrink-0">
+                📘
+              </div>
+              <div className="text-left">
+                <h3 className="text-xl md:text-2xl lg:text-3xl font-extrabold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                  Start Learning
+                </h3>
+                <p className="text-xs md:text-sm font-medium text-gray-500">
+                  Premium quality courses await you
+                </p>
               </div>
             </div>
 
-            <select className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary outline-none">
+            <select className="w-full md:w-56 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary outline-none">
               <option>All Categories</option>
               <option>Web Development</option>
               <option>Data Science</option>
               <option>Design</option>
             </select>
 
-            <select className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary outline-none">
+            <select className="w-full md:w-56 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary outline-none">
               <option>All Levels</option>
               <option>Beginner</option>
               <option>Intermediate</option>
@@ -76,7 +74,7 @@ const Hero = () => {
 
             <button
               onClick={() => navigate("/course-list")}
-              className="w-full px-8 py-3 md:py-4 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover transition shadow-md"
+              className="w-full md:w-auto px-8 py-3 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover transition shadow-md"
             >
               Search
             </button>

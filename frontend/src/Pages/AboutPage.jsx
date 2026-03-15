@@ -112,7 +112,7 @@ const AboutPage = () => {
               Nepal's Premier E-Learning Platform
             </h2>
             <p className="text-gray-500 leading-relaxed text-sm">
-              NEX-L was born from a simple belief: every learner in Nepal deserves access to
+              NEXL was born from a simple belief: every learner in Nepal deserves access to
               world-class education, regardless of location or background. Since our founding
               we have partnered with industry-leading instructors to deliver courses that are
               practical, affordable and career-changing.

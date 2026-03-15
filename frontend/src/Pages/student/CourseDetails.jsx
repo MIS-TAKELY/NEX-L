@@ -91,7 +91,7 @@ const CourseDetails = () => {
   const faqs = [
     {
       question: "Will I get a certificate after completion?",
-      answer: "Absolutely! You will receive a verified certificate from NEX-L.",
+      answer: "Absolutely! You will receive a verified certificate from NEXL.",
     },
     {
       question: "Can I access the course material anytime?",

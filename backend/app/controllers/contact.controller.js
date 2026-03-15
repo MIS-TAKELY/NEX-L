@@ -21,7 +21,7 @@ export const handleContactForm = async (req, res) => {
           <p><strong>Message:</strong></p>
           <p style="white-space: pre-wrap;">${message}</p>
         </div>
-        <p style="font-size: 12px; color: #888; margin-top: 20px; text-align: center;">Sent from NEX-L Contact Form</p>
+        <p style="font-size: 12px; color: #888; margin-top: 20px; text-align: center;">Sent from NEXL Contact Form</p>
       </div>
     `;
 

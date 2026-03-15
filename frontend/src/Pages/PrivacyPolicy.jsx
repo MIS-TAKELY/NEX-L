@@ -44,7 +44,7 @@ const PrivacyPolicy = () => {
           <section className="mb-10">
             <h2 className="text-2xl font-bold text-primary mb-4">1. Introduction</h2>
             <p className="text-gray-600 leading-relaxed mb-4">
-              Welcome to NEX-L. We are committed to protecting your personal information and your right to privacy. If you have any questions or concerns about our policy, or our practices with regards to your personal information, please contact us at nexl6911@gmail.com.
+              Welcome to NEXL. We are committed to protecting your personal information and your right to privacy. If you have any questions or concerns about our policy, or our practices with regards to your personal information, please contact us at nexl6911@gmail.com.
             </p>
             <p className="text-gray-600 leading-relaxed">
               When you visit our website and use our services, you trust us with your personal information. We take your privacy very seriously. In this privacy note, we describe our privacy policy.
@@ -89,7 +89,7 @@ const PrivacyPolicy = () => {
               If you have questions or comments about this policy, you may email us at nexl6911@gmail.com or by post to:
             </p>
             <address className="not-italic text-gray-600 mt-4 pl-4 border-l-4 border-primary">
-              NEX-L<br />
+              NEXL<br />
               Itahari, Nepal<br />
               +977 9800000000
             </address>

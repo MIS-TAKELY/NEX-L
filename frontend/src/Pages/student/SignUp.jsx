@@ -140,16 +140,18 @@ const SignUp = () => {
       </div>
 
       {/* Right Side - Form */}
-      <div className="w-full lg:w-1/2 bg-card flex items-center justify-center p-4 md:p-6 relative">
-        <div className="w-full max-w-md">
-          {/* Mobile Back Button & Header */}
-          <div className="lg:hidden mb-8">
-            <button
-              onClick={() => navigate(-1)}
-              className="flex items-center gap-2 px-4 py-2 bg-primary/5 hover:bg-primary/10 text-primary rounded-full transition-all font-medium mb-6 border border-primary/10"
-            >
-              <Icon icon="solar:alt-arrow-left-linear" className="w-5 h-5" /> go back
-            </button>
+      <div className="w-full lg:w-1/2 bg-card flex flex-col justify-center p-4 md:p-6 relative">
+        {/* New Top Left Arrow Button */}
+        <button
+          onClick={() => navigate(-1)}
+          className="absolute top-6 left-6 p-2 text-foreground/60 hover:text-foreground hover:bg-muted rounded-full transition-all flex items-center justify-center"
+        >
+          <Icon icon="solar:arrow-left-linear" className="w-6 h-6" />
+        </button>
+
+        <div className="w-full max-w-md mx-auto">
+          {/* Header */}
+          <div className="lg:hidden mb-8 mt-12">
             <h1 className="text-3xl font-bold text-primary">NEXL</h1>
           </div>
 

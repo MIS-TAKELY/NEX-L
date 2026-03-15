@@ -21,7 +21,7 @@ const StudentSidebar = () => {
 
       {/* Brand */}
       <div className="flex items-center gap-3 mb-10 text-gray-900">
-        <span className="text-2xl font-bold text-primary tracking-tight">NEX-L</span>
+        <span className="text-2xl font-bold text-primary tracking-tight">NEXL</span>
       </div>
 
       {/* Overview Menu */}

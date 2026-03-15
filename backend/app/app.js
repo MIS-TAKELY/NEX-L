@@ -31,7 +31,7 @@ app.use(cookieParser());
 app.get("/favicon.ico", (req, res) => res.status(204).end());
 
 app.get("/", (req, res) => {
-  res.send("NEX-L Backend is live! Redirecting you to the frontend...");
+  res.send("NEXL Backend is live! Redirecting you to the frontend...");
 });
 
 // other APIs
