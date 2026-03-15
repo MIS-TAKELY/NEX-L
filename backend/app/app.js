@@ -16,6 +16,8 @@ import contactRouter from "../app/routes/contact.routes.js";
 import couponRouter from "../app/routes/coupon.routes.js";
 import quizRouter from "../app/routes/quiz.routes.js";
 import streamRouter from "../app/routes/stream.routes.js";
+import { toNodeHandler } from "better-auth/node";
+import { auth } from "./lib/auth.js";
 
 const app = express();
 
@@ -24,10 +26,10 @@ app.use(
     origin: [
       process.env.FRONTEND_URL, 
       "https://nex-l.vercel.app",
-      "https://nex-l.onrender.com", // Include self for internal redirects
+      "https://nex-l.onrender.com",
       "http://localhost:5173", 
       "http://127.0.0.1:5173"
-    ],
+    ].filter(Boolean),
     credentials: true,
   }),
 );
@@ -43,8 +45,10 @@ app.get("/", (req, res) => {
 });
 
 // other APIs
-// Auth mounting - using the full path to avoid prefix stripping issues in better-auth
-app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/auth/pre-social", authRouter); // Only handle /pre-social here
+
+// Better Auth Handler - Mounted at the exact path expected by baseURL
+app.all("/api/v1/auth/*", toNodeHandler(auth));
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/courses", courseRouter);
