@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import Footer from "../components/common/Footer";
 import Navbar from "../components/common/Navbar";
 
-const PrivacyPolicy = () => {
+const LegalPolicy = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -102,4 +102,4 @@ const PrivacyPolicy = () => {
   );
 };
 
-export default PrivacyPolicy;
+export default LegalPolicy;

@@ -7,7 +7,7 @@ import Loading from "./components/student/Loading";
 import AboutPage from "./Pages/AboutPage";
 import ContactPage from "./Pages/ContactPage";
 import LandingPage from "./Pages/LandingPage";
-import PrivacyPolicy from "./Pages/PrivacyPolicy";
+import LegalPolicy from "./Pages/LegalPolicy";
 import Cart from "./Pages/student/Cart";
 import CourseDetails from "./Pages/student/CourseDetails";
 import ForgotPassword from "./Pages/student/ForgotPassword";
@@ -83,7 +83,7 @@ export default function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/about" element={<AboutPage />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/privacy-policy" element={<LegalPolicy />} />
         <Route path="/course-list" element={<CoursesList />} />
         <Route path="/course-list/:input" element={<CoursesList />} />
         <Route path="/search" element={<Search />} />
