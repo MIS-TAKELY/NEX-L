@@ -7,6 +7,7 @@ import {
   Target,
   Users,
 } from "lucide-react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/common/Footer";
 import Navbar from "../components/common/Navbar";
@@ -23,7 +24,7 @@ const team = [
   {
     name: "Sachin Sharma",
     role: "Backend Developer",
-    bio: "Passionate about building scalable and robust backend systems to power NEX-L.",
+    bio: "Passionate about building scalable and robust backend systems to power NEXL.",
     initials: "SS",
   },
   {
@@ -33,7 +34,7 @@ const team = [
     initials: "PS",
   },
   {
-    name: "Sidhant Shungel",
+    name: "Sidhant Dhungel",
     role: "Backend Developer",
     bio: "Developing secure and high-performance server-side applications.",
     initials: "SS",
@@ -62,6 +63,9 @@ const values = [
 const AboutPage = () => {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div className="min-h-screen bg-white font-outfit text-gray-800">
       <Navbar />
@@ -108,7 +112,7 @@ const AboutPage = () => {
               Nepal's Premier E-Learning Platform
             </h2>
             <p className="text-gray-500 leading-relaxed text-sm">
-              NEX-L was born from a simple belief: every learner in Nepal deserves access to
+              NEXL was born from a simple belief: every learner in Nepal deserves access to
               world-class education, regardless of location or background. Since our founding
               we have partnered with industry-leading instructors to deliver courses that are
               practical, affordable and career-changing.
@@ -155,13 +159,12 @@ const AboutPage = () => {
               Heritage &amp; Vision
             </h2>
             <p className="text-gray-500 leading-relaxed text-sm">
-              Our journey began in a small co-working space with
-              passionate developers guided by the  values that sparked it all:
-              quality, inclusivity and impact.
+             NEXL was born in a small co-working space, built by passionate developers united by a shared commitment to quality, inclusivity, and lasting impact.
+
+
             </p>
             <p className="text-gray-500 leading-relaxed text-sm mt-4">
-              We envision a Nepal where skill gaps no longer determine someone's future, and
-              where lifelong learning is the norm rather than the exception.
+              We imagine a Nepal where opportunities are not limited by skill gaps, and where continuous learning empowers individuals to grow, adapt, and succeed throughout their lives.
             </p>
           </div>
         </div>
@@ -195,7 +198,7 @@ const AboutPage = () => {
             {values.map((v, i) => (
               <div
                 key={i}
-                className="bg-white rounded-xl p-7 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300"
+                className="bg-white rounded-xl p-7 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
               >
                 <div className="w-11 h-11 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-4">
                   {v.icon}
@@ -213,7 +216,7 @@ const AboutPage = () => {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <span className="inline-block px-4 py-1.5 mb-4 text-xs font-semibold tracking-widest uppercase rounded-full bg-primary/10 text-primary border border-primary/20">
-              The People Behind NEX-L
+              The People Behind NEXL
             </span>
             <h2 className="text-3xl font-bold text-gray-800">Team Members</h2>
           </div>
@@ -221,7 +224,7 @@ const AboutPage = () => {
             {team.map((member, i) => (
               <div
                 key={i}
-                className="bg-white rounded-xl p-7 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300 flex flex-col items-center text-center"
+                className="bg-white rounded-xl p-7 shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
               >
                 {/* avatar */}
                 <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center text-white text-2xl font-bold mb-4 shadow-lg">
@@ -245,7 +248,7 @@ const AboutPage = () => {
             Ready to Start Learning?
           </h2>
           <p className="text-white/70 mb-8">
-            Join thousands of learners already building their future with NEX-L.
+            Join thousands of learners already building their future with NEXL.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button

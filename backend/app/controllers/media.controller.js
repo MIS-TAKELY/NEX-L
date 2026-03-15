@@ -7,7 +7,7 @@ export const uploadMedia = (req, res) => {
 
     const uploadStream = cloudinary.uploader.upload_stream(
         {
-            folder: 'nex-l-courses',
+            folder: 'nexl-courses',
             resource_type: 'auto',
         },
         (error, result) => {

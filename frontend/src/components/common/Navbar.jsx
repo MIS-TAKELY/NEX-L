@@ -87,8 +87,8 @@ const Navbar = () => {
           ></span>
         </div>
 
-        {/* Desktop Menu */}
-        <div className="hidden lg:flex space-x-6 items-center">
+        {/* Desktop Links (Center) */}
+        <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-1 xl:gap-3">
           {desktopButtons.map((btn) => (
             <button
               key={btn.path}
@@ -96,7 +96,7 @@ const Navbar = () => {
                 navigate(btn.path);
                 setActive(btn.path);
               }}
-              className={`px-5 py-2 text-white/90 font-medium relative transition-colors duration-300 hover:cursor-pointer hover:text-white group`}
+              className={`px-3 py-2 text-white/90 font-medium relative transition-colors duration-300 hover:cursor-pointer hover:text-white group whitespace-nowrap`}
             >
               {btn.label}
               {/* Underline */}
@@ -106,23 +106,27 @@ const Navbar = () => {
             </button>
           ))}
 
+          {isLoggedIn && (
+            <button
+              onClick={() => {
+                const dashboardPath = getDashboardPath();
+                navigate(dashboardPath);
+                setActive(dashboardPath);
+              }}
+              className={`px-3 py-2 hover:cursor-pointer text-white/90 font-medium relative transition-colors duration-300 hover:text-white group whitespace-nowrap`}
+            >
+              Go to Dashboard
+              <span
+                className={`absolute left-0 bottom-0 h-0.5 bg-white transition-all duration-700 ease-out w-0 group-hover:w-full`}
+              ></span>
+            </button>
+          )}
+        </div>
+
+        {/* Desktop Actions (Right) */}
+        <div className="hidden lg:flex items-center gap-3">
           {isLoggedIn ? (
             <>
-              {/* Go to Dashboard button */}
-              <button
-                onClick={() => {
-                  const dashboardPath = getDashboardPath();
-                  navigate(dashboardPath);
-                  setActive(dashboardPath);
-                }}
-                className={`px-5 py-2 hover:cursor-pointer text-white/90 font-medium relative transition-colors duration-300 hover:text-white group`}
-              >
-                Go to Dashboard
-                <span
-                  className={`absolute left-0 bottom-0 h-0.5 bg-white transition-all duration-700 ease-out w-0 group-hover:w-full`}
-                ></span>
-              </button>
-
               {/* Search Button */}
               <button
                 onClick={() => navigate('/search')}
@@ -158,7 +162,7 @@ const Navbar = () => {
                   navigate("/login");
                   setActive("/login");
                 }}
-                className={`px-5 py-2 text-white/90 hover:cursor-pointer font-medium relative transition-colors duration-300 hover:text-white group`}
+                className={`px-4 py-2 text-white/90 hover:cursor-pointer font-medium relative transition-colors duration-300 hover:text-white group whitespace-nowrap`}
               >
                 Sign In
                 <span
@@ -172,7 +176,7 @@ const Navbar = () => {
                   navigate("/signup");
                   setActive("/signup");
                 }}
-                className={`px-6 py-2.5 rounded-lg hover:cursor-pointer font-bold transition-all shadow-lg bg-white text-primary hover:bg-gray-100 relative group`}
+                className={`px-5 py-2 rounded-lg hover:cursor-pointer font-bold transition-all shadow-lg bg-white text-primary hover:bg-gray-100 relative group whitespace-nowrap`}
               >
                 Get Started
                 <span

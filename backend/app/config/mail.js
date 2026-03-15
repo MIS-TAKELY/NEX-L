@@ -19,7 +19,7 @@ transporter.verify(function (error, success) {
 
 export async function sendEmail({ to, subject, html }) {
   await transporter.sendMail({
-    from: `"NEX-L Support" <${process.env.MAIL_USER}>`,
+    from: `"NEXL Support" <${process.env.MAIL_USER}>`,
     to,
     subject,
     html,

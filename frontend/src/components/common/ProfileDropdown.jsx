@@ -1,16 +1,16 @@
+import { logout as reduxLogout, updateUser } from '@/store/slices/authSlice';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { logout as reduxLogout, updateUser } from '@/store/slices/authSlice';
 
-import { setTheme as reduxSetTheme } from '@/store/slices/uiSlice';
 import { signOut } from '@/lib/auth.client';
+import { setTheme as reduxSetTheme } from '@/store/slices/uiSlice';
 
 const ProfileDropdown = () => {
     const dispatch = useDispatch();
-    const { userData } = useSelector((state) => state.auth);
+    const { userData, userRole } = useSelector((state) => state.auth);
     const { theme } = useSelector((state) => state.ui);
     const [isOpen, setIsOpen] = useState(false);
     const [view, setView] = useState('main'); // 'main' or 'display'
@@ -52,8 +52,10 @@ const ProfileDropdown = () => {
         }
     };
 
+    const settingsPath = userRole === 'instructor' ? '/instructor/settings' : '/student/settings';
+
     const menuItems = [
-        { id: 'settings', icon: 'solar:settings-bold-duotone', label: 'Settings', path: '/settings' },
+        { id: 'settings', icon: 'solar:settings-bold-duotone', label: 'Settings', path: settingsPath },
         { id: 'help', icon: 'solar:help-bold-duotone', label: 'Help & support', path: '/help' },
         { id: 'display', icon: 'solar:moon-bold-duotone', label: 'Display' },
         { id: 'feedback', icon: 'solar:chat-round-line-bold-duotone', label: 'Give feedback', path: '/feedback' },

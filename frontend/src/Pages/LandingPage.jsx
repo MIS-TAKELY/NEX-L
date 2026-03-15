@@ -5,6 +5,7 @@ import SocialTopbar from '../components/common/SocialTopbar';
 import CoursesSection from '../components/landing/CoursesSection';
 import Features from '../components/landing/Features';
 import Hero from '../components/landing/Hero';
+import Testimonials from '../components/landing/Testimonials';
 
 const LandingPage = () => {
   return (
@@ -14,6 +15,7 @@ const LandingPage = () => {
       <Hero />
       <Features />
       <CoursesSection />
+      <Testimonials />
       {/* <CTA /> */}
 
       <Footer />

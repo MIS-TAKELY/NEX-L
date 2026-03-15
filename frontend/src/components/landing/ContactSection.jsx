@@ -36,7 +36,7 @@ const ContactSection = () => {
     {
       icon: <Mail className="w-5 h-5" />,
       label: "Email Us",
-      value: "nexl@gmail.com",
+      value: "nexl6911@gmail.com",
     },
     {
       icon: <Phone className="w-5 h-5" />,
@@ -134,7 +134,7 @@ const ContactSection = () => {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      placeholder="John Doe"
+                      placeholder="siddhant dhungel"
                       className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:border-primary focus:outline-none transition-colors duration-200"
                     />
                   </div>
@@ -148,8 +148,8 @@ const ContactSection = () => {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      placeholder="john@example.com"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-gray-800 placeholder-gray-400 focus:border-primary focus:outline-none transition-colors duration-200"
+                      placeholder="nexl6911@gmail.com"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:border-primary focus:outline-none transition-colors duration-200"
                     />
                   </div>
                 </div>

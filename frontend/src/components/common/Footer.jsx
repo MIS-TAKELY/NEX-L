@@ -1,4 +1,5 @@
 import { Icon } from '@iconify/react';
+import { Link } from 'react-router-dom';
 import logo from '../../assets/logoo.png';
 
 const Footer = () => {
@@ -8,58 +9,55 @@ const Footer = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
                     {/* Column 1: About */}
                     <div className="space-y-6">
-                        <div className="flex items-center gap-2">
-                             <div className="bg-white p-1 rounded-sm">
-                                <img src={logo} alt="NEXL" className="h-8 w-8 object-contain" />
-                             </div>
-                            <div className='flex flex-col'>
-                                <span className="text-xl font-bold leading-none">NEXL</span>
-                                <span className='text-[10px] tracking-widest uppercase opacity-80'>Education</span>
-                            </div>
+                        <div className="flex items-center gap-1">
+                            <img
+                                src={logo}
+                                alt="NEXL"
+                                className="h-8 w-auto brightness-0 invert"
+                            />
+                            <span className="text-2xl font-bold text-white">EXL</span>
                         </div>
                         <p className="text-gray-300 text-sm leading-relaxed">
-Empowering students across Nepal through modern learning experiences that combine academics, skill development, and future readiness in one accessible platform.
+                           Empowering learners through modern learning experiences that combine academics, skill development, and future readiness in one accessible platform.
+
                         </p>
                     </div>
 
-                    {/* Column 2: Company */}
+                    {/* Column 2: Platform */}
                     <div>
-                        <h3 className="text-lg font-bold mb-6">Company</h3>
+                        <h3 className="text-lg font-bold mb-6">Platform</h3>
                         <ul className="space-y-4 text-gray-300 text-sm">
-                            <li><a href="#" className="hover:text-white transition-colors">About NEXL</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">LMS Platform</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Gallery</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Blogs</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Projects</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                            <li><Link to="/" className="hover:text-white transition-colors">Home</Link></li>
+                            <li><Link to="/course-list" className="hover:text-white transition-colors">Courses</Link></li>
+                            <li><Link to="/about" className="hover:text-white transition-colors">About Us</Link></li>
+                            <li><Link to="/contact" className="hover:text-white transition-colors">Contact Us</Link></li>
                         </ul>
                     </div>
 
-                    {/* Column 3: Services */}
+                    {/* Column 3: Learning */}
                     <div>
-                        <h3 className="text-lg font-bold mb-6">Services</h3>
+                        <h3 className="text-lg font-bold mb-6">Learning</h3>
                         <ul className="space-y-4 text-gray-300 text-sm">
-                            <li><a href="#" className="hover:text-white transition-colors">IT Courses & Training</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">LMS System</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">School Management System</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Web Development</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Mobile App Development</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Digital Marketing</a></li>
+                            <li><Link to="/course-list" className="hover:text-white transition-colors">Browse Courses</Link></li>
+                            <li><Link to="/certifications" className="hover:text-white transition-colors">Certifications</Link></li>
+                            <li><Link to="/learning-paths" className="hover:text-white transition-colors">Learning Paths</Link></li>
+                            <li><Link to="/faqs" className="hover:text-white transition-colors">FAQs</Link></li>
+                            <li><Link to="/blog" className="hover:text-white transition-colors">Blog</Link></li>
                         </ul>
                     </div>
 
-                    {/* Column 4: Contact & Trusted By */}
+                    {/* Column 4: Get In Touch */}
                     <div className="space-y-8">
                         <div>
                             <h3 className="text-lg font-bold mb-6">Get In Touch</h3>
                             <ul className="space-y-4 text-gray-300 text-sm">
                                 <li className="flex items-center gap-3">
                                     <Icon icon="solar:letter-linear" className="text-accent" size={18} />
-                                    <span>hello@nexl.edu.np</span>
+                                    <span>nexl6911@gmail.com</span>
                                 </li>
                                 <li className="flex items-center gap-3">
                                     <Icon icon="solar:phone-calling-linear" className="text-accent" size={18} />
-                                    <span>+977 9827093876</span>
+                                    <span>+977 9800000000</span>
                                 </li>
                                 <li className="flex items-center gap-3">
                                     <Icon icon="solar:map-point-linear" className="text-accent" size={18} />
@@ -68,17 +66,14 @@ Empowering students across Nepal through modern learning experiences that combin
                             </ul>
                             
                             <div className="flex gap-4 mt-6">
-                                <a href="#" className="bg-white/10 hover:bg-accent transition-colors p-2 rounded-full">
+                                <a href="https://facebook.com" target="_blank" rel="noreferrer" className="bg-white/10 hover:bg-accent transition-colors p-2 rounded-full">
                                     <Icon icon="mdi:facebook" size={20} />
                                 </a>
-                                <a href="#" className="bg-white/10 hover:bg-accent transition-colors p-2 rounded-full">
+                                <a href="https://instagram.com" target="_blank" rel="noreferrer" className="bg-white/10 hover:bg-accent transition-colors p-2 rounded-full">
                                     <Icon icon="mdi:instagram" size={20} />
                                 </a>
-                                <a href="#" className="bg-white/10 hover:bg-accent transition-colors p-2 rounded-full">
+                                <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="bg-white/10 hover:bg-accent transition-colors p-2 rounded-full">
                                     <Icon icon="mdi:linkedin" size={20} />
-                                </a>
-                                <a href="#" className="bg-white/10 hover:bg-accent transition-colors p-2 rounded-full">
-                                    <Icon icon="mdi:youtube" size={20} />
                                 </a>
                             </div>
                         </div>
@@ -86,9 +81,18 @@ Empowering students across Nepal through modern learning experiences that combin
                     </div>
                 </div>
 
-                <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
-                    <p>&copy; {new Date().getFullYear()} NEXL. All rights reserved.</p>
-                    <p>Designed with <Icon icon="solar:heart-bold" className="inline text-red-500 mx-1" /> by NEXL Team</p>
+                <div className="border-t border-white/10 pt-8 flex flex-col items-center gap-4 text-sm text-gray-400">
+                    <div className="flex flex-col md:flex-row w-full justify-between items-center gap-4">
+                        <p>&copy; {new Date().getFullYear()} NEXL. All rights reserved.</p>
+                        
+                        <div className="flex gap-4">
+                            <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+                            <span>|</span>
+                            <Link to="/terms" className="hover:text-white transition-colors">Terms & Conditions</Link>
+                        </div>
+                        
+                        <p>Designed with <Icon icon="solar:heart-bold" className="inline text-red-500 mx-1" /> by NEXL Team</p>
+                    </div>
                 </div>
             </div>
             
