@@ -35,6 +35,7 @@ export const auth = betterAuth({
   trustedOrigins: [
     process.env.BETTER_AUTH_URL,
     process.env.FRONTEND_URL,
+    "https://nex-l.onrender.com",
   ],
 
   // Add custom user fields for role management
