@@ -130,11 +130,4 @@ export const auth = betterAuth({
 
 
 
-console.log(
-  "Auth initialized with baseURL:",
-  process.env.BETTER_AUTH_URL + "/api/v1/auth",
-);
-console.log("Trusted Origins:", [
-  process.env.BETTER_AUTH_URL,
-  process.env.FRONTEND_URL,
-]);
+console.log("Better Auth Setup Complete. baseURL:", baseURL);
