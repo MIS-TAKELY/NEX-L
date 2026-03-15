@@ -5,6 +5,11 @@ import { auth } from "../lib/auth.js";
 
 const router = express.Router();
 
+router.use((req, res, next) => {
+    console.log(`[Auth Route Debug] Path: ${req.path}, Cookies: ${Object.keys(req.cookies || {}).join(", ") || "none"}`);
+    next();
+});
+
 router.get("/pre-social", (req, res) => {
     const { role } = req.query;
     console.log(`--- /pre-social called with role: ${role} ---`);

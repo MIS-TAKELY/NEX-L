@@ -2,8 +2,13 @@ import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client } from "../config/dbConnect.js";
 
+const rawBaseURL = (process.env.BETTER_AUTH_URL || "http://localhost:3000").replace(/\/+$/, "");
+const baseURL = rawBaseURL.includes("/api/v1/auth") ? rawBaseURL : `${rawBaseURL}/api/v1/auth`;
+
+console.log("Better Auth initializing with baseURL:", baseURL);
+
 export const auth = betterAuth({
-  baseURL: (process.env.BETTER_AUTH_URL || "http://localhost:3000").replace(/\/+$/, "") + "/api/v1/auth",
+  baseURL,
   secret: process.env.BETTER_AUTH_SECRET,
 
   database: mongodbAdapter(client.db()),
@@ -112,6 +117,14 @@ export const auth = betterAuth({
         },
       },
     },
+  },
+  onResponse: async (response, context) => {
+    // Log cookie setting for debugging
+    const setCookie = response.headers.get("set-cookie");
+    if (setCookie) {
+      console.log(`[Better-Auth] Set-Cookie header detected: ${setCookie.substring(0, 50)}...`);
+    }
+    return { response };
   },
 });
 
