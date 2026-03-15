@@ -1,116 +1,100 @@
-import { Icon } from '@iconify/react';
-import { useState } from 'react';
+/**
+ * Messages (Instructor) – Real-time chat with students powered by Stream Chat.
+ * Lists all messaging channels where the teacher is a participant,
+ * and renders the selected channel with stream-chat-react components.
+ */
+import { useEffect, useState } from "react";
+import {
+  Chat,
+  Channel,
+  ChannelList,
+  ChannelPreviewMessenger,
+  MessageInput,
+  MessageList,
+  Thread,
+  Window,
+} from "stream-chat-react";
+import "stream-chat-react/dist/css/v2/index.css";
+import { Icon } from "@iconify/react";
+import { useStream } from "@/context/StreamContext";
+import { useSelector } from "react-redux";
 
 const Messages = () => {
-  const [selectedThread, setSelectedThread] = useState(0);
+  const { chatClient } = useStream();
+  const { userData } = useSelector((s) => s.auth);
+  const [selectedChannel, setSelectedChannel] = useState(null);
 
-  const threads = [
-    {
-      id: 1,
-      student: 'Sarah Johnson',
-      course: 'Web Development Fundamentals',
-      lastMessage: 'Can you explain the difference between let and const?',
-      time: '2 hours ago',
-      unread: true,
-      avatar: 'Sarah'
-    },
-    {
-      id: 2,
-      student: 'Mike Chen',
-      course: 'Advanced React Patterns',
-      lastMessage: 'Thank you for the detailed explanation!',
-      time: '1 day ago',
-      unread: false,
-      avatar: 'Mike'
-    },
-    {
-      id: 3,
-      student: 'Emily Davis',
-      course: 'Node.js Backend Development',
-      lastMessage: 'I\'m having trouble with async/await',
-      time: '2 days ago',
-      unread: true,
-      avatar: 'Emily'
-    },
-  ];
+  // Stream filter: all messaging channels with this teacher
+  const filters = chatClient
+    ? { type: "messaging", members: { $in: [userData?.id] } }
+    : null;
+  const sort = { last_message_at: -1 };
+  const options = { limit: 30 };
 
-  const messages = [
-    { sender: 'student', text: 'Can you explain the difference between let and const?', time: '2:30 PM' },
-    { sender: 'instructor', text: 'Great question! Let allows you to reassign values, while const creates a constant reference.', time: '2:35 PM' },
-    { sender: 'student', text: 'So I can never change a const variable?', time: '2:37 PM' },
-  ];
+  if (!chatClient) {
+    return (
+      <div className="h-[calc(100vh-12rem)] flex items-center justify-center text-gray-500 font-outfit">
+        <div className="text-center">
+          <Icon icon="solar:chat-round-dots-bold-duotone" className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+          <p className="font-semibold text-gray-600">Connecting to chat…</p>
+          <p className="text-sm text-gray-400 mt-1">
+            Make sure <code className="bg-gray-100 px-1 rounded text-xs">VITE_STREAM_API_KEY</code> is set.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-[calc(100vh-12rem)] font-outfit">
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 h-full flex overflow-hidden">
-        {/* Threads List */}
-        <div className="w-1/3 border-r border-gray-100 flex flex-col">
-          <div className="p-6 border-b border-gray-100">
-            <h2 className="text-xl font-bold text-gray-900">Messages</h2>
-            <p className="text-sm text-gray-600 mt-1">{threads.filter(t => t.unread).length} unread</p>
-          </div>
-          <div className="flex-1 overflow-y-auto">
-            {threads.map((thread, idx) => (
-              <div
-                key={thread.id}
-                onClick={() => setSelectedThread(idx)}
-                className={`p-4 border-b border-gray-100 cursor-pointer transition-colors ${
-                  selectedThread === idx ? 'bg-primary/5' : 'hover:bg-gray-50'
-                }`}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
-                    <Icon icon="solar:user-circle-bold-duotone" size={28} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <h3 className="font-semibold text-gray-900 truncate">{thread.student}</h3>
-                      {thread.unread && <div className="w-2 h-2 bg-primary rounded-full" />}
-                    </div>
-                    <p className="text-xs text-gray-500 mb-1">{thread.course}</p>
-                    <p className="text-sm text-gray-600 truncate">{thread.lastMessage}</p>
-                    <p className="text-xs text-gray-400 mt-1">{thread.time}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <Chat client={chatClient} theme="str-chat__theme-light">
+          {/* Threads / Channel List */}
+          <div className="w-80 border-r border-gray-100 flex flex-col flex-shrink-0">
+            <div className="p-5 border-b border-gray-100">
+              <h2 className="text-xl font-bold text-gray-900">Messages</h2>
+              <p className="text-sm text-gray-400 mt-0.5">Your student conversations</p>
+            </div>
 
-        {/* Chat Area */}
-        <div className="flex-1 flex flex-col">
-          {/* Chat Header */}
-          <div className="p-6 border-b border-gray-100">
-            <h3 className="font-bold text-gray-900">{threads[selectedThread].student}</h3>
-            <p className="text-sm text-gray-600">{threads[selectedThread].course}</p>
-          </div>
-
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
-            {messages.map((msg, idx) => (
-              <div key={idx} className={`flex ${msg.sender === 'instructor' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[70%] ${msg.sender === 'instructor' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-900'} rounded-2xl px-4 py-3`}>
-                  <p className="text-sm">{msg.text}</p>
-                  <p className={`text-xs mt-1 ${msg.sender === 'instructor' ? 'text-white/70' : 'text-gray-500'}`}>{msg.time}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Input Area */}
-          <div className="p-6 border-t border-gray-100">
-            <div className="flex items-center gap-3">
-              <input
-                type="text"
-                placeholder="Type your message..."
-                className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20"
+            <div className="flex-1 overflow-y-auto">
+              <ChannelList
+                filters={filters}
+                sort={sort}
+                options={options}
+                Preview={(props) => (
+                  <ChannelPreviewMessenger
+                    {...props}
+                    onSelect={() => setSelectedChannel(props.channel)}
+                  />
+                )}
               />
-              <button className="bg-primary text-white p-3 rounded-xl hover:bg-primary/90 transition-colors">
-                <Icon icon="solar:plain-2-linear" className="w-5 h-5" />
-              </button>
             </div>
           </div>
-        </div>
+
+          {/* Chat Area */}
+          <div className="flex-1 flex flex-col overflow-hidden">
+            {selectedChannel ? (
+              <Channel channel={selectedChannel}>
+                <Window>
+                  <MessageList />
+                  <MessageInput focus />
+                </Window>
+                <Thread />
+              </Channel>
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center text-gray-400 gap-3">
+                <Icon
+                  icon="solar:chat-round-line-linear"
+                  className="w-16 h-16 text-gray-200"
+                />
+                <p className="font-medium text-gray-500">Select a conversation</p>
+                <p className="text-sm text-gray-400">
+                  Choose a student thread from the left to start chatting
+                </p>
+              </div>
+            )}
+          </div>
+        </Chat>
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ const contentSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["video", "pdf", "note", "link", "article", "mixed", "image", "file"],
+      enum: ["video", "pdf", "note", "link", "article", "mixed", "image", "file", "quiz", "assignment"],
       required: true,
     },
     url: {
@@ -20,6 +20,14 @@ const contentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Section",
       required: true,
+    },
+    quiz: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Quiz"
+    },
+    assignment: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Assignment"
     },
     resources: [
       {

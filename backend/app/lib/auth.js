@@ -43,11 +43,10 @@ export const auth = betterAuth({
   advanced: {
     crossSite: true,
     trustProxy: true,
-  },
-
-  cookieOptions: {
-    sameSite: "none",
-    secure: process.env.NODE_ENV === "production",
+    defaultCookieAttributes: {
+      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+    },
   },
 
   // Include role in session

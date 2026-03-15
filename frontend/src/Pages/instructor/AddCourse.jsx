@@ -1,5 +1,7 @@
 import { uploadMedia } from "@/apis/course.api";
 import { createCoupon } from "@/apis/coupon.api";
+import QuizBuilder from "@/components/instructor/course-builder/QuizBuilder";
+import AssignmentBuilder from "@/components/instructor/course-builder/AssignmentBuilder";
 import UploadStatusOverlay from "@/components/instructor/UploadStatusOverlay";
 
 import {
@@ -107,15 +109,37 @@ const AddCourse = () => {
     setFormData({ ...formData, sections: newSections });
   };
 
-  const addContent = (sectionIndex) => {
+  const addContent = (sectionIndex, type = "mixed") => {
     const newSections = [...formData.sections];
-    newSections[sectionIndex].contents.push({
-      title: "New Lesson",
-      type: "mixed", // 'video', 'pdf', 'article', 'mixed'
-      resources: [], // Array of files: [{ name, url, type, size, duration }]
-      description: "",
+    
+    const baseContent = {
+      title: type === "quiz" ? "New Quiz" : type === "assignment" ? "New Assignment" : "New Lesson",
+      type: type,
       isOpen: true,
-    });
+    };
+
+    if (type === "quiz") {
+      baseContent.quizData = {
+        title: "",
+        description: "",
+        timeLimit: 30,
+        passingScore: 60,
+        questions: [],
+      };
+    } else if (type === "assignment") {
+      baseContent.assignmentData = {
+        title: "",
+        description: "",
+        dueDate: "",
+        totalMarks: 100,
+        instructions: "",
+      };
+    } else {
+      baseContent.description = "";
+      baseContent.resources = [];
+    }
+
+    newSections[sectionIndex].contents.push(baseContent);
     setFormData({ ...formData, sections: newSections });
   };
 
@@ -1062,26 +1086,46 @@ const AddCourse = () => {
                               {/* Content Body */}
                               {content.isOpen && (
                                 <div className="p-5 space-y-6">
-                                  {/* Lesson Description */}
-                                  <div>
-                                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
-                                      Lesson Description
-                                    </label>
-                                    <textarea
-                                      value={content.description}
-                                      onChange={(e) =>
-                                        updateContent(
-                                          sIdx,
-                                          cIdx,
-                                          "description",
-                                          e.target.value,
-                                        )
-                                      }
-                                      rows="3"
-                                      placeholder="What will students learn in this specific lesson?"
-                                      className="w-full text-sm px-4 py-3 rounded-xl border border-gray-100 focus:ring-2 focus:ring-blue-500 outline-none resize-none bg-gray-50/30 transition-all"
+                                  {content.type === "quiz" ? (
+                                    <QuizBuilder
+                                      content={content}
+                                      onChange={(updatedContent) => {
+                                        const newSections = [...formData.sections];
+                                        newSections[sIdx].contents[cIdx] = updatedContent;
+                                        setFormData({ ...formData, sections: newSections });
+                                      }}
                                     />
-                                  </div>
+                                  ) : content.type === "assignment" ? (
+                                    <AssignmentBuilder
+                                      content={content}
+                                      onChange={(updatedContent) => {
+                                        const newSections = [...formData.sections];
+                                        newSections[sIdx].contents[cIdx] = updatedContent;
+                                        setFormData({ ...formData, sections: newSections });
+                                      }}
+                                    />
+                                  ) : (
+                                    <>
+                                      {/* Lesson Description */}
+                                      <div>
+                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+                                          Lesson Description
+                                        </label>
+                                        <textarea
+                                          value={content.description}
+                                          onChange={(e) =>
+                                            updateContent(
+                                              sIdx,
+                                              cIdx,
+                                              "description",
+                                              e.target.value,
+                                            )
+                                          }
+                                          rows="3"
+                                          placeholder="What will students learn in this specific lesson?"
+                                          className="w-full text-sm px-4 py-3 rounded-xl border border-gray-100 focus:ring-2 focus:ring-blue-500 outline-none resize-none bg-gray-50/30 transition-all"
+                                        />
+                                      </div>
 
                                   {/* Resources List */}
                                   <div className="space-y-4">
@@ -1251,18 +1295,36 @@ const AddCourse = () => {
                                       </div>
                                     </div>
                                   </div>
-                                </div>
+                                </>
                               )}
-                            </div>
-                          ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
 
-                          <button
-                            type="button"
-                            onClick={() => addContent(sIdx)}
-                            className="w-full py-4 border-2 border-dashed border-gray-100 rounded-2xl text-gray-400 hover:text-blue-500 hover:border-blue-200 hover:bg-blue-50/30 transition-all flex items-center justify-center gap-2 font-bold text-sm tracking-tight"
-                          >
-                            <Plus size={18} /> Add New Lesson to Section
-                          </button>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <button
+                              type="button"
+                              onClick={() => addContent(sIdx, "mixed")}
+                              className="w-full py-4 border-2 border-dashed border-gray-100 rounded-2xl text-gray-400 hover:text-blue-500 hover:border-blue-200 hover:bg-blue-50/30 transition-all flex items-center justify-center gap-2 font-bold text-sm tracking-tight"
+                            >
+                              <Plus size={18} /> Add Lesson
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => addContent(sIdx, "quiz")}
+                              className="w-full py-4 border-2 border-dashed border-gray-100 rounded-2xl text-gray-400 hover:text-purple-500 hover:border-purple-200 hover:bg-purple-50/30 transition-all flex items-center justify-center gap-2 font-bold text-sm tracking-tight"
+                            >
+                              <Plus size={18} /> Add Quiz
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => addContent(sIdx, "assignment")}
+                              className="w-full py-4 border-2 border-dashed border-gray-100 rounded-2xl text-gray-400 hover:text-green-500 hover:border-green-200 hover:bg-green-50/30 transition-all flex items-center justify-center gap-2 font-bold text-sm tracking-tight"
+                            >
+                              <Plus size={18} /> Add Assignment
+                            </button>
+                          </div>
                         </div>
                       </div>
                     )}

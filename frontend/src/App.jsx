@@ -22,6 +22,8 @@ import StudentSettings from "./Pages/student/Settings";
 import SignIn from "./Pages/student/SignIn";
 import SignUp from "./Pages/student/SignUp";
 import StudentLayout from "./Pages/student/StudentLayout";
+import LiveStreamWatch from "./Pages/student/LiveStreamWatch";
+import VideoCallPage from "./Pages/student/VideoCallPage";
 
 const CoursesList = lazy(() => import("./Pages/student/CoursesList"));
 const Search = lazy(() => import("./Pages/student/Search"));
@@ -36,6 +38,7 @@ import Messages from "./Pages/instructor/Messages";
 import MyCourses from "./Pages/instructor/MyCourses";
 import InstructorSettings from "./Pages/instructor/Settings";
 import Statistics from "./Pages/instructor/Statistics";
+import LiveStreamBroadcast from "./Pages/instructor/LiveStreamBroadcast";
 
 // ADMIN PAGES
 import AdminLayout from "./Pages/admin/Admin";
@@ -46,6 +49,7 @@ import AdminUsers from "./Pages/admin/Users";
 import { getSession } from "@/lib/auth.client";
 import { logout, setCredentials, setLoading } from "@/store/slices/authSlice";
 import ProtectedRoute from "./components/common/ProtectedRoute";
+import { StreamContextProvider } from "@/context/StreamContext";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -73,8 +77,9 @@ export default function App() {
     verifySession();
   }, [dispatch]);
   return (
-    <Suspense fallback={<Loading />}>
-      <Routes>
+    <StreamContextProvider>
+      <Suspense fallback={<Loading />}>
+        <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/about" element={<AboutPage />} />
@@ -116,6 +121,24 @@ export default function App() {
           <Route path="settings" element={<StudentSettings />} />
         </Route>
 
+          {/* Student standalone communication pages */}
+          <Route
+            path="/student/live/:courseId"
+            element={
+              <ProtectedRoute allowedRoles={["student"]}>
+                <LiveStreamWatch />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student/video-call/:courseId"
+            element={
+              <ProtectedRoute allowedRoles={["student"]}>
+                <VideoCallPage />
+              </ProtectedRoute>
+            }
+          />
+
         {/* Legacy support for /home redirecting or same element */}
         <Route
           path="/home"
@@ -146,6 +169,7 @@ export default function App() {
           <Route path="messages" element={<Messages />} />
           <Route path="settings" element={<InstructorSettings />} />
           <Route path="statistics" element={<Statistics />} />
+          <Route path="livestream/:courseId" element={<LiveStreamBroadcast />} />
         </Route>
 
         {/* ADMIN ROUTES */}
@@ -164,7 +188,8 @@ export default function App() {
         </Route>
 
         <Route path="/loading/:path" element={<Loading />} />
-      </Routes>
-    </Suspense>
+        </Routes>
+      </Suspense>
+    </StreamContextProvider>
   );
 }

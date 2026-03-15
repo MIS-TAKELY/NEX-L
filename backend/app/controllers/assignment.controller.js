@@ -24,16 +24,24 @@ export const createAssignment = async (req, res) => {
 // Submit assignment
 export const submitAssignment = async (req, res) => {
   try {
-    const { assignmentId, studentId, fileUrl } = req.body;
-    const assignment = await Assignment.findById(assignmentId);
-    if (!assignment) return res.status(400).json({ message: "Assignment not found" });
+    const { fileUrl, text } = req.body;
+    const assignmentId = req.params.id;
+    const studentId = req.user.id; // From auth middleware
 
-    assignment.submissions.push({ student: studentId, fileUrl, submittedAt: new Date() });
+    const assignment = await Assignment.findById(assignmentId);
+    if (!assignment) return res.status(404).json({ success: false, message: "Assignment not found" });
+
+    assignment.submissions.push({ 
+        student: studentId, 
+        fileUrl, 
+        text,
+        submittedAt: new Date() 
+    });
     await assignment.save();
 
-    res.json(assignment);
+    res.json({ success: true, data: assignment });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
