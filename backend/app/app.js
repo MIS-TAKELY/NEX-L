@@ -20,8 +20,7 @@ import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth.js";
 
 const app = express();
-app.set("trust proxy", true); // Required for Render to handle secure cookies correctly
-app.set("trust proxy", true); // Required for Render to handle secure cookies correctly
+app.set("trust proxy", true); // Required for Render load balancer to handle secure cookies
 
 app.use(
   cors({
