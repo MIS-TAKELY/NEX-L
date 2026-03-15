@@ -47,8 +47,8 @@ app.get("/", (req, res) => {
 // other APIs
 app.use("/api/v1/auth/pre-social", authRouter); // Only handle /pre-social here
 
-// Better Auth Handler - Mounted at the exact path expected by baseURL
-app.all("/api/v1/auth/*", toNodeHandler(auth));
+// Better Auth Handler - Mounted at the base path
+app.use("/api/v1/auth", toNodeHandler(auth));
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/courses", courseRouter);
