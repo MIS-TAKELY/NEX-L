@@ -7,6 +7,10 @@ const baseURL = rawBaseURL.includes("/api/v1/auth") ? rawBaseURL : `${rawBaseURL
 
 console.log("Better Auth initializing with baseURL:", baseURL);
 
+if (process.env.NODE_ENV !== "production") {
+  console.warn("[WARNING] NODE_ENV is not set to 'production'. Cross-site cookies may be blocked by browsers like Chrome/Brave.");
+}
+
 export const auth = betterAuth({
   baseURL,
   secret: process.env.BETTER_AUTH_SECRET,
@@ -122,7 +126,7 @@ export const auth = betterAuth({
     // Log cookie setting for debugging
     const setCookie = response.headers.get("set-cookie");
     if (setCookie) {
-      console.log(`[Better-Auth] Set-Cookie header detected: ${setCookie.substring(0, 50)}...`);
+      console.log(`[Better-Auth DEBUG] Set-Cookie: ${setCookie}`);
     }
     return { response };
   },

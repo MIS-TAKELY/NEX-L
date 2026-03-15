@@ -20,6 +20,8 @@ import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth.js";
 
 const app = express();
+app.set("trust proxy", true); // Required for Render to handle secure cookies correctly
+app.set("trust proxy", true); // Required for Render to handle secure cookies correctly
 
 app.use(
   cors({
@@ -48,7 +50,8 @@ app.get("/", (req, res) => {
 app.use("/api/v1/auth/pre-social", authRouter); // Only handle /pre-social here
 
 // Better Auth Handler - Mounted at the base path
-app.use("/api/v1/auth", toNodeHandler(auth));
+// We use a middleware to ensure path compatibility
+app.use("/api/v1/auth", (req, res) => toNodeHandler(auth)(req, res));
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/courses", courseRouter);
