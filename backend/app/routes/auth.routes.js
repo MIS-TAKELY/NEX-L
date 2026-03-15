@@ -12,9 +12,10 @@ router.get("/pre-social", (req, res) => {
 
         res.cookie("pending_role", role, {
             httpOnly: false,
-            secure: true, // Required for SameSite=None in cross-site
+            secure: true,
             sameSite: "none",
-            maxAge: 3600000, // 1 hour
+            path: "/", // Scoped to root
+            maxAge: 3600000, 
         });
     }
     res.status(200).send({ success: true, role });
