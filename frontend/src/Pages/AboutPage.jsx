@@ -198,7 +198,7 @@ const AboutPage = () => {
             {values.map((v, i) => (
               <div
                 key={i}
-                className="bg-white rounded-xl p-7 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300"
+                className="bg-white rounded-xl p-7 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
               >
                 <div className="w-11 h-11 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-4">
                   {v.icon}
@@ -224,7 +224,7 @@ const AboutPage = () => {
             {team.map((member, i) => (
               <div
                 key={i}
-                className="bg-white rounded-xl p-7 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300 flex flex-col items-center text-center"
+                className="bg-white rounded-xl p-7 shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
               >
                 {/* avatar */}
                 <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center text-white text-2xl font-bold mb-4 shadow-lg">
