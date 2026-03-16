@@ -105,7 +105,7 @@ const Testimonials = () => {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl font-extrabold text-[#1B3452] mb-4">
-            Student <span className="text-[#1B3452]">Feedbacks</span>
+            Students <span className="text-[#1B3452]">Feedback</span>
           </h2>
           <div className="w-16 h-1 bg-[#d4af37] mx-auto mb-6"></div>
           <p className="text-gray-600 text-lg">

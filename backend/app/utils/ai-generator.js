@@ -51,7 +51,7 @@ Tags: [5 comma-separated tags]`;
         const description = descriptionMatch ? descriptionMatch[1].trim() : fallbackContent.description;
         let category = categoryMatch ? categoryMatch[1].trim() : fallbackContent.category;
         
-        const allowedCategories = ["Development", "Business, Design, Marketing"];
+        const allowedCategories = ["Development", "Business, Design, Marketing", "Others"];
         const foundCategory = allowedCategories.find(c => category.toLowerCase().includes(c.toLowerCase()));
         if (foundCategory) category = foundCategory;
 

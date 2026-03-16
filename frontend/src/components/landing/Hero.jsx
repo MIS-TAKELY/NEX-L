@@ -19,11 +19,10 @@ const Hero = () => {
         {/* Centered Content */}
         <div className="relative z-10 text-center text-white px-4 md:px-6 pt-20 lg:pt-16 pb-12">
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 tracking-tight drop-shadow-2xl">
-            NEXL: Elevate Your Learning
+            NEXL : Elevate Your Learning
           </h1>
           <p className="text-lg md:text-xl lg:text-2xl max-w-3xl mx-auto leading-relaxed text-white/90 drop-shadow-lg">
-            Explore breathtaking courses, local culture, and unique learning
-            experiences.
+            Learn new skills, master your subjects, and achieve more.
           </p>
         </div>
       </header>
@@ -63,6 +62,7 @@ const Hero = () => {
               <option>Web Development</option>
               <option>Data Science</option>
               <option>Design</option>
+              <option>Other</option>
             </select>
 
             <select className="w-full md:w-56 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary outline-none">

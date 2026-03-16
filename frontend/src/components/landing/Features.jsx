@@ -52,7 +52,7 @@ const Features = () => {
           ))}
         </div>
 
-        <div className="text-center">
+        <div className="text-center text-primary">
           <Link
             to="/about"
             className="inline-flex items-center gap-2 text-gray-700 font-bold hover:text-primary hover:scale-110 transition-all duration-300 group"
