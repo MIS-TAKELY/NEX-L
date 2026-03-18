@@ -32,7 +32,7 @@ const WatcherView = ({ courseName }) => {
             <Icon icon="solar:tv-bold-duotone" className="w-6 h-6 text-red-400" />
           </div>
           <div>
-            <h1 className="text-white font-bold text-lg truncate max-w-xs">{courseName}</h1>
+            <h1 className="text-foreground font-bold text-lg truncate max-w-xs">{courseName}</h1>
             <p className="text-gray-400 text-xs">
               {callingState === CallingState.JOINED
                 ? `🔴 LIVE · ${participantCount} viewer${participantCount !== 1 ? "s" : ""}`
@@ -40,8 +40,8 @@ const WatcherView = ({ courseName }) => {
             </p>
           </div>
         </div>
-        <span className="flex items-center gap-1.5 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full animate-pulse">
-          <span className="w-2 h-2 bg-white rounded-full" /> LIVE
+        <span className="flex items-center gap-1.5 bg-red-500 text-foreground text-xs font-bold px-3 py-1.5 rounded-full animate-pulse">
+          <span className="w-2 h-2 bg-background rounded-full" /> LIVE
         </span>
       </div>
 
@@ -50,7 +50,7 @@ const WatcherView = ({ courseName }) => {
         {callingState === CallingState.JOINED ? (
           <LivestreamLayout />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-white gap-4">
+          <div className="flex flex-col items-center justify-center h-full text-foreground gap-4">
             <Icon icon="solar:tv-bold-duotone" className="w-20 h-20 text-gray-600 animate-pulse" />
             <p className="text-gray-400 text-lg">Waiting for teacher to go live…</p>
             <div className="w-8 h-8 border-2 border-gray-500 border-t-red-400 rounded-full animate-spin" />
@@ -117,7 +117,7 @@ const LiveStreamWatch = () => {
         <p className="text-center max-w-sm">{error}</p>
         <button
           onClick={() => navigate(-1)}
-          className="mt-2 text-sm text-gray-400 hover:text-white underline"
+          className="mt-2 text-sm text-gray-400 hover:text-foreground underline"
         >
           ← Go back
         </button>

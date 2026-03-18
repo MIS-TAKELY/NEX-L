@@ -28,12 +28,12 @@ const CallUI = ({ onLeave }) => {
 
   if (callingState === CallingState.LEFT) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-950 text-white gap-4">
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-950 text-foreground gap-4">
         <Icon icon="solar:phone-hang-up-bold-duotone" className="w-16 h-16 text-gray-500" />
         <p className="text-gray-400">Call ended</p>
         <button
           onClick={onLeave}
-          className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded-xl transition-all mt-2"
+          className="bg-gray-700 hover:bg-gray-600 text-foreground px-6 py-2 rounded-xl transition-all mt-2"
         >
           ← Go Back
         </button>
@@ -50,7 +50,7 @@ const CallUI = ({ onLeave }) => {
             <Icon icon="solar:video-frame-play-bold-duotone" className="w-6 h-6 text-blue-400" />
           </div>
           <div>
-            <h1 className="text-white font-bold text-lg">Video Call</h1>
+            <h1 className="text-foreground font-bold text-lg">Video Call</h1>
             <p className="text-gray-400 text-xs">
               {callingState === CallingState.JOINED
                 ? `${count} participant${count !== 1 ? "s" : ""} in call`
@@ -130,7 +130,7 @@ const VideoCallPage = () => {
       <div className="flex items-center justify-center h-screen bg-gray-950 text-red-400 flex-col gap-4">
         <Icon icon="solar:danger-triangle-bold" className="w-12 h-12" />
         <p className="text-center max-w-sm">{error}</p>
-        <button onClick={() => navigate(-1)} className="text-sm text-gray-400 hover:text-white underline">
+        <button onClick={() => navigate(-1)} className="text-sm text-gray-400 hover:text-foreground underline">
           ← Go back
         </button>
       </div>

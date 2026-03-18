@@ -10,7 +10,7 @@ const AdminLayout = () => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-50 font-outfit overflow-hidden">
+    <div className="flex min-h-screen bg-background font-outfit text-foreground overflow-hidden">
       {/* Universal Sidebar */}
       <Sidebar 
         menuItems={menuItems} 

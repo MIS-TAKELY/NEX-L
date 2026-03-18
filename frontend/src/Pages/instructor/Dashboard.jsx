@@ -10,14 +10,14 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
                 {/* Visits Card - Large Gradient Card */}
-                <div className="lg:col-span-2 bg-gradient-to-br from-primary to-primary-light rounded-[2.5rem] p-8 text-white relative overflow-hidden min-h-[300px] flex flex-col justify-center">
+                <div className="lg:col-span-2 bg-gradient-to-br from-primary to-primary-light rounded-3xl p-8 text-foreground relative overflow-hidden min-h-[300px] flex flex-col justify-center premium-card">
                     <div className="relative z-10 w-full md:w-1/2">
                         <p className="text-blue-100 text-sm font-medium mb-1">Visits for today</p>
                         <h2 className="text-7xl font-bold mb-6">0</h2>
                         
                         <div className="space-y-4">
                             <div className="flex items-center gap-3">
-                                <span className="p-1 rounded bg-white/20">
+                                <span className="p-1 rounded bg-background/20">
                                     <Icon icon="solar:star-bold" />
                                 </span>
                                 <div>
@@ -26,7 +26,7 @@ const Dashboard = () => {
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
-                                <span className="p-1 rounded bg-white/20">
+                                <span className="p-1 rounded bg-background/20">
                                     <Icon icon="solar:graph-up-bold" />
                                 </span>
                                 <div>
@@ -39,7 +39,7 @@ const Dashboard = () => {
 
                     <button 
                         onClick={() => navigate('/instructor/statistics')}
-                        className="absolute bottom-0 right-0 bg-primary-hover text-white px-8 py-4 rounded-tl-[2.5rem] font-bold text-sm tracking-wide hover:bg-primary transition-colors flex items-center gap-2"
+                        className="absolute bottom-0 right-0 bg-primary-hover text-foreground px-8 py-4 rounded-tl-[2.5rem] font-bold text-sm tracking-wide hover:bg-primary transition-colors flex items-center gap-2"
                     >
                         VIEW FULL STATISTIC <Icon icon="solar:alt-arrow-right-linear" />
                     </button>
@@ -52,11 +52,11 @@ const Dashboard = () => {
                 </div>
 
                 {/* Popularity Rate Card */}
-                <div className="bg-accent-soft rounded-[2.5rem] p-8 relative flex flex-col justify-between">
+                <div className="bg-accent-soft rounded-3xl p-8 relative flex flex-col justify-between premium-card">
                     <div>
                         <div className="flex justify-between items-start">
                              <p className="font-bold text-gray-800">Popularity rate</p>
-                             <span className="bg-white px-2 py-1 rounded-full text-xs font-bold shadow-sm">+2</span>
+                             <span className="bg-background px-2 py-1 rounded-full text-xs font-bold shadow-sm">+2</span>
                         </div>
                         <h2 className="text-6xl font-bold text-gray-900 mt-2">0<span className="text-2xl align-top text-gray-500">°</span></h2>
                     </div>
@@ -68,7 +68,7 @@ const Dashboard = () => {
                         <p className="text-xs text-gray-600 leading-relaxed mb-4">
                             Your Rate has increased because of your recent update activity. <span className="font-bold">Keep moving</span> forward and get more points!
                         </p>
-                         {/* <div className="bg-white p-3 rounded-xl flex items-center justify-between shadow-sm cursor-pointer hover:shadow-md transition-shadow">
+                         {/* <div className="bg-background p-3 rounded-xl flex items-center justify-between shadow-sm cursor-pointer hover:shadow-md transition-shadow">
                               <div className="flex items-center gap-3"> */}
                                   {/* <span className="text-accent">
                                       <Icon icon="solar:globus-linear" />
@@ -77,7 +77,7 @@ const Dashboard = () => {
                                      Learn insights how to manage all <br/> aspects of your startup
                                  </div> */}
                              {/* </div> */}
-                             {/* <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white">▶</div> */}
+                             {/* <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-foreground">▶</div> */}
                         {/* </div> */}
                     </div>
                 </div>
@@ -87,14 +87,14 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
                 {/* Finance Performance */}
-                <div className="bg-white rounded-[2.5rem] p-8 shadow-sm">
+                <div className="bg-background rounded-3xl p-8 shadow-sm premium-card">
                     <div className="flex justify-between items-center mb-6">
                         <h3 className="font-bold text-gray-800">Finance Performance</h3>
                     </div>
                     
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-3">
-                             <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white font-bold">Rs</div>
+                             <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-foreground font-bold">Rs</div>
                              <div>
                                  <h4 className="text-2xl font-bold text-gray-800">0</h4>
                                  <p className="text-xs text-gray-400">Monthly income</p>
@@ -117,7 +117,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Top Performers */}
-                <div className="bg-white rounded-[2.5rem] p-8 shadow-sm">
+                <div className="bg-background rounded-3xl p-8 shadow-sm premium-card">
                     <h3 className="font-bold text-gray-800 mb-6">TOP performers</h3>
                     
                     <div className="space-y-6">
@@ -146,7 +146,7 @@ const Dashboard = () => {
                 </div>
 
                  {/* Top Performers - Targeting Region Placeholder */}
-                 {/* <div className="bg-white rounded-[2.5rem] p-8 shadow-sm relative overflow-hidden">
+                 {/* <div className="bg-background rounded-[2.5rem] p-8 shadow-sm relative overflow-hidden">
                     <div className="flex justify-between items-start mb-4">
                         <h3 className="font-bold text-gray-800">Targeting by region</h3>
                     </div>
@@ -162,7 +162,7 @@ const Dashboard = () => {
                         </div> */}
 
                          {/* Tooltip Card */}
-                         {/* <div className="absolute top-4 right-8 bg-white p-2 rounded-lg shadow-lg flex items-center gap-2 border border-gray-100 animate-bounce">
+                         {/* <div className="absolute top-4 right-8 bg-background p-2 rounded-lg shadow-lg flex items-center gap-2 border border-gray-100 animate-bounce">
                              <div className="w-6 h-6 rounded bg-gray-200 overflow-hidden"> */}
                                  {/* Flag placeholder */}
                                  {/* <img src="https://flagcdn.com/w40/pl.png" alt="Poland" className="w-full h-full object-cover" />

@@ -63,7 +63,7 @@ const Player = () => {
         <Icon icon="solar:danger-bold" className="text-red-500 mb-4" size={64} />
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Error Occurred</h2>
         <p className="text-gray-600 mb-8">{error}</p>
-        <button onClick={() => navigate(-1)} className="px-8 py-3 bg-primary text-white rounded-2xl font-bold">
+        <button onClick={() => navigate(-1)} className="px-8 py-3 bg-primary text-foreground rounded-2xl font-bold">
           Go Back
         </button>
       </div>
@@ -101,8 +101,8 @@ const Player = () => {
                 Your browser does not support the video tag.
               </video>
             </div>
-            <div className="bg-white dark:bg-zinc-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-zinc-800">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 italic">{activeResource.name || activeLesson?.title}</h2>
+            <div className="bg-background dark:bg-zinc-900 p-8 rounded-3xl border border-gray-100 dark:border-zinc-800 premium-card">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-foreground mb-4 italic">{activeResource.name || activeLesson?.title}</h2>
               <p className="text-gray-600 dark:text-zinc-400 leading-relaxed font-medium italic">
                 {activeLesson?.description || activeLesson?.summary || "No description provided for this lesson."}
               </p>
@@ -112,17 +112,17 @@ const Player = () => {
       case 'pdf':
       case 'file':
         return (
-          <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-zinc-900 rounded-[3rem] border border-gray-100 dark:border-zinc-800 shadow-sm px-10 text-center">
+          <div className="flex flex-col items-center justify-center py-20 bg-background dark:bg-zinc-900 rounded-3xl border border-gray-100 dark:border-zinc-800 shadow-sm px-10 text-center premium-card">
             <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
               <Icon icon="solar:document-bold" className="text-primary" size={40} />
             </div>
-            <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-4 italic">{activeResource.name || activeLesson?.title}</h2>
+            <h2 className="text-3xl font-extrabold text-gray-900 dark:text-foreground mb-4 italic">{activeResource.name || activeLesson?.title}</h2>
             <p className="text-gray-500 mb-8 max-w-md font-medium">This resource is a {type}. You can view it by clicking the button below.</p>
             <a
               href={url}
               target="_blank"
               rel="noreferrer"
-              className="px-10 py-4 bg-primary text-white rounded-2xl font-bold flex items-center gap-3 hover:shadow-xl hover:shadow-primary/20 transition-all active:scale-95"
+              className="px-10 py-4 bg-primary text-foreground rounded-2xl font-bold flex items-center gap-3 hover:shadow-xl hover:shadow-primary/20 transition-all active:scale-95"
             >
               <Icon icon="solar:download-minimalistic-bold" /> Open Resource
             </a>
@@ -131,8 +131,8 @@ const Player = () => {
       case 'note':
       case 'article':
         return (
-          <div className="prose prose-lg dark:prose-invert max-w-none bg-white dark:bg-zinc-900 p-8 md:p-12 rounded-[3rem] border border-gray-100 dark:border-zinc-800 shadow-sm">
-            <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-8 italic">{activeResource?.name || activeLesson?.title}</h1>
+          <div className="prose prose-lg dark:prose-invert max-w-none bg-background dark:bg-zinc-900 p-8 md:p-12 rounded-3xl border border-gray-100 dark:border-zinc-800 shadow-sm premium-card">
+            <h1 className="text-4xl font-extrabold text-gray-900 dark:text-foreground mb-8 italic">{activeResource?.name || activeLesson?.title}</h1>
             <div className="text-gray-700 dark:text-zinc-300 whitespace-pre-wrap leading-relaxed font-medium italic">
               {activeLesson?.description || activeLesson?.summary || "No description provided."}
             </div>
@@ -156,7 +156,7 @@ const Player = () => {
         );
       default:
         return (
-          <div className="flex flex-col items-center justify-center h-full py-20 bg-gray-50 dark:bg-zinc-900/50 rounded-[3rem] border-2 border-dashed border-gray-200 dark:border-zinc-800">
+          <div className="flex flex-col items-center justify-center h-full py-20 bg-gray-50 dark:bg-zinc-900/50 rounded-3xl border-2 border-dashed border-gray-200 dark:border-zinc-800">
             <Icon icon="solar:document-text-bold" className="text-primary mb-4" size={48} />
             <p className="text-gray-500 font-medium text-lg">Detailed content display for "{type}" is coming soon!</p>
             {url && (
@@ -175,7 +175,7 @@ const Player = () => {
       {!isSidebarOpen && (
         <button
           onClick={() => setIsSidebarOpen(true)}
-          className="fixed bottom-6 right-6 z-50 p-4 bg-primary text-white rounded-full shadow-2xl lg:hidden active:scale-95 transition-all"
+          className="fixed bottom-6 right-6 z-50 p-4 bg-primary text-foreground rounded-full shadow-2xl lg:hidden active:scale-95 transition-all"
         >
           <Icon icon="solar:menu-dots-bold" size={24} />
         </button>
@@ -183,12 +183,12 @@ const Player = () => {
 
       {/* Course Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-80 bg-white dark:bg-zinc-900 border-r border-gray-100 dark:border-zinc-800 transition-transform duration-300 lg:static lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed inset-y-0 left-0 z-40 w-80 bg-background dark:bg-zinc-900 border-r border-gray-100 dark:border-zinc-800 transition-transform duration-300 lg:static lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
       >
         <div className="flex flex-col h-full">
           <div className="p-6 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between">
-            <h2 className="text-xl font-extrabold text-gray-900 dark:text-white truncate pr-4 italic">{course?.title}</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 dark:text-foreground truncate pr-4 italic">{course?.title}</h2>
             <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 hover:bg-gray-100 rounded-lg">
               <Icon icon="solar:close-circle-linear" size={24} className="text-gray-400" />
             </button>
@@ -209,7 +209,7 @@ const Player = () => {
               </div>
               <div className="overflow-hidden">
                 <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Instructor</p>
-                <p className="text-sm font-extrabold text-gray-900 dark:text-white truncate italic">
+                <p className="text-sm font-extrabold text-gray-900 dark:text-foreground truncate italic">
                   {course?.teacher?.name || "Expert Instructor"}
                 </p>
               </div>
@@ -221,7 +221,7 @@ const Player = () => {
       {/* Main Content Pane */}
       <main className="flex-1 flex flex-col h-full overflow-hidden relative">
         {/* Top Navbar */}
-        <header className="h-20 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border-b border-gray-100 dark:border-zinc-800 px-6 md:px-10 flex items-center justify-between z-30">
+        <header className="h-20 bg-background/80 dark:bg-zinc-900/80 backdrop-blur-xl border-b border-gray-100 dark:border-zinc-800 px-6 md:px-10 flex items-center justify-between z-30">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate(-1)}
@@ -231,7 +231,7 @@ const Player = () => {
             </button>
             <div>
               <p className="text-xs text-gray-400 font-bold uppercase tracking-widest leading-none mb-1">Current Lesson</p>
-              <h3 className="text-lg font-extrabold text-gray-900 dark:text-white truncate max-w-xs md:max-w-md italic">
+              <h3 className="text-lg font-extrabold text-gray-900 dark:text-foreground truncate max-w-xs md:max-w-md italic">
                 {activeResource?.name || activeLesson?.title || "Choose a lesson"}
               </h3>
             </div>
@@ -264,7 +264,7 @@ const Player = () => {
               title="Group Chat"
               className={`p-2.5 rounded-xl transition-all flex items-center gap-1.5 text-xs font-bold ${
                 commPanel === 'group'
-                  ? 'bg-primary text-white shadow-lg shadow-primary/25'
+                  ? 'bg-primary text-foreground shadow-lg shadow-primary/25'
                   : 'bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-300 hover:bg-gray-200'
               }`}
             >
@@ -278,7 +278,7 @@ const Player = () => {
               title="Chat with Teacher"
               className={`p-2.5 rounded-xl transition-all flex items-center gap-1.5 text-xs font-bold ${
                 commPanel === 'dm'
-                  ? 'bg-primary text-white shadow-lg shadow-primary/25'
+                  ? 'bg-primary text-foreground shadow-lg shadow-primary/25'
                   : 'bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-300 hover:bg-gray-200'
               }`}
             >
@@ -302,7 +302,7 @@ const Player = () => {
 
       {/* Communication Panel (right slide-in) */}
       {commPanel && (
-        <aside className="w-full max-w-sm flex flex-col border-l border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 h-full flex-shrink-0">
+        <aside className="w-full max-w-sm flex flex-col border-l border-gray-100 dark:border-zinc-800 bg-background dark:bg-zinc-900 h-full flex-shrink-0">
           {commPanel === 'dm' && (
             <StudentChat courseId={courseId} onClose={() => setCommPanel(null)} />
           )}

@@ -49,7 +49,7 @@ const StudentSettings = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 transition-all hover:shadow-md">
+      <div className="bg-background rounded-3xl border border-gray-100 shadow-sm p-8 transition-all hover:shadow-md">
         <form onSubmit={handleSave} className="space-y-8">
           
           {/* Profile Photo Section */}
@@ -60,7 +60,7 @@ const StudentSettings = () => {
             </h3>
             <div className="flex items-center gap-6 bg-gray-50 p-6 rounded-2xl border border-gray-100">
               <div className="relative group cursor-pointer" onClick={() => fileInputRef.current.click()}>
-                <div className="w-24 h-24 rounded-full bg-white border-4 border-white shadow-md overflow-hidden flex items-center justify-center group-hover:border-primary/20 transition-all">
+                <div className="w-24 h-24 rounded-full bg-background border-4 border-white shadow-md overflow-hidden flex items-center justify-center group-hover:border-primary/20 transition-all">
                   {imagePreview ? (
                     <img src={imagePreview} alt="Profile preview" className="w-full h-full object-cover" />
                   ) : (
@@ -68,7 +68,7 @@ const StudentSettings = () => {
                   )}
                 </div>
                 <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Icon icon="solar:camera-add-bold" size={24} className="text-white" />
+                  <Icon icon="solar:camera-add-bold" size={24} className="text-foreground" />
                 </div>
                 <input
                   type="file"
@@ -86,7 +86,7 @@ const StudentSettings = () => {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current.click()}
-                  className="px-5 py-2 text-sm font-bold text-primary bg-primary/10 rounded-xl hover:bg-primary hover:text-white transition-colors"
+                  className="px-5 py-2 text-sm font-bold text-primary bg-primary/10 rounded-xl hover:bg-primary hover:text-foreground transition-colors"
                 >
                   Choose File
                 </button>
@@ -113,7 +113,7 @@ const StudentSettings = () => {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 bg-white rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                    className="w-full pl-11 pr-4 py-3 bg-background rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
                     placeholder="Enter your full name"
                     required
                   />
@@ -130,7 +130,7 @@ const StudentSettings = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 bg-white rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                    className="w-full pl-11 pr-4 py-3 bg-background rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
                     placeholder="Enter your email address"
                     required
                   />
@@ -142,7 +142,7 @@ const StudentSettings = () => {
           <div className="flex justify-end pt-6 border-t border-gray-100">
             <button
               type="submit"
-              className="flex items-center gap-2 px-8 py-3.5 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/25 hover:bg-primary/90 hover:-translate-y-0.5 active:translate-y-0 transition-all"
+              className="flex items-center gap-2 px-8 py-3.5 bg-primary text-foreground font-bold rounded-xl shadow-lg shadow-primary/25 hover:bg-primary/90 hover:-translate-y-0.5 active:translate-y-0 transition-all"
             >
               <Icon icon="solar:diskette-bold-duotone" size={20} />
               Save Changes

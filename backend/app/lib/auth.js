@@ -36,6 +36,8 @@ export const auth = betterAuth({
     process.env.BETTER_AUTH_URL,
     process.env.FRONTEND_URL,
     "https://nex-l.onrender.com",
+    "http://localhost:5173",
+    "http://127.0.0.1:5174",
   ],
 
   // Add custom user fields for role management

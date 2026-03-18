@@ -528,7 +528,7 @@ const AddCourse = () => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8 min-h-screen">
+    <div className="bg-background rounded-xl shadow-sm border border-gray-100 p-6 md:p-8 min-h-screen">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">
@@ -563,8 +563,8 @@ const AddCourse = () => {
                 type="button"
                 onClick={() => step.id < currentStep && setCurrentStep(step.id)}
                 className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${currentStep >= step.id
-                  ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
-                  : "bg-white text-gray-400 border-2 border-gray-100"
+                  ? "bg-blue-600 text-foreground shadow-lg shadow-blue-200"
+                  : "bg-background text-gray-400 border-2 border-gray-100"
                   }`}
                 animate={{
                   scale: currentStep === step.id ? 1.2 : 1,
@@ -596,7 +596,7 @@ const AddCourse = () => {
               exit={{ opacity: 0, x: -20 }}
               className="space-y-6"
             >
-              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-6">
+              <div className="bg-background rounded-2xl p-6 border border-gray-100 shadow-sm space-y-6">
                   <div className="flex justify-between items-center mb-2">
                     <label className="block text-sm font-bold text-gray-700 uppercase tracking-wide">
                       Course Title <span className="text-red-500">*</span>
@@ -654,7 +654,7 @@ const AddCourse = () => {
                       name="category"
                       value={formData.category}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none bg-white transition-all appearance-none"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none bg-background transition-all appearance-none"
                       required
                     >
                       <option value="">Select Category</option>
@@ -710,7 +710,7 @@ const AddCourse = () => {
                         setFormData((prev) => ({ ...prev, courseType: "full" }))
                       }
                       className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${formData.courseType === "full"
-                        ? "bg-white text-blue-600 shadow-sm"
+                        ? "bg-background text-blue-600 shadow-sm"
                         : "text-gray-400 hover:text-gray-600"
                         }`}
                     >
@@ -725,7 +725,7 @@ const AddCourse = () => {
                         }))
                       }
                       className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${formData.courseType === "syllabus"
-                        ? "bg-white text-blue-600 shadow-sm"
+                        ? "bg-background text-blue-600 shadow-sm"
                         : "text-gray-400 hover:text-gray-600"
                         }`}
                     >
@@ -770,7 +770,7 @@ const AddCourse = () => {
               exit={{ opacity: 0, x: -20 }}
               className="space-y-6"
             >
-              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-8">
+              <div className="bg-background rounded-2xl p-6 border border-gray-100 shadow-sm space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-4">
                     <label className="block text-sm font-bold text-gray-700 uppercase tracking-wide">
@@ -811,7 +811,7 @@ const AddCourse = () => {
                       </div>
                       {formData.thumbnail && (
                         <div className="absolute top-2 right-2 flex gap-2">
-                          <div className="bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-sm text-green-600">
+                          <div className="bg-background/90 backdrop-blur-sm p-2 rounded-lg shadow-sm text-green-600">
                             <CheckCircle2 size={16} />
                           </div>
                         </div>
@@ -876,7 +876,7 @@ const AddCourse = () => {
               </div>
 
               {/* Demo / Preview Video */}
-              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4">
+              <div className="bg-background rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <label className="block text-sm font-bold text-gray-700 uppercase tracking-wide">
@@ -903,7 +903,7 @@ const AddCourse = () => {
                       controls
                       className="w-full h-full object-contain"
                     />
-                    <span className="absolute top-3 left-3 bg-green-500 text-white text-[10px] font-black px-2 py-1 rounded-lg uppercase tracking-wider shadow">
+                    <span className="absolute top-3 left-3 bg-green-500 text-foreground text-[10px] font-black px-2 py-1 rounded-lg uppercase tracking-wider shadow">
                       Preview Ready
                     </span>
                   </div>
@@ -967,7 +967,7 @@ const AddCourse = () => {
                 <button
                   type="button"
                   onClick={addSection}
-                  className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl hover:bg-blue-700 font-bold transition-all shadow-lg shadow-blue-200 active:scale-95"
+                  className="flex items-center gap-2 bg-blue-600 text-foreground px-5 py-2.5 rounded-xl hover:bg-blue-700 font-bold transition-all shadow-lg shadow-blue-200 active:scale-95"
                 >
                   <Plus size={18} /> Add Section
                 </button>
@@ -977,7 +977,7 @@ const AddCourse = () => {
                 {formData.sections.map((section, sIdx) => (
                   <div
                     key={sIdx}
-                    className="border border-gray-100 rounded-3xl overflow-hidden bg-white shadow-sm"
+                    className="border border-gray-100 rounded-3xl overflow-hidden bg-background shadow-sm"
                   >
                     {/* Section Header */}
                     <div className="flex justify-between items-center p-5 bg-gray-50/50 border-b border-gray-100">
@@ -985,7 +985,7 @@ const AddCourse = () => {
                         <button
                           type="button"
                           onClick={() => toggleSection(sIdx)}
-                          className="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm hover:text-blue-600 transition-colors"
+                          className="w-8 h-8 flex items-center justify-center bg-background rounded-lg shadow-sm hover:text-blue-600 transition-colors"
                         >
                           {section.isOpen ? (
                             <ChevronUp size={18} />
@@ -994,7 +994,7 @@ const AddCourse = () => {
                           )}
                         </button>
                         <div className="flex items-center gap-3 flex-1">
-                          <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest bg-white px-2 py-0.5 rounded border">
+                          <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest bg-background px-2 py-0.5 rounded border">
                             Section {sIdx + 1}
                           </span>
                           <input
@@ -1019,12 +1019,12 @@ const AddCourse = () => {
 
                     {/* Section Contents */}
                     {section.isOpen && (
-                      <div className="p-6 space-y-6 bg-white">
+                      <div className="p-6 space-y-6 bg-background">
                         <div className="space-y-6 lg:pl-4">
                           {section.contents.map((content, cIdx) => (
                             <div
                               key={cIdx}
-                              className="group bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:border-blue-200 transition-all"
+                              className="group bg-background rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:border-blue-200 transition-all"
                             >
                               {/* Content Header */}
                               <div className="flex justify-between items-center p-4 bg-gray-50/30 border-b border-gray-50">
@@ -1032,7 +1032,7 @@ const AddCourse = () => {
                                   <button
                                     type="button"
                                     onClick={() => toggleContent(sIdx, cIdx)}
-                                    className="w-6 h-6 flex items-center justify-center bg-white rounded-md shadow-xs"
+                                    className="w-6 h-6 flex items-center justify-center bg-background rounded-md shadow-xs"
                                   >
                                     {content.isOpen ? (
                                       <ChevronUp
@@ -1066,7 +1066,7 @@ const AddCourse = () => {
                                     />
                                   </div>
                                   {content.resources.length > 0 && (
-                                    <span className="text-[9px] font-black text-gray-400 bg-white border border-gray-100 px-3 py-1 rounded-full uppercase tracking-tighter">
+                                    <span className="text-[9px] font-black text-gray-400 bg-background border border-gray-100 px-3 py-1 rounded-full uppercase tracking-tighter">
                                       {content.resources.length} resource
                                       {content.resources.length !== 1
                                         ? "s"
@@ -1137,7 +1137,7 @@ const AddCourse = () => {
                                       {content.resources.map((resource) => (
                                         <div
                                           key={resource.id}
-                                          className={`flex items-center gap-4 p-3 bg-white rounded-xl border transition-all ${resource.isUploading
+                                          className={`flex items-center gap-4 p-3 bg-background rounded-xl border transition-all ${resource.isUploading
                                             ? "border-blue-200 bg-blue-50/20"
                                             : "border-gray-100 group/item hover:border-blue-200"
                                             }`}
@@ -1154,7 +1154,7 @@ const AddCourse = () => {
                                                 />
                                                 <Play
                                                   size={14}
-                                                  className="text-white absolute z-10 opacity-70"
+                                                  className="text-foreground absolute z-10 opacity-70"
                                                 />
                                               </div>
                                             ) : resource.type === "image" ? (
@@ -1166,13 +1166,13 @@ const AddCourse = () => {
                                                 />
                                               </div>
                                             ) : (
-                                              <div className="w-14 h-14 bg-white rounded-xl shadow-xs border border-gray-100 flex items-center justify-center">
+                                              <div className="w-14 h-14 bg-background rounded-xl shadow-xs border border-gray-100 flex items-center justify-center">
                                                 {getResourceIcon(resource.type)}
                                               </div>
                                             )}
 
                                             {resource.isUploading && (
-                                              <div className="absolute inset-0 bg-white/20 backdrop-blur-[1px] flex items-center justify-center rounded-xl">
+                                              <div className="absolute inset-0 bg-background/20 backdrop-blur-[1px] flex items-center justify-center rounded-xl">
                                                 <Loader2 className="animate-spin h-5 w-5 text-blue-600" />
                                               </div>
                                             )}
@@ -1276,7 +1276,7 @@ const AddCourse = () => {
                                         />
                                         <div className="border border-dashed border-gray-200 rounded-xl p-4 text-center hover:bg-blue-50/30 hover:border-blue-200 transition-all">
                                           <div className="flex items-center justify-center gap-3">
-                                            <div className="w-8 h-8 bg-gray-50 rounded-full flex items-center justify-center group-hover:bg-white transition-colors">
+                                            <div className="w-8 h-8 bg-gray-50 rounded-full flex items-center justify-center group-hover:bg-background transition-colors">
                                               <Upload
                                                 size={14}
                                                 className="text-gray-400"
@@ -1313,7 +1313,7 @@ const AddCourse = () => {
                             <button
                               type="button"
                               onClick={() => addContent(sIdx, "quiz")}
-                              className="w-full py-4 border-2 border-dashed border-gray-100 rounded-2xl text-gray-400 hover:text-purple-500 hover:border-purple-200 hover:bg-purple-50/30 transition-all flex items-center justify-center gap-2 font-bold text-sm tracking-tight"
+                              className="w-full py-4 border-2 border-dashed border-gray-100 rounded-2xl text-gray-400 hover:text-orange-500 hover:border-orange-200 hover:bg-orange-50/30 transition-all flex items-center justify-center gap-2 font-bold text-sm tracking-tight"
                             >
                               <Plus size={18} /> Add Quiz
                             </button>
@@ -1332,7 +1332,7 @@ const AddCourse = () => {
                 ))}
 
                 {formData.sections.length === 0 && (
-                  <div className="text-center py-16 bg-white rounded-3xl border border-gray-100 shadow-sm ring-1 ring-gray-900/5">
+                  <div className="text-center py-16 bg-background rounded-3xl border border-gray-100 shadow-sm ring-1 ring-gray-900/5">
                     <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
                       <Plus size={40} className="text-blue-500" />
                     </div>
@@ -1346,7 +1346,7 @@ const AddCourse = () => {
                     <button
                       type="button"
                       onClick={addSection}
-                      className="bg-blue-600 text-white px-8 py-3 rounded-2xl hover:bg-blue-700 font-black transition-all shadow-xl shadow-blue-200 active:scale-95"
+                      className="bg-blue-600 text-foreground px-8 py-3 rounded-2xl hover:bg-blue-700 font-black transition-all shadow-xl shadow-blue-200 active:scale-95"
                     >
                       Initialize First Section
                     </button>
@@ -1377,7 +1377,7 @@ const AddCourse = () => {
                 <button
                   type="button"
                   onClick={addCoupon}
-                  className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl hover:bg-blue-700 font-bold transition-all shadow-lg shadow-blue-200 active:scale-95"
+                  className="flex items-center gap-2 bg-blue-600 text-foreground px-5 py-2.5 rounded-xl hover:bg-blue-700 font-bold transition-all shadow-lg shadow-blue-200 active:scale-95"
                 >
                   <Plus size={18} /> Add Coupon
                 </button>
@@ -1389,7 +1389,7 @@ const AddCourse = () => {
                     key={idx}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4 relative group"
+                    className="bg-background p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4 relative group"
                   >
                     <button
                       type="button"
@@ -1436,7 +1436,7 @@ const AddCourse = () => {
                           <select
                             value={coupon.type}
                             onChange={(e) => updateCouponField(idx, "type", e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-xl border border-gray-100 focus:ring-2 focus:ring-blue-500 outline-none font-bold text-gray-700 transition-all bg-white shadow-sm appearance-none"
+                            className="w-full px-4 py-2.5 rounded-xl border border-gray-100 focus:ring-2 focus:ring-blue-500 outline-none font-bold text-gray-700 transition-all bg-background shadow-sm appearance-none"
                           >
                             <option value="percentage">% Percentage</option>
                             <option value="fixed">Fixed Amount</option>
@@ -1511,7 +1511,7 @@ const AddCourse = () => {
                 key="btn-next"
                 type="button"
                 onClick={nextStep}
-                className="bg-black text-white px-10 py-3 rounded-xl font-bold hover:bg-gray-800 transition-all shadow-xl shadow-black/10 active:scale-95 flex items-center gap-2"
+                className="bg-black text-foreground px-10 py-3 rounded-xl font-bold hover:bg-gray-800 transition-all shadow-xl shadow-black/10 active:scale-95 flex items-center gap-2"
               >
                 Forward <ArrowRight size={18} />
               </button>
@@ -1521,7 +1521,7 @@ const AddCourse = () => {
                 type="button"
                 onClick={handleSubmit}
                 disabled={loading || Object.values(uploadingFiles).some(Boolean)}
-                className="bg-blue-600 text-white px-10 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 active:scale-95 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-blue-600 text-foreground px-10 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 active:scale-95 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>

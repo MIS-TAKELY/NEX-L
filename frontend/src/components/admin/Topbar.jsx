@@ -1,36 +1,48 @@
 import { Icon } from '@iconify/react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleTheme } from '@/store/slices/uiSlice';
 
 const AdminTopbar = () => {
+  const dispatch = useDispatch();
+  const { theme } = useSelector((state) => state.ui);
+
   return (
-    <div className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 sticky top-0 z-10">
+    <header className="h-20 bg-card border-b border-border flex items-center justify-between px-8 sticky top-0 z-10 shrink-0">
       <div className="flex-1 max-w-md">
-        {/* <div className="relative">
-          <Icon icon="solar:magnifer-linear" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-          <input 
-            type="text" 
-            placeholder="Search resources..." 
-            className="w-full pl-12 pr-4 py-2.5 bg-gray-50 border border-transparent focus:border-primary/20 focus:bg-white rounded-xl text-sm outline-none transition-all"
-          />
-        </div> */}
+        {/* Placeholder for future search bar */}
       </div>
 
-      {/* <div className="flex items-center gap-6">
-        <button className="relative w-10 h-10 flex items-center justify-center text-gray-500 hover:bg-gray-50 rounded-full transition-colors">
-          <Icon icon="solar:bell-linear" size={20} />
-          <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-        </button> */}
-        
-        <div className="flex items-center gap-3 pl-6 border-l border-gray-100">
+      <div className="flex items-center gap-4">
+        {/* Theme Toggle */}
+        <button
+          onClick={() => dispatch(toggleTheme())}
+          className="w-10 h-10 bg-card rounded-full flex items-center justify-center text-muted-foreground hover:text-primary hover:shadow-md transition-all shadow-sm border border-border relative overflow-hidden group"
+        >
+          <Icon
+            icon="solar:sun-bold-duotone"
+            className={`absolute h-5 w-5 transition-all duration-500 ease-in-out ${
+              theme === 'dark' ? 'scale-0 -rotate-90 opacity-0' : 'scale-100 rotate-0 opacity-100'
+            } text-amber-500`}
+          />
+          <Icon
+            icon="solar:moon-stars-bold-duotone"
+            className={`absolute h-5 w-5 transition-all duration-500 ease-in-out ${
+              theme === 'dark' ? 'scale-100 rotate-0 opacity-100' : 'scale-0 rotate-90 opacity-0'
+            } text-blue-400 group-hover:text-primary`}
+          />
+        </button>
+
+        <div className="flex items-center gap-3 pl-6 border-l border-border">
           <div className="text-right hidden sm:block">
-            <p className="text-sm font-bold text-gray-900">Admin User</p>
-            <p className="text-xs text-gray-500">Super Admin</p>
+            <p className="text-sm font-bold text-foreground">Admin User</p>
+            <p className="text-xs text-muted-foreground">Super Admin</p>
           </div>
-          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white overflow-hidden shadow-md">
+          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary overflow-hidden border border-primary/20">
             <Icon icon="solar:user-circle-bold-duotone" size={24} />
           </div>
         </div>
       </div>
-    // </div>
+    </header>
   );
 };
 

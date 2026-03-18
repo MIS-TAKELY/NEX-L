@@ -47,7 +47,7 @@ const Messages = () => {
 
   return (
     <div className="h-[calc(100vh-12rem)] font-outfit">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 h-full flex overflow-hidden">
+      <div className="bg-background rounded-xl shadow-sm border border-gray-100 h-full flex overflow-hidden">
         <Chat client={chatClient} theme="str-chat__theme-light">
           {/* Threads / Channel List */}
           <div className="w-80 border-r border-gray-100 flex flex-col flex-shrink-0">

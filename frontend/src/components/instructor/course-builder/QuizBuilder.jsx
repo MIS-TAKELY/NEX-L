@@ -115,7 +115,7 @@ const QuizBuilder = ({ content, onChange }) => {
         </h4>
 
         {quizData.questions?.map((q, qIndex) => (
-          <div key={qIndex} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm relative group">
+          <div key={qIndex} className="bg-background p-4 rounded-xl border border-gray-200 shadow-sm relative group">
             <button
               onClick={() => removeQuestion(qIndex)}
               className="absolute top-2 right-2 text-gray-300 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-all"
@@ -174,7 +174,7 @@ const QuizBuilder = ({ content, onChange }) => {
                          onClick={() => updateQuestion(qIndex, "correctAnswer", opt)}
                          className={`w-5 h-5 rounded-full flex items-center justify-center border transition-all ${
                            q.correctAnswer === opt
-                             ? "bg-green-500 border-green-500 text-white shadow-md shadow-green-200"
+                             ? "bg-green-500 border-green-500 text-foreground shadow-md shadow-green-200"
                              : "border-gray-300 hover:border-green-400"
                          }`}
                        >
@@ -185,7 +185,7 @@ const QuizBuilder = ({ content, onChange }) => {
                         value={opt}
                         onChange={(e) => updateOption(qIndex, oIndex, e.target.value)}
                         className={`flex-1 px-3 py-1.5 text-sm outline-none rounded-md transition-all ${
-                           q.correctAnswer === opt ? "bg-green-50/50 font-semibold" : "bg-gray-50 focus:bg-white border border-transparent focus:border-gray-200"
+                           q.correctAnswer === opt ? "bg-green-50/50 font-semibold" : "bg-gray-50 focus:bg-background border border-transparent focus:border-gray-200"
                         }`}
                       />
                       <button
@@ -213,7 +213,7 @@ const QuizBuilder = ({ content, onChange }) => {
                     value={q.correctAnswer || ""}
                     onChange={(e) => updateQuestion(qIndex, "correctAnswer", e.target.value)}
                     placeholder="e.g. Paris"
-                    className="w-full px-3 py-2 text-sm border-b-2 border-transparent bg-gray-50 hover:bg-white focus:border-blue-500 outline-none transition-all rounded-t-md"
+                    className="w-full px-3 py-2 text-sm border-b-2 border-transparent bg-gray-50 hover:bg-background focus:border-blue-500 outline-none transition-all rounded-t-md"
                   />
                 </div>
               )}
@@ -222,7 +222,7 @@ const QuizBuilder = ({ content, onChange }) => {
         ))}
 
         {(!quizData.questions || quizData.questions.length === 0) && (
-          <div className="text-center py-6 bg-white border border-dashed border-gray-200 rounded-xl">
+          <div className="text-center py-6 bg-background border border-dashed border-gray-200 rounded-xl">
              <p className="text-sm font-medium text-gray-400 mb-2">No questions yet</p>
           </div>
         )}

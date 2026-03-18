@@ -17,7 +17,7 @@ const StudentSidebar = () => {
   ];
 
   return (
-    <div className="w-64 bg-white min-h-screen border-r border-gray-100 flex flex-col p-6 hidden md:flex font-outfit">
+    <div className="w-64 bg-background min-h-screen border-r border-gray-100 flex flex-col p-6 hidden md:flex font-outfit">
 
       {/* Brand */}
       <div className="flex items-center gap-3 mb-10 text-gray-900">

@@ -106,17 +106,15 @@ const SignUp = () => {
     <div className="min-h-screen flex font-outfit overflow-hidden">
       {/* Left Side - Dark Background with Text */}
       <div className="hidden lg:flex lg:w-1/2 bg-primary relative flex-col justify-center px-12 md:px-20 text-primary-foreground overflow-hidden">
+        {/* Dynamic Background Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-accent opacity-100 dark:from-[#0f0f17] dark:to-[#0a0a0f]" />
+
         {/* Abstract lines decoration */}
         <div className="absolute bottom-20 left-20 w-48 h-48 border border-white/10 rounded-lg transform rotate-12" />
         <div className="absolute bottom-24 left-24 w-48 h-48 border border-white/10 rounded-lg transform rotate-12" />
 
         <div className="relative z-10 mb-20">
-          <button
-            onClick={() => navigate(-1)}
-            className="absolute -top-32 left-0 flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all font-medium backdrop-blur-sm border border-white/20 shadow-sm"
-          >
-            <Icon icon="solar:alt-arrow-left-linear" className="w-5 h-5" /> go back
-          </button>
+         
 
           <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-4">
             Chase your <br />
@@ -130,7 +128,7 @@ const SignUp = () => {
         {/* Wave Shape Divider */}
         <div className="absolute top-0 right-0 bottom-0 w-24 translate-x-[1px] h-full pointer-events-none">
           <svg
-            className="h-full w-full fill-white"
+            className="h-full w-full fill-background"
             preserveAspectRatio="none"
             viewBox="0 0 100 100"
           >
@@ -140,7 +138,7 @@ const SignUp = () => {
       </div>
 
       {/* Right Side - Form */}
-      <div className="w-full lg:w-1/2 bg-card flex flex-col justify-center p-4 md:p-6 relative">
+      <div className="w-full lg:w-1/2 bg-background flex flex-col justify-center p-4 md:p-6 relative">
         {/* New Top Left Arrow Button */}
         <button
           onClick={() => navigate(-1)}
@@ -155,45 +153,45 @@ const SignUp = () => {
             <h1 className="text-3xl font-bold text-primary">NEXL</h1>
           </div>
 
-          <h2 className="text-xl font-bold text-foreground dark:text-neutral-200">
+          <h2 className="text-xl font-bold text-foreground">
             Sign Up
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground dark:text-neutral-300">
+          <p className="mt-2 text-sm text-muted-foreground">
             Create your account to get started
           </p>
 
           {/* Role Selection */}
-          <div className="mt-4">
-            <p className="text-sm font-medium text-gray-700 mb-3">I am a:</p>
+          <div className="mt-6">
+            <p className="text-sm font-medium text-foreground/70 mb-3">I am a:</p>
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={() => setRole("student")}
-                className={`flex-1 px-4 py-3 rounded-lg border-2 transition-all flex items-center justify-center gap-2 ${role === "student"
-                  ? "border-primary bg-primary/5 text-primary font-semibold"
-                  : "border-gray-200 text-gray-600 hover:border-gray-300"
+                className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${role === "student"
+                  ? "border-primary bg-primary/5 text-primary font-semibold shadow-sm shadow-primary/10"
+                  : "border-border text-muted-foreground hover:border-primary/50 hover:bg-muted/50"
                   }`}
               >
-                <Icon icon="solar:userId-linear" /> Student
+                <Icon icon="solar:user-id-linear" className="w-5 h-5" /> Student
               </button>
               <button
                 type="button"
                 onClick={() => setRole("instructor")}
-                className={`flex-1 px-4 py-3 rounded-lg border-2 transition-all flex items-center justify-center gap-2 ${role === "instructor"
-                  ? "border-primary bg-primary/5 text-primary font-semibold"
-                  : "border-gray-200 text-gray-600 hover:border-gray-300"
+                className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${role === "instructor"
+                  ? "border-primary bg-primary/5 text-primary font-semibold shadow-sm shadow-primary/10"
+                  : "border-border text-muted-foreground hover:border-primary/50 hover:bg-muted/50"
                   }`}
               >
-                <Icon icon="solar:teacher-linear" /> Instructor
+                <Icon icon="solar:teacher-linear" className="w-5 h-5" /> Instructor
               </button>
             </div>
           </div>
 
-          <form className="my-4" onSubmit={handleSubmit}>
-            <div className="flex flex-col space-y-2">
-              <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
+          <form className="my-6" onSubmit={handleSubmit}>
+            <div className="flex flex-col space-y-4">
+              <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
                 <LabelInputContainer>
-                  <Label htmlFor="firstName" className="text-sm">
+                  <Label htmlFor="firstName" className="text-sm text-foreground">
                     First name
                   </Label>
                   <input
@@ -204,11 +202,11 @@ const SignUp = () => {
                     value={formData.firstName}
                     onChange={handleChange}
                     required
-                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex h-11 w-full rounded-xl border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
                   />
                 </LabelInputContainer>
                 <LabelInputContainer>
-                  <Label htmlFor="lastName" className="text-sm">
+                  <Label htmlFor="lastName" className="text-sm text-foreground">
                     Last name
                   </Label>
                   <input
@@ -219,13 +217,13 @@ const SignUp = () => {
                     value={formData.lastName}
                     onChange={handleChange}
                     required
-                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex h-11 w-full rounded-xl border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
                   />
                 </LabelInputContainer>
               </div>
 
               <LabelInputContainer>
-                <Label htmlFor="email" className="text-sm">
+                <Label htmlFor="email" className="text-sm text-foreground">
                   Email Address
                 </Label>
                 <input
@@ -236,12 +234,12 @@ const SignUp = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex h-11 w-full rounded-xl border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
                 />
               </LabelInputContainer>
 
               <LabelInputContainer>
-                <Label htmlFor="phoneNumber" className="text-sm">
+                <Label htmlFor="phoneNumber" className="text-sm text-foreground">
                   Phone Number
                 </Label>
                 <input
@@ -252,30 +250,30 @@ const SignUp = () => {
                   value={formData.phoneNumber}
                   onChange={handleChange}
                   required
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex h-11 w-full rounded-xl border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
                 />
               </LabelInputContainer>
 
-              <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
+              <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
                 <LabelInputContainer>
-                  <Label htmlFor="password" className="text-sm">
-                    Create NewPassword
+                  <Label htmlFor="password" className="text-sm text-foreground">
+                    Create Password
                   </Label>
                   <div className="relative">
                       <input
                         id="password"
                         name="createNewPassword"
-                        placeholder=""
+                        placeholder="••••••••"
                         type={showPassword ? "text" : "password"}
                         value={formData.createNewPassword}
                         onChange={handleChange}
                         required
-                        className="flex h-12 w-full rounded-xl border border-[#e8ecef] bg-[#f5f7f9] px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pr-10"
+                        className="flex h-11 w-full rounded-xl border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground pr-10"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9ba3af] hover:text-foreground transition-colors p-1 flex items-center justify-center"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1 flex items-center justify-center"
                       >
                         <Icon
                           icon={showPassword ? "mdi:eye-outline" : "mdi:eye-off-outline"}
@@ -286,24 +284,24 @@ const SignUp = () => {
                 </LabelInputContainer>
 
                 <LabelInputContainer>
-                  <Label htmlFor="confirmPassword" className="text-sm">
+                  <Label htmlFor="confirmPassword" className="text-sm text-foreground">
                     Confirm Password
                   </Label>
                   <div className="relative">
                       <input
                         id="confirmPassword"
                         name="confirmPassword"
-                        placeholder=""
+                        placeholder="••••••••"
                         type={showConfirmPassword ? "text" : "password"}
                         value={formData.confirmPassword}
                         onChange={handleChange}
                         required
-                        className="flex h-12 w-full rounded-xl border border-[#e8ecef] bg-[#f5f7f9] px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pr-10"
+                        className="flex h-11 w-full rounded-xl border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground pr-10"
                       />
                       <button
                         type="button"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9ba3af] hover:text-foreground transition-colors p-1 flex items-center justify-center"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1 flex items-center justify-center"
                       >
                         <Icon
                           icon={showConfirmPassword ? "mdi:eye-outline" : "mdi:eye-off-outline"}
@@ -316,65 +314,57 @@ const SignUp = () => {
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm mb-4">
+              <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md text-sm my-4">
                 {error}
               </div>
             )}
 
             <button
-              className="group/btn relative block h-9 w-full rounded-lg bg-primary text-primary-foreground font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-800 dark:from-zinc-900 dark:to-zinc-900 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset] mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="relative block h-11 w-full rounded-xl bg-primary text-primary-foreground font-medium shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-[0.98] mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
               type="submit"
               disabled={loading}
             >
               {loading ? "Creating Account..." : "Sign up"}
             </button>
 
-            <div className="my-4 h-[1px] w-full bg-border" />
+            <div className="my-6 h-[1px] w-full bg-border" />
 
-            <div className="flex flex-col space-y-4">
+            <div className="flex flex-col space-y-3">
               <button
                 onClick={() => loginWithGithub(role)}
-                className="group/btn shadow-input relative flex h-10 w-full items-center justify-start space-x-2 rounded-md bg-muted px-4 font-medium text-foreground dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
+                className="flex h-11 w-full items-center justify-center space-x-2 rounded-xl bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
                 type="button"
               >
-                <Icon icon="logos:github-icon" className="h-4 w-4" />
-                <span className="text-sm text-muted-foreground dark:text-neutral-300">
+                <Icon icon="logos:github-icon" className="h-5 w-5" />
+                <span className="text-sm font-medium text-foreground">
                   GitHub
                 </span>
               </button>
               <button
                 onClick={() => loginWithGoogle(role)}
-                className="group/btn shadow-input relative flex h-10 w-full items-center justify-start space-x-2 rounded-md bg-muted px-4 font-medium text-foreground dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
+                className="flex h-11 w-full items-center justify-center space-x-2 rounded-xl bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
                 type="button"
               >
-                <Icon icon="logos:google-icon" className="h-4 w-4" />
-                <span className="text-sm text-muted-foreground dark:text-neutral-300">
+                <Icon icon="logos:google-icon" className="h-5 w-5" />
+                <span className="text-sm font-medium text-foreground">
                   Google
                 </span>
               </button>
-              {/* <button
-                className="group/btn shadow-input relative flex h-10 w-full items-center justify-start space-x-2 rounded-md bg-muted px-4 font-medium text-foreground dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
-                type="button">
-                <Icon icon="logos:facebook" className="h-4 w-4" />
-                <span className="text-sm text-muted-foreground dark:text-neutral-300">
-                  Facebook
-                </span>
-              </button> */}
             </div>
           </form>
 
-          <p className="text-center text-muted-foreground text-sm">
+          <p className="text-center text-muted-foreground text-sm mb-4">
             Have an account?{" "}
             <button
               onClick={() => navigate("/login")}
-              className="text-accent font-semibold hover:underline"
+              className="text-primary font-semibold hover:underline"
             >
               Sign in
             </button>
           </p>
 
           {/* Bottom Right Decoration */}
-          <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary rounded-full hidden md:block opacity-20"></div>
+          <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary rounded-full hidden md:block opacity-10"></div>
         </div>
       </div>
     </div>

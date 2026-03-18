@@ -126,7 +126,7 @@ const PaymentGateway = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4 font-sans">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden">
+      <div className="bg-background rounded-lg shadow-xl w-full max-w-md overflow-hidden">
         <div className="h-1 w-full" style={{ backgroundColor: currentConfig.color }}></div>
         <div className="p-8">
           <div className="flex flex-col items-center mb-8">
@@ -158,7 +158,7 @@ const PaymentGateway = () => {
           <button
             onClick={handlePayment}
             disabled={loading}
-            className="w-full py-4 text-white font-bold rounded-lg shadow-md hover:opacity-90 transition-all uppercase text-sm mt-6 flex items-center justify-center gap-2"
+            className="w-full py-4 text-foreground font-bold rounded-lg shadow-md hover:opacity-90 transition-all uppercase text-sm mt-6 flex items-center justify-center gap-2"
             style={{ backgroundColor: currentConfig.color }}
           >
             {loading ? (

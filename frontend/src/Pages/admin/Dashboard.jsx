@@ -15,7 +15,7 @@ const AdminDashboard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (
-          <div key={stat.label} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+          <div key={stat.label} className="bg-background p-6 rounded-2xl shadow-sm border border-gray-100">
             <p className="text-sm font-medium text-gray-500">{stat.label}</p>
             <div className="flex items-end justify-between mt-2">
               <h3 className="text-2xl font-bold text-gray-900">{stat.value}</h3>
@@ -33,10 +33,10 @@ const AdminDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm h-80 flex items-center justify-center text-gray-400">
+        <div className="bg-background p-8 rounded-3xl border border-gray-100 shadow-sm h-80 flex items-center justify-center text-gray-400">
           User Growth Chart Placeholder
         </div>
-        <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm h-80 flex items-center justify-center text-gray-400">
+        <div className="bg-background p-8 rounded-3xl border border-gray-100 shadow-sm h-80 flex items-center justify-center text-gray-400">
           Revenue Distribution Placeholder
         </div>
       </div>

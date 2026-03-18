@@ -49,6 +49,7 @@ import AdminUsers from "./Pages/admin/Users";
 import { getSession } from "@/lib/auth.client";
 import { logout, setCredentials, setLoading } from "@/store/slices/authSlice";
 import ProtectedRoute from "./components/common/ProtectedRoute";
+import PublicRoute from "./components/common/PublicRoute";
 import { StreamContextProvider } from "@/context/StreamContext";
 
 export default function App() {
@@ -89,8 +90,22 @@ export default function App() {
         <Route path="/search" element={<Search />} />
         <Route path="/course/:id" element={<CourseDetails />} />
         <Route path="/payment-gateway" element={<PaymentGateway />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<SignIn />} />
+        <Route
+          path="/signup"
+          element={
+            <PublicRoute>
+              <SignUp />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <SignIn />
+            </PublicRoute>
+          }
+        />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-failure" element={<PaymentFailure />} />

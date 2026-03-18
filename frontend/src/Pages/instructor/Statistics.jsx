@@ -9,14 +9,14 @@ const Statistics = () => {
                     <h1 className="text-3xl font-bold text-gray-900">Full Statistics</h1>
                     <p className="text-gray-500 mt-1">Comprehensive analytics and performance metrics</p>
                 </div>
-                <button className="px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary/90 transition-colors">
+                <button className="px-6 py-3 bg-primary text-foreground rounded-xl font-semibold hover:bg-primary/90 transition-colors">
                     Export Report
                 </button>
             </div>
 
             {/* Overview Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="bg-white rounded-2xl p-6 shadow-sm">
+                <div className="bg-background rounded-2xl p-6 shadow-sm">
                     <div className="flex items-center justify-between mb-4">
                         <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
                             <Icon icon="solar:eye-bold" className="text-2xl" />
@@ -27,7 +27,7 @@ const Statistics = () => {
                     <p className="text-sm text-gray-500 mt-1">Total Visits</p>
                 </div>
 
-                <div className="bg-white rounded-2xl p-6 shadow-sm">
+                <div className="bg-background rounded-2xl p-6 shadow-sm">
                     <div className="flex items-center justify-between mb-4">
                         <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center text-green-600">
                             <Icon icon="solar:notebook-bold" className="text-2xl" />
@@ -38,9 +38,9 @@ const Statistics = () => {
                     <p className="text-sm text-gray-500 mt-1">Course Enrollments</p>
                 </div>
 
-                <div className="bg-white rounded-2xl p-6 shadow-sm">
+                <div className="bg-background rounded-2xl p-6 shadow-sm">
                     <div className="flex items-center justify-between mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600">
+                        <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600">
                             <Icon icon="solar:star-bold" className="text-2xl" />
                         </div>
                         <span className="text-xs text-gray-500 font-semibold">0</span>
@@ -49,7 +49,7 @@ const Statistics = () => {
                     <p className="text-sm text-gray-500 mt-1">Average Rating</p>
                 </div>
 
-                <div className="bg-white rounded-2xl p-6 shadow-sm">
+                <div className="bg-background rounded-2xl p-6 shadow-sm">
                     <div className="flex items-center justify-between mb-4">
                         <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600">
                             <Icon icon="solar:wad-of-money-bold" className="text-2xl" />
@@ -64,7 +64,7 @@ const Statistics = () => {
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Visits Trend */}
-                <div className="bg-white rounded-2xl p-8 shadow-sm">
+                <div className="bg-background rounded-2xl p-8 shadow-sm">
                     <div className="flex justify-between items-center mb-6">
                         <h3 className="text-xl font-bold text-gray-900">Visits Trend</h3>
                         <select className="px-4 py-2 border border-gray-200 rounded-lg text-sm">
@@ -88,7 +88,7 @@ const Statistics = () => {
                 </div>
 
                 {/* Revenue Breakdown */}
-                <div className="bg-white rounded-2xl p-8 shadow-sm">
+                <div className="bg-background rounded-2xl p-8 shadow-sm">
                     <div className="flex justify-between items-center mb-6">
                         <h3 className="text-xl font-bold text-gray-900">Revenue Breakdown</h3>
                         <select className="px-4 py-2 border border-gray-200 rounded-lg text-sm">
@@ -126,7 +126,7 @@ const Statistics = () => {
                         </div>
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+                                <div className="w-3 h-3 rounded-full bg-orange-500"></div>
                                 <span className="text-sm text-gray-600">Other</span>
                             </div>
                             <span className="text-sm font-semibold text-gray-900">Rs 2000</span>
@@ -136,7 +136,7 @@ const Statistics = () => {
             </div>
 
             {/* Detailed Stats Table */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm">
+            <div className="bg-background rounded-2xl p-8 shadow-sm">
                 <h3 className="text-xl font-bold text-gray-900 mb-6">Course Performance</h3>
                 
                 <div className="overflow-x-auto">
@@ -162,7 +162,7 @@ const Statistics = () => {
             </div>
 
             {/* Student Engagement */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm">
+            <div className="bg-background rounded-2xl p-8 shadow-sm">
                 <h3 className="text-xl font-bold text-gray-900 mb-6">Student Engagement</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

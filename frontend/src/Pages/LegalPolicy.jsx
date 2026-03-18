@@ -8,7 +8,7 @@ const LegalPolicy = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white font-outfit text-gray-800 flex flex-col">
+    <div className="min-h-screen bg-background font-outfit text-gray-800 flex flex-col">
       <Navbar />
 
       {/* ── HERO ─────────────────────────────────────────── */}
@@ -20,23 +20,23 @@ const LegalPolicy = () => {
         }}
       >
         {/* decorative circles */}
-        <div className="absolute top-0 left-0 w-72 h-72 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-white/5 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl" />
+        <div className="absolute top-0 left-0 w-72 h-72 bg-background/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-background/5 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl" />
 
         <div className="relative z-10 text-center select-none px-4">
-          <p className="text-white/50 tracking-[0.3em] uppercase text-sm mb-3">
+          <p className="text-primary-foreground/50 tracking-[0.3em] uppercase text-sm mb-3">
             — &nbsp; Legal Information &nbsp; —
           </p>
-          <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4 drop-shadow-lg">
+          <h1 className="text-4xl lg:text-5xl font-bold text-primary-foreground mb-4 drop-shadow-lg">
             Privacy Policy
           </h1>
-          <div className="w-16 h-1 bg-white/50 mx-auto rounded-full" />
+          <div className="w-16 h-1 bg-background/50 mx-auto rounded-full" />
         </div>
       </div>
 
       {/* ── CONTENT ─────────────────────────────────────── */}
       <main className="flex-grow py-16 px-6 sm:px-12 lg:px-24 max-w-5xl mx-auto w-full">
-        <div className="bg-white rounded-2xl p-8 sm:p-12 shadow-sm border border-gray-100">
+        <div className="bg-background rounded-2xl p-8 sm:p-12 shadow-sm border border-gray-100">
           <p className="text-sm text-gray-500 mb-8">
             Last Updated: {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
           </p>

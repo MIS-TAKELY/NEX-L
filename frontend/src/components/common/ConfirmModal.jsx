@@ -36,7 +36,7 @@ const ConfirmModal = ({
                     initial={{ opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                    className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative"
+                    className="bg-background rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative"
                 >
                     <button
                         onClick={onClose}
@@ -70,7 +70,7 @@ const ConfirmModal = ({
                                     onConfirm();
                                     onClose();
                                 }}
-                                className={`flex-1 px-4 py-2.5 rounded-xl text-white font-semibold transition-colors shadow-lg shadow-black/5 ${style.button}`}
+                                className={`flex-1 px-4 py-2.5 rounded-xl text-foreground font-semibold transition-colors shadow-lg shadow-black/5 ${style.button}`}
                             >
                                 {confirmText}
                             </button>
