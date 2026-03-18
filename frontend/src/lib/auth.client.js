@@ -78,17 +78,27 @@ export const signOut = async () => {
 
 export const loginWithGoogle = async (role = "student") => {
   try {
-    console.log("Google login with role:", role);
+    console.log("Starting Google login for role:", role);
 
-    // Call backend to set a cookie on the backend domain
-    await fetch(import.meta.env.VITE_BACKEND_URL + "/api/v1/auth/pre-social?role=" + role, {
+    // 1. First, call pre-social to set the pending_role cookie on the backend domain.
+    // We use a direct window.location if we were doing a full redirect, but 
+    // fetch with credentials: 'include' should work if CORS is correct.
+    const preSocialUrl = `${import.meta.env.VITE_BACKEND_URL}/api/v1/auth/pre-social?role=${role}`;
+    
+    await fetch(preSocialUrl, {
       method: 'GET',
       credentials: 'include',
     });
 
+    console.log("Pre-social cookie call finished, initiating social sign-in...");
+
+    // 2. Initiate social sign-in. 
+    // The callbackURL MUST be a full URL pointing back to your frontend.
+    const callbackURL = `${import.meta.env.VITE_FRONTEND_URL}/${role}/dashboard`;
+    
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: `${import.meta.env.VITE_FRONTEND_URL}/${role}/dashboard`, // Dynamic redirect based on role
+      callbackURL: callbackURL,
     });
   } catch (error) {
     console.error("Google login failed:", error);
@@ -98,17 +108,22 @@ export const loginWithGoogle = async (role = "student") => {
 
 export const loginWithGithub = async (role = "student") => {
   try {
-    console.log("Github login with role:", role);
+    console.log("Starting Github login for role:", role);
 
-    // Call backend to set a cookie on the backend domain
-    await fetch(import.meta.env.VITE_BACKEND_URL + "/api/v1/auth/pre-social?role=" + role, {
+    const preSocialUrl = `${import.meta.env.VITE_BACKEND_URL}/api/v1/auth/pre-social?role=${role}`;
+
+    await fetch(preSocialUrl, {
       method: "GET",
       credentials: "include",
     });
 
+    console.log("Pre-social cookie call finished, initiating social sign-in...");
+
+    const callbackURL = `${import.meta.env.VITE_FRONTEND_URL}/${role}/dashboard`;
+
     await authClient.signIn.social({
       provider: "github",
-      callbackURL: `${import.meta.env.VITE_FRONTEND_URL}/${role}/dashboard`, // Dynamic redirect based on role
+      callbackURL: callbackURL,
     });
   } catch (error) {
     console.error("Github login failed:", error);
