@@ -102,10 +102,10 @@ const Cart = () => {
               return (
                 <div
                   key={item.course._id}
-                  className={`bg-background dark:bg-zinc-900 rounded-2xl border-2 transition-all duration-300 hover:shadow-lg ${isSelected
+                  className={`bg-background dark:bg-zinc-900 rounded-xl border-2 transition-all duration-300 hover:shadow-lg ${isSelected
                     ? 'border-primary dark:border-primary'
                     : 'border-gray-100 dark:border-zinc-800'
-                    } p-6`}
+                    } p-4`}
                 >
                   <div className="flex gap-6">
                     {/* Checkbox */}
@@ -181,7 +181,7 @@ const Cart = () => {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-background dark:bg-zinc-900 rounded-2xl border-2 border-gray-100 dark:border-zinc-800 p-6 sticky top-6">
+            <div className="bg-background dark:bg-zinc-900 rounded-xl border-2 border-gray-100 dark:border-zinc-800 p-5 sticky top-6">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-foreground mb-4">Order Summary</h2>
 
               {/* Select All */}

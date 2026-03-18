@@ -238,7 +238,7 @@ const SignIn = () => {
               className="flex h-11 items-center justify-center rounded-xl bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
               type="button"
             >
-              <Icon icon="logos:github-icon" className="h-5 w-5" />
+              <Icon icon="mdi:github" className="h-6 w-6 text-foreground" />
             </button>
             <button
               onClick={() => loginWithGoogle(role)}

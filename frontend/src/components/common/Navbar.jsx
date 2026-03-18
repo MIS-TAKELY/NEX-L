@@ -9,6 +9,7 @@ import { useGetCartQuery } from "@/store/slices/cartApi";
 import logo from "../../assets/logoo.png";
 import ProfileDropdown from "./ProfileDropdown";
 import ModeToggle from "./ModeToggle";
+import { GraduationCap, Search, ShoppingCart } from "lucide-react";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -103,19 +104,19 @@ const Navbar = () => {
         } ${showNavbar ? "translate-y-0" : "-translate-y-full"}`}
       >
         <div
-          className="flex items-center gap-1 cursor-pointer z-50 px-2 py-1 relative group"
+          className="flex items-center gap-2 cursor-pointer z-50 group"
           onClick={() => navigate("/")}
         >
-          <img
-            src={logo}
-            alt="NEXL"
-            className={`h-8 w-auto transition-all ${isScrolled || location.pathname !== "/" ? "" : ""}`}
-          />
-          <span className={`text-2xl font-black tracking-tighter italic serif text-primary`}>EXL</span>
+          <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center group-hover:scale-105 transition-transform shadow-lg shadow-primary/20">
+            <GraduationCap className="w-6 h-6 text-primary-foreground" />
+          </div>
+          <span className="text-xl font-bold tracking-tight text-foreground">
+            NEXL
+          </span>
         </div>
 
         {/* Desktop Links (Center) */}
-        <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-1 xl:gap-8">
+        <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-1 xl:gap-4 glass px-2 py-1.5 rounded-2xl border border-white/10 shadow-sm">
           {desktopButtons.map((btn) => (
             <button
               key={btn.path}
@@ -123,18 +124,13 @@ const Navbar = () => {
                 navigate(btn.path);
                 setActive(btn.path);
               }}
-              className={`px-4 py-2 font-bold text-xs tracking-widest uppercase relative transition-all duration-300 hover:cursor-pointer group whitespace-nowrap ${
+              className={`px-4 py-2 font-bold text-[11px] tracking-widest uppercase relative transition-all duration-300 hover:cursor-pointer group whitespace-nowrap rounded-xl ${
                 active === btn.path 
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-primary"
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:text-primary hover:bg-primary/5"
               }`}
             >
               {btn.label}
-              <span
-                className={`absolute left-0 bottom-0 h-0.5 bg-primary transition-all duration-500 ease-out ${
-                  active === btn.path ? "w-full" : "w-0 group-hover:w-full"
-                }`}
-              ></span>
             </button>
           ))}
         </div>
@@ -145,11 +141,11 @@ const Navbar = () => {
           <ModeToggle />
           <button
             onClick={() => setIsSearchOpen(true)}
-            className={`flex items-center gap-3 px-5 py-2.5 rounded-2xl text-xs font-bold transition-all border group bg-secondary/50 border-border text-muted-foreground hover:bg-secondary`}
+            className={`flex items-center gap-3 px-5 py-2.5 rounded-2xl text-[11px] font-bold transition-all border group glass border-border/50 text-muted-foreground hover:bg-secondary/50`}
           >
-            <Icon icon="solar:magnifer-linear" size={18} />
-            <span className="group-hover:text-foreground transition-colors">Search</span>
-            <span className={`px-2 py-0.5 rounded text-[10px] border bg-background border-border`}>⌘K</span>
+            <Search size={16} />
+            <span className="group-hover:text-foreground transition-colors uppercase tracking-widest">Search</span>
+            <span className={`px-2 py-0.5 rounded text-[10px] border bg-background/50 border-border`}>⌘K</span>
           </button>
 
           {isLoggedIn ? (

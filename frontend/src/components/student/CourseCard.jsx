@@ -1,73 +1,83 @@
 import { Icon } from '@iconify/react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'motion/react';
 
 const CourseCard = ({ enrollment }) => {
   const navigate = useNavigate();
   const { course, progress } = enrollment;
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5 }}
+      whileHover={{ y: -5 }}
       onClick={() => navigate(`/student/player/${course._id}`)}
-      className="group cursor-pointer bg-background dark:bg-zinc-900 rounded-3xl border-2 border-gray-100 dark:border-zinc-800 p-4 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5 hover:border-primary/20 flex flex-col h-full premium-card"
+      className="group cursor-pointer bg-card rounded-xl border border-border/50 p-4 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 flex flex-col h-full premium-card glass-card max-w-[280px] mx-auto w-full"
     >
       {/* Thumbnail */}
-      <div className="relative h-48 mb-4 overflow-hidden rounded-2xl bg-gray-100">
+      <div className="relative aspect-[4/3] mb-4 overflow-hidden rounded-xl bg-muted">
         <img
           src={course.thumbnail || "https://via.placeholder.com/400x225?text=No+Thumbnail"}
           alt={course.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
         />
-        <div className="absolute top-3 left-3 px-3 py-1 bg-primary/90 backdrop-blur-md text-foreground text-xs font-bold rounded-full">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        
+        <div className="absolute top-3 left-3 px-3 py-1.5 bg-background/80 backdrop-blur-md text-primary text-[10px] font-bold rounded-full border border-white/10 uppercase tracking-widest shadow-lg">
           {course.category}
         </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex flex-col">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-foreground mb-2 line-clamp-1 group-hover:text-primary transition-colors">
+      <div className="flex-1 flex flex-col px-1">
+        <h3 className="text-base font-bold text-foreground mb-1.5 line-clamp-1 group-hover:text-primary transition-colors font-outfit" title={course.title}>
           {course.title}
         </h3>
 
-        <p className="text-sm text-gray-500 dark:text-zinc-400 mb-4 line-clamp-2 italic">
+        <p className="text-[10px] text-muted-foreground mb-4 line-clamp-2 italic font-medium opacity-80">
           {course.description}
         </p>
 
-        <div className="mt-auto">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Progress</span>
-            <span className="text-sm font-extrabold text-primary">{progress}%</span>
+        <div className="mt-auto space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest">Progress</span>
+            <span className="text-[10px] font-black text-primary">{progress}%</span>
           </div>
 
           {/* Progress Bar */}
-          <div className="w-full h-2 bg-gray-100 dark:bg-zinc-800 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-primary transition-all duration-500 ease-out"
-              style={{ width: `${progress}%` }}
+          <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden border border-border/20">
+            <motion.div
+              initial={{ width: 0 }}
+              whileInView={{ width: `${progress}%` }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="h-full bg-primary shadow-[0_0_10px_rgba(99,102,241,0.5)]"
             />
           </div>
         </div>
       </div>
 
       {/* Footer / Instructor */}
-      <div className="mt-6 pt-4 border-t border-gray-50 dark:border-zinc-800 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center">
-            <Icon icon="solar:user-bold" className="text-accent" />
+      <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between px-0.5">
+        <div className="flex items-center gap-1.5">
+          <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
+            <Icon icon="solar:user-bold" className="text-primary text-[10px]" />
           </div>
-          <span className="text-sm font-medium text-gray-700 dark:text-zinc-300">
+          <span className="text-[11px] font-semibold text-foreground/80">
             {course.teacher?.name || "Instructor"}
           </span>
         </div>
 
         <button
-          className="p-2 rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-foreground transition-all"
+          className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300 group/btn shadow-sm"
           title="Continue Learning"
         >
-          <Icon icon="solar:play-bold" size={20} />
+          <Icon icon="solar:play-bold" className="text-xs group-hover/btn:scale-110 transition-transform" />
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
