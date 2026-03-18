@@ -20,13 +20,13 @@ const Analytics = () => {
         {[
           { label: 'Total Views', value: '2,882', icon: 'solar:eye-bold', color: 'bg-blue-500' },
           { label: 'Completions', value: '879', icon: 'solar:graph-up-bold', color: 'bg-green-500' },
-          { label: 'Active Students', value: '156', icon: 'solar:users-group-rounded-bold', color: 'bg-purple-500' },
+          { label: 'Active Students', value: '156', icon: 'solar:users-group-rounded-bold', color: 'bg-orange-500' },
           { label: 'Avg. Rating', value: '4.8', icon: 'solar:star-bold', color: 'bg-orange-500' },
         ].map((stat, idx) => {
           return (
-            <div key={idx} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+            <div key={idx} className="bg-background rounded-xl p-6 shadow-sm border border-gray-100">
               <div className={`${stat.color} p-3 rounded-lg w-fit mb-4`}>
-                <Icon icon={stat.icon} className="w-6 h-6 text-white" />
+                <Icon icon={stat.icon} className="w-6 h-6 text-foreground" />
               </div>
               <p className="text-gray-600 text-sm mb-1">{stat.label}</p>
               <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
@@ -36,7 +36,7 @@ const Analytics = () => {
       </div>
 
       {/* Course Performance Table */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+      <div className="bg-background rounded-xl p-6 shadow-sm border border-gray-100">
         <h2 className="text-xl font-bold text-gray-900 mb-6">Course Performance</h2>
         <div className="overflow-x-auto">
           <table className="w-full">

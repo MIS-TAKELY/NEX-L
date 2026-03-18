@@ -132,7 +132,7 @@ const CourseDetails = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Left Column - Course Details & Syllabus */}
           <div className="lg:col-span-2 space-y-12">
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 mt-13">
+            <div className="bg-background rounded-2xl p-8 shadow-sm border border-gray-100 mt-13">
               <h1 className="text-4xl font-extrabold text-primary mb-2">
                 {course.title}
               </h1>
@@ -143,7 +143,7 @@ const CourseDetails = () => {
 
             {/* Demo / Preview Video Section */}
             {course.demoVideo && (
-              <section className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+              <section className="bg-background rounded-2xl overflow-hidden shadow-sm border border-gray-100">
                 <div className="relative aspect-video bg-black">
                   <video
                     src={course.demoVideo}
@@ -151,7 +151,7 @@ const CourseDetails = () => {
                     className="w-full h-full object-contain"
                     poster={course.thumbnail || undefined}
                   />
-                  <span className="absolute top-3 left-3 bg-blue-600 text-white text-xs font-black px-3 py-1 rounded-full shadow-lg flex items-center gap-1.5">
+                  <span className="absolute top-3 left-3 bg-blue-600 text-foreground text-xs font-black px-3 py-1 rounded-full shadow-lg flex items-center gap-1.5">
                     <PlayCircle size={14} />
                     Free Preview
                   </span>
@@ -178,7 +178,7 @@ const CourseDetails = () => {
                     href={course.syllabus}
                     target="_blank"
                     rel="noreferrer"
-                    className="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold hover:bg-blue-700 transition-all flex items-center gap-2"
+                    className="bg-blue-600 text-foreground px-6 py-2 rounded-xl font-bold hover:bg-blue-700 transition-all flex items-center gap-2"
                   >
                     Download PDF{" "}
                     <Icon icon="solar:download-minimalistic-bold" />
@@ -193,7 +193,7 @@ const CourseDetails = () => {
 
             {/* Course Curriculum Section */}
             {course.sections && course.sections.length > 0 && (
-              <section className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+              <section className="bg-background rounded-2xl p-8 shadow-sm border border-gray-100">
                 <div className="flex items-center gap-4 mb-8">
                   <h2
                     className="text-3xl font-bold text-gray-800"
@@ -201,7 +201,7 @@ const CourseDetails = () => {
                   >
                     Course
                   </h2>
-                  <span className="bg-accent text-white px-4 py-1 rounded-lg text-xl font-bold">
+                  <span className="bg-accent text-foreground px-4 py-1 rounded-lg text-xl font-bold">
                     Curriculum
                   </span>
                 </div>
@@ -246,7 +246,7 @@ const CourseDetails = () => {
                                           {Math.floor(resource.duration / 60)}:{(resource.duration % 60).toString().padStart(2, '0')}
                                         </span>
                                       )}
-                                      <span className="text-[10px] text-gray-400 font-bold uppercase bg-white px-2 py-0.5 rounded border border-gray-100 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                                      <span className="text-[10px] text-gray-400 font-bold uppercase bg-background px-2 py-0.5 rounded border border-gray-100 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
                                         {resource.type}
                                       </span>
                                     </div>
@@ -264,7 +264,7 @@ const CourseDetails = () => {
             )}
 
             {/* Description Section */}
-            <section className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+            <section className="bg-background rounded-2xl p-8 shadow-sm border border-gray-100">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">
                 Description
               </h2>
@@ -282,7 +282,7 @@ const CourseDetails = () => {
                 >
                   Frequently
                 </h2>
-                <span className="bg-primary text-white px-4 py-1 rounded-lg text-xl font-bold">
+                <span className="bg-primary text-foreground px-4 py-1 rounded-lg text-xl font-bold">
                   Asked Questions
                 </span>
               </div>
@@ -302,7 +302,7 @@ const CourseDetails = () => {
 
           {/* Right Column - Enrollment / Payment Sidebar */}
           <div className="lg:col-span-1">
-            <div className="sticky top-24 bg-white rounded-2xl p-8 shadow-xl border border-gray-50">
+            <div className="sticky top-24 bg-background rounded-2xl p-8 shadow-xl border border-gray-50">
               <div className="mb-8">
                 <h3 className="text-xl font-bold text-gray-800 mb-2">
                   Enroll Now
@@ -363,7 +363,7 @@ const CourseDetails = () => {
                       <button
                         onClick={handleApplyCoupon}
                         disabled={isVerifying || !couponCode}
-                        className="bg-primary/10 text-primary px-4 py-2 rounded-xl font-bold text-xs hover:bg-primary hover:text-white transition-all disabled:opacity-50"
+                        className="bg-primary/10 text-primary px-4 py-2 rounded-xl font-bold text-xs hover:bg-primary hover:text-foreground transition-all disabled:opacity-50"
                       >
                         {isVerifying ? "..." : "Apply"}
                       </button>
@@ -409,7 +409,7 @@ const CourseDetails = () => {
 
                 <button
                   onClick={() => navigate(`/payment-gateway?method=${selectedPayment}&amount=${finalPrice}&courseId=${id}${appliedCoupon ? `&couponCode=${appliedCoupon.code}` : ""}`)}
-                  className="w-full bg-primary text-white py-4 rounded-2xl font-bold text-lg hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-3"
+                  className="w-full bg-primary text-foreground py-4 rounded-2xl font-bold text-lg hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-3"
                 >
                   Pay with {selectedPayment.toUpperCase()}
                   <Icon icon="solar:arrow-right-bold" />
@@ -420,8 +420,8 @@ const CourseDetails = () => {
                     onClick={isInCart ? handleRemoveFromCart : handleAddToCart}
                     className={`w-full py-4 rounded-2xl font-bold text-lg transition-all border-2 flex items-center justify-center gap-3 mt-3
                       ${isInCart
-                        ? "bg-white border-red-500 text-red-500 hover:bg-red-50"
-                        : "bg-white border-primary text-primary hover:bg-primary/5"
+                        ? "bg-background border-red-500 text-red-500 hover:bg-red-50"
+                        : "bg-background border-primary text-primary hover:bg-primary/5"
                       }`}
                   >
                     {isInCart ? (

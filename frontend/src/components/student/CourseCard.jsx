@@ -9,7 +9,7 @@ const CourseCard = ({ enrollment }) => {
   return (
     <div
       onClick={() => navigate(`/student/player/${course._id}`)}
-      className="group cursor-pointer bg-white dark:bg-zinc-900 rounded-[2rem] border-2 border-gray-100 dark:border-zinc-800 p-4 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5 hover:border-primary/20 flex flex-col h-full"
+      className="group cursor-pointer bg-background dark:bg-zinc-900 rounded-3xl border-2 border-gray-100 dark:border-zinc-800 p-4 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5 hover:border-primary/20 flex flex-col h-full premium-card"
     >
       {/* Thumbnail */}
       <div className="relative h-48 mb-4 overflow-hidden rounded-2xl bg-gray-100">
@@ -18,14 +18,14 @@ const CourseCard = ({ enrollment }) => {
           alt={course.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-        <div className="absolute top-3 left-3 px-3 py-1 bg-primary/90 backdrop-blur-md text-white text-xs font-bold rounded-full">
+        <div className="absolute top-3 left-3 px-3 py-1 bg-primary/90 backdrop-blur-md text-foreground text-xs font-bold rounded-full">
           {course.category}
         </div>
       </div>
 
       {/* Content */}
       <div className="flex-1 flex flex-col">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-1 group-hover:text-primary transition-colors">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-foreground mb-2 line-clamp-1 group-hover:text-primary transition-colors">
           {course.title}
         </h3>
 
@@ -61,7 +61,7 @@ const CourseCard = ({ enrollment }) => {
         </div>
 
         <button
-          className="p-2 rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all"
+          className="p-2 rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-foreground transition-all"
           title="Continue Learning"
         >
           <Icon icon="solar:play-bold" size={20} />

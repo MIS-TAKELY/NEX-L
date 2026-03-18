@@ -68,7 +68,7 @@ const InstructorSettings = () => {
                   )}
                 </div>
                 <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Icon icon="solar:camera-add-bold" size={24} className="text-white" />
+                  <Icon icon="solar:camera-add-bold" size={24} className="text-foreground" />
                 </div>
                 <input
                   type="file"
@@ -86,7 +86,7 @@ const InstructorSettings = () => {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current.click()}
-                  className="px-5 py-2 text-sm font-bold text-primary bg-primary/10 rounded-xl hover:bg-primary hover:text-white transition-colors"
+                  className="px-5 py-2 text-sm font-bold text-primary bg-primary/10 rounded-xl hover:bg-primary hover:text-foreground transition-colors"
                 >
                   Choose File
                 </button>
@@ -142,7 +142,7 @@ const InstructorSettings = () => {
           <div className="flex justify-end pt-6 border-t border-border">
             <button
               type="submit"
-              className="flex items-center gap-2 px-8 py-3.5 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/25 hover:bg-primary/90 hover:-translate-y-0.5 active:translate-y-0 transition-all"
+              className="flex items-center gap-2 px-8 py-3.5 bg-primary text-foreground font-bold rounded-xl shadow-lg shadow-primary/25 hover:bg-primary/90 hover:-translate-y-0.5 active:translate-y-0 transition-all"
             >
               <Icon icon="solar:diskette-bold-duotone" size={20} />
               Save Changes

@@ -102,7 +102,7 @@ const CoursesList = () => {
               <input
                 type="text"
                 placeholder="Search for courses..."
-                className="w-full pl-12 pr-6 py-4 bg-white border-2 border-transparent focus:border-primary rounded-2xl shadow-sm outline-none transition-all text-lg"
+                className="w-full pl-12 pr-6 py-4 bg-background border-2 border-transparent focus:border-primary rounded-2xl shadow-sm outline-none transition-all text-lg"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleSearch}

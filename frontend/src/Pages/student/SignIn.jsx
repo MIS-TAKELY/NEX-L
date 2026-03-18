@@ -77,6 +77,9 @@ const SignIn = () => {
     <div className="min-h-screen flex font-outfit overflow-hidden">
       {/* Left Side - Dark Background with Text */}
       <div className="hidden lg:flex lg:w-1/2 bg-primary relative flex-col justify-center px-12 md:px-20 text-primary-foreground overflow-hidden">
+        {/* Dynamic Background Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-accent opacity-100 dark:from-[#0f0f17] dark:to-[#0a0a0f]" />
+        
         {/* Abstract lines decoration */}
         <div className="absolute bottom-20 left-20 w-48 h-48 border border-white/10 rounded-lg transform rotate-12" />
         <div className="absolute bottom-24 left-24 w-48 h-48 border border-white/10 rounded-lg transform rotate-12" />
@@ -96,7 +99,7 @@ const SignIn = () => {
         {/* Wave Shape Divider */}
         <div className="absolute top-0 right-0 bottom-0 w-24 translate-x-[1px] h-full pointer-events-none">
           <svg
-            className="h-full w-full fill-white"
+            className="h-full w-full fill-background"
             preserveAspectRatio="none"
             viewBox="0 0 100 100"
           >
@@ -141,7 +144,7 @@ const SignIn = () => {
                       className={cn(
                         "py-2 px-3 rounded-md text-xs font-bold transition-all border capitalize",
                         role === r
-                          ? "bg-primary text-white border-primary shadow-md"
+                          ? "bg-primary text-primary-foreground border-primary shadow-md"
                           : "bg-muted text-muted-foreground border-border hover:border-primary/50",
                       )}
                     >
@@ -163,7 +166,7 @@ const SignIn = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="flex h-9 w-full rounded-md border border-input bg-card px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
+                  className="flex h-12 w-full rounded-xl border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
                 />
               </LabelInputContainer>
 
@@ -180,12 +183,12 @@ const SignIn = () => {
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    className="flex h-12 w-full rounded-xl border border-[#e8ecef] bg-[#f5f7f9] px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground pr-10"
+                    className="flex h-12 w-full rounded-xl border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground pr-10"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9ba3af] hover:text-foreground transition-colors p-1 flex items-center justify-center"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1 flex items-center justify-center"
                   >
                     <Icon
                       icon={showPassword ? "mdi:eye-outline" : "mdi:eye-off-outline"}
@@ -197,7 +200,7 @@ const SignIn = () => {
             </div>
 
             {error && (
-              <div className="bg-red-500/10 border border-red-500/20 text-red-500 px-4 py-3 rounded-md text-sm my-4">
+              <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md text-sm my-4">
                 {error}
               </div>
             )}
@@ -206,14 +209,14 @@ const SignIn = () => {
               <button
                 type="button"
                 onClick={() => navigate("/forgot-password")}
-                className="text-sm text-muted-foreground hover:text-primary"
+                className="text-sm text-muted-foreground hover:text-primary transition-colors"
               >
                 Forgot Password?
               </button>
             </div>
 
             <button
-              className="relative block h-10 w-full rounded-lg bg-primary text-white font-medium shadow-md hover:bg-primary/90 transition-all disabled:opacity-50"
+              className="relative block h-11 w-full rounded-xl bg-primary text-primary-foreground font-medium shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-50"
               type="submit"
               disabled={loading}
             >
@@ -232,21 +235,21 @@ const SignIn = () => {
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={() => loginWithGithub(role)}
-              className="flex h-10 items-center justify-center rounded-md bg-card border border-border hover:bg-muted transition-colors"
+              className="flex h-11 items-center justify-center rounded-xl bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
               type="button"
             >
               <Icon icon="logos:github-icon" className="h-5 w-5" />
             </button>
             <button
               onClick={() => loginWithGoogle(role)}
-              className="flex h-10 items-center justify-center rounded-md bg-card border border-border hover:bg-muted transition-colors"
+              className="flex h-11 items-center justify-center rounded-xl bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
               type="button"
             >
               <Icon icon="logos:google-icon" className="h-5 w-5" />
             </button>
           </div>
 
-          <p className="text-center text-muted-foreground text-sm mt-6">
+          <p className="text-center text-muted-foreground text-sm mt-8">
             Don't have an account?{" "}
             <button
               onClick={() => navigate("/signup")}
@@ -257,7 +260,7 @@ const SignIn = () => {
           </p>
 
           {/* Bottom Right Decoration */}
-          <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary rounded-full hidden md:block opacity-20"></div>
+          <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary rounded-full hidden md:block opacity-10"></div>
         </div>
       </div>
     </div>

@@ -12,7 +12,7 @@ const AssignmentPlayer = ({ assignmentData, courseId, contentId }) => {
     // Safety check
     if (!assignmentData) {
         return (
-            <div className="bg-white p-8 rounded-3xl text-center border border-red-100">
+            <div className="bg-background p-8 rounded-3xl text-center border border-red-100">
                 <Icon icon="solar:danger-triangle-bold" className="text-red-500 mx-auto mb-4" size={48} />
                 <h3 className="text-xl font-bold text-gray-800">Assignment Data Unavailable</h3>
             </div>
@@ -60,7 +60,7 @@ const AssignmentPlayer = ({ assignmentData, courseId, contentId }) => {
 
     if (submitted) {
         return (
-            <div className="bg-white p-10 rounded-3xl border border-gray-100 shadow-sm text-center max-w-2xl mx-auto mt-8">
+            <div className="bg-background p-10 rounded-3xl border border-gray-100 shadow-sm text-center max-w-2xl mx-auto mt-8">
                 <div className="w-24 h-24 rounded-full mx-auto flex items-center justify-center mb-6 bg-green-100 text-green-500">
                     <Icon icon="solar:check-circle-bold" size={48} />
                 </div>
@@ -80,7 +80,7 @@ const AssignmentPlayer = ({ assignmentData, courseId, contentId }) => {
 
     return (
         <div className="max-w-4xl mx-auto space-y-8">
-            <div className="bg-white p-8 md:p-10 rounded-[2.5rem] border border-gray-100 shadow-sm">
+            <div className="bg-background p-8 md:p-10 rounded-3xl border border-gray-100 shadow-sm premium-card">
                 <div className="flex items-center gap-4 mb-6">
                     <div className="w-14 h-14 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center flex-shrink-0">
                         <Icon icon="solar:file-check-bold" size={28} />
@@ -117,7 +117,7 @@ const AssignmentPlayer = ({ assignmentData, courseId, contentId }) => {
                 )}
             </div>
 
-            <div className="bg-white p-8 md:p-10 rounded-[2.5rem] border border-gray-100 shadow-sm relative overflow-hidden">
+            <div className="bg-background p-8 md:p-10 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden premium-card">
                 <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-emerald-500"></div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
                     Your Submission
@@ -133,7 +133,7 @@ const AssignmentPlayer = ({ assignmentData, courseId, contentId }) => {
                             onChange={(e) => setSubmissionText(e.target.value)}
                             rows="6"
                             placeholder="Type your answer here or provide a link to your work..."
-                            className="w-full p-5 rounded-2xl border-2 border-gray-100 bg-gray-50 outline-none focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-50 transition-all resize-none text-gray-700 font-medium"
+                            className="w-full p-5 rounded-2xl border-2 border-gray-100 bg-gray-50 outline-none focus:bg-background focus:border-green-400 focus:ring-4 focus:ring-green-50 transition-all resize-none text-gray-700 font-medium"
                         ></textarea>
                     </div>
 
@@ -160,14 +160,14 @@ const AssignmentPlayer = ({ assignmentData, courseId, contentId }) => {
                                     <span className="text-xs text-green-600 font-medium mt-1">{(file.size / 1024 / 1024).toFixed(2)} MB</span>
                                     <button 
                                         onClick={(e) => { e.stopPropagation(); setFile(null); }}
-                                        className="mt-4 text-xs font-bold text-red-500 hover:text-red-700 uppercase tracking-widest bg-white px-3 py-1 rounded-lg border border-red-100 shadow-sm"
+                                        className="mt-4 text-xs font-bold text-red-500 hover:text-red-700 uppercase tracking-widest bg-background px-3 py-1 rounded-lg border border-red-100 shadow-sm"
                                     >
                                         Remove File
                                     </button>
                                 </div>
                             ) : (
                                 <div className="flex flex-col items-center">
-                                    <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100 mb-3">
+                                    <div className="w-14 h-14 bg-background rounded-full flex items-center justify-center shadow-sm border border-gray-100 mb-3">
                                         <Icon icon="solar:upload-bold" className="text-gray-400" size={24} />
                                     </div>
                                     <span className="font-bold text-gray-700">Click to upload a file</span>
@@ -181,7 +181,7 @@ const AssignmentPlayer = ({ assignmentData, courseId, contentId }) => {
                         <button
                             onClick={handleSubmit}
                             disabled={isSubmitting || (!submissionText.trim() && !file)}
-                            className="px-10 py-4 bg-green-600 text-white rounded-2xl font-bold hover:bg-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-xl shadow-green-200 active:scale-95"
+                            className="px-10 py-4 bg-green-600 text-foreground rounded-2xl font-bold hover:bg-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-xl shadow-green-200 active:scale-95"
                         >
                             {isSubmitting ? (
                                 <>

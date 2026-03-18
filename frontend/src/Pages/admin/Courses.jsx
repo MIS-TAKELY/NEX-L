@@ -12,7 +12,7 @@ const AdminCourses = () => {
           { title: 'Python for AI', instructor: 'Mr. Shyam', students: 125, status: 'Draft' },
           { title: 'Advanced DSA', instructor: 'Ms. Sita', students: 89, status: 'Published' },
         ].map((course) => (
-          <div key={course.title} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between hover:border-primary/20 transition-all">
+          <div key={course.title} className="bg-background p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between hover:border-primary/20 transition-all">
             <div className="flex items-center gap-4">
               <div className="w-16 h-12 bg-gray-100 rounded-lg" />
               <div>

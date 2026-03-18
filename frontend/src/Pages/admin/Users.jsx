@@ -6,12 +6,12 @@ const AdminUsers = () => {
           <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
           <p className="text-gray-500 mt-1">View and manage all registered users.</p>
         </div>
-        <button className="bg-primary text-white px-6 py-2.5 rounded-xl font-bold hover:bg-primary-hover transition-all">
+        <button className="bg-primary text-foreground px-6 py-2.5 rounded-xl font-bold hover:bg-primary-hover transition-all">
           Add New User
         </button>
       </div>
 
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-background rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
         <table className="w-full text-left">
           <thead className="bg-gray-50 border-b border-gray-100">
             <tr>

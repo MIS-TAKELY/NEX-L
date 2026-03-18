@@ -54,7 +54,7 @@ const MyCourses = () => {
                 <p className="text-red-500 mb-4">Failed to load courses</p>
                 <button
                     onClick={refetch}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    className="px-4 py-2 bg-blue-600 text-foreground rounded-lg hover:bg-blue-700"
                 >
                     Retry
                 </button>
@@ -63,12 +63,12 @@ const MyCourses = () => {
     }
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-background rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="flex justify-between items-center p-6 border-b border-gray-100">
                 <h1 className="text-xl font-bold text-gray-800">My Courses</h1>
                 <button
                     onClick={() => navigate('/instructor/add-course')}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="px-4 py-2 bg-blue-600 text-foreground rounded-lg hover:bg-blue-700 transition-colors"
                 >
                     Add New Course
                 </button>
