@@ -58,6 +58,14 @@ export default function App() {
   useEffect(() => {
     const verifySession = async () => {
       try {
+        // Capture session token from URL if redirected from OAuth
+        const params = new URLSearchParams(window.location.search);
+        const sessionToken = params.get("session_token");
+        if (sessionToken) {
+          localStorage.setItem("session_token", sessionToken);
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
         const session = await getSession();
         if (session && session.user) {
           const role = session.user.role || 'student';
