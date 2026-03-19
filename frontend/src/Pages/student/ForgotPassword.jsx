@@ -1,6 +1,7 @@
 import { Icon } from '@iconify/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import logo from '../../assets/logoo.png';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -60,7 +61,10 @@ const ForgotPassword = () => {
             >
               <Icon icon="solar:alt-arrow-left-linear" className="w-5 h-5" /> go back
             </button>
-            <h1 className="text-3xl font-bold text-primary">NEXL</h1>
+            <div className="flex items-center gap-2">
+              <img src={logo} alt="N" className="h-8 w-auto" />
+              <h1 className="text-3xl font-bold text-primary">EXL</h1>
+            </div>
           </div>
 
           <div className="text-left">

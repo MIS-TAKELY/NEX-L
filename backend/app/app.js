@@ -102,6 +102,74 @@ app.get("/", (req, res) => {
   `);
 });
 
+// Custom endpoint to bypass third-party cookie blocking during social login
+app.get("/api/v1/auth/social-redirect", (req, res) => {
+  const { provider, role, callbackURL } = req.query;
+  
+  if (!provider) {
+    return res.status(400).send("Provider is required");
+  }
+
+  // Set the role cookie (1st party context now, so it won't be blocked)
+  if (role) {
+    res.cookie("pending_role", role, {
+      httpOnly: false,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+      maxAge: 3600000,
+    });
+  }
+
+  // Serve a simple auto-submitting form to Better Auth's POST endpoint
+  // Since we are already on the backend domain, the POST request is same-origin,
+  // allowing Better Auth to set the "better-auth.state" cookie without 3rd-party restrictions.
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Authenticating with ${provider}...</title>
+        <style>
+          body { font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; background-color: #0c0c0e; color: #fff; }
+          .loader { border: 3px solid rgba(255, 255, 255, 0.1); border-top: 3px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+          @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        </style>
+    </head>
+    <body>
+        <div style="text-align: center;">
+            <div class="loader"></div>
+            <p>Redirecting to ${provider}...</p>
+        </div>
+        <script>
+          fetch('/api/v1/auth/sign-in/social', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              provider: '${provider}', 
+              callbackURL: '${callbackURL || (process.env.FRONTEND_URL || "https://nex-l.vercel.app")}' 
+            })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.url) {
+              window.location.href = data.url;
+            } else if (data.redirect) {
+              window.location.href = data.redirect;
+            } else {
+              document.body.innerText = "Error: Please check backend logs. " + JSON.stringify(data);
+            }
+          })
+          .catch(err => {
+            document.body.innerText = "Error: " + err.message;
+          });
+        </script>
+    </body>
+    </html>
+  `);
+});
+
 // other APIs
 app.use("/api/v1/auth/pre-social", authRouter); // Only handle /pre-social here
 

@@ -9,7 +9,7 @@ import { useGetCartQuery } from "@/store/slices/cartApi";
 import logo from "../../assets/logoo.png";
 import ProfileDropdown from "./ProfileDropdown";
 import ModeToggle from "./ModeToggle";
-import { GraduationCap, Search, ShoppingCart } from "lucide-react";
+import { Search, ShoppingCart } from "lucide-react";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -107,9 +107,7 @@ const Navbar = () => {
           className="flex items-center gap-2 cursor-pointer z-50 group"
           onClick={() => navigate("/")}
         >
-          <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center group-hover:scale-105 transition-transform shadow-lg shadow-primary/20">
-            <GraduationCap className="w-6 h-6 text-primary-foreground" />
-          </div>
+          <img src={logo} alt="NEXL Logo" className="w-10 h-10 object-contain group-hover:scale-105 transition-transform" />
           <span className="text-xl font-bold tracking-tight text-foreground">
             NEXL
           </span>

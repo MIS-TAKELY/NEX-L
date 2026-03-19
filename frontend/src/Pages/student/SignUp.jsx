@@ -13,6 +13,7 @@ import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import logo from "../../assets/logoo.png";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -149,8 +150,9 @@ const SignUp = () => {
 
         <div className="w-full max-w-md mx-auto">
           {/* Header */}
-          <div className="lg:hidden mb-8 mt-12">
-            <h1 className="text-3xl font-bold text-primary">NEXL</h1>
+          <div className="flex items-center gap-2 lg:hidden mb-8 mt-12">
+            <img src={logo} alt="N" className="h-8 w-auto" />
+            <h1 className="text-3xl font-bold text-primary">EXL</h1>
           </div>
 
           <h2 className="text-xl font-bold text-foreground">
