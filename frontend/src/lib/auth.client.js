@@ -4,10 +4,16 @@ export const authClient = createAuthClient({
   baseURL: import.meta.env.VITE_BACKEND_URL + "/api/v1/auth",
   fetchOptions: {
     credentials: "include",
-    auth: () => {
+    onRequest(context) {
+      // Attach Bearer token if we have one saved from OAuth redirect
       const token = localStorage.getItem("session_token");
-      return token ? `Bearer ${token}` : undefined;
-    }
+      if (token) {
+        context.options.headers = {
+          ...context.options.headers,
+          Authorization: `Bearer ${token}`,
+        };
+      }
+    },
   },
 });
 
