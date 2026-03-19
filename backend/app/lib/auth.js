@@ -133,6 +133,27 @@ export const auth = betterAuth({
     if (setCookie) {
       console.log(`[Better-Auth DEBUG] Set-Cookie: ${setCookie}`);
     }
+
+    // Intercept OAuth callback redirects to pass the token in the URL
+    // specifically for cross-domain OAuth fixes on render -> vercel
+    if ([302, 303].includes(response.status)) {
+      const location = response.headers.get("location");
+      if (location && setCookie) {
+        // extract better-auth.session_token
+        const tokenMatch = setCookie.match(/better-auth\.session_token=([^;]+)/);
+        if (tokenMatch) {
+          const token = tokenMatch[1];
+          try {
+            const url = new URL(location);
+            url.searchParams.set("session_token", token);
+            response.headers.set("location", url.toString());
+          } catch (e) {
+            console.error("Failed to append session token to redirect URL", e);
+          }
+        }
+      }
+    }
+
     return { response };
   },
 });

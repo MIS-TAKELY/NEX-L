@@ -4,6 +4,10 @@ export const authClient = createAuthClient({
   baseURL: import.meta.env.VITE_BACKEND_URL + "/api/v1/auth",
   fetchOptions: {
     credentials: "include",
+    auth: () => {
+      const token = localStorage.getItem("session_token");
+      return token ? `Bearer ${token}` : undefined;
+    }
   },
 });
 
@@ -52,6 +56,7 @@ export const signIn = async (email, password) => {
 export const signOut = async () => {
   try {
     const { error } = await authClient.signOut();
+    localStorage.removeItem("session_token");
     if (error) {
       throw error;
     }
