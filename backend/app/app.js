@@ -196,9 +196,90 @@ app.get("/api/v1/auth/social-redirect", (req, res) => {
 // other APIs
 app.use("/api/v1/auth/pre-social", authRouter); // Only handle /pre-social here
 
-// Better Auth Handler - Mounted at the base path
-// We use a middleware to ensure path compatibility
-app.use("/api/v1/auth", (req, res) => toNodeHandler(auth)(req, res));
+// Better Auth Handler - With social callback interceptor
+// We intercept the final redirect after OAuth to append the session token to the URL.
+// This is necessary because browsers block third-party cookies between
+// nex-l.onrender.com (backend) and nex-l.vercel.app (frontend).
+app.use("/api/v1/auth", (req, res, next) => {
+  const isOAuthCallback =
+    req.path === "/callback/google" || req.path === "/callback/github";
+
+  if (isOAuthCallback) {
+    // Wrap res.redirect to intercept better-auth's final redirect
+    const originalRedirect = res.redirect.bind(res);
+    const originalSetHeader = res.setHeader.bind(res);
+
+    // Intercept setHeader calls for 'Location'
+    res.setHeader = function (name, value) {
+      if (name.toLowerCase() === "location" && typeof value === "string") {
+        // Look for the session cookie in res.getHeaders()
+        const cookies = res.getHeader("set-cookie");
+        let sessionToken = null;
+        if (cookies) {
+          const cookieList = Array.isArray(cookies) ? cookies : [cookies];
+          for (const cookie of cookieList) {
+            const match = cookie.match(/better-auth\.session_token=([^;]+)/);
+            if (match) {
+              sessionToken = match[1];
+              break;
+            }
+          }
+        }
+        if (sessionToken) {
+          try {
+            const redirectURL = new URL(value);
+            redirectURL.searchParams.set("session_token", sessionToken);
+            value = redirectURL.toString();
+            console.log("[OAuth Interceptor] Appended session_token to redirect:", value);
+          } catch (e) {
+            console.error("[OAuth Interceptor] Failed to parse redirect URL:", e);
+          }
+        }
+      }
+      return originalSetHeader(name, value);
+    };
+
+    // Also intercept res.redirect in case better-auth calls it directly
+    res.redirect = function (urlOrStatus, url) {
+      let status = 302;
+      let location;
+      if (typeof urlOrStatus === "number") {
+        status = urlOrStatus;
+        location = url;
+      } else {
+        location = urlOrStatus;
+      }
+
+      // Look for session token in set-cookie headers
+      const cookies = res.getHeader("set-cookie");
+      let sessionToken = null;
+      if (cookies) {
+        const cookieList = Array.isArray(cookies) ? cookies : [cookies];
+        for (const cookie of cookieList) {
+          const match = cookie.match(/better-auth\.session_token=([^;]+)/);
+          if (match) {
+            sessionToken = match[1];
+            break;
+          }
+        }
+      }
+      if (sessionToken && location) {
+        try {
+          const redirectURL = new URL(location);
+          redirectURL.searchParams.set("session_token", sessionToken);
+          location = redirectURL.toString();
+          console.log("[OAuth Interceptor] Appended session_token via redirect():", location);
+        } catch (e) {
+          console.error("[OAuth Interceptor] Failed to parse redirect URL:", e);
+        }
+      }
+      return originalRedirect(status, location);
+    };
+  }
+
+  toNodeHandler(auth)(req, res);
+});
+
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/courses", courseRouter);
