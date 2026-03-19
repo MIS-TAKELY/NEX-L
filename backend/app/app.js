@@ -196,89 +196,68 @@ app.get("/api/v1/auth/social-redirect", (req, res) => {
 // other APIs
 app.use("/api/v1/auth/pre-social", authRouter); // Only handle /pre-social here
 
-// Better Auth Handler - With social callback interceptor
-// We intercept the final redirect after OAuth to append the session token to the URL.
-// This is necessary because browsers block third-party cookies between
-// nex-l.onrender.com (backend) and nex-l.vercel.app (frontend).
-app.use("/api/v1/auth", (req, res, next) => {
-  const isOAuthCallback =
-    req.path === "/callback/google" || req.path === "/callback/github";
+// OAuth callback interceptor — runs BEFORE the general better-auth handler.
+// We call auth.handler (Web API) directly so we can read the Response
+// and append the session_token to the redirect URL before sending it.
+// This bypasses the third-party cookie limitation between Render and Vercel.
+const oauthCallbackHandler = async (req, res) => {
+  const fullURL = `${(process.env.BETTER_AUTH_URL || "http://localhost:3000").replace(/\/+$/, "")}${req.originalUrl}`;
 
-  if (isOAuthCallback) {
-    // Wrap res.redirect to intercept better-auth's final redirect
-    const originalRedirect = res.redirect.bind(res);
-    const originalSetHeader = res.setHeader.bind(res);
+  // Build a Web API Request from the incoming Express request
+  const headers = new Headers();
+  Object.entries(req.headers).forEach(([k, v]) => {
+    if (typeof v === "string") headers.set(k, v);
+    else if (Array.isArray(v)) v.forEach((val) => headers.append(k, val));
+  });
 
-    // Intercept setHeader calls for 'Location'
-    res.setHeader = function (name, value) {
-      if (name.toLowerCase() === "location" && typeof value === "string") {
-        // Look for the session cookie in res.getHeaders()
-        const cookies = res.getHeader("set-cookie");
-        let sessionToken = null;
-        if (cookies) {
-          const cookieList = Array.isArray(cookies) ? cookies : [cookies];
-          for (const cookie of cookieList) {
-            const match = cookie.match(/better-auth\.session_token=([^;]+)/);
-            if (match) {
-              sessionToken = match[1];
-              break;
-            }
-          }
-        }
-        if (sessionToken) {
-          try {
-            const redirectURL = new URL(value);
-            redirectURL.searchParams.set("session_token", sessionToken);
-            value = redirectURL.toString();
-            console.log("[OAuth Interceptor] Appended session_token to redirect:", value);
-          } catch (e) {
-            console.error("[OAuth Interceptor] Failed to parse redirect URL:", e);
-          }
-        }
-      }
-      return originalSetHeader(name, value);
-    };
+  const webReq = new Request(fullURL, { method: req.method, headers });
 
-    // Also intercept res.redirect in case better-auth calls it directly
-    res.redirect = function (urlOrStatus, url) {
-      let status = 302;
-      let location;
-      if (typeof urlOrStatus === "number") {
-        status = urlOrStatus;
-        location = url;
-      } else {
-        location = urlOrStatus;
-      }
+  // Let better-auth process the OAuth callback
+  const webRes = await auth.handler(webReq);
 
-      // Look for session token in set-cookie headers
-      const cookies = res.getHeader("set-cookie");
-      let sessionToken = null;
-      if (cookies) {
-        const cookieList = Array.isArray(cookies) ? cookies : [cookies];
-        for (const cookie of cookieList) {
-          const match = cookie.match(/better-auth\.session_token=([^;]+)/);
-          if (match) {
-            sessionToken = match[1];
-            break;
-          }
-        }
+  // Forward all response cookies and headers (except Location — we'll handle that)
+  webRes.headers.forEach((value, name) => {
+    if (name.toLowerCase() !== "location") {
+      res.setHeader(name, value);
+    }
+  });
+
+  const location = webRes.headers.get("location");
+  if (location) {
+    // Try to extract the session token from Set-Cookie
+    const setCookieHeader = webRes.headers.get("set-cookie") || "";
+    const tokenMatch = setCookieHeader.match(/better-auth\.session_token=([^;]+)/);
+    let finalLocation = location;
+
+    if (tokenMatch) {
+      try {
+        const redirectURL = new URL(location);
+        redirectURL.searchParams.set("session_token", tokenMatch[1]);
+        finalLocation = redirectURL.toString();
+        console.log("[OAuth Interceptor] session_token appended to redirect:", finalLocation);
+      } catch (e) {
+        console.error("[OAuth Interceptor] Failed to modify redirect URL:", e);
       }
-      if (sessionToken && location) {
-        try {
-          const redirectURL = new URL(location);
-          redirectURL.searchParams.set("session_token", sessionToken);
-          location = redirectURL.toString();
-          console.log("[OAuth Interceptor] Appended session_token via redirect():", location);
-        } catch (e) {
-          console.error("[OAuth Interceptor] Failed to parse redirect URL:", e);
-        }
-      }
-      return originalRedirect(status, location);
-    };
+    } else {
+      console.warn("[OAuth Interceptor] session_token NOT found in Set-Cookie. Cookies:", setCookieHeader);
+    }
+
+    res.writeHead(webRes.status, { location: finalLocation });
+    res.end();
+  } else {
+    // Not a redirect — just forward the response body normally
+    res.writeHead(webRes.status);
+    const body = await webRes.text();
+    res.end(body);
   }
+};
 
-  toNodeHandler(auth)(req, res);
-});
+app.get("/api/v1/auth/callback/google", oauthCallbackHandler);
+app.get("/api/v1/auth/callback/github", oauthCallbackHandler);
+
+// General Better Auth Handler for all other /api/v1/auth/* routes
+app.use("/api/v1/auth", (req, res) => toNodeHandler(auth)(req, res));
+
 
 
 app.use("/api/v1/users", userRouter);
