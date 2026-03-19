@@ -1,4 +1,4 @@
-import { UserPlus, Search, CreditCard, GraduationCap } from 'lucide-react';
+import { UserPlus, Search, CreditCard, BookOpen } from 'lucide-react';
 
 const steps = [
   {
@@ -24,7 +24,7 @@ const steps = [
   },
   {
     number: '04',
-    icon: GraduationCap,
+    icon: BookOpen,
     title: 'Start Learning',
     description: 'Access course materials, join live sessions, take quizzes, and earn certificates.',
     color: 'from-orange-500 to-amber-500',

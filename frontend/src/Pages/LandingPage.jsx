@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Navbar } from '../sections/Navbar';
+import Navbar from '../components/common/Navbar';
 import { Hero } from '../sections/Hero';
 import { Features } from '../sections/Features';
 import { HowItWorks } from '../sections/HowItWorks';
@@ -18,7 +18,7 @@ const LandingPage = () => {
   return (
     <div className={`min-h-screen bg-background transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
       <div className="gradient-mesh fixed inset-0 pointer-events-none" />
-      <Navbar scrolled={isLoaded} />
+      <Navbar />
       <main className="relative z-10">
         <Hero />
         <Features />

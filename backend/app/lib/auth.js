@@ -3,9 +3,10 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client } from "../config/dbConnect.js";
 
 const rawBaseURL = (process.env.BETTER_AUTH_URL || "http://localhost:3000").replace(/\/+$/, "");
-const baseURL = rawBaseURL.includes("/api/v1/auth") ? rawBaseURL : `${rawBaseURL}/api/v1/auth`;
+const baseURL = rawBaseURL.endsWith("/api/v1/auth") ? rawBaseURL : `${rawBaseURL}/api/v1/auth`;
 
 console.log("Better Auth initializing with baseURL:", baseURL);
+console.log("Environment FRONTEND_URL:", process.env.FRONTEND_URL);
 
 if (process.env.NODE_ENV !== "production") {
   console.warn("[WARNING] NODE_ENV is not set to 'production'. Cross-site cookies may be blocked by browsers like Chrome/Brave.");
@@ -35,10 +36,11 @@ export const auth = betterAuth({
   trustedOrigins: [
     process.env.BETTER_AUTH_URL,
     process.env.FRONTEND_URL,
+    "https://nex-l.vercel.app", // Fallback for safety
     "https://nex-l.onrender.com",
     "http://localhost:5173",
-    "http://127.0.0.1:5174",
-  ],
+    "http://127.0.0.1:5173",
+  ].filter(Boolean),
 
   // Add custom user fields for role management
   user: {

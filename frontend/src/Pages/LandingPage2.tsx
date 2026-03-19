@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Navbar } from './sections/Navbar';
-import { Hero } from './sections/Hero';
-import { Features } from './sections/Features';
-import { HowItWorks } from './sections/HowItWorks';
-import { Stats } from './sections/Stats';
-import { Testimonials } from './sections/Testimonials';
-import { CTA } from './sections/CTA';
-import { Footer } from './sections/Footer';
+import Navbar from '../components/common/Navbar';
+import { Hero } from '../sections/Hero';
+import { Features } from '../sections/Features';
+import { HowItWorks } from '../sections/HowItWorks';
+import { Stats } from '../sections/Stats';
+import { Testimonials } from '../sections/Testimonials';
+import { CTA } from '../sections/CTA';
+import { Footer } from '../sections/Footer';
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);

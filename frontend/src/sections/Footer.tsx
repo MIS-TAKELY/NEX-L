@@ -1,4 +1,5 @@
-import { GraduationCap, Mail, MapPin, Phone, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { Mail, MapPin, Phone, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import logo from '../assets/logoo.png';
 
 const footerLinks = {
   product: [
@@ -42,11 +43,9 @@ export function Footer() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 lg:gap-12">
             {/* Brand Column */}
             <div className="col-span-2">
-              <a href="#" className="flex items-center gap-2 mb-6">
-                <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center">
-                  <GraduationCap className="w-6 h-6 text-primary-foreground" />
-                </div>
-                <span className="text-xl font-bold text-foreground">NEXL</span>
+              <a href="#" className="flex items-center gap-2 mb-6 group">
+                <img src={logo} alt="N" className="h-8 w-auto group-hover:scale-105 transition-transform" />
+                <span className="text-xl font-bold text-foreground">EXL</span>
               </a>
               <p className="text-muted-foreground mb-6 max-w-sm">
                 Elevating education in Nepal through technology. 

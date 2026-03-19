@@ -8,6 +8,7 @@ import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import logo from "../../assets/logoo.png";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -120,8 +121,9 @@ const SignIn = () => {
 
         <div className="w-full max-w-md mx-auto">
           {/* Header */}
-          <div className="lg:hidden mb-8 mt-12">
-            <h1 className="text-3xl font-bold text-primary">NEXL</h1>
+          <div className="flex items-center gap-2 lg:hidden mb-8 mt-12">
+            <img src={logo} alt="N" className="h-8 w-auto" />
+            <h1 className="text-3xl font-bold text-primary">EXL</h1>
           </div>
 
           <div className="text-left mb-6">
@@ -238,7 +240,7 @@ const SignIn = () => {
               className="flex h-11 items-center justify-center rounded-xl bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
               type="button"
             >
-              <Icon icon="logos:github-icon" className="h-5 w-5" />
+              <Icon icon="mdi:github" className="h-6 w-6 text-foreground" />
             </button>
             <button
               onClick={() => loginWithGoogle(role)}
