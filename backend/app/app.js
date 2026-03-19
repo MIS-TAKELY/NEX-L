@@ -121,48 +121,71 @@ app.get("/api/v1/auth/social-redirect", (req, res) => {
     });
   }
 
-  // Serve a simple auto-submitting form to Better Auth's POST endpoint
-  // Since we are already on the backend domain, the POST request is same-origin,
-  // allowing Better Auth to set the "better-auth.state" cookie without 3rd-party restrictions.
+  // Serve a simple page that requires a button click. 
+  // Strict browsers (Safari ITP / Chrome) often BLOCK cookies set during pure 
+  // automated redirect chains across domains without actual user interaction.
+  // The button click provides the "user gesture" needed for the browser to SAVE the state cookie.
+  const providerName = provider.charAt(0).toUpperCase() + provider.slice(1);
   res.send(`
     <!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Authenticating with ${provider}...</title>
+        <title>Sign in with ${providerName}</title>
         <style>
-          body { font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; background-color: #0c0c0e; color: #fff; }
-          .loader { border: 3px solid rgba(255, 255, 255, 0.1); border-top: 3px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
-          @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; background-color: #0c0c0e; color: #fff; margin: 0; }
+          .container { background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); max-width: 400px; text-align: center; }
+          .btn { display: inline-block; background: #3b82f6; color: white; text-decoration: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; border: none; font-size: 1rem; transition: all 0.2s; margin-top: 20px; }
+          .btn:hover { background: #2563eb; transform: translateY(-2px); }
+          .btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+          h2 { margin-top: 0; }
+          p { color: #a0a0a0; }
         </style>
     </head>
     <body>
-        <div style="text-align: center;">
-            <div class="loader"></div>
-            <p>Redirecting to ${provider}...</p>
+        <div class="container">
+            <h2>Secure Sign In</h2>
+            <p>You are being securely connected to ${providerName}. Please click below to continue.</p>
+            <button id="auth-btn" class="btn">Continue with ${providerName}</button>
+            <p id="error-text" style="color: #ff4d4d; display: none; margin-top: 15px; font-size: 0.9rem;"></p>
         </div>
         <script>
-          fetch('/api/v1/auth/sign-in/social', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-              provider: '${provider}', 
-              callbackURL: '${callbackURL || (process.env.FRONTEND_URL || "https://nex-l.vercel.app")}' 
+          document.getElementById('auth-btn').addEventListener('click', function() {
+            this.disabled = true;
+            this.innerText = 'Connecting...';
+            const errorText = document.getElementById('error-text');
+            errorText.style.display = 'none';
+
+            fetch('/api/v1/auth/sign-in/social', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({ 
+                provider: '${provider}', 
+                callbackURL: '${callbackURL || (process.env.FRONTEND_URL || "https://nex-l.vercel.app")}' 
+              })
             })
-          })
-          .then(res => res.json())
-          .then(data => {
-            if (data.url) {
-              window.location.href = data.url;
-            } else if (data.redirect) {
-              window.location.href = data.redirect;
-            } else {
-              document.body.innerText = "Error: Please check backend logs. " + JSON.stringify(data);
-            }
-          })
-          .catch(err => {
-            document.body.innerText = "Error: " + err.message;
+            .then(res => res.json())
+            .then(data => {
+              if (data.url) {
+                window.location.href = data.url;
+              } else if (data.redirect) {
+                window.location.href = data.redirect;
+              } else {
+                this.disabled = false;
+                this.innerText = 'Continue with ${providerName}';
+                errorText.innerText = "Error: " + JSON.stringify(data);
+                errorText.style.display = 'block';
+              }
+            })
+            .catch(err => {
+              this.disabled = false;
+              this.innerText = 'Continue with ${providerName}';
+              errorText.innerText = "Error connecting to server. Please try again.";
+              errorText.style.display = 'block';
+              console.error(err);
+            });
           });
         </script>
     </body>
