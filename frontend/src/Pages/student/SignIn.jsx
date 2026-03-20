@@ -86,7 +86,7 @@ const SignIn = () => {
         <div className="absolute bottom-24 left-24 w-48 h-48 border border-white/10 rounded-lg transform rotate-12" />
 
         <div className="relative z-10 mb-20">
-          {/* Removed old go back button */}
+          
 
           <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-4">
             Welcome <br />

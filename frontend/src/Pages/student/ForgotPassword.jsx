@@ -22,12 +22,12 @@ const ForgotPassword = () => {
         <div className="absolute bottom-24 left-24 w-48 h-48 border border-white/10 rounded-lg transform rotate-12" />
         
         <div className="relative z-10 mb-20">
-          <button 
+          {/* <button 
             onClick={() => navigate(-1)}
             className="absolute -top-32 left-0 flex items-center gap-2 px-4 py-2 bg-background/10 hover:bg-background/20 text-foreground rounded-full transition-all font-medium backdrop-blur-sm border border-white/20 shadow-sm"
           >
             <Icon icon="solar:alt-arrow-left-linear" className="w-5 h-5" /> go back
-          </button>
+          </button> */}
           
           <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-4">
             Reset <br />
@@ -55,16 +55,13 @@ const ForgotPassword = () => {
         <div className="w-full max-w-md space-y-8">
           {/* Mobile Back Button & Header */}
            <div className="lg:hidden mb-8">
-            <button 
+            {/* <button 
               onClick={() => navigate(-1)}
               className="flex items-center gap-2 px-4 py-2 bg-primary/5 hover:bg-primary/10 text-primary rounded-full transition-all font-medium mb-6 border border-primary/10"
             >
               <Icon icon="solar:alt-arrow-left-linear" className="w-5 h-5" /> go back
-            </button>
-            <div className="flex items-center gap-2">
-              <img src={logo} alt="N" className="h-8 w-auto" />
-              <h1 className="text-3xl font-bold text-primary">EXL</h1>
-            </div>
+            </button> */}
+            <h1 className="text-3xl font-bold text-primary">NEXL</h1>
           </div>
 
           <div className="text-left">

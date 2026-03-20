@@ -3,11 +3,80 @@ import { testimonials } from '../../data/landingData';
 
 const Testimonials = () => {
   return (
-    <section className="py-20 md:py-32 px-6 bg-background">
-      <div className="max-w-7xl mx-auto">
-        <h2 className="text-4xl md:text-5xl font-bold mb-16 md:mb-24 text-center text-foreground serif">
-          Student Stories
-        </h2>
+    <section className="py-20 bg-gray-50 flex justify-center items-center">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 w-full">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-extrabold text-[#1B3452] mb-4">
+            Students <span className="text-[#1B3452]">Feedback</span>
+          </h2>
+          <div className="w-16 h-1 bg-[#d4af37] mx-auto mb-6"></div>
+          <p className="text-gray-600 text-lg">
+            Read what our students have to say about their learning journey with NEXL.
+          </p>
+        </div>
+
+        {/* Carousel Container */}
+        <div className="relative flex items-center justify-center">
+            
+          {/* Previous Button - hidden on small screens */}
+          <button 
+            onClick={prevTestimonial}
+            className="absolute left-0 -ml-4 lg:-ml-12 z-10 hidden md:flex h-12 w-12 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-sm hover:bg-gray-50 hover:text-primary transition-colors focus:outline-none"
+            aria-label="Previous testimonial"
+          >
+            <ChevronLeft size={24} />
+          </button>
+
+          {/* Cards Grid */}
+          <div className="flex gap-6 w-full overflow-hidden justify-center transition-all duration-300">
+            {getVisibleTestimonials().map((testimonial, idx) => (
+              <div 
+                key={testimonial.id}
+                className={`bg-white rounded-2xl p-8 flex flex-col mx-auto w-full max-w-sm flex-shrink-0 transition-all duration-300 ${idx > 0 ? "hidden md:flex" : "flex"} ${idx === 2 ? "lg:flex hidden" : ""} ${testimonial.empty ? "opacity-0 pointer-events-none" : "shadow-sm border border-gray-200 items-center text-center hover:scale-105 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 z-0 hover:z-10"}`}
+              >
+                {!testimonial.empty && (
+                  <>
+                    {/* User Info Route */}
+                    <div className="flex flex-col items-center mb-6 w-full">
+                        <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white text-xl font-bold mb-4 shadow-sm">
+                          {getInitials(testimonial.name)}
+                        </div>
+                        <h3 className="text-xl font-bold text-[#1B3452] whitespace-nowrap">{testimonial.name}</h3>
+                        <p className="text-gray-600 font-medium text-sm mb-2 whitespace-nowrap">{testimonial.role}</p>
+                        
+                        {/* Star Rating */}
+                        <div className="flex justify-center gap-1">
+                            {[...Array(testimonial.rating)].map((_, i) => (
+                            <Star key={i} className="w-4 h-4 fill-[#d4af37] text-[#d4af37]" />
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Testimonial Text */}
+                    <p className="text-gray-700 italic flex-grow mb-6 leading-relaxed relative">
+                      {testimonial.text}
+                    </p>
+
+                    {/* Footer Info */}
+                    <p className="text-sm font-semibold text-gray-500 mt-auto">
+                      {testimonial.date}
+                    </p>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Next Button - hidden on small screens */}
+          <button 
+            onClick={nextTestimonial}
+            className="absolute right-0 -mr-4 lg:-mr-12 z-10 hidden md:flex h-12 w-12 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-sm hover:bg-gray-50 hover:text-primary transition-colors focus:outline-none"
+            aria-label="Next testimonial"
+          >
+            <ChevronRight size={24} />
+          </button>
+        </div>
         
         <div className="grid md:grid-cols-3 gap-8">
           {testimonials.map((item) => (
