@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Icon } from '@iconify/react';
 import { useGetInstructorStatsQuery } from "@/store/slices/enrollmentApi";
 
 const Dashboard = () => {

@@ -13,24 +13,30 @@ export const StreamContextProvider = ({ children }) => {
   const [chatClient, setChatClient] = useState(null);
   const [videoClient, setVideoClient] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { userData, isAuthenticated } = useSelector((s) => s.auth);
+  const { userData, isLoggedIn } = useSelector((s) => s.auth);
 
   useEffect(() => {
-    if (!isAuthenticated || !userData?.id || !API_KEY || API_KEY === "your_stream_api_key") return;
+    if (!isLoggedIn || !userData?.id || !API_KEY || API_KEY === "your_stream_api_key") return;
 
     let chatClientLocal;
     let videoClientLocal;
 
     const connect = async () => {
       try {
+        console.log("StreamContext: Starting connection process...");
+        console.log("StreamContext: API_KEY present:", !!API_KEY && API_KEY !== "your_stream_api_key");
+        
         setLoading(true);
+        console.log("StreamContext: Fetching token from", `${BACKEND}/api/v1/stream/token`);
         const { data } = await axios.post(
           `${BACKEND}/api/v1/stream/token`,
           {},
           { withCredentials: true }
         );
+        console.log("StreamContext: Token received for user:", data.userId);
 
         // Chat Client Setup
+        console.log("StreamContext: Initializing Chat Client...");
         const cClient = StreamChat.getInstance(API_KEY);
         await cClient.connectUser(
           {
@@ -41,8 +47,10 @@ export const StreamContextProvider = ({ children }) => {
           data.token
         );
         chatClientLocal = cClient;
+        console.log("StreamContext: Chat Client connected");
 
         // Video Client Setup
+        console.log("StreamContext: Initializing Video Client...");
         const vClient = new StreamVideoClient({
           apiKey: API_KEY,
           user: {
@@ -54,6 +62,7 @@ export const StreamContextProvider = ({ children }) => {
         });
         
         // Explicitly connect the video client
+        console.log("StreamContext: Connecting Video Client...");
         await vClient.connectUser(
           {
             id: data.userId,
@@ -63,12 +72,13 @@ export const StreamContextProvider = ({ children }) => {
           data.token
         );
         videoClientLocal = vClient;
+        console.log("StreamContext: Video Client connected");
 
         setChatClient(cClient);
         setVideoClient(vClient);
-        console.log("Stream connected successfully for user:", data.userId);
+        console.log("StreamContext: Both clients set to state");
       } catch (err) {
-        console.error("Stream connect error:", err);
+        console.error("StreamContext: Connection error:", err);
       } finally {
         setLoading(false);
       }
@@ -88,7 +98,8 @@ export const StreamContextProvider = ({ children }) => {
           .catch(err => console.error("Video disconnect error:", err));
       }
     };
-  }, [isAuthenticated, userData?.id]);
+  }, [isLoggedIn, userData?.id]);
+
 
   return (
     <StreamContext.Provider value={{ chatClient, videoClient, loading }}>
