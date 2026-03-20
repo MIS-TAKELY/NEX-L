@@ -243,13 +243,15 @@ const CourseDetails = () => {
                           </div>
                         </div>
                       </div>
-                      <button
-                        onClick={() => navigate(`/student/live/${id}`)}
-                        className="px-6 py-2.5 bg-red-500 text-white text-sm font-bold rounded-xl hover:bg-red-600 transition-all shadow-lg shadow-red-500/20 flex items-center justify-center gap-2"
-                      >
-                        <Icon icon="solar:play-bold" />
-                        Join Now
-                      </button>
+                      {liveClass.status === 'live' && (
+                        <button
+                          onClick={() => navigate(`/student/live/${id}`)}
+                          className="px-6 py-2.5 bg-red-500 text-white text-sm font-bold rounded-xl hover:bg-red-600 transition-all shadow-lg shadow-red-500/20 flex items-center justify-center gap-2"
+                        >
+                          <Icon icon="solar:play-bold" />
+                          Join Now
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>
