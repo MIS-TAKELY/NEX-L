@@ -62,12 +62,21 @@ const ConsultationClient = ({ sessionId, onLeave, isInstructor }) => {
     const setup = async () => {
       try {
         const { data } = await axios.get(`${BACKEND}/api/v1/stream/consultation/${sessionId}`, { withCredentials: true });
-        const { callId, callType } = data;
+        const { callId, callType, studentId, teacherId } = data;
+        const members = [studentId, teacherId];
 
         const videoCall = videoClient.call(callType, callId);
         
-        // Join the call and create it if necessary
-        await videoCall.join({ create: isInstructor });
+        // Ensure call is created with members before joining
+        await videoCall.getOrCreate({
+          data: {
+            members: members.map(id => ({ user_id: id })),
+            custom: { type: 'consultation' }
+          }
+        });
+
+        // Join the call
+        await videoCall.join();
 
         // If instructor, ring the call to notify the student
         if (isInstructor) {

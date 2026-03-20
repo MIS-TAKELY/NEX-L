@@ -345,7 +345,13 @@ export const createConsultationCall = async (req, res) => {
     }
 
     const callId = `consult-${sessionId}`;
-    res.json({ callId, callType: "default", sessionId });
+    res.json({ 
+      callId, 
+      callType: "default", 
+      sessionId,
+      studentId: String(session.student),
+      teacherId: String(session.teacher)
+    });
   } catch (error) {
     console.error("createConsultationCall error:", error);
     res.status(500).json({ message: "Failed to create consultation call" });
