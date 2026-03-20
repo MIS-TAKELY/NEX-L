@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
     emailVerified: { type: Boolean, default: false },
     image: { type: String },
     password: { type: String }, // Optional for better-auth
-    role: { type: String, enum: ["student", "teacher", "admin"], default: "student" },
+    role: { type: String, enum: ["student", "teacher", "instructor", "admin"], default: "student" },
   },
   {
     timestamps: true,

@@ -23,7 +23,7 @@ export const generateToken = async (req, res) => {
       id: user.id,
       name: user.name,
       image: user.image || "",
-      role: user.role === "teacher" ? "user" : "user",
+      role: (user.role === "teacher" || user.role === "instructor") ? "admin" : "user",
     });
 
     const token = client.createToken(user.id);
@@ -45,6 +45,7 @@ export const generateVideoToken = async (req, res) => {
       id: user.id,
       name: user.name,
       image: user.image || "",
+      role: (user.role === "teacher" || user.role === "instructor") ? "admin" : "user",
     });
 
     const token = client.createToken(user.id);
@@ -259,7 +260,7 @@ export const createLiveStream = async (req, res) => {
     if (!course) return res.status(404).json({ message: "Course not found" });
 
     if (String(course.teacher) !== teacher.id) {
-      return res.status(403).json({ message: "Only the course teacher can start a live stream" });
+      return res.status(403).json({ message: "Only the course instructor can start a live stream" });
     }
 
     // The call ID is deterministic per course; teacher can restart the same room

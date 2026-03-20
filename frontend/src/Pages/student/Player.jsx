@@ -11,7 +11,18 @@ import CourseGroupChat from '../../components/student/CourseGroupChat';
 import { useStream } from '../../context/StreamContext';
 
 const Player = () => {
+  const formatDisplayName = (name, backupTitle) => {
+    if (!name) return backupTitle || "Choose a lesson";
+    const lowerName = name.toLowerCase();
+    // Check if name is a generic WhatsApp video or typical filename
+    if (lowerName.includes('whatsapp video') || lowerName.match(/\.(mp4|mkv|avi|mov|pdf|zip|txt)$/)) {
+      return backupTitle || "Video Content";
+    }
+    return name;
+  };
+
   const { courseId } = useParams();
+
   const navigate = useNavigate();
   const [course, setCourse] = useState(null);
   const [activeLesson, setActiveLesson] = useState(null);
@@ -102,8 +113,11 @@ const Player = () => {
               </video>
             </div>
             <div className="bg-background dark:bg-zinc-900 p-8 rounded-3xl border border-gray-100 dark:border-zinc-800 premium-card">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-foreground mb-4 italic">{activeResource.name || activeLesson?.title}</h2>
-              <p className="text-gray-600 dark:text-zinc-400 leading-relaxed font-medium italic">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-foreground mb-4">
+                {formatDisplayName(activeResource.name, activeLesson?.title)}
+              </h2>
+              <p className="text-gray-600 dark:text-zinc-400 leading-relaxed font-medium">
+
                 {activeLesson?.description || activeLesson?.summary || "No description provided for this lesson."}
               </p>
             </div>
@@ -116,8 +130,11 @@ const Player = () => {
             <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
               <Icon icon="solar:document-bold" className="text-primary" size={40} />
             </div>
-            <h2 className="text-3xl font-extrabold text-gray-900 dark:text-foreground mb-4 italic">{activeResource.name || activeLesson?.title}</h2>
+            <h2 className="text-3xl font-extrabold text-gray-900 dark:text-foreground mb-4">
+              {formatDisplayName(activeResource.name, activeLesson?.title)}
+            </h2>
             <p className="text-gray-500 mb-8 max-w-md font-medium">This resource is a {type}. You can view it by clicking the button below.</p>
+
             <a
               href={url}
               target="_blank"
@@ -132,8 +149,11 @@ const Player = () => {
       case 'article':
         return (
           <div className="prose prose-lg dark:prose-invert max-w-none bg-background dark:bg-zinc-900 p-8 md:p-12 rounded-3xl border border-gray-100 dark:border-zinc-800 shadow-sm premium-card">
-            <h1 className="text-4xl font-extrabold text-gray-900 dark:text-foreground mb-8 italic">{activeResource?.name || activeLesson?.title}</h1>
-            <div className="text-gray-700 dark:text-zinc-300 whitespace-pre-wrap leading-relaxed font-medium italic">
+            <h1 className="text-4xl font-extrabold text-gray-900 dark:text-foreground mb-8">
+              {formatDisplayName(activeResource?.name, activeLesson?.title)}
+            </h1>
+            <div className="text-gray-700 dark:text-zinc-300 whitespace-pre-wrap leading-relaxed font-medium">
+
               {activeLesson?.description || activeLesson?.summary || "No description provided."}
             </div>
           </div>
@@ -188,7 +208,8 @@ const Player = () => {
       >
         <div className="flex flex-col h-full">
           <div className="p-6 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between">
-            <h2 className="text-xl font-extrabold text-gray-900 dark:text-foreground truncate pr-4 italic">{course?.title}</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 dark:text-foreground truncate pr-4">{course?.title}</h2>
+
             <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 hover:bg-gray-100 rounded-lg">
               <Icon icon="solar:close-circle-linear" size={24} className="text-gray-400" />
             </button>
@@ -209,10 +230,11 @@ const Player = () => {
               </div>
               <div className="overflow-hidden">
                 <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Instructor</p>
-                <p className="text-sm font-extrabold text-gray-900 dark:text-foreground truncate italic">
+                <p className="text-sm font-extrabold text-gray-900 dark:text-foreground truncate">
                   {course?.teacher?.name || "Expert Instructor"}
                 </p>
               </div>
+
             </div>
           </div>
         </div>
@@ -231,10 +253,11 @@ const Player = () => {
             </button>
             <div>
               <p className="text-xs text-gray-400 font-bold uppercase tracking-widest leading-none mb-1">Current Lesson</p>
-              <h3 className="text-lg font-extrabold text-gray-900 dark:text-foreground truncate max-w-xs md:max-w-md italic">
-                {activeResource?.name || activeLesson?.title || "Choose a lesson"}
+              <h3 className="text-lg font-extrabold text-gray-900 dark:text-foreground truncate max-w-xs md:max-w-md">
+                {formatDisplayName(activeResource?.name, activeLesson?.title)}
               </h3>
             </div>
+
           </div>
 
           <div className="flex items-center gap-2">

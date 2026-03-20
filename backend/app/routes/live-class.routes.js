@@ -12,13 +12,13 @@ const router = express.Router();
 
 // ─── Teacher routes ──────────────────────────────────────────────────────────
 // POST /api/v1/live-classes/schedule  – Teacher schedules a class
-router.post("/schedule", requireAuth, requireRole("teacher"), createLiveClass);
+router.post("/schedule", requireAuth, requireRole("instructor", "admin"), createLiveClass);
 
 // PATCH /api/v1/live-classes/:classId  – Teacher updates a class
-router.patch("/:classId", requireAuth, requireRole("teacher"), updateLiveClass);
+router.patch("/:classId", requireAuth, requireRole("instructor", "admin"), updateLiveClass);
 
 // DELETE /api/v1/live-classes/:classId  – Teacher cancels a class
-router.delete("/:classId", requireAuth, requireRole("teacher"), deleteLiveClass);
+router.delete("/:classId", requireAuth, requireRole("instructor", "admin"), deleteLiveClass);
 
 // ─── Shared routes ───────────────────────────────────────────────────────────
 // GET /api/v1/live-classes/course/:courseId  – Get classes for a course

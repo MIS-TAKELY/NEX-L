@@ -109,7 +109,14 @@ const VideoCallPage = () => {
         setCall(videoCall);
       } catch (err) {
         console.error("VideoCallPage setup error:", err);
-        setError(err.response?.data?.message || "Failed to start video call");
+        const backendMessage = err.response?.data?.message;
+        const streamError = err.message;
+
+        if (streamError?.includes("permission")) {
+          setError("You don't have permission to start or join this video call. If this is a course call, ensure you are enrolled and the teacher has started the session.");
+        } else {
+          setError(backendMessage || "Failed to start or join video call. Please try again later.");
+        }
       }
     };
 
