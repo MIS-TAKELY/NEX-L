@@ -88,7 +88,7 @@ const MeetingLayout = ({
         courseName={courseName} 
         isInstructor={isInstructor} 
         goLive={handleGoLive}
-        isVideoCall={callType === 'videocall'}
+        isVideoCall={callType === 'videocall' || callType === 'consultation'}
         isJoining={isJoining}
       />
     );
@@ -180,7 +180,7 @@ const MeetingLayout = ({
           activePanel={activePanel}
           sendReaction={callType === 'livestream' ? (type, emoji) => call.sendReaction({ type, emoji_code: emoji }) : (type, emoji) => call.sendReaction({ type, emoji_code: emoji })}
           isLive={isLive}
-          isVideoCall={callType === 'videocall'}
+          isVideoCall={callType === 'videocall' || callType === 'consultation'}
           isJoining={isJoining}
         />
       </div>

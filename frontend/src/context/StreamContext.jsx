@@ -1,15 +1,17 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { StreamChat } from "stream-chat";
+import { StreamVideoClient } from "@stream-io/video-react-sdk";
 import { useSelector } from "react-redux";
 import axios from "axios";
-
-const StreamContext = createContext(null);
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 const API_KEY = import.meta.env.VITE_STREAM_API_KEY || "";
 
+const StreamContext = createContext(null);
+
 export const StreamContextProvider = ({ children }) => {
   const [chatClient, setChatClient] = useState(null);
+  const [videoClient, setVideoClient] = useState(null);
   const [loading, setLoading] = useState(false);
   const { userData, isAuthenticated } = useSelector((s) => s.auth);
 
@@ -38,7 +40,18 @@ export const StreamContextProvider = ({ children }) => {
           data.token
         );
 
+        const vClient = new StreamVideoClient({
+          apiKey: API_KEY,
+          user: {
+            id: data.userId,
+            name: data.userName,
+            image: userData.image || "",
+          },
+          token: data.token,
+        });
+
         setChatClient(client);
+        setVideoClient(vClient);
       } catch (err) {
         console.error("Stream connect error:", err);
       } finally {
@@ -49,14 +62,13 @@ export const StreamContextProvider = ({ children }) => {
     connect();
 
     return () => {
-      if (client) {
-        client.disconnectUser().catch(console.error);
-      }
+      if (client) client.disconnectUser().catch(console.error);
+      if (videoClient) videoClient.disconnectUser().catch(console.error);
     };
   }, [isAuthenticated, userData?.id]);
 
   return (
-    <StreamContext.Provider value={{ chatClient, loading }}>
+    <StreamContext.Provider value={{ chatClient, videoClient, loading }}>
       {children}
     </StreamContext.Provider>
   );

@@ -126,6 +126,7 @@ const Consultations = () => {
       <ConsultationModal 
         sessionId={activeSessionId} 
         onClose={() => setActiveSessionId(null)} 
+        isInstructor={true}
       />
     </div>
   );
