@@ -188,5 +188,36 @@
 .stagger-1 { animation-delay: 0.1s; }
 .stagger-2 { animation-delay: 0.2s; }
 .stagger-3 { animation-delay: 0.3s; }
-.stagger-4 { animation-delay: 0.4s; }
 .stagger-5 { animation-delay: 0.5s; }
+
+/* Stream SDK Overrides for Google Meet UI */
+.str-video__participant-view {
+  border: none !important;
+  border-radius: 16px !important;
+  background-color: #3c4043 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  overflow: hidden !important;
+}
+
+.str-video__speaker-layout__wrapper,
+.str-video__paginated-grid-layout {
+  gap: 16px !important;
+  padding: 0 !important;
+}
+
+.str-video__participant-details {
+  background: rgba(0,0,0,0.5) !important;
+  border-radius: 8px !important;
+  backdrop-filter: blur(4px) !important;
+  padding: 4px 12px !important;
+  margin: 12px !important;
+}
+
+.str-video__call-controls {
+  display: none !important;
+}
+
+.override-stream-theme {
+  --str-video-surface-color: transparent !important;
+  --str-video-border-color: transparent !important;
+}

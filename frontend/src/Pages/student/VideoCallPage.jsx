@@ -9,31 +9,29 @@ import {
   StreamVideo,
   StreamVideoClient,
   StreamCall,
-  CallControls,
-  SpeakerLayout,
   StreamTheme,
   useCallStateHooks,
   CallingState,
 } from "@stream-io/video-react-sdk";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { Icon } from "@iconify/react";
+import MeetingLayout from "@/components/meeting/MeetingLayout";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 const API_KEY = import.meta.env.VITE_STREAM_API_KEY || "";
 
-const CallUI = ({ onLeave }) => {
-  const { useCallCallingState, useParticipantCount } = useCallStateHooks();
+const CallUI = ({ onLeave, call, courseId }) => {
+  const { useCallCallingState } = useCallStateHooks();
   const callingState = useCallCallingState();
-  const count = useParticipantCount();
 
   if (callingState === CallingState.LEFT) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-950 text-foreground gap-4">
-        <Icon icon="solar:phone-hang-up-bold-duotone" className="w-16 h-16 text-gray-500" />
+      <div className="flex flex-col items-center justify-center h-screen bg-[#202124] text-white gap-4 w-screen">
+        <Icon icon="solar:phone-hang-up-bold-duotone" className="w-16 h-16 text-[#ea4335]" />
         <p className="text-gray-400">Call ended</p>
         <button
           onClick={onLeave}
-          className="bg-gray-700 hover:bg-gray-600 text-foreground px-6 py-2 rounded-xl transition-all mt-2"
+          className="bg-[#3c4043] hover:bg-[#4d5154] text-white px-6 py-2 rounded-full transition-all mt-2 border border-white/10"
         >
           ← Go Back
         </button>
@@ -43,32 +41,15 @@ const CallUI = ({ onLeave }) => {
 
   return (
     <StreamTheme>
-      <div className="flex flex-col h-screen bg-gray-950">
-        {/* Header */}
-        <div className="flex items-center gap-3 px-6 py-4 bg-gray-900 border-b border-gray-800">
-          <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-            <Icon icon="solar:video-frame-play-bold-duotone" className="w-6 h-6 text-blue-400" />
-          </div>
-          <div>
-            <h1 className="text-foreground font-bold text-lg">Video Call</h1>
-            <p className="text-gray-400 text-xs">
-              {callingState === CallingState.JOINED
-                ? `${count} participant${count !== 1 ? "s" : ""} in call`
-                : "Connecting…"}
-            </p>
-          </div>
-        </div>
-
-        {/* Video layout */}
-        <div className="flex-1 relative overflow-hidden">
-          <SpeakerLayout participantsBarPosition="bottom" />
-        </div>
-
-        {/* Controls */}
-        <div className="py-4 bg-gray-900 border-t border-gray-800 flex justify-center">
-          <CallControls onLeave={onLeave} />
-        </div>
-      </div>
+        <MeetingLayout
+            courseName="Video Call"
+            courseId={courseId}
+            call={call}
+            onLeave={onLeave}
+            isInstructor={false}
+            callType="videocall"
+            autoJoin={false}
+        />
     </StreamTheme>
   );
 };
@@ -104,7 +85,9 @@ const VideoCallPage = () => {
 
         await videoClient.connectUser({ id: userId }, token);
         const videoCall = videoClient.call(callType, callId);
-        await videoCall.join({ create: true });
+        
+        // Removed auto-join, letting JoinScreen handle it
+        
         setClient(videoClient);
         setCall(videoCall);
       } catch (err) {
@@ -134,10 +117,10 @@ const VideoCallPage = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-950 text-red-400 flex-col gap-4">
+      <div className="flex items-center justify-center h-screen bg-[#202124] text-[#ea4335] flex-col gap-4 w-screen">
         <Icon icon="solar:danger-triangle-bold" className="w-12 h-12" />
         <p className="text-center max-w-sm">{error}</p>
-        <button onClick={() => navigate(-1)} className="text-sm text-gray-400 hover:text-foreground underline">
+        <button onClick={() => navigate(-1)} className="text-sm text-gray-400 hover:text-white underline">
           ← Go back
         </button>
       </div>
@@ -146,8 +129,8 @@ const VideoCallPage = () => {
 
   if (!client || !call) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-950 text-gray-400 gap-3">
-        <div className="w-6 h-6 border-2 border-gray-400 border-t-blue-400 rounded-full animate-spin" />
+      <div className="flex items-center justify-center h-screen bg-[#202124] text-gray-400 gap-3 w-screen">
+        <div className="w-6 h-6 border-2 border-gray-400 border-t-[#8ab4f8] rounded-full animate-spin" />
         Connecting video call…
       </div>
     );
@@ -156,7 +139,7 @@ const VideoCallPage = () => {
   return (
     <StreamVideo client={client}>
       <StreamCall call={call}>
-        <CallUI onLeave={handleLeave} />
+        <CallUI onLeave={handleLeave} call={call} courseId={courseId} />
       </StreamCall>
     </StreamVideo>
   );
