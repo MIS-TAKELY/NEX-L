@@ -11,7 +11,7 @@ import {
   LivestreamLayout,
   useCallStateHooks,
   CallingState,
-  ParticipantList,
+  CallParticipantsList,
 } from "@stream-io/video-react-sdk";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { Icon } from "@iconify/react";
@@ -67,7 +67,7 @@ const WatcherView = ({ courseName }) => {
             <span className="font-bold text-sm text-foreground uppercase tracking-wider">Viewers</span>
           </div>
           <div className="flex-1 overflow-y-auto">
-            <ParticipantList />
+            <CallParticipantsList onClose={() => {}} />
           </div>
         </div>
       </div>
