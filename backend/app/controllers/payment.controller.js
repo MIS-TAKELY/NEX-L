@@ -152,11 +152,17 @@ export const verifyEsewaPayment = async (req, res) => {
             for (const courseId of coursesToEnroll) {
                 const existing = await Enrollment.findOne({ student: payment.user, course: courseId });
                 if (!existing) {
-                    await Enrollment.create({
+                    const enrollment = await Enrollment.create({
                         student: payment.user,
                         course: courseId,
                         payment: payment._id,
                     });
+
+                    // Sync with Course model
+                    await Course.findByIdAndUpdate(courseId, {
+                        $addToSet: { enrollments: enrollment._id }
+                    });
+
                     // Also add student to all Stream channels for this course
                     await addStudentToAllCourseChannels(String(payment.user), String(courseId));
                 }
@@ -346,11 +352,17 @@ export const verifyKhaltiPayment = async (req, res) => {
             for (const courseId of coursesToEnroll) {
                 const existing = await Enrollment.findOne({ student: payment.user, course: courseId });
                 if (!existing) {
-                    await Enrollment.create({
+                    const enrollment = await Enrollment.create({
                         student: payment.user,
                         course: courseId,
                         payment: payment._id,
                     });
+
+                    // Sync with Course model
+                    await Course.findByIdAndUpdate(courseId, {
+                        $addToSet: { enrollments: enrollment._id }
+                    });
+
                     // Also add student to all Stream channels for this course
                     await addStudentToAllCourseChannels(String(payment.user), String(courseId));
                 }

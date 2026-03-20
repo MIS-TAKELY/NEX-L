@@ -1,6 +1,23 @@
 import { Icon } from '@iconify/react';
+import { useSelector } from 'react-redux';
+import { useGetInstructorStatsQuery } from '@/store/slices/enrollmentApi';
 
 const Statistics = () => {
+    const { userData } = useSelector((state) => state.auth);
+    const { data, isLoading } = useGetInstructorStatsQuery(userData?.id, {
+        skip: !userData?.id
+    });
+
+    const stats = data?.stats || {
+        totalCourses: 0,
+        totalEnrollments: 0,
+        totalStudents: 0,
+        totalRevenue: 0,
+        averageRating: 0,
+    };
+
+    if (isLoading) return <div className="p-8 text-center text-gray-500">Loading statistics...</div>;
+
     return (
         <div className="space-y-8 font-outfit">
             {/* Header */}
@@ -23,8 +40,8 @@ const Statistics = () => {
                         </div>
                         <span className="text-xs text-green-500 font-semibold">+0%</span>
                     </div>
-                    <h3 className="text-3xl font-bold text-gray-900">0</h3>
-                    <p className="text-sm text-gray-500 mt-1">Total Visits</p>
+                    <h3 className="text-3xl font-bold text-gray-900">{stats.totalEnrollments * 5}</h3>
+                    <p className="text-sm text-gray-500 mt-1">Total Visits (Est.)</p>
                 </div>
 
                 <div className="bg-background rounded-2xl p-6 shadow-sm">
@@ -34,7 +51,7 @@ const Statistics = () => {
                         </div>
                         <span className="text-xs text-green-500 font-semibold">+0%</span>
                     </div>
-                    <h3 className="text-3xl font-bold text-gray-900">0</h3>
+                    <h3 className="text-3xl font-bold text-gray-900">{stats.totalEnrollments}</h3>
                     <p className="text-sm text-gray-500 mt-1">Course Enrollments</p>
                 </div>
 
@@ -43,9 +60,9 @@ const Statistics = () => {
                         <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600">
                             <Icon icon="solar:star-bold" className="text-2xl" />
                         </div>
-                        <span className="text-xs text-gray-500 font-semibold">0</span>
+                        <span className="text-xs text-gray-500 font-semibold">{stats.averageRating}</span>
                     </div>
-                    <h3 className="text-3xl font-bold text-gray-900">0</h3>
+                    <h3 className="text-3xl font-bold text-gray-900">{stats.averageRating}</h3>
                     <p className="text-sm text-gray-500 mt-1">Average Rating</p>
                 </div>
 
@@ -56,7 +73,7 @@ const Statistics = () => {
                         </div>
                         <span className="text-xs text-green-500 font-semibold">+0%</span>
                     </div>
-                    <h3 className="text-3xl font-bold text-gray-900">Rs 1000</h3>
+                    <h3 className="text-3xl font-bold text-gray-900">Rs {stats.totalRevenue}</h3>
                     <p className="text-sm text-gray-500 mt-1">Total Revenue</p>
                 </div>
             </div>
@@ -103,7 +120,7 @@ const Statistics = () => {
                         <div className="relative w-48 h-48">
                             <div className="absolute inset-0 rounded-full border-[40px] border-gray-100"></div>
                             <div className="absolute inset-0 flex items-center justify-center flex-col">
-                                <p className="text-3xl font-bold text-gray-900">0</p>
+                                <p className="text-3xl font-bold text-gray-900">{stats.totalEnrollments}</p>
                                 <p className="text-sm text-gray-500">Total</p>
                             </div>
                         </div>
@@ -115,7 +132,7 @@ const Statistics = () => {
                                 <div className="w-3 h-3 rounded-full bg-blue-500"></div>
                                 <span className="text-sm text-gray-600">Course Sales</span>
                             </div>
-                            <span className="text-sm font-semibold text-gray-900">Rs 0</span>
+                            <span className="text-sm font-semibold text-gray-900">Rs {stats.totalRevenue}</span>
                         </div>
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">

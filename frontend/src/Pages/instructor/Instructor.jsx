@@ -74,9 +74,9 @@ const Instructor = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Top Header */}
-        <header className="bg-card border-b border-border py-4 px-8 flex justify-between items-center shadow-sm z-10 shrink-0">
+        <header className="bg-background/80 backdrop-blur-md border-b border-border/50 py-4 px-8 flex justify-between items-center z-10 shrink-0 sticky top-0">
           <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold text-foreground">
+            <h1 className="text-xl font-bold text-foreground tracking-tight">
               Instructor Portal
             </h1>
           </div>
@@ -84,7 +84,7 @@ const Instructor = () => {
           <div className="flex items-center gap-4">
             <button
                 onClick={() => dispatch(toggleTheme())}
-                className="w-10 h-10 bg-card rounded-full flex items-center justify-center text-muted-foreground hover:text-primary hover:shadow-md transition-all shadow-sm border border-border relative overflow-hidden group"
+                className="w-10 h-10 bg-secondary/50 rounded-xl flex items-center justify-center text-muted-foreground hover:text-primary hover:shadow-lg hover:shadow-primary/10 transition-all border border-border/50 group"
             >
                 <Icon
                     icon="solar:sun-bold-duotone"
@@ -96,12 +96,16 @@ const Instructor = () => {
                     icon="solar:moon-stars-bold-duotone"
                     className={`absolute h-5 w-5 transition-all duration-500 ease-in-out ${
                         theme === 'dark' ? 'scale-100 rotate-0 opacity-100' : 'scale-0 rotate-90 opacity-0'
-                    } text-blue-400 group-hover:text-primary`}
+                    } text-blue-400`}
                 />
             </button>
-            <ProfileDropdown />
-            <div className="hidden md:block">
-              <p className="text-xs text-muted-foreground">Instructor</p>
+            <div className="h-6 w-[1px] bg-border/50 mx-2" />
+            <div className="flex items-center gap-3">
+              <div className="hidden md:block text-right">
+                <p className="text-sm font-semibold text-foreground leading-none">{displayName}</p>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-widest mt-1">Instructor</p>
+              </div>
+              <ProfileDropdown />
             </div>
           </div>
         </header>

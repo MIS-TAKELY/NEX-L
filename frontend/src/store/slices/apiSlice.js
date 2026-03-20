@@ -10,7 +10,7 @@ export const apiSlice = createApi({
         },
         credentials: 'include',
     }),
-    tagTypes: ['Course', 'User', 'Cart'],
+    tagTypes: ['Course', 'User', 'Cart', 'Enrollment'],
     endpoints: (builder) => ({
         // Endpoints will be injected from other files or defined here
     }),

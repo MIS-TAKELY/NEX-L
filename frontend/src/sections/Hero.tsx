@@ -23,29 +23,28 @@ export function Hero() {
             </div>
 
             {/* Heading */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-foreground leading-tight mb-6 animate-slide-up">
-              Elevate Your{' '}
-              <span className="text-gradient">Learning</span>{' '}
-              Experience
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-foreground leading-[1.1] mb-8 animate-slide-up tracking-tight">
+              Master Your Future with{' '}
+              <span className="text-gradient">NEXL</span>
             </h1>
 
             {/* Description */}
-            <p className="text-lg sm:text-xl text-muted-foreground mb-10 max-w-xl mx-auto lg:mx-0 animate-slide-up stagger-1">
-              NEXL is a modern Learning Management System designed for Nepal. 
-              Access courses, track progress, and achieve your goals with AI-powered personalization.
+            <p className="text-xl text-muted-foreground/80 mb-10 max-w-xl mx-auto lg:mx-0 animate-slide-up stagger-1 leading-relaxed">
+              The premium learning platform tailored for Nepal. 
+              Elevate your skills with AI-driven personalization and world-class content.
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12 animate-slide-up stagger-2">
+            <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start mb-12 animate-slide-up stagger-2">
               <Button 
                 size="lg" 
-                className="gradient-primary hover:opacity-90 text-primary-foreground border-0 px-8 py-6 text-lg group"
+                className="gradient-primary hover:opacity-90 text-primary-foreground border-0 px-10 py-7 text-lg rounded-2xl shadow-lg shadow-primary/20 group"
                 onClick={() => navigate('/signup')}
               >
-                Start Learning Free
+                Get Started
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <Button size="lg" variant="outline" className="border-border hover:bg-secondary px-8 py-6 text-lg group">
+              <Button size="lg" variant="outline" className="border-border/60 hover:bg-secondary/80 px-10 py-7 text-lg rounded-2xl backdrop-blur-sm group">
                 <Play className="w-5 h-5 mr-2 text-primary" />
                 Watch Demo
               </Button>

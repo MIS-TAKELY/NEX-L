@@ -108,31 +108,31 @@ const CourseGroupChat = ({ courseId, onClose }) => {
   return (
     <div className="flex h-full overflow-hidden">
       {/* Sidebar for Channels */}
-      <div className="w-64 border-r border-gray-100 flex flex-col bg-gray-50/50">
-        <div className="p-4 border-b bg-white flex items-center justify-between">
-          <span className="font-bold text-gray-900 text-sm">CHANNELS</span>
+      <div className="w-64 border-r border-border flex flex-col bg-secondary/30 transition-colors duration-500">
+        <div className="p-6 border-b border-border bg-card/50 flex items-center justify-between">
+          <span className="font-black text-foreground text-xs tracking-[0.2em] uppercase">Channels</span>
           {isTeacher && (
             <button 
               onClick={() => setIsModalOpen(true)}
-              className="p-1.5 hover:bg-primary/10 rounded-lg text-primary transition-all"
+              className="w-8 h-8 flex items-center justify-center bg-primary/10 hover:bg-primary text-primary hover:text-primary-foreground rounded-lg transition-all shadow-sm shadow-primary/10"
               title="Add Channel"
             >
               <Icon icon="solar:add-circle-bold" className="w-5 h-5" />
             </button>
           )}
         </div>
-        <div className="flex-1 overflow-y-auto p-2 space-y-1">
+        <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
           {channels.map((ch) => (
             <button
               key={ch.channelId}
               onClick={() => handleChannelSelect(ch.channelId)}
-              className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold transition-all group ${
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all group border ${
                 activeChannel?.id === ch.channelId
-                  ? 'bg-primary text-foreground shadow-sm shadow-primary/20'
-                  : 'text-gray-500 hover:bg-gray-100'
+                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 border-primary'
+                  : 'text-muted-foreground hover:bg-background/80 border-transparent hover:border-border'
               }`}
             >
-              <Icon icon="solar:hashtag-bold" className={activeChannel?.id === ch.channelId ? 'text-white' : 'text-gray-400 group-hover:text-primary'} />
+              <Icon icon="solar:hashtag-bold" className={`w-4 h-4 ${activeChannel?.id === ch.channelId ? 'text-primary-foreground' : 'text-primary/40 group-hover:text-primary'}`} />
               <span className="truncate">{ch.name}</span>
             </button>
           ))}
@@ -141,16 +141,18 @@ const CourseGroupChat = ({ courseId, onClose }) => {
 
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b bg-background shadow-sm z-10">
-          <div className="flex items-center gap-2 overflow-hidden">
-            <Icon icon="solar:hashtag-bold" className="w-5 h-5 text-primary shrink-0" />
-            <span className="font-extrabold text-gray-900 text-sm truncate italic">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-card shadow-sm z-10 transition-colors duration-500">
+          <div className="flex items-center gap-3 overflow-hidden">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
+              <Icon icon="solar:hashtag-bold" className="w-4 h-4 text-primary shrink-0" />
+            </div>
+            <span className="font-black text-foreground text-sm truncate uppercase tracking-tight">
               {activeChannel?.data?.name || 'Loading...'}
             </span>
           </div>
           {onClose && (
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-700 ml-2">
-              <Icon icon="solar:close-circle-linear" className="w-5 h-5" />
+            <button onClick={onClose} className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all ml-2">
+              <Icon icon="solar:close-circle-bold" size={20} />
             </button>
           )}
         </div>

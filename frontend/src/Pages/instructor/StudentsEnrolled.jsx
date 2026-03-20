@@ -1,32 +1,17 @@
+import { useSelector } from "react-redux";
+import { useGetInstructorStudentsQuery } from "@/store/slices/enrollmentApi";
 
 const StudentsEnrolled = () => {
-  // Mock Data
-  const students = [
-    {
-      id: 1,
-      name: "Jane Doe",
-      course: "Complete Web Development Bootcamp",
-      progress: 75,
-      date: "2024-01-15",
-      avatar: ""
-    },
-    {
-      id: 2,
-      name: "John Smith",
-      course: "Advanced React Patterns",
-      progress: 30,
-      date: "2024-01-20",
-      avatar: ""
-    },
-    {
-      id: 3,
-      name: "Alice Johnson",
-      course: "Complete Web Development Bootcamp",
-      progress: 100,
-      date: "2024-01-10",
-      avatar: ""
-    }
-  ];
+  const { userData } = useSelector((state) => state.auth);
+  const { data, isLoading } = useGetInstructorStudentsQuery(userData?.id, {
+    skip: !userData?.id
+  });
+
+  const students = data?.students || [];
+
+  if (isLoading) {
+    return <div className="p-8 text-center text-gray-500">Loading students...</div>;
+  }
 
   return (
     <div className="bg-background rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -67,7 +52,7 @@ const StudentsEnrolled = () => {
                     <span className="text-xs text-gray-500">{student.progress}%</span>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-center">{student.date}</td>
+                <td className="px-6 py-4 text-center">{new Date(student.date).toLocaleDateString()}</td>
               </tr>
             ))}
           </tbody>

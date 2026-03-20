@@ -59,7 +59,7 @@ const LiveStreamChat = ({ courseId }) => {
   }
 
   return (
-    <div className="flex flex-col h-full str-chat-livestream bg-gray-900">
+    <div className="flex flex-col h-full str-chat-livestream bg-background transition-colors duration-500">
       <div className="flex-1 overflow-hidden relative">
         <Chat client={chatClient} theme="str-chat__theme-dark">
           <Channel channel={channel}>
