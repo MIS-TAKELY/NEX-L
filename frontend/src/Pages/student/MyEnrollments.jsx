@@ -3,12 +3,23 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getUserEnrollments } from '../../apis/enrollment.api';
 import CourseCard from '../../components/student/CourseCard';
+import { useGetUpcomingLiveClassesQuery } from '../../store/slices/liveClassApi';
+import { useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 const MyEnrollments = () => {
   const { userData } = useSelector((state) => state.auth);
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  const { data: upcomingClasses = [], isLoading: loadingClasses } = useGetUpcomingLiveClassesQuery(undefined, {
+    skip: !userData?._id && !userData?.id
+  });
 
   useEffect(() => {
     const fetchEnrollments = async () => {
@@ -29,7 +40,7 @@ const MyEnrollments = () => {
     fetchEnrollments();
   }, [userData]);
 
-  if (loading) {
+  if (loading || loadingClasses) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
         <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
@@ -67,14 +78,57 @@ const MyEnrollments = () => {
             You are currently enrolled in {enrollments.length} course{enrollments.length !== 1 ? 's' : ''}
           </p>
         </div>
+      </div>
 
-        <div className="flex gap-3">
-          <div className="px-4 py-2 bg-background dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-xl shadow-sm flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500" />
-            <span className="text-sm font-bold text-gray-700 dark:text-zinc-300">Active Learning</span>
+      {upcomingClasses.length > 0 && (
+        <div className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+              <Icon icon="solar:videocamera-record-bold-duotone" className="text-red-500 w-6 h-6" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900">Upcoming Live Classes</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {upcomingClasses.map((liveClass) => (
+              <div key={liveClass._id} className="bg-white rounded-2xl p-6 border border-red-100 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4">
+                   <div className="flex items-center gap-1.5 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full animate-pulse">
+                      <div className="w-1.5 h-1.5 bg-white rounded-full" /> LIVE SOON
+                   </div>
+                </div>
+                <div className="flex items-center gap-4 mb-4">
+                  <img src={liveClass.course?.thumbnail || '/placeholder-course.png'} alt="" className="w-12 h-12 rounded-lg object-cover" />
+                  <div>
+                    <h3 className="font-bold text-gray-900 group-hover:text-primary transition-colors line-clamp-1">{liveClass.title}</h3>
+                    <p className="text-xs text-gray-500 font-medium">{liveClass.course?.title}</p>
+                  </div>
+                </div>
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Icon icon="solar:calendar-bold" className="text-primary" />
+                    <span>{dayjs(liveClass.startTime).format('MMM D, YYYY')}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Icon icon="solar:clock-circle-bold" className="text-primary" />
+                    <span>{dayjs(liveClass.startTime).format('h:mm A')} ({liveClass.duration} min)</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Icon icon="solar:user-bold" className="text-primary" />
+                    <span className="text-xs">by {liveClass.teacher?.name}</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => navigate(`/student/live/${liveClass.course?._id}`)}
+                  className="w-full py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-all shadow-lg shadow-red-500/20 flex items-center justify-center gap-2"
+                >
+                  <Icon icon="solar:play-bold" />
+                  Join Room
+                </button>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
+      )}
 
       {enrollments.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 bg-gray-50 dark:bg-zinc-900/50 rounded-3xl border-2 border-dashed border-gray-200 dark:border-zinc-800 text-center px-4">
