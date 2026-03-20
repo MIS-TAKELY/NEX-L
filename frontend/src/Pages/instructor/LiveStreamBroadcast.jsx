@@ -15,7 +15,11 @@ import {
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { Icon } from "@iconify/react";
 import MeetingLayout from "@/components/meeting/MeetingLayout";
-import { useGetCourseLiveClassesQuery, useUpdateLiveClassMutation } from "../../store/slices/liveClassApi";
+import { 
+  useGetCourseLiveClassesQuery, 
+  useUpdateLiveClassMutation, 
+  useEndAllCourseLiveClassesMutation 
+} from "../../store/slices/liveClassApi";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 const API_KEY = import.meta.env.VITE_STREAM_API_KEY || "";
@@ -29,6 +33,18 @@ const BroadcastControls = ({ call, courseId }) => {
 
   const { data: liveClasses = [] } = useGetCourseLiveClassesQuery(courseId);
   const [updateLiveClass] = useUpdateLiveClassMutation();
+  const [endAllLiveClasses] = useEndAllCourseLiveClassesMutation();
+  
+  // Track the specific class ID we started
+  const [currentClassId, setCurrentClassId] = useState(null);
+
+  // If there's already a live class when we mount, track it
+  useEffect(() => {
+    if (!currentClassId && liveClasses.length > 0) {
+      const live = liveClasses.find(lc => lc.status === 'live');
+      if (live) setCurrentClassId(live._id);
+    }
+  }, [liveClasses, currentClassId]);
 
   useEffect(() => {
     const cleanup = call.on("call.reaction_new", (event) => {
@@ -71,6 +87,7 @@ const BroadcastControls = ({ call, courseId }) => {
           courseId,
           payload: { status: 'live' } 
         }).unwrap();
+        setCurrentClassId(scheduledClass._id);
       }
     } catch (err) {
       console.error("Failed to go live:", err);
@@ -90,15 +107,23 @@ const BroadcastControls = ({ call, courseId }) => {
       }
       await call.endCall();
 
-      // Update database status to 'completed'
-      const activeClass = liveClasses.find(lc => lc.status === 'live');
-      if (activeClass) {
-        await updateLiveClass({ 
-          classId: activeClass._id, 
-          courseId,
-          payload: { status: 'completed' } 
-        }).unwrap();
+      // Robust ending: 
+      // 1. Try to update the specific class we tracked
+      // 2. Also call the "end all live" endpoint as a safety measure
+      if (currentClassId) {
+        try {
+          await updateLiveClass({ 
+            classId: currentClassId, 
+            courseId,
+            payload: { status: 'completed' } 
+          }).unwrap();
+        } catch (updateErr) {
+          console.error("Failed to update specific class status:", updateErr);
+        }
       }
+      
+      // Safety: ensure no zombie live status remains for this course
+      await endAllLiveClasses(courseId).unwrap();
 
       navigate(-1);
     } catch (err) {

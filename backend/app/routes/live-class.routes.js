@@ -6,6 +6,8 @@ import {
   getStudentUpcomingClasses,
   updateLiveClass,
   deleteLiveClass,
+  endAllCourseLiveClasses,
+  getInstructorActiveClasses,
 } from "../controllers/live-class.controller.js";
 
 const router = express.Router();
@@ -20,11 +22,17 @@ router.patch("/:classId", requireAuth, requireRole("instructor", "admin"), updat
 // DELETE /api/v1/live-classes/:classId  – Teacher cancels a class
 router.delete("/:classId", requireAuth, requireRole("instructor", "admin"), deleteLiveClass);
 
+// GET /api/v1/live-classes/active  – Teacher gets all their active classes
+router.get("/active", requireAuth, requireRole("instructor", "admin"), getInstructorActiveClasses);
+
 // ─── Shared routes ───────────────────────────────────────────────────────────
 // GET /api/v1/live-classes/course/:courseId  – Get classes for a course
 router.get("/course/:courseId", requireAuth, getCourseLiveClasses);
 
 // GET /api/v1/live-classes/upcoming  – Get student's upcoming classes
 router.get("/upcoming", requireAuth, getStudentUpcomingClasses);
+
+// PATCH /api/v1/live-classes/course/:courseId/end-all-live  – Teacher ends all live sessions for a course
+router.patch("/course/:courseId/end-all-live", requireAuth, requireRole("instructor", "admin"), endAllCourseLiveClasses);
 
 export default router;

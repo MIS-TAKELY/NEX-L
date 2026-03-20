@@ -13,6 +13,13 @@ export const liveClassApi = apiSlice.injectEndpoints({
             query: () => '/live-classes/upcoming',
             providesTags: [{ type: 'LiveClass', id: 'UPCOMING' }],
         }),
+        getInstructorActiveClasses: builder.query({
+            query: () => '/live-classes/active',
+            providesTags: (result) => [
+                { type: 'LiveClass', id: 'ACTIVE_INSTRUCTOR' },
+                ...(result ? result.map(({ _id }) => ({ type: 'LiveClass', id: _id })) : []),
+            ],
+        }),
         scheduleLiveClass: builder.mutation({
             query: (payload) => ({
                 url: '/live-classes/schedule',
@@ -46,6 +53,16 @@ export const liveClassApi = apiSlice.injectEndpoints({
                 { type: 'LiveClass', id: 'UPCOMING' },
             ],
         }),
+        endAllCourseLiveClasses: builder.mutation({
+            query: (courseId) => ({
+                url: `/live-classes/course/${courseId}/end-all-live`,
+                method: 'PATCH',
+            }),
+            invalidatesTags: (result, error, courseId) => [
+                { type: 'LiveClass', id: `COURSE_${courseId}` },
+                { type: 'LiveClass', id: 'UPCOMING' },
+            ],
+        }),
     }),
 });
 
@@ -55,4 +72,6 @@ export const {
     useScheduleLiveClassMutation,
     useUpdateLiveClassMutation,
     useDeleteLiveClassMutation,
+    useEndAllCourseLiveClassesMutation,
+    useGetInstructorActiveClassesQuery,
 } = liveClassApi;
