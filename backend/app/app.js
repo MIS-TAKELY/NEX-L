@@ -121,10 +121,7 @@ app.get("/api/v1/auth/social-redirect", (req, res) => {
     });
   }
 
-  // Serve a simple page that requires a button click. 
-  // Strict browsers (Safari ITP / Chrome) often BLOCK cookies set during pure 
-  // automated redirect chains across domains without actual user interaction.
-  // The button click provides the "user gesture" needed for the browser to SAVE the state cookie.
+  // Serve an auto-redirecting page.
   const providerName = provider.charAt(0).toUpperCase() + provider.slice(1);
   res.send(`
     <!DOCTYPE html>
@@ -132,30 +129,24 @@ app.get("/api/v1/auth/social-redirect", (req, res) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Sign in with ${providerName}</title>
+        <title>Connecting to ${providerName}...</title>
         <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; background-color: #0c0c0e; color: #fff; margin: 0; }
-          .container { background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); max-width: 400px; text-align: center; }
-          .btn { display: inline-block; background: #3b82f6; color: white; text-decoration: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; border: none; font-size: 1rem; transition: all 0.2s; margin-top: 20px; }
-          .btn:hover { background: #2563eb; transform: translateY(-2px); }
-          .btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
-          h2 { margin-top: 0; }
-          p { color: #a0a0a0; }
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #0c0c0e; color: #fff; text-align: center; }
+            .loader { border: 3px solid rgba(255, 255, 255, 0.1); border-top: 3px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+            @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+            h2 { margin-top: 0; font-weight: 500; font-size: 1.5rem; }
+            p { color: #a0a0a0; margin-top: 10px; }
         </style>
     </head>
     <body>
-        <div class="container">
-            <h2>Secure Sign In</h2>
-            <p>You are being securely connected to ${providerName}. Please click below to continue.</p>
-            <button id="auth-btn" class="btn">Continue with ${providerName}</button>
-            <p id="error-text" style="color: #ff4d4d; display: none; margin-top: 15px; font-size: 0.9rem;"></p>
+        <div>
+            <div class="loader"></div>
+            <h2>Connecting to ${providerName}...</h2>
+            <p id="error-text" style="color: #ff4d4d; display: none;"></p>
         </div>
         <script>
-          document.getElementById('auth-btn').addEventListener('click', function() {
-            this.disabled = true;
-            this.innerText = 'Connecting...';
+          window.onload = function() {
             const errorText = document.getElementById('error-text');
-            errorText.style.display = 'none';
 
             fetch('/api/v1/auth/sign-in/social', {
               method: 'POST',
@@ -173,20 +164,20 @@ app.get("/api/v1/auth/social-redirect", (req, res) => {
               } else if (data.redirect) {
                 window.location.href = data.redirect;
               } else {
-                this.disabled = false;
-                this.innerText = 'Continue with ${providerName}';
-                errorText.innerText = "Error: " + JSON.stringify(data);
-                errorText.style.display = 'block';
+                if (errorText) {
+                  errorText.innerText = "Error: " + JSON.stringify(data);
+                  errorText.style.display = 'block';
+                }
               }
             })
             .catch(err => {
-              this.disabled = false;
-              this.innerText = 'Continue with ${providerName}';
-              errorText.innerText = "Error connecting to server. Please try again.";
-              errorText.style.display = 'block';
+              if (errorText) {
+                errorText.innerText = "Error connecting to server. Please try again.";
+                errorText.style.display = 'block';
+              }
               console.error(err);
             });
-          });
+          };
         </script>
     </body>
     </html>
