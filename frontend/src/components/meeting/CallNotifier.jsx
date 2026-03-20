@@ -11,22 +11,25 @@ const CallNotifier = () => {
   useEffect(() => {
     if (!videoClient) return;
 
-    // Listen for incoming calls
-    const unsubscribe = videoClient.on("call.created", (event) => {
+    const handleEvent = (event) => {
       const call = event.call;
-      // We only care about consultation calls (callId starts with consult-)
       if (call.id.startsWith("consult-")) {
         setIncomingCall(call);
         
-        // Play notification sound if possible
         try {
           const audio = new Audio("https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3");
-          audio.play().catch(() => {}); // Browser might block auto-play
+          audio.play().catch(() => {});
         } catch (e) {}
       }
-    });
+    };
 
-    return () => unsubscribe();
+    const unsubCreated = videoClient.on("call.created", handleEvent);
+    const unsubRing = videoClient.on("call.notification.ring", handleEvent);
+
+    return () => {
+      unsubCreated();
+      unsubRing();
+    };
   }, [videoClient]);
 
   const handleAccept = () => {
