@@ -8,10 +8,20 @@ export const authClient = createAuthClient({
       // Attach Bearer token if we have one saved from OAuth redirect
       const token = localStorage.getItem("session_token");
       if (token) {
-        context.options.headers = {
-          ...context.options.headers,
-          Authorization: `Bearer ${token}`,
-        };
+        if (context.request) {
+          context.request.headers.set("Authorization", `Bearer ${token}`);
+        } else {
+          context.options = context.options || {};
+          context.options.headers = context.options.headers || {};
+          if (typeof context.options.headers.set === 'function') {
+            context.options.headers.set("Authorization", `Bearer ${token}`);
+          } else {
+            context.options.headers = {
+              ...context.options.headers,
+              Authorization: `Bearer ${token}`,
+            };
+          }
+        }
       }
     },
   },
