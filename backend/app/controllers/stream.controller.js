@@ -158,6 +158,97 @@ export const getOrCreateGroupChannel = async (req, res) => {
   }
 };
 
+// ─── Create a new channel for a course (teacher only) ────────────────────────
+export const createCourseChannel = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const { name, description } = req.body;
+    const client = getStreamClient();
+    const user = req.user;
+
+    const course = await Course.findById(courseId)
+      .populate("teacher")
+      .populate({ path: "enrollments", populate: { path: "student" } });
+
+    if (!course) return res.status(404).json({ message: "Course not found" });
+
+    // Ensure user is the teacher
+    if (String(course.teacher._id) !== user.id) {
+      return res.status(403).json({ message: "Only the instructor can create channels" });
+    }
+
+    // Build members list: teacher + all enrolled students
+    const memberIds = [String(course.teacher._id)];
+    if (course.enrollments) {
+      for (const enrollment of course.enrollments) {
+        if (enrollment.student) memberIds.push(String(enrollment.student._id));
+      }
+    }
+    const uniqueMembers = [...new Set(memberIds)];
+
+    // Generate unique slug for channel
+    const slug = name.toLowerCase().replace(/[^a-z0-9]/g, "-").slice(0, 30);
+    const channelId = `course-${courseId}-${slug}-${Date.now().toString().slice(-4)}`;
+
+    const channel = client.channel("messaging", channelId, {
+      name: name,
+      description: description || "",
+      created_by_id: user.id,
+      course_id: courseId,
+      members: uniqueMembers,
+    });
+
+    await channel.create();
+
+    res.json({
+      success: true,
+      channelId,
+      channelType: "messaging",
+      name: name,
+    });
+  } catch (error) {
+    console.error("createCourseChannel error:", error);
+    res.status(500).json({ message: "Failed to create course channel" });
+  }
+};
+
+// ─── List all channels for a course ──────────────────────────────────────────
+export const getCourseChannels = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const client = getStreamClient();
+    const user = req.user;
+
+    const course = await Course.findById(courseId).populate("teacher");
+    if (!course) return res.status(404).json({ message: "Course not found" });
+
+    const isTeacher = String(course.teacher._id) === user.id;
+    const enrolled = await isEnrolled(user.id, courseId);
+
+    if (!isTeacher && !enrolled) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    // Query Stream for channels with course_id
+    const filter = { course_id: courseId };
+    const sort = { created_at: 1 };
+    const channels = await client.queryChannels(filter, sort);
+
+    const formattedChannels = channels.map(ch => ({
+      channelId: ch.id,
+      type: ch.type,
+      name: ch.data.name,
+      description: ch.data.description,
+      createdAt: ch.data.created_at,
+    }));
+
+    res.json({ success: true, channels: formattedChannels });
+  } catch (error) {
+    console.error("getCourseChannels error:", error);
+    res.status(500).json({ message: "Failed to fetch course channels" });
+  }
+};
+
 // ─── Create Live Stream (teacher only) ───────────────────────────────────────
 export const createLiveStream = async (req, res) => {
   try {
@@ -231,5 +322,30 @@ export const createVideoCall = async (req, res) => {
   } catch (error) {
     console.error("createVideoCall error:", error);
     res.status(500).json({ message: "Failed to create video call" });
+  }
+};
+
+/**
+ * ── Helper: Add a student to all existing channels of a course ────────────────
+ * Used when a student newly enrolls in a course.
+ */
+export const addStudentToAllCourseChannels = async (studentId, courseId) => {
+  try {
+    const client = getStreamClient();
+    
+    // Find all channels for this course
+    const filter = { course_id: courseId };
+    const channels = await client.queryChannels(filter);
+    
+    if (channels.length === 0) return;
+
+    // Add member to each channel
+    for (const channel of channels) {
+      await channel.addMembers([studentId]);
+    }
+    
+    console.log(`Added student ${studentId} to ${channels.length} channels for course ${courseId}`);
+  } catch (error) {
+    console.error("addStudentToAllCourseChannels error:", error);
   }
 };
