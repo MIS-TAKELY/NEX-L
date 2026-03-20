@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useGetInstructorCoursesQuery, useDeleteCourseMutation } from '@/store/slices/courseApi';
 import ConfirmModal from '@/components/common/ConfirmModal';
+import ScheduleClassModal from '@/components/instructor/ScheduleClassModal';
 import { useToast } from '@/context/ToastContext';
 
 const MyCourses = () => {
@@ -23,7 +24,14 @@ const MyCourses = () => {
     const [deleteCourse] = useDeleteCourseMutation();
 
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const [isScheduleOpen, setIsScheduleOpen] = useState(false);
     const [courseToDelete, setCourseToDelete] = useState(null);
+    const [selectedCourse, setSelectedCourse] = useState(null);
+
+    const handleScheduleClick = (course) => {
+        setSelectedCourse(course);
+        setIsScheduleOpen(true);
+    };
 
     const handleDeleteClick = (id) => {
         setCourseToDelete(id);
@@ -105,6 +113,14 @@ const MyCourses = () => {
                                     <td className="px-6 py-4 text-center">{course.isFree ? "Free" : `Rs ${course.price}`}</td>
                                     <td className="px-6 py-4 text-center">
                                         <button
+                                            onClick={() => handleScheduleClick(course)}
+                                            title="Schedule Live Class"
+                                            className="text-blue-500 hover:text-blue-700 mr-3 inline-flex items-center gap-1"
+                                        >
+                                            <Icon icon="solar:calendar-add-bold-duotone" className="w-4 h-4" />
+                                            Schedule
+                                        </button>
+                                        <button
                                             onClick={() => navigate(`/instructor/livestream/${course._id}`)}
                                             title="Start Live Stream"
                                             className="text-red-500 hover:text-red-700 mr-3 inline-flex items-center gap-1"
@@ -146,6 +162,12 @@ const MyCourses = () => {
                 message="Are you sure you want to delete this course? This will also delete all its sections and lessons. This action cannot be undone."
                 confirmText="Delete"
                 type="danger"
+            />
+            <ScheduleClassModal
+                isOpen={isScheduleOpen}
+                onClose={() => setIsScheduleOpen(false)}
+                courseId={selectedCourse?._id}
+                courseTitle={selectedCourse?.title}
             />
         </div>
     )

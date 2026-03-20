@@ -4,7 +4,9 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGetCourseByIdQuery, useRecordCourseViewMutation } from "@/store/slices/courseApi";
+import { useGetCourseLiveClassesQuery } from "@/store/slices/liveClassApi";
 import { useAddToCartMutation, useGetCartQuery, useRemoveFromCartMutation } from "@/store/slices/cartApi";
+import dayjs from "dayjs";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { validateCoupon } from "../../apis/coupon.api";
@@ -22,6 +24,7 @@ const CourseDetails = () => {
   const [addToCartApi] = useAddToCartMutation();
   const [removeFromCartApi] = useRemoveFromCartMutation();
   const [recordCourseView] = useRecordCourseViewMutation();
+  const { data: liveClasses = [] } = useGetCourseLiveClassesQuery(id, { skip: !id });
   const { showToast } = useToast();
 
   const [couponCode, setCouponCode] = useState("");
@@ -196,6 +199,59 @@ const CourseDetails = () => {
                     Detailed curriculum overview and learning path available for
                     download.
                   </p>
+                </div>
+              </section>
+            )}
+
+            {/* Live Class Schedule Section */}
+            {liveClasses.length > 0 && (
+              <section className="glass premium-card rounded-2xl p-8 border border-red-500/20 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4">
+                  <div className="flex items-center gap-1.5 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full animate-pulse">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full" /> LIVE SESSIONS
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
+                    <Icon icon="solar:videocamera-record-bold-duotone" className="text-red-500 w-6 h-6" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-foreground">Live Class Schedule</h2>
+                </div>
+                <div className="space-y-4">
+                  {liveClasses.map((liveClass) => (
+                    <div key={liveClass._id} className="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-2xl bg-card/50 border border-border/50 hover:border-red-500/30 transition-all group gap-4">
+                      <div className="flex items-start gap-4">
+                        <div className="hidden md:flex flex-col items-center justify-center w-16 h-16 rounded-xl bg-background border border-border/50">
+                          <span className="text-[10px] font-bold text-red-500 uppercase">{dayjs(liveClass.startTime).format('MMM')}</span>
+                          <span className="text-2xl font-black text-foreground">{dayjs(liveClass.startTime).format('D')}</span>
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-foreground text-lg mb-1 group-hover:text-red-500 transition-colors">{liveClass.title}</h3>
+                          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground font-medium">
+                            <span className="flex items-center gap-1.5">
+                              <Icon icon="solar:clock-circle-bold" className="text-primary" />
+                              {dayjs(liveClass.startTime).format('h:mm A')}
+                            </span>
+                            <span className="flex items-center gap-1.5">
+                              <Icon icon="solar:stopwatch-bold" className="text-primary" />
+                              {liveClass.duration} min
+                            </span>
+                            <span className="flex items-center gap-1.5">
+                              <Icon icon="solar:user-bold" className="text-primary" />
+                              by Trainer
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => navigate(`/student/live/${id}`)}
+                        className="px-6 py-2.5 bg-red-500 text-white text-sm font-bold rounded-xl hover:bg-red-600 transition-all shadow-lg shadow-red-500/20 flex items-center justify-center gap-2"
+                      >
+                        <Icon icon="solar:play-bold" />
+                        Join Now
+                      </button>
+                    </div>
+                  ))}
                 </div>
               </section>
             )}

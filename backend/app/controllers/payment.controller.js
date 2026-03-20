@@ -4,6 +4,7 @@ import Coupon from "../models/coupon.model.js";
 import Course from "../models/course.model.js";
 import axios from "axios";
 import crypto from "crypto";
+import { addStudentToAllCourseChannels } from "./stream.controller.js";
 
 // eSewa Config (Test)
 const ESEWA_CONFIG = {
@@ -156,6 +157,8 @@ export const verifyEsewaPayment = async (req, res) => {
                         course: courseId,
                         payment: payment._id,
                     });
+                    // Also add student to all Stream channels for this course
+                    await addStudentToAllCourseChannels(String(payment.user), String(courseId));
                 }
             }
 
@@ -348,6 +351,8 @@ export const verifyKhaltiPayment = async (req, res) => {
                         course: courseId,
                         payment: payment._id,
                     });
+                    // Also add student to all Stream channels for this course
+                    await addStudentToAllCourseChannels(String(payment.user), String(courseId));
                 }
             }
 
