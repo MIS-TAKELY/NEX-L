@@ -12,6 +12,35 @@ const isEnrolled = async (studentId, courseId) => {
   return !!enrollment;
 };
 
+// ─── Helper: mark stale live classes as completed ─────────────────────────────
+const autoCompleteStaleClasses = async (courseId) => {
+  try {
+    const now = new Date();
+    // Find all classes that are "live" for this course
+    const liveClasses = await LiveClass.find({
+      course: courseId,
+      status: "live",
+    });
+
+    for (const lc of liveClasses) {
+      // If session is older than 6 hours since startTime, it's definitely stale
+      // Or if it's 2 hours past its scheduled duration
+      const startTime = new Date(lc.startTime);
+      const scheduledEndTime = new Date(startTime.getTime() + (lc.duration || 60) * 60000);
+      const staleThreshold = new Date(scheduledEndTime.getTime() + 2 * 60 * 60000); // 2 hours after scheduled end
+      const maxAgeThreshold = new Date(startTime.getTime() + 6 * 60 * 60000); // 6 hours total age
+
+      if (now > staleThreshold || now > maxAgeThreshold) {
+        lc.status = "completed";
+        await lc.save();
+        console.log(`Auto-completed stale live class: ${lc._id} for course ${courseId}`);
+      }
+    }
+  } catch (error) {
+    console.error("autoCompleteStaleClasses error:", error);
+  }
+};
+
 // ─── Create Live Class (teacher only) ───────────────────────────────────────
 export const createLiveClass = async (req, res) => {
   try {
@@ -62,6 +91,9 @@ export const getCourseLiveClasses = async (req, res) => {
     if (!isTeacher && !enrolled) {
       return res.status(403).json({ message: "Access denied. Purchase the course first." });
     }
+
+    // Attempt to clear any stale "live" sessions first
+    await autoCompleteStaleClasses(courseId);
 
     const liveClasses = await LiveClass.find({ course: courseId }).sort({ startTime: 1 });
     res.json(liveClasses);
@@ -150,5 +182,55 @@ export const deleteLiveClass = async (req, res) => {
   } catch (error) {
     console.error("deleteLiveClass error:", error);
     res.status(500).json({ message: "Failed to delete live class" });
+  }
+};
+// ─── End all live sessions for a course (teacher only) ───────────────────────
+export const endAllCourseLiveClasses = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const teacherId = req.user.id;
+
+    const course = await Course.findById(courseId);
+    if (!course) return res.status(404).json({ message: "Course not found" });
+
+    if (String(course.teacher) !== teacherId) {
+      return res.status(403).json({ message: "Only the instructor can end live sessions" });
+    }
+
+    // Set all "live" classes for this course to "completed"
+    const result = await LiveClass.updateMany(
+      { course: courseId, status: "live" },
+      { $set: { status: "completed" } }
+    );
+
+    res.json({
+      message: "Successfully completed all live sessions for the course",
+      count: result.modifiedCount,
+    });
+  } catch (error) {
+    console.error("endAllCourseLiveClasses error:", error);
+    res.status(500).json({ message: "Failed to end live classes" });
+  }
+};
+
+// ─── Get all active live classes for an instructor ──────────────────────────
+export const getInstructorActiveClasses = async (req, res) => {
+  try {
+    const teacherId = req.user.id;
+
+    // Find all courses by this teacher
+    const courses = await Course.find({ teacher: teacherId }).select("_id");
+    const courseIds = courses.map((c) => c._id);
+
+    // Find any "live" classes for these courses
+    const activeClasses = await LiveClass.find({
+      course: { $in: courseIds },
+      status: "live",
+    }).populate("course", "title");
+
+    res.json(activeClasses);
+  } catch (error) {
+    console.error("getInstructorActiveClasses error:", error);
+    res.status(500).json({ message: "Failed to fetch active classes" });
   }
 };
