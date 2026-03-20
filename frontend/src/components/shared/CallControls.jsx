@@ -99,7 +99,7 @@ const CallControls = ({ onLeave }) => {
           className="ml-2 bg-red-500 hover:bg-red-600 text-white flex items-center justify-center rounded-2xl px-6 py-3 transition-all duration-300 shadow-lg shadow-red-500/20 active:scale-95"
           title="Leave call"
         >
-          <Icon icon="solar:phone-calling-broken" className="w-6 h-6 rotate-[135deg]" />
+          <Icon icon="material-symbols:call-end-rounded" className="w-6 h-6 text-white" />
         </button>
       )}
     </div>

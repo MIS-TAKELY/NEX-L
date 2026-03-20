@@ -4,8 +4,8 @@ import { useCallStateHooks } from '@stream-io/video-react-sdk';
 
 const JoinScreen = ({ onJoin, courseName, isInstructor, goLive, isVideoCall, isJoining }) => {
   const { useMicrophoneState, useCameraState } = useCallStateHooks();
-  const { microphone, isMuted: isMicMuted } = useMicrophoneState();
-  const { camera, isMuted: isCamMuted } = useCameraState();
+  const { microphone, optionsAwareIsMute: isMicMuted } = useMicrophoneState({ optimisticUpdates: true });
+  const { camera, optionsAwareIsMute: isCamMuted } = useCameraState({ optimisticUpdates: true });
 
   const toggleMic = () => microphone.toggle();
   const toggleCam = () => camera.toggle();
@@ -41,7 +41,7 @@ const JoinScreen = ({ onJoin, courseName, isInstructor, goLive, isVideoCall, isJ
                   isMicMuted ? 'bg-[#ea4335] text-white hover:bg-[#d93025]' : 'bg-[#3c4043]/80 text-white backdrop-blur-md hover:bg-[#4d5154]/90'
                 }`}
               >
-                <Icon icon={isMicMuted ? 'solar:microphone-off-bold' : 'solar:microphone-bold'} className="w-5 h-5" />
+                <Icon icon={isMicMuted ? 'material-symbols:mic-off-rounded' : 'material-symbols:mic-rounded'} className="w-6 h-6" />
               </button>
               
               <button
@@ -50,7 +50,7 @@ const JoinScreen = ({ onJoin, courseName, isInstructor, goLive, isVideoCall, isJ
                   isCamMuted ? 'bg-[#ea4335] text-white hover:bg-[#d93025]' : 'bg-[#3c4043]/80 text-white backdrop-blur-md hover:bg-[#4d5154]/90'
                 }`}
               >
-                <Icon icon={isCamMuted ? 'solar:videocamera-off-bold' : 'solar:videocamera-bold'} className="w-5 h-5" />
+                <Icon icon={isCamMuted ? 'material-symbols:videocam-off-rounded' : 'material-symbols:videocam-rounded'} className="w-6 h-6" />
               </button>
             </div>
           </div>
@@ -85,9 +85,17 @@ const JoinScreen = ({ onJoin, courseName, isInstructor, goLive, isVideoCall, isJ
                 </button>
                 <button
                   onClick={goLive}
-                  className="w-full bg-[#1a73e8] hover:bg-[#1557b0] text-white px-8 py-3 rounded-full font-medium transition-all shadow-md mt-2 text-[15px]"
+                  disabled={isJoining}
+                  className="w-full bg-[#1a73e8] hover:bg-[#1557b0] disabled:opacity-70 disabled:cursor-not-allowed text-white px-8 py-3 rounded-full font-medium transition-all shadow-md mt-2 text-[15px] flex items-center justify-center gap-2"
                 >
-                  Go Live (Join & Start)
+                  {isJoining ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin flex-shrink-0" />
+                      Initializing...
+                    </>
+                  ) : (
+                    'Go Live (Join & Start)'
+                  )}
                 </button>
               </div>
             ) : (

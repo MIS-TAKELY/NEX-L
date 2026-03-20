@@ -22,7 +22,7 @@ export const enrollInCourse = async (req, res) => {
 
     // Also update course's enrollments array if it's used there
     await Course.findByIdAndUpdate(courseId, {
-      $addToSet: { enrollments: studentId }
+      $addToSet: { enrollments: enrollment._id }
     });
 
     res.status(201).json({ message: "Enrollment successful", enrollment });
@@ -135,5 +135,82 @@ export const getUserEnrollments = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+// Get stats for an instructor
+export const getInstructorStats = async (req, res) => {
+  try {
+    const { instructorId } = req.params;
+
+    // 1. Get all courses by this instructor
+    const courses = await Course.find({ teacher: instructorId });
+    const courseIds = courses.map((c) => c._id);
+
+    // 2. Get all enrollments for these courses
+    const enrollments = await Enrollment.find({ course: { $in: courseIds } }).populate('payment');
+
+    // 3. Calculate stats
+    const totalCourses = courses.length;
+    const totalEnrollments = enrollments.length;
+    const totalStudents = new Set(enrollments.map((e) => e.student.toString())).size;
+    
+    // Revenue calculation
+    const totalRevenue = enrollments.reduce((sum, e) => {
+        return sum + (e.payment?.amount || 0);
+    }, 0);
+
+    // Average rating
+    const ratings = courses.map(c => c.ratings?.average || 0).filter(r => r > 0);
+    const averageRating = ratings.length > 0 
+        ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1)
+        : 0;
+
+    res.json({
+      success: true,
+      stats: {
+        totalCourses,
+        totalEnrollments,
+        totalStudents,
+        totalRevenue,
+        averageRating,
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error", error: err.message });
+  }
+};
+
+// Get list of students for an instructor
+export const getInstructorStudents = async (req, res) => {
+  try {
+    const { instructorId } = req.params;
+
+    // Get all courses by this instructor
+    const courses = await Course.find({ teacher: instructorId });
+    const courseIds = courses.map((c) => c._id);
+
+    // Get all enrollments with student details
+    const enrollments = await Enrollment.find({ course: { $in: courseIds } })
+      .populate("student", "name email avatar")
+      .populate("course", "title")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      students: enrollments.map(e => ({
+        id: e._id,
+        name: e.student?.name || "Unknown",
+        email: e.student?.email || "N/A",
+        course: e.course?.title || "Deleted Course",
+        progress: e.progress || 0,
+        date: e.createdAt,
+        avatar: e.student?.avatar || ""
+      }))
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error", error: err.message });
   }
 };

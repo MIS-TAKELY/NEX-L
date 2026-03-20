@@ -1,8 +1,26 @@
-import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useGetInstructorStatsQuery } from "@/store/slices/enrollmentApi";
 
 const Dashboard = () => {
     const navigate = useNavigate();
+    const { userData } = useSelector((state) => state.auth);
+    const { data, isLoading } = useGetInstructorStatsQuery(userData?.id, {
+        skip: !userData?.id
+    });
+
+    const stats = data?.stats || {
+        totalCourses: 0,
+        totalEnrollments: 0,
+        totalStudents: 0,
+        totalRevenue: 0,
+        averageRating: 0,
+    };
+
+    if (isLoading) {
+        return <div className="p-8 text-center text-gray-500">Loading dashboard...</div>;
+    }
+
     return (
         <div className="space-y-8 font-outfit">
             
@@ -22,7 +40,7 @@ const Dashboard = () => {
                                 </span>
                                 <div>
                                     <p className="text-xs text-blue-100">Popularity</p>
-                                    <p className="font-bold">0</p>
+                                    <p className="font-bold">{stats.totalEnrollments}</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
@@ -30,8 +48,8 @@ const Dashboard = () => {
                                     <Icon icon="solar:graph-up-bold" />
                                 </span>
                                 <div>
-                                    <p className="text-xs text-blue-100">General rate</p>
-                                    <p className="font-bold">0</p>
+                                    <p className="text-xs text-blue-100">Average Rating</p>
+                                    <p className="font-bold">{stats.averageRating}</p>
                                 </div>
                             </div>
                         </div>
@@ -56,9 +74,9 @@ const Dashboard = () => {
                     <div>
                         <div className="flex justify-between items-start">
                              <p className="font-bold text-gray-800">Popularity rate</p>
-                             <span className="bg-background px-2 py-1 rounded-full text-xs font-bold shadow-sm">+2</span>
+                             <span className="bg-background px-2 py-1 rounded-full text-xs font-bold shadow-sm">+0</span>
                         </div>
-                        <h2 className="text-6xl font-bold text-gray-900 mt-2">0<span className="text-2xl align-top text-gray-500">°</span></h2>
+                        <h2 className="text-6xl font-bold text-gray-900 mt-2">{stats.totalStudents}<span className="text-2xl align-top text-gray-500"> Students</span></h2>
                     </div>
 
                     {/* Gauge Chart Placeholder */}
@@ -96,8 +114,8 @@ const Dashboard = () => {
                         <div className="flex items-center gap-3">
                              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-foreground font-bold">Rs</div>
                              <div>
-                                 <h4 className="text-2xl font-bold text-gray-800">0</h4>
-                                 <p className="text-xs text-gray-400">Monthly income</p>
+                                 <h4 className="text-2xl font-bold text-gray-800">{stats.totalRevenue}</h4>
+                                 <p className="text-xs text-gray-400">Total revenue</p>
                              </div>
                         </div>
                         <button className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-gray-50">

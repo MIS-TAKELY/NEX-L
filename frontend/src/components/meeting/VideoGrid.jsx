@@ -14,12 +14,12 @@ const VideoGrid = ({ isLivestream, isInstructor, callType }) => {
   }
 
   // Google Meet style Video Call Grid
-  // Removes default borders and makes it immersive
   return (
-    <div className="w-full h-full [&>div]:h-full [&>div]:w-full">
+    <div className="w-full h-full [&>div]:h-full [&>div]:w-full rounded-2xl overflow-hidden shadow-2xl">
        <PaginatedGridLayout 
-           groupSize={8} 
-           includeAudioOnly={true} 
+           groupSize={12} 
+           includeAudioOnly={true}
+           theme="dark"
        />
     </div>
   );
