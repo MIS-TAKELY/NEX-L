@@ -54,6 +54,7 @@ import { logout, setCredentials, setLoading } from "@/store/slices/authSlice";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import PublicRoute from "./components/common/PublicRoute";
 import { StreamContextProvider } from "@/context/StreamContext";
+import CallNotifier from "./components/meeting/CallNotifier";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -90,6 +91,7 @@ export default function App() {
   }, [dispatch]);
   return (
     <StreamContextProvider>
+      <CallNotifier />
       <Suspense fallback={<Loading />}>
         <Routes>
         <Route path="/" element={<LandingPage />} />

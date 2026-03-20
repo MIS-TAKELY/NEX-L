@@ -100,6 +100,7 @@ const StudentConsultations = () => {
       <ConsultationModal 
         sessionId={activeSessionId} 
         onClose={() => setActiveSessionId(null)} 
+        isInstructor={false}
       />
     </div>
   );

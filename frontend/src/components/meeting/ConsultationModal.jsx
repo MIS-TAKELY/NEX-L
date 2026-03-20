@@ -2,7 +2,7 @@ import { Icon } from "@iconify/react";
 import ConsultationClient from "./ConsultationClient";
 import { useEffect } from "react";
 
-const ConsultationModal = ({ sessionId, onClose }) => {
+const ConsultationModal = ({ sessionId, onClose, isInstructor }) => {
   // Prevent scrolling when modal is open
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -28,6 +28,7 @@ const ConsultationModal = ({ sessionId, onClose }) => {
         <ConsultationClient 
           sessionId={sessionId} 
           onLeave={onClose} 
+          isInstructor={isInstructor}
         />
       </div>
     </div>
