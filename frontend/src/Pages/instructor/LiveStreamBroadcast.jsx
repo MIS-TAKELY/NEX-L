@@ -29,9 +29,15 @@ const BroadcastControls = ({ call }) => {
   const navigate = useNavigate();
 
   const goLive = async () => {
-    await call.join({ create: true });
-    await call.startHLS();
-    setIsLive(true);
+    try {
+      await call.join({ create: true });
+      await call.stopBackstage(); // This allows students to join
+      await call.startHLS();
+      setIsLive(true);
+    } catch (err) {
+      console.error("Failed to go live:", err);
+      alert("Failed to start live stream. Check console for details.");
+    }
   };
 
   const endStream = async () => {
