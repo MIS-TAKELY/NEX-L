@@ -1,36 +1,54 @@
 import { Icon } from "@iconify/react";
 import ConsultationClient from "./ConsultationClient";
-import { useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 
 const ConsultationModal = ({ sessionId, onClose, isInstructor }) => {
-  // Prevent scrolling when modal is open
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, []);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   if (!sessionId) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-fade-in p-4 md:p-8">
-      <div className="w-full h-full max-w-6xl max-h-[90vh] bg-[#0c0c0e] rounded-[2rem] border border-white/10 shadow-2xl overflow-hidden relative group">
-        
-        {/* Close Button - Optional since ControlBar has Leave button, but good for safety */}
-        <button 
-          onClick={onClose}
-          className="absolute top-6 right-6 z-[1000] w-10 h-10 bg-white/5 hover:bg-red-500 hover:text-white rounded-full flex items-center justify-center transition-all border border-white/10 text-white/40"
-        >
-          <Icon icon="solar:close-circle-linear" className="w-6 h-6" />
-        </button>
+    <div className={`fixed z-[9999] pointer-events-none transition-all duration-300 ${isExpanded ? 'inset-4 md:inset-8 lg:inset-12' : 'bottom-6 right-6'}`}>
+      <motion.div 
+        initial={{ y: 50, opacity: 0, scale: 0.95 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        exit={{ y: 50, opacity: 0, scale: 0.95 }}
+        className={`${isExpanded ? 'w-full h-full' : 'w-[380px] h-[580px]'} bg-background rounded-[2.5rem] border border-border/50 shadow-3xl overflow-hidden relative pointer-events-auto flex flex-col premium-card glass transition-all duration-300`}
+      >
+        {/* Header / Call Info */}
+        <div className="h-12 bg-secondary/30 border-b border-border/50 flex items-center justify-between px-6 flex-shrink-0 transition-colors">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Active Consultation</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+               onClick={() => setIsExpanded(!isExpanded)}
+               className="w-8 h-8 rounded-full flex items-center justify-center transition-all text-muted-foreground hover:bg-secondary/50 hover:text-foreground active:scale-95"
+               title={isExpanded ? "Minimize" : "Expand"}
+            >
+              <Icon icon={isExpanded ? "solar:minimize-square-3-bold-duotone" : "solar:maximize-square-3-bold-duotone"} className="w-5 h-5" />
+            </button>
+            <button 
+              onClick={onClose}
+              className="w-8 h-8 rounded-full flex items-center justify-center transition-all text-muted-foreground hover:bg-destructive/10 hover:text-destructive active:scale-95"
+              title="End Call"
+            >
+              <Icon icon="solar:phone-hang-up-bold" className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
 
-        <ConsultationClient 
-          sessionId={sessionId} 
-          onLeave={onClose} 
-          isInstructor={isInstructor}
-        />
-      </div>
+        <div className="flex-1 overflow-hidden relative">
+          <ConsultationClient 
+            sessionId={sessionId} 
+            onLeave={onClose} 
+            isInstructor={isInstructor}
+            isExpanded={isExpanded}
+          />
+        </div>
+      </motion.div>
     </div>
   );
 };

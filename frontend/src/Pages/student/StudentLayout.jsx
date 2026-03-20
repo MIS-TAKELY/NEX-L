@@ -7,7 +7,6 @@ const StudentLayout = () => {
   const menuItems = [
     { name: 'Dashboard', icon: "solar:widget-2-linear", path: '/student/dashboard' },
     { name: 'Enrolled Courses', icon: "solar:notebook-linear", path: '/student/my-enrollments' },
-    { name: 'Consultations', icon: "solar:videocamera-record-linear", path: '/student/consultations' },
     { name: 'Inbox', icon: "solar:letter-linear", path: '/student/inbox' },
     { name: 'Lesson', icon: "solar:notebook-linear", path: '/student/lessons' },
     { name: 'Task', icon: "solar:clipboard-check-linear", path: '/student/tasks' },

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useCallStateHooks } from '@stream-io/video-react-sdk';
 import { Icon } from '@iconify/react';
 
-const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipants, activePanel, sendReaction, isLive, isVideoCall, isJoining }) => {
+const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipants, activePanel, sendReaction, isLive, isVideoCall, isJoining, isConsultation }) => {
   const { useMicrophoneState, useCameraState, useScreenShareState } = useCallStateHooks();
 
   // Use optimisticUpdates: true for instant visual feedback — same as Stream SDK's own ToggleAudioPublishingButton
@@ -17,6 +17,46 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
 
   const [showMoreOptions, setShowMoreOptions] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+
+  if (isConsultation) {
+    return (
+      <div className="flex items-center justify-center w-full bg-background px-4 py-4 border-t border-border/50 gap-4 transition-colors">
+        {/* Mic Toggle */}
+        <button
+          onClick={toggleMic}
+          className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all duration-200 shadow-xl border border-border/50 active:scale-95 ${
+            micOff
+              ? 'bg-destructive/20 text-destructive hover:bg-destructive/30'
+              : 'bg-secondary/50 text-foreground hover:bg-secondary'
+          }`}
+        >
+          <Icon icon={micOff ? 'solar:mic-broken-bold' : 'solar:mic-bold'} className="w-6 h-6" />
+        </button>
+
+        {/* Camera Toggle */}
+        <button
+          onClick={toggleCam}
+          className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all duration-200 shadow-xl border border-border/50 active:scale-95 ${
+            camOff
+              ? 'bg-destructive/20 text-destructive hover:bg-destructive/30'
+              : 'bg-secondary/50 text-foreground hover:bg-secondary'
+          }`}
+        >
+          <Icon icon={camOff ? 'solar:videocamera-broken-bold' : 'solar:videocamera-bold'} className="w-6 h-6" />
+        </button>
+
+        {/* Leave Call */}
+        {onLeave && (
+          <button
+            onClick={onLeave}
+            className="w-16 h-12 flex items-center justify-center rounded-2xl bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:shadow-lg shadow-destructive/20 transition-all duration-200 active:scale-95 ml-2 border border-destructive/50"
+          >
+            <Icon icon="solar:phone-hang-up-bold" className="w-6 h-6" />
+          </button>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-between w-full bg-[#202124] px-4 py-3 md:px-6 md:py-4 border-t border-white/10">
