@@ -22,7 +22,7 @@ export const createLiveClass = async (req, res) => {
     if (!course) return res.status(404).json({ message: "Course not found" });
 
     if (String(course.teacher) !== teacherId) {
-      return res.status(403).json({ message: "Only the course teacher can schedule live classes" });
+      return res.status(403).json({ message: "Only the course instructor can schedule live classes" });
     }
 
     const liveClass = new LiveClass({

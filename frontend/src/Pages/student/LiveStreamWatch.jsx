@@ -99,7 +99,14 @@ const LiveStreamWatch = () => {
         setCall(videoCall);
       } catch (err) {
         console.error("LiveStreamWatch setup error:", err);
-        setError(err.response?.data?.message || "Failed to join live stream");
+        const backendMessage = err.response?.data?.message;
+        const streamError = err.message;
+        
+        if (streamError?.includes("JoinBackstage") || streamError?.includes("permission")) {
+          setError("The live stream hasn't started yet or you don't have permission to wait in the backstage. Please wait for the teacher to go live.");
+        } else {
+          setError(backendMessage || "Failed to join live stream. Please try again later.");
+        }
       }
     };
 

@@ -10,7 +10,10 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(relativeTime);
 
+import { motion } from 'motion/react';
+
 const MyEnrollments = () => {
+
   const { userData } = useSelector((state) => state.auth);
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -68,92 +71,137 @@ const MyEnrollments = () => {
   }
 
   return (
-    <div className="p-6 md:p-8 max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
-        <div>
-          <h1 className="text-4xl font-extrabold text-gray-900 mb-2">
-            My <span className="text-primary italic">Enrollments</span>
+    <div className="min-h-screen relative bg-background font-outfit text-foreground overflow-hidden">
+      {/* Background Effects */}
+      <div className="gradient-mesh fixed inset-0 pointer-events-none" />
+
+      <div className="relative z-10 p-6 md:p-8 max-w-7xl mx-auto">
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h1 className="text-4xl md:text-5xl font-extrabold text-foreground mb-3 tracking-tight">
+            My <span className="text-gradient">Enrollments</span>
           </h1>
-          <p className="text-gray-500 font-medium">
-            You are currently enrolled in {enrollments.length} course{enrollments.length !== 1 ? 's' : ''}
+          <p className="text-muted-foreground font-medium text-lg">
+            You are currently enrolled in <span className="text-primary font-bold">{enrollments.length}</span> course{enrollments.length !== 1 ? 's' : ''}
           </p>
-        </div>
-      </div>
+        </motion.div>
+
 
       {upcomingClasses.length > 0 && (
-        <div className="mb-12">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
-              <Icon icon="solar:videocamera-record-bold-duotone" className="text-red-500 w-6 h-6" />
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-16"
+        >
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center border border-red-500/20 shadow-lg shadow-red-500/5">
+              <Icon icon="solar:videocamera-record-bold-duotone" className="text-red-500 w-7 h-7" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">Upcoming Live Classes</h2>
+            <div>
+              <h2 className="text-2xl font-bold text-foreground tracking-tight">Upcoming Live Classes</h2>
+              <p className="text-sm text-muted-foreground">Don't miss out on your scheduled sessions</p>
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {upcomingClasses.map((liveClass) => (
-              <div key={liveClass._id} className="bg-white rounded-2xl p-6 border border-red-100 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {upcomingClasses.map((liveClass, index) => (
+              <motion.div 
+                key={liveClass._id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
+                className="glass-card premium-card rounded-3xl p-6 relative overflow-hidden group"
+              >
                 <div className="absolute top-0 right-0 p-4">
-                   <div className="flex items-center gap-1.5 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full animate-pulse">
+                   <div className="flex items-center gap-1.5 bg-red-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-lg shadow-red-500/30 animate-pulse uppercase tracking-wider">
                       <div className="w-1.5 h-1.5 bg-white rounded-full" /> LIVE SOON
                    </div>
                 </div>
-                <div className="flex items-center gap-4 mb-4">
-                  <img src={liveClass.course?.thumbnail || '/placeholder-course.png'} alt="" className="w-12 h-12 rounded-lg object-cover" />
+                <div className="flex items-center gap-5 mb-6">
+                  <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white/10 shadow-xl">
+                    <img src={liveClass.course?.thumbnail || '/placeholder-course.png'} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 group-hover:text-primary transition-colors line-clamp-1">{liveClass.title}</h3>
-                    <p className="text-xs text-gray-500 font-medium">{liveClass.course?.title}</p>
+                    <h3 className="font-bold text-foreground text-lg group-hover:text-primary transition-colors line-clamp-1">{liveClass.title}</h3>
+                    <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">{liveClass.course?.title}</p>
                   </div>
                 </div>
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Icon icon="solar:calendar-bold" className="text-primary" />
+                <div className="space-y-4 mb-8">
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium bg-white/5 p-3 rounded-2xl border border-white/5">
+                    <Icon icon="solar:calendar-bold" className="text-primary w-5 h-5" />
                     <span>{dayjs(liveClass.startTime).format('MMM D, YYYY')}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Icon icon="solar:clock-circle-bold" className="text-primary" />
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium bg-white/5 p-3 rounded-2xl border border-white/5">
+                    <Icon icon="solar:clock-circle-bold" className="text-primary w-5 h-5" />
                     <span>{dayjs(liveClass.startTime).format('h:mm A')} ({liveClass.duration} min)</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Icon icon="solar:user-bold" className="text-primary" />
-                    <span className="text-xs">by {liveClass.teacher?.name}</span>
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium bg-white/5 p-3 rounded-2xl border border-white/5">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
+                      <Icon icon="solar:user-bold" className="text-primary w-3.5 h-3.5" />
+                    </div>
+                    <span className="text-xs font-bold uppercase tracking-widest">by {liveClass.teacher?.name}</span>
                   </div>
                 </div>
                 <button
                   onClick={() => navigate(`/student/live/${liveClass.course?._id}`)}
-                  className="w-full py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-all shadow-lg shadow-red-500/20 flex items-center justify-center gap-2"
+                  className="w-full py-4 bg-red-500 text-white font-black rounded-2xl hover:bg-red-600 transition-all shadow-xl shadow-red-500/20 flex items-center justify-center gap-3 group/btn active:scale-[0.98] uppercase tracking-widest text-xs"
                 >
-                  <Icon icon="solar:play-bold" />
+                  <Icon icon="solar:play-bold" className="group-hover/btn:scale-110 transition-transform" />
                   Join Room
                 </button>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       )}
 
+
       {enrollments.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 bg-gray-50 dark:bg-zinc-900/50 rounded-3xl border-2 border-dashed border-gray-200 dark:border-zinc-800 text-center px-4">
-          <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-6">
-            <Icon icon="solar:globus-bold" className="text-primary" size={48} />
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="flex flex-col items-center justify-center py-24 glass-card premium-card rounded-[2.5rem] text-center px-4 overflow-hidden relative"
+        >
+          <div className="absolute inset-0 bg-primary/5 pointer-events-none" />
+          <div className="w-28 h-28 bg-primary/10 rounded-3xl flex items-center justify-center mb-8 border border-primary/20 shadow-2xl relative z-10">
+            <Icon icon="solar:globus-bold-duotone" className="text-primary w-14 h-14" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-foreground mb-2">No enrollments yet</h2>
-          <p className="text-gray-500 dark:text-zinc-400 max-w-sm mb-8">
-            Start your learning journey today by exploring our wide range of professional courses.
-          </p>
-          <button
-            onClick={() => window.location.href = '/course-list'}
-            className="px-10 py-4 bg-primary text-foreground rounded-2xl font-bold hover:bg-primary-hover transition-all shadow-xl hover:shadow-primary/20 active:scale-95 flex items-center gap-2"
-          >
-            Explore Courses <Icon icon="solar:arrow-right-bold" />
-          </button>
-        </div>
+          <div className="relative z-10">
+            <h2 className="text-3xl font-bold text-foreground mb-3 tracking-tight text-gradient">No enrollments yet</h2>
+            <p className="text-muted-foreground max-w-sm mb-10 text-lg font-medium">
+              Start your learning journey today by exploring our wide range of professional courses.
+            </p>
+            <button
+              onClick={() => window.location.href = '/course-list'}
+              className="px-12 py-5 bg-primary text-primary-foreground rounded-2xl font-black text-xs tracking-[0.2em] uppercase hover:bg-primary/90 transition-all shadow-2xl shadow-primary/20 active:scale-95 flex items-center gap-3 mx-auto group"
+            >
+              Explore Courses 
+              <Icon icon="solar:arrow-right-bold" className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+        </motion.div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {enrollments.map((enrollment) => (
-            <CourseCard key={enrollment._id} enrollment={enrollment} />
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
+        >
+          {enrollments.map((enrollment, index) => (
+            <div key={enrollment._id} className={`stagger-${(index % 5) + 1}`}>
+               <CourseCard enrollment={enrollment} />
+            </div>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
+  </div>
+
   );
 };
 
