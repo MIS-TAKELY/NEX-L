@@ -10,9 +10,14 @@ import {
   createVideoCall,
   createCourseChannel,
   getCourseChannels,
+  createConsultationCall,
 } from "../controllers/stream.controller.js";
 
 const router = express.Router();
+
+// ── Consultation Call ──────────────────────────────────────────────────────
+// GET /api/v1/stream/consultation/:sessionId (members)
+router.get("/consultation/:sessionId", requireAuth, createConsultationCall);
 
 // ── Chat Tokens ────────────────────────────────────────────────────────────
 // POST /api/v1/stream/token  – any authenticated user

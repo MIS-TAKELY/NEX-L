@@ -6,6 +6,10 @@ import { useGetInstructorCoursesQuery, useDeleteCourseMutation } from '@/store/s
 import ConfirmModal from '@/components/common/ConfirmModal';
 import ScheduleClassModal from '@/components/instructor/ScheduleClassModal';
 import { useToast } from '@/context/ToastContext';
+import { 
+    useGetInstructorActiveClassesQuery, 
+    useEndAllCourseLiveClassesMutation 
+} from '@/store/slices/liveClassApi';
 
 const MyCourses = () => {
     const navigate = useNavigate();
@@ -22,6 +26,10 @@ const MyCourses = () => {
     });
 
     const [deleteCourse] = useDeleteCourseMutation();
+    const { data: activeClasses = [] } = useGetInstructorActiveClassesQuery(undefined, {
+        pollingInterval: 10000 // Poll every 10s to stay in sync
+    });
+    const [endAllLiveClasses] = useEndAllCourseLiveClassesMutation();
 
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [isScheduleOpen, setIsScheduleOpen] = useState(false);
@@ -49,6 +57,16 @@ const MyCourses = () => {
         } finally {
             setCourseToDelete(null);
             setIsConfirmOpen(false);
+        }
+    };
+
+    const handleEndSession = async (courseId) => {
+        try {
+            await endAllLiveClasses(courseId).unwrap();
+            showToast("Live session ended successfully", "success");
+        } catch (error) {
+            console.error("Failed to end session", error);
+            showToast("Failed to end session", "error");
         }
     };
 
@@ -129,13 +147,23 @@ const MyCourses = () => {
                                     <Icon icon="solar:calendar-add-bold-duotone" className="w-4 h-4" />
                                     Schedule
                                 </button>
-                                <button
-                                    onClick={() => navigate(`/instructor/livestream/${course._id}`)}
-                                    className="px-4 py-2 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all text-sm font-medium flex items-center gap-2 border border-red-500/20"
-                                >
-                                    <Icon icon="solar:play-stream-bold-duotone" className="w-4 h-4" />
-                                    Go Live
-                                </button>
+                                {activeClasses.some(ac => ac.course?._id === course._id) ? (
+                                    <button
+                                        onClick={() => handleEndSession(course._id)}
+                                        className="px-4 py-2 rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-all text-sm font-bold flex items-center gap-2 shadow-lg shadow-destructive/20"
+                                    >
+                                        <Icon icon="solar:stop-circle-bold-duotone" className="w-4 h-4" />
+                                        End Session
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={() => navigate(`/instructor/livestream/${course._id}`)}
+                                        className="px-4 py-2 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all text-sm font-medium flex items-center gap-2 border border-red-500/20"
+                                    >
+                                        <Icon icon="solar:play-stream-bold-duotone" className="w-4 h-4" />
+                                        Go Live
+                                    </button>
+                                )}
                                 <button
                                     onClick={() => navigate(`/instructor/edit-course/${course._id}`)}
                                     className="p-2 rounded-xl bg-secondary text-secondary-foreground hover:bg-primary/10 hover:text-primary transition-all border border-transparent hover:border-primary/20"

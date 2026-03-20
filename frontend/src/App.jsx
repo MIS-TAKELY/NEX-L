@@ -39,6 +39,10 @@ import MyCourses from "./Pages/instructor/MyCourses";
 import InstructorSettings from "./Pages/instructor/Settings";
 import Statistics from "./Pages/instructor/Statistics";
 import LiveStreamBroadcast from "./Pages/instructor/LiveStreamBroadcast";
+import StudentsEnrolled from "./Pages/instructor/StudentsEnrolled";
+import Consultations from "./Pages/instructor/Consultations";
+import ConsultationPage from "./Pages/instructor/ConsultationPage";
+import StudentConsultations from "./Pages/student/StudentConsultations";
 
 // ADMIN PAGES
 import AdminLayout from "./Pages/admin/Admin";
@@ -139,6 +143,7 @@ export default function App() {
           <Route index element={<Home />} />
           <Route path="dashboard" element={<Home />} />
           <Route path="my-enrollments" element={<MyEnrollments />} />
+          <Route path="consultations" element={<StudentConsultations />} />
           <Route path="player/:courseId" element={<Player />} />
           <Route path="cart" element={<Cart />} />
           <Route path="settings" element={<StudentSettings />} />
@@ -158,6 +163,14 @@ export default function App() {
             element={
               <ProtectedRoute allowedRoles={["student"]}>
                 <VideoCallPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student/consultation/:sessionId"
+            element={
+              <ProtectedRoute allowedRoles={["student"]}>
+                <ConsultationPage />
               </ProtectedRoute>
             }
           />
@@ -193,6 +206,9 @@ export default function App() {
           <Route path="settings" element={<InstructorSettings />} />
           <Route path="statistics" element={<Statistics />} />
           <Route path="livestream/:courseId" element={<LiveStreamBroadcast />} />
+          <Route path="students-enrolled" element={<StudentsEnrolled />} />
+          <Route path="consultations" element={<Consultations />} />
+          <Route path="consultation/:sessionId" element={<ConsultationPage />} />
         </Route>
 
         {/* ADMIN ROUTES */}

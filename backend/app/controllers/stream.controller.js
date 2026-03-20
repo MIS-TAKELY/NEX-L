@@ -1,6 +1,7 @@
 import { getStreamClient } from "../utils/stream.js";
 import Enrollment from "../models/enrollment.model.js";
 import Course from "../models/course.model.js";
+import TutoringSession from "../models/tutoring-session.model.js";
 
 // ─── Helper: check enrollment ───────────────────────────────────────────────
 const isEnrolled = async (studentId, courseId) => {
@@ -323,6 +324,31 @@ export const createVideoCall = async (req, res) => {
   } catch (error) {
     console.error("createVideoCall error:", error);
     res.status(500).json({ message: "Failed to create video call" });
+  }
+};
+
+// ─── Create Consultation Call (1-on-1 talk) ───────────────────────────────
+export const createConsultationCall = async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const user = req.user;
+
+    const session = await TutoringSession.findById(sessionId);
+    if (!session) return res.status(404).json({ message: "Session not found" });
+
+    // Check if user is part of this session
+    const isTeacher = String(session.teacher) === user.id;
+    const isStudent = String(session.student) === user.id;
+
+    if (!isTeacher && !isStudent) {
+      return res.status(403).json({ message: "Access denied. You are not part of this session." });
+    }
+
+    const callId = `consult-${sessionId}`;
+    res.json({ callId, callType: "default", sessionId });
+  } catch (error) {
+    console.error("createConsultationCall error:", error);
+    res.status(500).json({ message: "Failed to create consultation call" });
   }
 };
 
