@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const Features = () => {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-background">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-gray-900">
@@ -35,7 +35,7 @@ const Features = () => {
           ].map((feature, idx) => (
             <div
               key={idx}
-              className="p-8 rounded-2xl bg-gray-50 hover:bg-white border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300 group"
+              className="p-8 rounded-2xl bg-gray-50 hover:bg-background border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300 group"
             >
               <div
                 className={`w-14 h-14 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}

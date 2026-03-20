@@ -1,8 +1,6 @@
-import { useNavigate } from "react-router-dom";
+import React from 'react';
 
 const Hero = () => {
-  const navigate = useNavigate();
-
   return (
     <div className="min-h-screen flex flex-col min-w-full overflow-x-hidden relative">
       <header className="relative flex-1 flex flex-col justify-center overflow-hidden min-h-[645px] h-[92vh] pb-10">
@@ -79,9 +77,12 @@ const Hero = () => {
               Search
             </button>
           </div>
+          <button className="px-8 py-3.5 bg-[#171717] text-foreground rounded-[1.5rem] text-sm font-medium hover:bg-black transition-colors shrink-0">
+            Search
+          </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

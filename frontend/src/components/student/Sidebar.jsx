@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import logo from '../../assets/logoo.png';
 
 const StudentSidebar = () => {
   const menuItems = [
@@ -17,11 +18,12 @@ const StudentSidebar = () => {
   ];
 
   return (
-    <div className="w-64 bg-white min-h-screen border-r border-gray-100 flex flex-col p-6 hidden md:flex font-outfit">
+    <div className="w-64 bg-background min-h-screen border-r border-gray-100 flex flex-col p-6 hidden md:flex font-outfit">
 
       {/* Brand */}
-      <div className="flex items-center gap-3 mb-10 text-gray-900">
-        <span className="text-2xl font-bold text-primary tracking-tight">NEXL</span>
+      <div className="flex items-center gap-2 mb-10 text-gray-900">
+        <img src={logo} alt="N" className="h-8 w-auto" />
+        <span className="text-2xl font-bold text-primary tracking-tight">EXL</span>
       </div>
 
       {/* Overview Menu */}

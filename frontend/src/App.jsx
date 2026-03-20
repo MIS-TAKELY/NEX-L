@@ -49,6 +49,7 @@ import AdminUsers from "./Pages/admin/Users";
 import { getSession } from "@/lib/auth.client";
 import { logout, setCredentials, setLoading } from "@/store/slices/authSlice";
 import ProtectedRoute from "./components/common/ProtectedRoute";
+import PublicRoute from "./components/common/PublicRoute";
 import { StreamContextProvider } from "@/context/StreamContext";
 
 export default function App() {
@@ -57,6 +58,14 @@ export default function App() {
   useEffect(() => {
     const verifySession = async () => {
       try {
+        // Capture session token from URL if redirected from OAuth
+        const params = new URLSearchParams(window.location.search);
+        const sessionToken = params.get("session_token");
+        if (sessionToken) {
+          localStorage.setItem("session_token", sessionToken);
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
         const session = await getSession();
         if (session && session.user) {
           const role = session.user.role || 'student';
@@ -89,8 +98,22 @@ export default function App() {
         <Route path="/search" element={<Search />} />
         <Route path="/course/:id" element={<CourseDetails />} />
         <Route path="/payment-gateway" element={<PaymentGateway />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<SignIn />} />
+        <Route
+          path="/signup"
+          element={
+            <PublicRoute>
+              <SignUp />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <SignIn />
+            </PublicRoute>
+          }
+        />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-failure" element={<PaymentFailure />} />

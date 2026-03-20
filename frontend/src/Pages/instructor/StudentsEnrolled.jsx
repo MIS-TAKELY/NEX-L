@@ -29,7 +29,7 @@ const StudentsEnrolled = () => {
   ];
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div className="bg-background rounded-xl shadow-sm border border-gray-100 overflow-hidden">
        <div className="p-6 border-b border-gray-100">
         <h1 className="text-xl font-bold text-gray-800">Students Enrolled</h1>
       </div>

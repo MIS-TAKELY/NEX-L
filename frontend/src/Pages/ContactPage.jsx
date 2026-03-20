@@ -3,7 +3,7 @@ import ContactSection from "../components/landing/ContactSection";
 
 const ContactPage = () => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <Navbar />
       <div className="pt-24">
         <ContactSection />

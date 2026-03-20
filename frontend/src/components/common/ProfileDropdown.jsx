@@ -52,9 +52,11 @@ const ProfileDropdown = () => {
         }
     };
 
+    const dashboardPath = userRole === 'instructor' ? '/instructor/dashboard' : userRole === 'admin' ? '/admin/dashboard' : '/student/dashboard';
     const settingsPath = userRole === 'instructor' ? '/instructor/settings' : '/student/settings';
 
     const menuItems = [
+        { id: 'dashboard', icon: 'solar:widget-2-bold-duotone', label: 'Dashboard', path: dashboardPath },
         { id: 'settings', icon: 'solar:settings-bold-duotone', label: 'Settings', path: settingsPath },
         { id: 'help', icon: 'solar:help-bold-duotone', label: 'Help & support', path: '/help' },
         { id: 'display', icon: 'solar:moon-bold-duotone', label: 'Display' },

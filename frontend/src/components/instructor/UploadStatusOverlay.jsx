@@ -8,13 +8,13 @@ const UploadStatusOverlay = ({ isOpen, totalFiles, uploadedFiles }) => {
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm transition-all duration-300">
-            <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 border border-gray-100 transform scale-100 animate-in fade-in zoom-in duration-300">
+            <div className="bg-background rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 border border-gray-100 transform scale-100 animate-in fade-in zoom-in duration-300">
                 <div className="flex flex-col items-center text-center">
                     <div className="relative mb-6">
                         <div className="w-20 h-20 rounded-full border-4 border-gray-100 flex items-center justify-center">
                             <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
                         </div>
-                        <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1 shadow-sm">
+                        <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-1 shadow-sm">
                             <Clock className="w-5 h-5 text-blue-500" />
                         </div>
                     </div>

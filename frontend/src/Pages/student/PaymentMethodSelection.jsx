@@ -139,15 +139,15 @@ const PaymentMethodSelection = () => {
                         <Icon icon="solar:arrow-left-linear" size={20} />
                         Back to Cart
                     </button>
-                    <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Select Payment Method</h1>
+                    <h1 className="text-4xl font-bold text-gray-900 dark:text-foreground mb-2">Select Payment Method</h1>
                     <p className="text-gray-600 dark:text-zinc-400">
                         Choose your preferred payment method to complete your purchase
                     </p>
                 </div>
 
                 {/* Order Summary Card */}
-                <div className="bg-white dark:bg-zinc-900 rounded-2xl border-2 border-gray-100 dark:border-zinc-800 p-6 mb-8">
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Order Summary</h2>
+                <div className="bg-background dark:bg-zinc-900 rounded-2xl border-2 border-gray-100 dark:border-zinc-800 p-6 mb-8">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-foreground mb-4">Order Summary</h2>
                     <div className="space-y-2">
                         <div className="flex justify-between text-gray-600 dark:text-zinc-400">
                             <span>Courses</span>
@@ -168,7 +168,7 @@ const PaymentMethodSelection = () => {
                                     <button
                                         onClick={handleApplyCoupon}
                                         disabled={isVerifying || !couponCode}
-                                        className="px-6 py-2 bg-primary text-white rounded-lg font-bold text-sm hover:bg-primary-hover transition-all disabled:opacity-50"
+                                        className="px-6 py-2 bg-primary text-foreground rounded-lg font-bold text-sm hover:bg-primary-hover transition-all disabled:opacity-50"
                                     >
                                         {isVerifying ? '...' : 'Apply'}
                                     </button>
@@ -213,13 +213,13 @@ const PaymentMethodSelection = () => {
 
                 {/* Payment Methods */}
                 <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Available Payment Methods</h2>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-foreground mb-4">Available Payment Methods</h2>
                     {paymentMethods.map((method) => (
                         <button
                             key={method.id}
                             onClick={() => !method.disabled && handlePaymentMethod(method.id)}
                             disabled={method.disabled}
-                            className={`w-full bg-white dark:bg-zinc-900 rounded-2xl border-2 p-6 transition-all duration-300 ${method.disabled
+                            className={`w-full bg-background dark:bg-zinc-900 rounded-2xl border-2 p-6 transition-all duration-300 ${method.disabled
                                     ? 'border-gray-200 dark:border-zinc-800 opacity-50 cursor-not-allowed'
                                     : 'border-gray-100 dark:border-zinc-800 hover:border-primary hover:shadow-lg cursor-pointer'
                                 }`}
@@ -232,7 +232,7 @@ const PaymentMethodSelection = () => {
                                     <Icon icon={method.icon} size={32} style={{ color: method.color }} />
                                 </div>
                                 <div className="flex-1 text-left">
-                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 flex items-center gap-2">
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-foreground mb-1 flex items-center gap-2">
                                         {method.name}
                                         {method.disabled && (
                                             <span className="text-xs font-normal text-gray-500 dark:text-zinc-500 bg-gray-100 dark:bg-zinc-800 px-2 py-1 rounded">

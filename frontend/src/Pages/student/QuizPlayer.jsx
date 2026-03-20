@@ -11,7 +11,7 @@ const QuizPlayer = ({ quizData, courseId, contentId }) => {
     // Safety check - if quizData is missing or malformed
     if (!quizData || !quizData.questions) {
         return (
-            <div className="bg-white p-8 rounded-3xl text-center border border-red-100">
+            <div className="bg-background p-8 rounded-3xl text-center border border-red-100">
                 <Icon icon="solar:danger-triangle-bold" className="text-red-500 mx-auto mb-4" size={48} />
                 <h3 className="text-xl font-bold text-gray-800">Quiz Data Unavailable</h3>
                 <p className="text-gray-500 mt-2">The quiz data seems to be missing or incomplete.</p>
@@ -86,7 +86,7 @@ const QuizPlayer = ({ quizData, courseId, contentId }) => {
 
     if (submitted && result) {
         return (
-            <div className="bg-white p-10 rounded-3xl border border-gray-100 shadow-sm text-center max-w-2xl mx-auto">
+            <div className="bg-background p-10 rounded-3xl border border-gray-100 shadow-sm text-center max-w-2xl mx-auto">
                 <div className={`w-24 h-24 rounded-full mx-auto flex items-center justify-center mb-6 ${result.passed ? 'bg-green-100 text-green-500' : 'bg-red-100 text-red-500'}`}>
                     <Icon icon={result.passed ? "solar:check-circle-bold" : "solar:close-circle-bold"} size={48} />
                 </div>
@@ -115,7 +115,7 @@ const QuizPlayer = ({ quizData, courseId, contentId }) => {
                                     const isSelected = answers[idx] === opt;
                                     
                                     let ringColor = "border-gray-200";
-                                    let bg = "bg-white";
+                                    let bg = "bg-background";
                                     let textColor = "text-gray-600";
                                     let icon = null;
 
@@ -148,7 +148,7 @@ const QuizPlayer = ({ quizData, courseId, contentId }) => {
                 {!result.passed && (
                      <button 
                         onClick={() => { setSubmitted(false); setAnswers({}); setResult(null); }}
-                        className="mt-8 px-8 py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-all"
+                        className="mt-8 px-8 py-3 bg-gray-900 text-foreground rounded-xl font-bold hover:bg-gray-800 transition-all"
                      >
                         Retake Quiz
                      </button>
@@ -159,9 +159,9 @@ const QuizPlayer = ({ quizData, courseId, contentId }) => {
 
     return (
         <div className="max-w-3xl mx-auto">
-            <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm mb-8">
+            <div className="bg-background p-8 rounded-3xl border border-gray-100 shadow-sm mb-8 premium-card">
                 <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center">
                         <Icon icon="solar:check-read-bold" size={24} />
                     </div>
                     <div>
@@ -184,7 +184,7 @@ const QuizPlayer = ({ quizData, courseId, contentId }) => {
                             {quizData.timeLimit} Mins
                         </div>
                     )}
-                    <div className="flex items-center gap-2 text-sm font-bold text-purple-500">
+                    <div className="flex items-center gap-2 text-sm font-bold text-orange-500">
                         <Icon icon="solar:target-bold" size={18} />
                         {quizData.passingScore || 60}% to pass
                     </div>
@@ -193,9 +193,9 @@ const QuizPlayer = ({ quizData, courseId, contentId }) => {
 
             <div className="space-y-8">
                 {quizData.questions.map((q, idx) => (
-                    <div key={idx} className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+                    <div key={idx} className="bg-background p-8 rounded-3xl border border-gray-100 shadow-sm">
                         <h3 className="text-xl font-bold text-gray-900 mb-6 flex gap-4">
-                            <span className="text-purple-500">{idx + 1}.</span>
+                            <span className="text-orange-500">{idx + 1}.</span>
                             <span>{q.question}</span>
                         </h3>
                         <div className="space-y-3">
@@ -207,14 +207,14 @@ const QuizPlayer = ({ quizData, courseId, contentId }) => {
                                         onClick={() => handleOptionSelect(idx, optIdx)}
                                         className={`w-full text-left px-6 py-4 rounded-2xl border-2 transition-all flex items-center gap-4 ${
                                             isSelected 
-                                                ? 'border-purple-500 bg-purple-50 text-purple-900' 
-                                                : 'border-gray-100 bg-white hover:border-purple-200 hover:bg-purple-50/30 text-gray-700'
+                                                ? 'border-orange-500 bg-orange-50 text-orange-900' 
+                                                : 'border-gray-100 bg-background hover:border-orange-200 hover:bg-orange-50/30 text-gray-700'
                                         }`}
                                     >
                                         <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                                            isSelected ? 'border-purple-500' : 'border-gray-300'
+                                            isSelected ? 'border-orange-500' : 'border-gray-300'
                                         }`}>
-                                            {isSelected && <div className="w-3 h-3 rounded-full bg-purple-500" />}
+                                            {isSelected && <div className="w-3 h-3 rounded-full bg-orange-500" />}
                                         </div>
                                         <span className="font-medium text-lg">{opt}</span>
                                     </button>
@@ -229,7 +229,7 @@ const QuizPlayer = ({ quizData, courseId, contentId }) => {
                 <button
                     onClick={handleSubmit}
                     disabled={isSubmitting || Object.keys(answers).length < quizData.questions.length}
-                    className="px-10 py-4 bg-purple-600 text-white rounded-2xl font-bold hover:bg-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-purple-200 active:scale-95 flex items-center gap-2"
+                    className="px-10 py-4 bg-orange-600 text-foreground rounded-2xl font-bold hover:bg-orange-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-orange-200 active:scale-95 flex items-center gap-2"
                 >
                     {isSubmitting ? (
                         <>

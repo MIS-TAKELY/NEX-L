@@ -4,6 +4,26 @@ export const authClient = createAuthClient({
   baseURL: import.meta.env.VITE_BACKEND_URL + "/api/v1/auth",
   fetchOptions: {
     credentials: "include",
+    onRequest(context) {
+      // Attach Bearer token if we have one saved from OAuth redirect
+      const token = localStorage.getItem("session_token");
+      if (token) {
+        if (context.request) {
+          context.request.headers.set("Authorization", `Bearer ${token}`);
+        } else {
+          context.options = context.options || {};
+          context.options.headers = context.options.headers || {};
+          if (typeof context.options.headers.set === 'function') {
+            context.options.headers.set("Authorization", `Bearer ${token}`);
+          } else {
+            context.options.headers = {
+              ...context.options.headers,
+              Authorization: `Bearer ${token}`,
+            };
+          }
+        }
+      }
+    },
   },
 });
 
@@ -52,6 +72,7 @@ export const signIn = async (email, password) => {
 export const signOut = async () => {
   try {
     const { error } = await authClient.signOut();
+    localStorage.removeItem("session_token");
     if (error) {
       throw error;
     }
@@ -78,18 +99,17 @@ export const signOut = async () => {
 
 export const loginWithGoogle = async (role = "student") => {
   try {
-    console.log("Google login with role:", role);
-
-    // Call backend to set a cookie on the backend domain
-    await fetch(import.meta.env.VITE_BACKEND_URL + "/api/v1/auth/pre-social?role=" + role, {
-      method: 'GET',
-      credentials: 'include',
-    });
-
-    await authClient.signIn.social({
-      provider: "google",
-      callbackURL: `${import.meta.env.VITE_FRONTEND_URL}/${role}/dashboard`, // Dynamic redirect based on role
-    });
+    console.log("Starting Google login for role:", role);
+    const callbackURL = `${import.meta.env.VITE_FRONTEND_URL}/${role}/dashboard`;
+    
+    // Direct redirect to the backend to start the OAuth flow as a 1st party navigation
+    // This bypasses third-party cookie blocking in browsers like Chrome/Safari
+    const redirectUrl = new URL(`${import.meta.env.VITE_BACKEND_URL}/api/v1/auth/social-redirect`);
+    redirectUrl.searchParams.append("provider", "google");
+    redirectUrl.searchParams.append("role", role);
+    redirectUrl.searchParams.append("callbackURL", callbackURL);
+    
+    window.location.href = redirectUrl.toString();
   } catch (error) {
     console.error("Google login failed:", error);
     throw error;
@@ -98,18 +118,16 @@ export const loginWithGoogle = async (role = "student") => {
 
 export const loginWithGithub = async (role = "student") => {
   try {
-    console.log("Github login with role:", role);
+    console.log("Starting Github login for role:", role);
+    const callbackURL = `${import.meta.env.VITE_FRONTEND_URL}/${role}/dashboard`;
 
-    // Call backend to set a cookie on the backend domain
-    await fetch(import.meta.env.VITE_BACKEND_URL + "/api/v1/auth/pre-social?role=" + role, {
-      method: "GET",
-      credentials: "include",
-    });
-
-    await authClient.signIn.social({
-      provider: "github",
-      callbackURL: `${import.meta.env.VITE_FRONTEND_URL}/${role}/dashboard`, // Dynamic redirect based on role
-    });
+    // Direct redirect to the backend to start the OAuth flow as a 1st party navigation
+    const redirectUrl = new URL(`${import.meta.env.VITE_BACKEND_URL}/api/v1/auth/social-redirect`);
+    redirectUrl.searchParams.append("provider", "github");
+    redirectUrl.searchParams.append("role", role);
+    redirectUrl.searchParams.append("callbackURL", callbackURL);
+    
+    window.location.href = redirectUrl.toString();
   } catch (error) {
     console.error("Github login failed:", error);
     throw error;

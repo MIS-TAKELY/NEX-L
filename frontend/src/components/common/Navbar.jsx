@@ -8,6 +8,7 @@ import { signOut } from "@/lib/auth.client";
 import { useGetCartQuery } from "@/store/slices/cartApi";
 import logo from "../../assets/logoo.png";
 import ProfileDropdown from "./ProfileDropdown";
+import ModeToggle from "./ModeToggle";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -18,17 +19,33 @@ const Navbar = () => {
   const cartCount = cartResp?.data?.items?.length || 0;
 
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [active, setActive] = useState(location.pathname); // active button
+  const [active, setActive] = useState(location.pathname);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setShowNavbar(false);
+      } else {
+        setShowNavbar(true);
+      }
+      
+      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
   // Update active when route changes
   useEffect(() => {
@@ -66,29 +83,24 @@ const Navbar = () => {
   return (
     <>
       <nav
-        className={`fixed left-0 right-0 flex justify-between items-center px-6 lg:px-12 py-4 z-40 transition-all duration-300 ${isScrolled || location.pathname !== "/"
-          ? "top-0 bg-primary shadow-lg"
-          : "top-0 lg:top-6 bg-transparent"
-          }`}
+        className={`fixed left-0 right-0 flex justify-between items-center px-6 lg:px-12 py-5 z-40 transition-all duration-700 ${
+          isScrolled || location.pathname !== "/"
+            ? "bg-card/80 backdrop-blur-2xl border-b border-white/10 shadow-lg shadow-black/5"
+            : "bg-transparent mt-2"
+        } ${showNavbar ? "translate-y-0" : "-translate-y-full"}`}
       >
         <div
-          className="flex items-center gap-1 cursor-pointer z-50 px-2 py-1 relative group"
+          className="flex items-center gap-2 cursor-pointer z-50 group"
           onClick={() => navigate("/")}
         >
-          <img
-            src={logo}
-            alt="NEXL"
-            className="h-8 w-auto brightness-0 invert"
-          />
-          <span className="text-2xl font-bold text-white">EXL</span>
-          {/* Underline for Logo (Home) */}
-          <span
-            className={`absolute left-0 bottom-0 h-0.5 bg-white transition-all duration-700 ease-out w-0 group-hover:w-full`}
-          ></span>
+          <img src={logo} alt="NEXL Logo" className="w-10 h-10 object-contain group-hover:scale-105 transition-transform" />
+          <span className="text-xl font-bold tracking-tight text-foreground">
+            NEXL
+          </span>
         </div>
 
         {/* Desktop Links (Center) */}
-        <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-1 xl:gap-3">
+        <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-1 xl:gap-4 glass px-2 py-1.5 rounded-2xl border border-white/10 shadow-sm">
           {desktopButtons.map((btn) => (
             <button
               key={btn.path}
@@ -96,55 +108,33 @@ const Navbar = () => {
                 navigate(btn.path);
                 setActive(btn.path);
               }}
-              className={`px-3 py-2 text-white/90 font-medium relative transition-colors duration-300 hover:cursor-pointer hover:text-white group whitespace-nowrap`}
+              className={`px-4 py-2 font-bold text-[11px] tracking-widest uppercase relative transition-all duration-300 hover:cursor-pointer group whitespace-nowrap rounded-xl ${
+                active === btn.path 
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:text-primary hover:bg-primary/5"
+              }`}
             >
               {btn.label}
-              {/* Underline */}
-              <span
-                className={`absolute left-0 bottom-0 h-0.5 bg-white transition-all duration-700 ease-out w-0 group-hover:w-full`}
-              ></span>
             </button>
           ))}
-
-          {isLoggedIn && (
-            <button
-              onClick={() => {
-                const dashboardPath = getDashboardPath();
-                navigate(dashboardPath);
-                setActive(dashboardPath);
-              }}
-              className={`px-3 py-2 hover:cursor-pointer text-white/90 font-medium relative transition-colors duration-300 hover:text-white group whitespace-nowrap`}
-            >
-              Go to Dashboard
-              <span
-                className={`absolute left-0 bottom-0 h-0.5 bg-white transition-all duration-700 ease-out w-0 group-hover:w-full`}
-              ></span>
-            </button>
-          )}
         </div>
 
         {/* Desktop Actions (Right) */}
-        <div className="hidden lg:flex items-center gap-3">
-          {isLoggedIn ? (
-            <>
-              {/* Search Button */}
-              <button
-                onClick={() => navigate('/search')}
-                className="w-10 h-10 rounded-full hover:cursor-pointer bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
-                title="Search courses"
-              >
-                <Icon icon="solar:magnifer-linear" size={24} />
-              </button>
+        <div className="hidden lg:flex items-center gap-6">
+          <ModeToggle />
+          <div className="w-px h-6 bg-border/50 hidden md:block"></div>
 
+          {isLoggedIn ? (
+            <div className="flex items-center gap-6">
               {/* Cart Button - Only for Students */}
               {userRole === 'student' && (
                 <button
                   onClick={() => navigate('/cart')}
-                  className="w-10 h-10 rounded-full hover:cursor-pointer bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors relative"
+                  className={`w-11 h-11 rounded-full hover:cursor-pointer flex items-center justify-center transition-all relative bg-secondary hover:bg-muted text-primary`}
                 >
-                  <Icon icon="solar:cart-large-2-bold-duotone" size={24} />
+                  <Icon icon="solar:cart-large-2-bold" size={24} />
                   {cartCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full border-2 border-primary flex items-center justify-center text-[10px] font-bold text-white">
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center text-[10px] font-black text-primary-foreground">
                       {cartCount}
                     </span>
                   )}
@@ -153,43 +143,35 @@ const Navbar = () => {
 
               {/* Profile Dropdown */}
               <ProfileDropdown />
-            </>
+            </div>
           ) : (
-            <>
-              {/* Sign In button */}
+            <div className="flex items-center gap-6">
               <button
                 onClick={() => {
                   navigate("/login");
                   setActive("/login");
                 }}
-                className={`px-4 py-2 text-white/90 hover:cursor-pointer font-medium relative transition-colors duration-300 hover:text-white group whitespace-nowrap`}
+                className={`font-bold text-xs tracking-widest uppercase transition-all text-muted-foreground hover:text-primary`}
               >
                 Sign In
-                <span
-                  className={`absolute left-0 bottom-0 h-0.5 bg-white transition-all duration-700 ease-out w-0 group-hover:w-full`}
-                ></span>
               </button>
 
-              {/* Get Started button */}
               <button
                 onClick={() => {
                   navigate("/signup");
                   setActive("/signup");
                 }}
-                className={`px-5 py-2 rounded-lg hover:cursor-pointer font-bold transition-all shadow-lg bg-white text-primary hover:bg-gray-100 relative group whitespace-nowrap`}
+                className={`px-8 py-3 rounded-2xl font-black text-xs tracking-widest uppercase transition-all shadow-xl active:scale-95 bg-primary text-primary-foreground hover:bg-primary-hover shadow-primary/20`}
               >
                 Get Started
-                <span
-                  className={`absolute left-0 bottom-0 h-0.5 hover:cursor-pointer bg-primary transition-all duration-700 ease-out w-0 group-hover:w-full`}
-                ></span>
               </button>
-            </>
+            </div>
           )}
         </div>
 
         {/* Mobile Hamburger Button */}
         <button
-          className="lg:hidden text-white z-50 p-2"
+          className={`lg:hidden z-50 p-2 transition-colors text-primary`}
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           <Icon
@@ -216,16 +198,16 @@ const Navbar = () => {
                 setActive(dashboardPath);
                 setIsMobileMenuOpen(false);
               }}
-              className="text-white text-2xl font-medium relative group"
+              className="text-primary-foreground text-2xl font-medium relative group"
             >
               Go to Dashboard
               <span
-                className={`absolute left-0 -bottom-1 h-0.5 bg-white transition-all duration-700 ease-out w-0 group-hover:w-full`}
+                className={`absolute left-0 -bottom-1 h-0.5 bg-background transition-all duration-700 ease-out w-0 group-hover:w-full`}
               ></span>
             </button>
             <button
               onClick={handleLogout}
-              className="bg-white text-primary px-8 py-3 rounded-lg text-xl font-bold shadow-lg relative group flex items-center gap-2"
+              className="bg-background text-primary px-8 py-3 rounded-lg text-xl font-bold shadow-lg relative group flex items-center gap-2"
             >
               <Icon icon="solar:logout-2-linear" className="h-5 w-5" />
               Logout
@@ -239,11 +221,11 @@ const Navbar = () => {
                 setActive("/about");
                 setIsMobileMenuOpen(false);
               }}
-              className="text-white text-2xl font-medium relative group"
+              className="text-primary-foreground text-2xl font-medium relative group"
             >
               About Us
               <span
-                className={`absolute left-0 -bottom-1 h-0.5 bg-white transition-all duration-700 ease-out w-0 group-hover:w-full`}
+                className={`absolute left-0 -bottom-1 h-0.5 bg-background transition-all duration-700 ease-out w-0 group-hover:w-full`}
               ></span>
             </button>
             <button
@@ -252,11 +234,11 @@ const Navbar = () => {
                 setActive("/contact");
                 setIsMobileMenuOpen(false);
               }}
-              className="text-white text-2xl font-medium relative group"
+              className="text-primary-foreground text-2xl font-medium relative group"
             >
               Contact Us
               <span
-                className={`absolute left-0 -bottom-1 h-0.5 bg-white transition-all duration-700 ease-out w-0 group-hover:w-full`}
+                className={`absolute left-0 -bottom-1 h-0.5 bg-background transition-all duration-700 ease-out w-0 group-hover:w-full`}
               ></span>
             </button>
             <button
@@ -265,11 +247,11 @@ const Navbar = () => {
                 setActive("/login");
                 setIsMobileMenuOpen(false);
               }}
-              className="text-white text-2xl font-medium relative group"
+              className="text-primary-foreground text-2xl font-medium relative group"
             >
               Sign In
               <span
-                className={`absolute left-0 -bottom-1 h-0.5 bg-white transition-all duration-700 ease-out w-0 group-hover:w-full`}
+                className={`absolute left-0 -bottom-1 h-0.5 bg-background transition-all duration-700 ease-out w-0 group-hover:w-full`}
               ></span>
             </button>
             <button
@@ -278,7 +260,7 @@ const Navbar = () => {
                 setActive("/signup");
                 setIsMobileMenuOpen(false);
               }}
-              className="bg-white text-primary px-8 py-3 rounded-lg text-xl font-bold shadow-lg relative group"
+              className="bg-background text-primary px-8 py-3 rounded-lg text-xl font-bold shadow-lg relative group"
             >
               Get Started
               <span

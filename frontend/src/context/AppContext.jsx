@@ -1,10 +1,23 @@
 import { signOut as authSignOut, getSession } from "@/lib/auth.client";
 import { createContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleTheme as reduxToggleTheme, setTheme as reduxSetTheme } from "@/store/slices/uiSlice";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
+  const dispatch = useDispatch();
+  const theme = useSelector((state) => state.ui.theme);
+
+  const setTheme = (newTheme) => {
+    dispatch(reduxSetTheme(newTheme));
+  };
+
+  const toggleTheme = () => {
+    dispatch(reduxToggleTheme());
+  };
+
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem('isLoggedIn') === 'true'
   );
@@ -60,21 +73,7 @@ export const AppContextProvider = ({ children }) => {
     verifySession();
   }, []);
 
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
-
-  // Apply theme to document
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
-  };
+  // Theme logic is now handled via Redux
 
   const login = (role, data = null) => {
     setIsLoggedIn(true);

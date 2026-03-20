@@ -48,7 +48,7 @@ const MyEnrollments = () => {
         <p className="text-gray-600 max-w-md mb-8">{error}</p>
         <button
           onClick={() => window.location.reload()}
-          className="px-8 py-3 bg-primary text-white rounded-2xl font-bold hover:bg-primary-hover transition-all shadow-lg"
+          className="px-8 py-3 bg-primary text-foreground rounded-2xl font-bold hover:bg-primary-hover transition-all shadow-lg"
         >
           Try Again
         </button>
@@ -69,7 +69,7 @@ const MyEnrollments = () => {
         </div>
 
         <div className="flex gap-3">
-          <div className="px-4 py-2 bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-xl shadow-sm flex items-center gap-2">
+          <div className="px-4 py-2 bg-background dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-xl shadow-sm flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-500" />
             <span className="text-sm font-bold text-gray-700 dark:text-zinc-300">Active Learning</span>
           </div>
@@ -77,17 +77,17 @@ const MyEnrollments = () => {
       </div>
 
       {enrollments.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 bg-gray-50 dark:bg-zinc-900/50 rounded-[3rem] border-2 border-dashed border-gray-200 dark:border-zinc-800 text-center px-4">
+        <div className="flex flex-col items-center justify-center py-20 bg-gray-50 dark:bg-zinc-900/50 rounded-3xl border-2 border-dashed border-gray-200 dark:border-zinc-800 text-center px-4">
           <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-6">
             <Icon icon="solar:globus-bold" className="text-primary" size={48} />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">No enrollments yet</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-foreground mb-2">No enrollments yet</h2>
           <p className="text-gray-500 dark:text-zinc-400 max-w-sm mb-8">
             Start your learning journey today by exploring our wide range of professional courses.
           </p>
           <button
             onClick={() => window.location.href = '/course-list'}
-            className="px-10 py-4 bg-primary text-white rounded-[2rem] font-bold hover:bg-primary-hover transition-all shadow-xl hover:shadow-primary/20 active:scale-95 flex items-center gap-2"
+            className="px-10 py-4 bg-primary text-foreground rounded-2xl font-bold hover:bg-primary-hover transition-all shadow-xl hover:shadow-primary/20 active:scale-95 flex items-center gap-2"
           >
             Explore Courses <Icon icon="solar:arrow-right-bold" />
           </button>

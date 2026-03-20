@@ -49,7 +49,7 @@ const BroadcastControls = ({ call }) => {
             <Icon icon="solar:play-stream-bold-duotone" className="w-6 h-6 text-red-400" />
           </div>
           <div>
-            <h1 className="text-white font-bold text-lg">Live Broadcast</h1>
+            <h1 className="text-foreground font-bold text-lg">Live Broadcast</h1>
             <p className="text-gray-400 text-xs">
               {isLive
                 ? `🔴 LIVE · ${participantCount} viewer${participantCount !== 1 ? "s" : ""}`
@@ -58,8 +58,8 @@ const BroadcastControls = ({ call }) => {
           </div>
         </div>
         {isLive && (
-          <span className="flex items-center gap-1.5 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full animate-pulse">
-            <span className="w-2 h-2 bg-white rounded-full" /> LIVE
+          <span className="flex items-center gap-1.5 bg-red-500 text-foreground text-xs font-bold px-3 py-1.5 rounded-full animate-pulse">
+            <span className="w-2 h-2 bg-background rounded-full" /> LIVE
           </span>
         )}
       </div>
@@ -69,7 +69,7 @@ const BroadcastControls = ({ call }) => {
         {callingState === CallingState.JOINED ? (
           <LivestreamLayout />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-white gap-6">
+          <div className="flex flex-col items-center justify-center h-full text-foreground gap-6">
             <Icon icon="solar:camera-add-bold-duotone" className="w-24 h-24 text-gray-600" />
             <p className="text-gray-400 text-lg">Your camera preview will appear here</p>
           </div>
@@ -81,7 +81,7 @@ const BroadcastControls = ({ call }) => {
         {!isLive ? (
           <button
             onClick={goLive}
-            className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white font-bold px-8 py-3 rounded-xl transition-all duration-200 shadow-lg shadow-red-500/25"
+            className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-foreground font-bold px-8 py-3 rounded-xl transition-all duration-200 shadow-lg shadow-red-500/25"
           >
             <Icon icon="solar:play-bold" className="w-5 h-5" />
             Go Live
@@ -89,7 +89,7 @@ const BroadcastControls = ({ call }) => {
         ) : (
           <button
             onClick={endStream}
-            className="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-semibold px-8 py-3 rounded-xl transition-all"
+            className="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-foreground font-semibold px-8 py-3 rounded-xl transition-all"
           >
             <Icon icon="solar:stop-bold" className="w-5 h-5" />
             End Stream

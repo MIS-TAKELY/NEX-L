@@ -1,104 +1,7 @@
-import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
-import { useState } from 'react';
-
-const testimonials = [
-  {
-    id: 1,
-    name: 'Nabina Shrestha',
-    role: 'Web Development Student',
-    rating: 5,
-    text: '"The web development course at NEXL completely transformed my career. The practical projects and clear explanations made complex concepts easy to grasp. I am now working as a junior developer!"',
-    date: 'Enrolled: Jan 2025'
-  },
-  {
-    id: 2,
-    name: 'Grishma Sitaula',
-    role: 'Digital Marketing Student',
-    rating: 5,
-    text: '"As someone new to digital marketing, NEXL gave me the perfect starting point. The instructors are incredibly supportive, and the course materials are top-notch. Highly recommended!"',
-    date: 'Enrolled: March 2025'
-  },
-  {
-    id: 3,
-    name: 'Karuna Shrestha',
-    role: 'UI/UX Design Student',
-    rating: 5,
-    text: '"Learning UI/UX design has never been this engaging. The focus on real-world case studies helped me build a strong portfolio even before completing the course. Thank you NEXL!"',
-    date: 'Enrolled: Nov 2024'
-  },
-   {
-    id: 4,
-    name: 'Gita Shrestha',
-    role: 'Python Programming Student',
-    rating: 5,
-    text: '"I always found programming intimidating, but the Python course here broke everything down perfectly. The assignments really tested my knowledge and built my confidence."',
-    date: 'Enrolled: Feb 2025'
-  },
-  {
-    id: 5,
-    name: 'Shreya Shrestha',
-    role: 'Business Management Student',
-    rating: 5,
-    text: '"NEXL\'s business class is phenomenal. The case studies and real-world examples really prepare you for the current market. I feel much more confident in my entrepreneurial journey now."',
-    date: 'Enrolled: Dec 2024'
-  },
-  {
-    id: 6,
-    name: 'Apekxya Limbu',
-    role: 'Entrepreneurship Course',
-    rating: 4,
-    text: '"The business curriculum covers everything from strategy to finance in an easy-to-understand way. The instructors have real industry experience, making the lessons incredibly valuable."',
-    date: 'Enrolled: Jan 2025'
-  },
-  {
-    id: 7,
-    name: 'Nabin Tamang',
-    role: '+2 Science Tuition',
-    rating: 5,
-    text: '"The +2 tuition at NEXL saved my finals! The teachers explain complex physics and chemistry topics so clearly instead of just making us memorize them. Highly recommended for board exam prep."',
-    date: 'Enrolled: Nov 2024'
-  },
-];
-
-const getInitials = (name) => {
-  const parts = name.split(' ');
-  if (parts.length >= 2) {
-    return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
-  }
-  return name.substring(0, 2).toUpperCase();
-};
+import React from 'react';
+import { testimonials } from '../../data/landingData';
 
 const Testimonials = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const totalSlides = Math.ceil(testimonials.length / 3);
-  const currentSlide = Math.floor(currentIndex / 3);
-
-  const nextTestimonial = () => {
-    setCurrentIndex((prev) => {
-      const nextIndex = prev + 3;
-      return nextIndex >= testimonials.length ? prev : nextIndex;
-    });
-  };
-
-  const prevTestimonial = () => {
-    setCurrentIndex((prev) => Math.max(prev - 3, 0));
-  };
-
-  const getVisibleTestimonials = () => {
-    const visible = [];
-    for (let i = 0; i < 3; i++) {
-        const item = testimonials[currentIndex + i];
-        if (item) {
-            visible.push(item);
-        } else {
-            // Add Empty placeholders to keep layout consistent at the end
-            visible.push({ id: `empty-${i}`, empty: true });
-        }
-    }
-    return visible;
-  };
-
   return (
     <section className="py-20 bg-gray-50 flex justify-center items-center">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 w-full">
@@ -175,51 +78,24 @@ const Testimonials = () => {
           </button>
         </div>
         
-        {/* Mobile Navigation Controls */}
-        <div className="flex md:hidden justify-center items-center gap-4 mt-8 w-full">
-             <button 
-                onClick={prevTestimonial}
-                className="h-12 w-12 flex items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-sm hover:bg-gray-50 transition-colors"
-             >
-                 <ChevronLeft size={24} />
-             </button>
-             
-              {/* Pagination Dots */}
-            <div className="flex gap-2">
-            {[...Array(totalSlides)].map((_, idx) => (
-                <button
-                key={idx}
-                onClick={() => setCurrentIndex(idx * 3)}
-                className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                    currentSlide === idx ? 'bg-[#1B3452]' : 'bg-gray-300 hover:bg-gray-400'
-                }`}
-                aria-label={`Go to slide ${idx + 1}`}
-                />
-            ))}
-            </div>
-
-             <button 
-                onClick={nextTestimonial}
-                 className="h-12 w-12 flex items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-sm hover:bg-gray-50 transition-colors"
-             >
-                 <ChevronRight size={24} />
-             </button>
-        </div>
-
-        {/* Desktop Pagination Dots */}
-        <div className="hidden md:flex justify-center items-center gap-2 mt-10">
-          {[...Array(totalSlides)].map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentIndex(idx * 3)}
-              className={`w-3 h-3 rounded-full transition-colors ${
-                currentSlide === idx ? 'bg-[#1B3452]' : 'bg-gray-300 hover:bg-gray-400'
-              }`}
-              aria-label={`Go to slide ${idx + 1}`}
-            />
+        <div className="grid md:grid-cols-3 gap-8">
+          {testimonials.map((item) => (
+            <blockquote key={item.id} className="space-y-6 p-8 rounded-3xl bg-secondary/30 relative">
+              <div className="text-6xl text-primary/20 font-serif absolute top-4 left-6 leading-none select-none">"</div>
+              <p className="text-lg font-light leading-relaxed text-gray-800 font-outfit relative z-10 pt-4">
+                {item.quote}
+              </p>
+              <footer className="space-y-1 font-outfit relative z-10">
+                <cite className="not-italic font-bold text-sm text-foreground">
+                  {item.author}
+                </cite>
+                <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold">
+                  {item.role} · {item.date}
+                </p>
+              </footer>
+            </blockquote>
           ))}
         </div>
-        
       </div>
     </section>
   );

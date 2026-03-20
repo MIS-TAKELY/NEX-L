@@ -31,7 +31,7 @@ const SectionList = ({ sections, onSelectContent, activeResourceId }) => {
                             <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary text-sm font-bold">
                                 {sIndex + 1}
                             </span>
-                            <span className="font-bold text-gray-900 dark:text-white line-clamp-1 italic">{section.title}</span>
+                            <span className="font-bold text-gray-900 dark:text-foreground line-clamp-1 italic">{section.title}</span>
                         </div>
                         <Icon
                             icon={expandedSections[section._id] ? 'solar:alt-arrow-up-linear' : 'solar:alt-arrow-down-linear'}

@@ -1,107 +1,85 @@
-import { Icon } from '@iconify/react';
+import React from 'react';
+import { Star, Users, Clock, ArrowRight } from 'lucide-react';
+import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { useAddToCartMutation, useGetCartQuery, useRemoveFromCartMutation } from '../../store/slices/cartApi';
 
-const CourseCard = ({ course }) => {
+const CourseCard = ({ course, index }) => {
   const navigate = useNavigate();
-  const { isLoggedIn, userRole } = useSelector((state) => state.auth);
-  const [addToCartApi] = useAddToCartMutation();
-  const [removeFromCartApi] = useRemoveFromCartMutation();
-  const { data: cartResp } = useGetCartQuery(undefined, { skip: !isLoggedIn || userRole !== 'student' });
-  const cartItems = cartResp?.data?.items || [];
-
-  const isInCart = cartItems.some((item) => item.course._id === course._id);
-
-  const handleToggleCart = async (e) => {
-    e.stopPropagation();
-    try {
-      if (isInCart) {
-        await removeFromCartApi(course._id).unwrap();
-      } else {
-        await addToCartApi({ courseId: course._id, course }).unwrap();
-      }
-    } catch (err) {
-      console.error(`Failed to ${isInCart ? 'remove from' : 'add to'} cart:`, err);
-    }
-  };
 
   return (
-    <div className="group h-full flex flex-col bg-white dark:bg-zinc-900 rounded-2xl border-2 border-gray-100 dark:border-zinc-800 p-4 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5 hover:border-primary/20">
-      <div className="relative h-48 mb-4 overflow-hidden rounded-xl bg-gray-100">
-        <img
-          src={course.thumbnail || "https://via.placeholder.com/400x225?text=No+Thumbnail"}
+    <motion.article 
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      whileHover={{ y: -5 }}
+      onClick={() => navigate(`/course/${course._id || course.id}`)}
+      className="group cursor-pointer bg-card rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300 flex flex-col premium-card glass-card h-full"
+    >
+      {/* Image Container with Overlay */}
+      <div className="aspect-[4/3] overflow-hidden relative">
+        <img 
+          src={course.image || course.thumbnail} 
           alt={course.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
-        <div className="absolute top-3 left-3 px-3 py-1 bg-primary/90 backdrop-blur-md text-white text-xs font-bold rounded-full">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        
+        <div className="absolute top-4 left-4 bg-background/80 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold text-primary uppercase tracking-widest shadow-lg border border-white/10">
           {course.category}
         </div>
-      </div>
 
-      <div className="flex-1 flex flex-col">
-        <div className="flex items-center gap-2 mb-2">
-          <h3 className="text-xl font-bold text-primary dark:text-white leading-tight">
-            {course.title}
-          </h3>
-        </div>
-
-        {/* <p className="text-sm font-semibold text-accent mb-1">
-          ✨ {course.benefit}
-        </p> */}
-
-        <p className="text-sm text-gray-500 dark:text-zinc-400 mb-4 line-clamp-2">
-          {course.description}
-        </p>
-
-        <div className="mt-auto flex items-center justify-between">
-          <div>
-            <p className="text-xs text-gray-400 font-medium">Instructor</p>
-            <p className="text-sm font-bold text-gray-800 dark:text-zinc-200">
-              {course?.teacher?.name || "NEXL Instructor"}
-            </p>
+        {course.featured && (
+          <div className="absolute top-4 right-4 bg-primary px-3 py-1.5 rounded-full text-[10px] font-bold text-primary-foreground uppercase tracking-widest shadow-lg">
+            Featured
           </div>
-          <div className="text-right">
-            <span className="inline-block px-2 py-0.5 rounded bg-accent/10 text-accent text-[10px] font-bold uppercase mb-1">
-              {course.level}
-            </span>
-            <p className="text-lg font-extrabold text-primary dark:text-accent">
-              Rs. {course.price}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-6 flex gap-3">
-        <button
-          onClick={() => navigate(`/course/${course._id}`)}
-          className="flex-1 py-3 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover transition-all shadow-md active:scale-95 flex items-center justify-center gap-2 group"
-        >
-          View Course
-          <span className="group-hover:translate-x-1 transition-transform">
-            →
-          </span>
-        </button>
-
-        {userRole === "student" && (
-          <button
-            onClick={handleToggleCart}
-            className={`px-4 rounded-lg font-bold transition-all shadow-md active:scale-95 flex items-center justify-center border-2
-                ${isInCart
-                ? "bg-red-500 border-red-500 text-white hover:bg-red-600"
-                : "bg-white border-primary text-primary hover:bg-primary hover:text-white dark:bg-zinc-800 dark:text-white dark:border-zinc-700 dark:hover:bg-primary dark:hover:border-primary"
-              }`}
-            title={isInCart ? "Remove from cart" : "Add to cart"}
-          >
-            {isInCart ? (
-              <Icon icon="solar:trash-bin-trash-bold" size={24} />
-            ) : (
-              <Icon icon="solar:cart-large-2-bold" size={24} />
-            )}
-          </button>
         )}
       </div>
-    </div>
+      
+      <div className="p-5 flex-1 flex flex-col max-w-[280px] mx-auto w-full">
+        <h3 className="text-lg font-bold leading-tight line-clamp-1 group-hover:text-primary transition-colors text-foreground mb-3 font-outfit" title={course.title}>
+          {course.title}
+        </h3>
+        
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
+            <Users className="w-2.5 h-2.5 text-primary" />
+          </div>
+          <p className="text-[11px] text-muted-foreground font-medium">{course.instructor || "Expert Instructor"}</p>
+        </div>
+        
+        {/* Stats Grid */}
+        <div className="grid grid-cols-3 gap-1 py-3 border-y border-border/50 mb-4">
+          <div className="flex flex-col items-center gap-0.5 border-r border-border/50">
+            <div className="flex items-center gap-1 text-amber-400">
+              <Star className="w-2.5 h-2.5 fill-current" />
+              <span className="text-[10px] font-bold">{course.rating || "4.8"}</span>
+            </div>
+            <span className="text-[8px] uppercase text-muted-foreground font-bold tracking-tighter">Rating</span>
+          </div>
+          <div className="flex flex-col items-center gap-0.5 border-r border-border/50">
+            <span className="text-[10px] font-bold text-foreground">{course.students || "1.2K"}</span>
+            <span className="text-[8px] uppercase text-muted-foreground font-bold tracking-tighter">Students</span>
+          </div>
+          <div className="flex flex-col items-center gap-0.5">
+            <span className="text-[10px] font-bold text-foreground">{course.duration || "20h"}</span>
+            <span className="text-[8px] uppercase text-muted-foreground font-bold tracking-tighter">Duration</span>
+          </div>
+        </div>
+
+        <div className="mt-auto flex items-center justify-between">
+          <div className="flex flex-col">
+            <span className="text-[10px] uppercase text-muted-foreground font-bold tracking-widest mb-0.5">Price</span>
+            <span className="text-lg font-black text-foreground truncate max-w-[120px]" title={course.price}>
+              {course.price || "Free"}
+            </span>
+          </div>
+          <button className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300 group/btn">
+            <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-0.5 transition-transform" />
+          </button>
+        </div>
+      </div>
+    </motion.article>
   );
 };
 

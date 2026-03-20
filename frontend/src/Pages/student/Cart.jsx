@@ -73,11 +73,11 @@ const Cart = () => {
       <div className="min-h-screen flex items-center justify-center bg-secondary/30">
         <div className="text-center">
           <Icon icon="solar:cart-large-2-bold-duotone" className="mx-auto text-gray-300 dark:text-zinc-700 mb-6" width={120} />
-          <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">Your Cart is Empty</h2>
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-foreground mb-4">Your Cart is Empty</h2>
           <p className="text-gray-600 dark:text-zinc-400 mb-8">Add some courses to get started!</p>
           <button
             onClick={() => navigate('/course-list')}
-            className="px-8 py-3 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover transition-all shadow-md"
+            className="px-8 py-3 bg-primary text-foreground rounded-lg font-bold hover:bg-primary-hover transition-all shadow-md"
           >
             Browse Courses
           </button>
@@ -90,7 +90,7 @@ const Cart = () => {
     <div className="min-h-screen bg-secondary/30 py-12">
       <div className="container mx-auto px-6">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Shopping Cart</h1>
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-foreground mb-2">Shopping Cart</h1>
           <p className="text-gray-600 dark:text-zinc-400">{cart.length} {cart.length === 1 ? 'course' : 'courses'} in your cart</p>
         </div>
 
@@ -102,10 +102,10 @@ const Cart = () => {
               return (
                 <div
                   key={item.course._id}
-                  className={`bg-white dark:bg-zinc-900 rounded-2xl border-2 transition-all duration-300 hover:shadow-lg ${isSelected
+                  className={`bg-background dark:bg-zinc-900 rounded-xl border-2 transition-all duration-300 hover:shadow-lg ${isSelected
                     ? 'border-primary dark:border-primary'
                     : 'border-gray-100 dark:border-zinc-800'
-                    } p-6`}
+                    } p-4`}
                 >
                   <div className="flex gap-6">
                     {/* Checkbox */}
@@ -131,7 +131,7 @@ const Cart = () => {
                     <div className="flex-1">
                       <div className="flex justify-between items-start mb-2">
                         <div>
-                          <h3 className="text-xl font-bold text-primary dark:text-white mb-1">
+                          <h3 className="text-xl font-bold text-primary dark:text-foreground mb-1">
                             {item.course.title}
                           </h3>
                           <p className="text-sm text-gray-600 dark:text-zinc-400 mb-2">
@@ -181,8 +181,8 @@ const Cart = () => {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-zinc-900 rounded-2xl border-2 border-gray-100 dark:border-zinc-800 p-6 sticky top-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Order Summary</h2>
+            <div className="bg-background dark:bg-zinc-900 rounded-xl border-2 border-gray-100 dark:border-zinc-800 p-5 sticky top-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-foreground mb-4">Order Summary</h2>
 
               {/* Select All */}
               <div className="mb-6 pb-4 border-b border-gray-200 dark:border-zinc-700">
@@ -209,7 +209,7 @@ const Cart = () => {
                   <span className="text-green-600">- Rs. 0</span>
                 </div>
                 <div className="border-t border-gray-200 dark:border-zinc-700 pt-3 mt-3">
-                  <div className="flex justify-between text-xl font-bold text-gray-900 dark:text-white">
+                  <div className="flex justify-between text-xl font-bold text-gray-900 dark:text-foreground">
                     <span>Total</span>
                     <span>Rs. {calculateTotal().toLocaleString()}</span>
                   </div>
@@ -221,7 +221,7 @@ const Cart = () => {
                 disabled={selectedCourses.length === 0}
                 className={`w-full py-4 rounded-lg font-bold transition-all shadow-md mb-3 ${selectedCourses.length === 0
                     ? 'bg-gray-300 dark:bg-zinc-700 text-gray-500 dark:text-zinc-500 cursor-not-allowed'
-                    : 'bg-primary text-white hover:bg-primary-hover'
+                    : 'bg-primary text-foreground hover:bg-primary-hover'
                   }`}
               >
                 {selectedCourses.length === 0
@@ -232,7 +232,7 @@ const Cart = () => {
 
               <button
                 onClick={() => navigate('/course-list')}
-                className="w-full py-4 bg-white dark:bg-zinc-800 border-2 border-primary text-primary rounded-lg font-bold hover:bg-primary hover:text-white dark:hover:bg-primary transition-all"
+                className="w-full py-4 bg-background dark:bg-zinc-800 border-2 border-primary text-primary rounded-lg font-bold hover:bg-primary hover:text-foreground dark:hover:bg-primary transition-all"
               >
                 Add More Courses
               </button>

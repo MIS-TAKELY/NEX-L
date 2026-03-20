@@ -43,7 +43,7 @@ const Search = () => {
                     <div className="flex flex-col lg:flex-row gap-8">
                         {/* Sidebar Filters */}
                         <aside className="w-full lg:w-80 space-y-8">
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <div className="bg-background p-6 rounded-2xl shadow-sm border border-gray-100">
                                 <h3 className="text-xl font-bold text-primary mb-6 flex items-center gap-2">
                                     <Icon icon="solar:filter-bold-duotone" className="text-accent" />
                                     Filters
@@ -73,7 +73,7 @@ const Search = () => {
                                                 <button
                                                     key={lvl}
                                                     onClick={() => setLevel(lvl)}
-                                                    className={`w-full text-left px-4 py-2.5 rounded-xl transition-all font-medium ${level === lvl ? "bg-primary text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                                                    className={`w-full text-left px-4 py-2.5 rounded-xl transition-all font-medium ${level === lvl ? "bg-primary text-foreground" : "bg-gray-50 text-gray-600 hover:bg-gray-100"
                                                         }`}
                                                 >
                                                     {lvl || "All Levels"}
@@ -95,7 +95,7 @@ const Search = () => {
                                                     key={p.value}
                                                     onClick={() => setPriceRange(p.value)}
                                                     className={`px-4 py-2 rounded-full border-2 transition-all font-bold text-sm ${priceRange === p.value
-                                                            ? "bg-accent border-accent text-white"
+                                                            ? "bg-accent border-accent text-foreground"
                                                             : "border-gray-100 text-gray-500 hover:border-accent/30"
                                                         }`}
                                                 >
@@ -126,7 +126,7 @@ const Search = () => {
                                 <input
                                     type="text"
                                     placeholder="Search for anything..."
-                                    className="w-full pl-16 pr-6 py-5 bg-white border-2 border-transparent focus:border-primary rounded-2xl shadow-sm outline-none transition-all text-xl"
+                                    className="w-full pl-16 pr-6 py-5 bg-background border-2 border-transparent focus:border-primary rounded-2xl shadow-sm outline-none transition-all text-xl"
                                     value={q}
                                     onChange={(e) => setQ(e.target.value)}
                                 />
@@ -147,7 +147,7 @@ const Search = () => {
                                             ))}
                                         </div>
                                     ) : (
-                                        <div className="text-center py-32 bg-white rounded-[3rem] border-2 border-dashed border-gray-100">
+                                        <div className="text-center py-32 bg-background rounded-3xl border-2 border-dashed border-gray-100">
                                             <Icon icon="solar:document-grey-bold" className="mx-auto text-gray-100 mb-6" width={80} />
                                             <h3 className="text-3xl font-bold text-gray-400">No courses found</h3>
                                             <p className="text-gray-400 mt-2 text-lg">Try adjusting your filters or search query.</p>

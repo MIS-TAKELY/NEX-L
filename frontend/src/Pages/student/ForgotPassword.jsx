@@ -1,6 +1,7 @@
 import { Icon } from '@iconify/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import logo from '../../assets/logoo.png';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const ForgotPassword = () => {
   return (
     <div className="min-h-screen flex font-outfit">
       {/* Left Side - Dark Background with Text */}
-      <div className="hidden lg:flex lg:w-1/2 bg-primary relative flex-col justify-center px-12 md:px-20 text-white overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-primary relative flex-col justify-center px-12 md:px-20 text-foreground overflow-hidden">
         {/* Abstract lines decoration */}
         <div className="absolute bottom-20 left-20 w-48 h-48 border border-white/10 rounded-lg transform rotate-12" />
         <div className="absolute bottom-24 left-24 w-48 h-48 border border-white/10 rounded-lg transform rotate-12" />
@@ -23,7 +24,7 @@ const ForgotPassword = () => {
         <div className="relative z-10 mb-20">
           {/* <button 
             onClick={() => navigate(-1)}
-            className="absolute -top-32 left-0 flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all font-medium backdrop-blur-sm border border-white/20 shadow-sm"
+            className="absolute -top-32 left-0 flex items-center gap-2 px-4 py-2 bg-background/10 hover:bg-background/20 text-foreground rounded-full transition-all font-medium backdrop-blur-sm border border-white/20 shadow-sm"
           >
             <Icon icon="solar:alt-arrow-left-linear" className="w-5 h-5" /> go back
           </button> */}
@@ -50,7 +51,7 @@ const ForgotPassword = () => {
       </div>
 
       {/* Right Side - Form */}
-      <div className="w-full lg:w-1/2 bg-white flex items-center justify-center p-6 md:p-8 relative">
+      <div className="w-full lg:w-1/2 bg-background flex items-center justify-center p-6 md:p-8 relative">
         <div className="w-full max-w-md space-y-8">
           {/* Mobile Back Button & Header */}
            <div className="lg:hidden mb-8">
@@ -82,7 +83,7 @@ const ForgotPassword = () => {
 
             <button
               type="submit"
-              className="w-full bg-accent text-white py-3.5 rounded-lg font-bold hover:bg-accent/90 transition-transform active:scale-[0.99] shadow-lg shadow-accent/20"
+              className="w-full bg-accent text-foreground py-3.5 rounded-lg font-bold hover:bg-accent/90 transition-transform active:scale-[0.99] shadow-lg shadow-accent/20"
             >
               Send Reset Link
             </button>

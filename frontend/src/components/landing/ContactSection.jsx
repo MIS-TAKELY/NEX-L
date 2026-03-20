@@ -51,7 +51,7 @@ const ContactSection = () => {
   ];
 
   return (
-    <section id="contact" className="py-20 bg-white relative overflow-hidden">
+    <section id="contact" className="py-20 bg-background relative overflow-hidden">
       {/* Decorative background blobs */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary/5 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl pointer-events-none" />
@@ -100,7 +100,7 @@ const ContactSection = () => {
           </div>
 
           {/* Form Panel */}
-          <div className="lg:col-span-3 bg-white rounded-2xl shadow-2xl p-8 md:p-10">
+          <div className="lg:col-span-3 bg-background rounded-2xl shadow-2xl p-8 md:p-10">
             {submitted ? (
               <div className="flex flex-col items-center justify-center h-full py-12 gap-4 text-center">
                 <CheckCircle className="w-16 h-16 text-primary" />
@@ -116,7 +116,7 @@ const ContactSection = () => {
                     setSubmitted(false);
                     setFormData({ name: "", email: "", subject: "", message: "" });
                   }}
-                  className="mt-4 px-6 py-2.5 rounded-lg bg-primary text-white font-semibold hover:bg-primary-hover transition-colors duration-200"
+                  className="mt-4 px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary-hover transition-colors duration-200"
                 >
                   Send Another
                 </button>
@@ -187,7 +187,7 @@ const ContactSection = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover active:scale-[0.98] transition-all duration-200 shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-primary text-primary-foreground rounded-lg font-bold hover:bg-primary-hover active:scale-[0.98] transition-all duration-200 shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>
