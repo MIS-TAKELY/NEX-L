@@ -67,14 +67,19 @@ const StudentChat = ({ courseId, onClose }) => {
   return (
     <div className="flex flex-col h-full str-chat-custom">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b bg-background">
-        <div className="flex items-center gap-2">
-          <Icon icon="solar:chat-round-dots-bold-duotone" className="w-5 h-5 text-primary" />
-          <span className="font-semibold text-gray-900 text-sm">Chat with Teacher</span>
+      <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-card transition-colors duration-500">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+            <Icon icon="solar:chat-round-dots-bold-duotone" className="w-6 h-6 text-primary" />
+          </div>
+          <div>
+            <span className="font-black text-foreground text-sm tracking-tight uppercase">Private Mentor</span>
+            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest leading-none">1-on-1 Session</p>
+          </div>
         </div>
         {onClose && (
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-700 transition-colors">
-            <Icon icon="solar:close-circle-linear" className="w-5 h-5" />
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all">
+            <Icon icon="solar:close-circle-bold" size={20} />
           </button>
         )}
       </div>

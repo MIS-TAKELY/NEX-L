@@ -101,7 +101,7 @@ const Player = () => {
       case 'video':
         return (
           <div className="space-y-6">
-            <div className="aspect-video w-full bg-black rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-zinc-800">
+            <div className="aspect-video w-full bg-black rounded-[2rem] overflow-hidden shadow-2xl border border-border/50 group relative">
               <video
                 key={url}
                 controls
@@ -112,7 +112,7 @@ const Player = () => {
                 Your browser does not support the video tag.
               </video>
             </div>
-            <div className="bg-background dark:bg-zinc-900 p-8 rounded-3xl border border-gray-100 dark:border-zinc-800 premium-card">
+            <div className="bg-card p-10 rounded-[2rem] border border-border shadow-sm transition-colors duration-500 premium-card">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-foreground mb-4">
                 {formatDisplayName(activeResource.name, activeLesson?.title)}
               </h2>
@@ -126,33 +126,34 @@ const Player = () => {
       case 'pdf':
       case 'file':
         return (
-          <div className="flex flex-col items-center justify-center py-20 bg-background dark:bg-zinc-900 rounded-3xl border border-gray-100 dark:border-zinc-800 shadow-sm px-10 text-center premium-card">
-            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
-              <Icon icon="solar:document-bold" className="text-primary" size={40} />
+          <div className="flex flex-col items-center justify-center py-20 bg-card rounded-[2rem] border border-border shadow-sm px-10 text-center premium-card transition-colors duration-500">
+            <div className="w-24 h-24 bg-primary/10 rounded-[2rem] flex items-center justify-center mb-8 relative group">
+              <div className="absolute inset-0 bg-primary/5 rounded-[2rem] animate-pulse" />
+              <Icon icon="solar:document-bold" className="text-primary relative z-10" size={48} />
             </div>
-            <h2 className="text-3xl font-extrabold text-gray-900 dark:text-foreground mb-4">
+            <h2 className="text-4xl font-black text-foreground mb-4 tracking-tight">
               {formatDisplayName(activeResource.name, activeLesson?.title)}
             </h2>
-            <p className="text-gray-500 mb-8 max-w-md font-medium">This resource is a {type}. You can view it by clicking the button below.</p>
+            <p className="text-muted-foreground mb-10 max-w-md font-medium text-lg leading-relaxed">This resource is a <span className="text-primary font-bold">{type}</span>. You can view it by clicking the button below.</p>
 
             <a
               href={url}
               target="_blank"
               rel="noreferrer"
-              className="px-10 py-4 bg-primary text-foreground rounded-2xl font-bold flex items-center gap-3 hover:shadow-xl hover:shadow-primary/20 transition-all active:scale-95"
+              className="px-12 py-5 bg-primary text-primary-foreground rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:shadow-2xl hover:shadow-primary/30 transition-all active:scale-95 shadow-xl shadow-primary/10"
             >
-              <Icon icon="solar:download-minimalistic-bold" /> Open Resource
+              <Icon icon="solar:download-minimalistic-bold" className="w-5 h-5" /> Open Resource
             </a>
           </div>
         );
       case 'note':
       case 'article':
         return (
-          <div className="prose prose-lg dark:prose-invert max-w-none bg-background dark:bg-zinc-900 p-8 md:p-12 rounded-3xl border border-gray-100 dark:border-zinc-800 shadow-sm premium-card">
-            <h1 className="text-4xl font-extrabold text-gray-900 dark:text-foreground mb-8">
+          <div className="prose prose-lg dark:prose-invert max-w-none bg-card p-10 md:p-16 rounded-[2rem] border border-border shadow-sm premium-card transition-colors duration-500">
+            <h1 className="text-5xl font-black text-foreground mb-10 tracking-tight">
               {formatDisplayName(activeResource?.name, activeLesson?.title)}
             </h1>
-            <div className="text-gray-700 dark:text-zinc-300 whitespace-pre-wrap leading-relaxed font-medium">
+            <div className="text-foreground/80 whitespace-pre-wrap leading-relaxed font-medium text-lg">
 
               {activeLesson?.description || activeLesson?.summary || "No description provided."}
             </div>
@@ -176,12 +177,13 @@ const Player = () => {
         );
       default:
         return (
-          <div className="flex flex-col items-center justify-center h-full py-20 bg-gray-50 dark:bg-zinc-900/50 rounded-3xl border-2 border-dashed border-gray-200 dark:border-zinc-800">
-            <Icon icon="solar:document-text-bold" className="text-primary mb-4" size={48} />
-            <p className="text-gray-500 font-medium text-lg">Detailed content display for "{type}" is coming soon!</p>
+          <div className="flex flex-col items-center justify-center py-24 bg-secondary/30 rounded-[2rem] border-2 border-dashed border-border transition-colors duration-500">
+            <Icon icon="solar:document-text-bold" className="text-primary/40 mb-6 animate-pulse" size={64} />
+            <p className="text-muted-foreground font-black uppercase tracking-widest text-sm">Preview Unavailable</p>
+            <p className="text-foreground font-medium text-lg mt-2">Interactive "{type}" module coming soon!</p>
             {url && (
-              <a href={url} target="_blank" rel="noreferrer" className="mt-4 text-primary font-bold hover:underline">
-                View Resource URL
+              <a href={url} target="_blank" rel="noreferrer" className="mt-8 text-primary font-black uppercase tracking-wider text-xs hover:underline flex items-center gap-2 bg-background px-6 py-3 rounded-xl border border-border shadow-sm hover:shadow-md transition-all">
+                Access Resource File <Icon icon="solar:arrow-right-up-bold" className="w-4 h-4" />
               </a>
             )}
           </div>
@@ -190,28 +192,28 @@ const Player = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-zinc-950 overflow-hidden font-outfit">
+    <div className="flex h-screen bg-background overflow-hidden font-outfit transition-colors duration-500">
       {/* Sidebar Overlay for Mobile */}
       {!isSidebarOpen && (
         <button
           onClick={() => setIsSidebarOpen(true)}
-          className="fixed bottom-6 right-6 z-50 p-4 bg-primary text-foreground rounded-full shadow-2xl lg:hidden active:scale-95 transition-all"
+          className="fixed bottom-8 right-8 z-50 p-5 bg-primary text-primary-foreground rounded-full shadow-[0_20px_50px_rgba(79,70,229,0.3)] lg:hidden active:scale-90 transition-all group"
         >
-          <Icon icon="solar:menu-dots-bold" size={24} />
+          <Icon icon="solar:menu-dots-bold" size={28} className="group-hover:rotate-90 transition-transform" />
         </button>
       )}
 
       {/* Course Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-80 bg-background dark:bg-zinc-900 border-r border-gray-100 dark:border-zinc-800 transition-transform duration-300 lg:static lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed inset-y-0 left-0 z-40 w-80 bg-card border-r border-border transition-all duration-500 lg:static lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
       >
         <div className="flex flex-col h-full">
-          <div className="p-6 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between">
-            <h2 className="text-xl font-extrabold text-gray-900 dark:text-foreground truncate pr-4">{course?.title}</h2>
+          <div className="p-8 border-b border-border flex items-center justify-between">
+            <h2 className="text-2xl font-black text-foreground truncate pr-4 tracking-tight leading-tight">{course?.title}</h2>
 
-            <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 hover:bg-gray-100 rounded-lg">
-              <Icon icon="solar:close-circle-linear" size={24} className="text-gray-400" />
+            <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 hover:bg-secondary rounded-xl transition-colors">
+              <Icon icon="solar:close-circle-bold" size={28} className="text-muted-foreground hover:text-destructive" />
             </button>
           </div>
 
@@ -223,18 +225,17 @@ const Player = () => {
             />
           </div>
 
-          <div className="p-4 bg-gray-50 dark:bg-zinc-800/30 m-4 rounded-3xl border border-gray-100 dark:border-zinc-800">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
-                <Icon icon="solar:user-bold" className="text-accent" />
+          <div className="p-5 bg-secondary/50 m-6 rounded-[2rem] border border-border shadow-inner">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center border border-accent/20 shadow-sm">
+                <Icon icon="solar:user-bold-duotone" className="text-accent w-6 h-6" />
               </div>
               <div className="overflow-hidden">
-                <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Instructor</p>
-                <p className="text-sm font-extrabold text-gray-900 dark:text-foreground truncate">
+                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-0.5">Instructor</p>
+                <p className="text-sm font-black text-foreground truncate">
                   {course?.teacher?.name || "Expert Instructor"}
                 </p>
               </div>
-
             </div>
           </div>
         </div>
@@ -243,74 +244,71 @@ const Player = () => {
       {/* Main Content Pane */}
       <main className="flex-1 flex flex-col h-full overflow-hidden relative">
         {/* Top Navbar */}
-        <header className="h-20 bg-background/80 dark:bg-zinc-900/80 backdrop-blur-xl border-b border-gray-100 dark:border-zinc-800 px-6 md:px-10 flex items-center justify-between z-30">
-          <div className="flex items-center gap-4">
+        <header className="h-24 glass border-b border-border px-8 md:px-12 flex items-center justify-between z-30 transition-all duration-500">
+          <div className="flex items-center gap-6">
             <button
               onClick={() => navigate(-1)}
-              className="p-3 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-2xl transition-all text-gray-500 hover:text-primary active:scale-95"
+              className="w-12 h-12 flex items-center justify-center bg-secondary hover:bg-background rounded-2xl transition-all text-muted-foreground hover:text-primary active:scale-90 border border-transparent hover:border-border shadow-sm"
             >
-              <Icon icon="solar:alt-arrow-left-linear" size={24} />
+              <Icon icon="solar:alt-arrow-left-bold" size={24} />
             </button>
             <div>
-              <p className="text-xs text-gray-400 font-bold uppercase tracking-widest leading-none mb-1">Current Lesson</p>
-              <h3 className="text-lg font-extrabold text-gray-900 dark:text-foreground truncate max-w-xs md:max-w-md">
+              <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] leading-none mb-1.5">Learning Module</p>
+              <h3 className="text-xl font-black text-foreground truncate max-w-xs md:max-w-md tracking-tight">
                 {formatDisplayName(activeResource?.name, activeLesson?.title)}
               </h3>
             </div>
-
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {/* Live Stream button */}
             <button
               onClick={() => navigate(`/student/live/${courseId}`)}
               title="Watch Live Class"
-              className="p-2.5 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 transition-all flex items-center gap-1.5 text-xs font-bold"
+              className="p-3 bg-destructive/10 text-destructive rounded-2xl hover:bg-destructive shadow-lg shadow-destructive/10 hover:shadow-destructive/20 hover:text-white transition-all flex items-center gap-2 text-xs font-black uppercase tracking-widest"
             >
-              <Icon icon="solar:play-stream-bold-duotone" className="w-4 h-4" />
-              <span className="hidden sm:inline">Live</span>
+              <Icon icon="solar:play-stream-bold-duotone" className="w-5 h-5 animate-pulse" />
+              <span className="hidden xl:inline">Live Session</span>
             </button>
 
             {/* Video Call button */}
             <button
               onClick={() => navigate(`/student/video-call/${courseId}`)}
               title="Video Call Teacher"
-              className="p-2.5 bg-blue-50 text-blue-500 rounded-xl hover:bg-blue-100 transition-all flex items-center gap-1.5 text-xs font-bold"
+              className="p-3 bg-blue-500/10 text-blue-500 rounded-2xl hover:bg-blue-500 hover:text-white transition-all flex items-center gap-2 text-xs font-black uppercase tracking-widest border border-blue-500/10"
             >
-              <Icon icon="solar:video-frame-play-bold-duotone" className="w-4 h-4" />
-              <span className="hidden sm:inline">Call</span>
+              <Icon icon="solar:video-frame-play-bold-duotone" className="w-5 h-5" />
+              <span className="hidden xl:inline">Video Consult</span>
             </button>
+
+            <div className="w-px h-8 bg-border hidden md:block mx-1"></div>
 
             {/* Group Chat button */}
             <button
               onClick={() => setCommPanel(commPanel === 'group' ? null : 'group')}
               title="Group Chat"
-              className={`p-2.5 rounded-xl transition-all flex items-center gap-1.5 text-xs font-bold ${
+              className={`p-3 rounded-2xl transition-all flex items-center gap-2 text-xs font-black uppercase tracking-widest border ${
                 commPanel === 'group'
-                  ? 'bg-primary text-foreground shadow-lg shadow-primary/25'
-                  : 'bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-300 hover:bg-gray-200'
+                  ? 'bg-primary text-primary-foreground shadow-xl shadow-primary/20 border-primary'
+                  : 'bg-secondary text-muted-foreground hover:text-foreground hover:bg-background border-transparent hover:border-border shadow-sm'
               }`}
             >
-              <Icon icon="solar:users-group-rounded-bold-duotone" className="w-4 h-4" />
-              <span className="hidden sm:inline">Group</span>
+              <Icon icon="solar:users-group-rounded-bold-duotone" className="w-5 h-5" />
+              <span className="hidden xl:inline">Community</span>
             </button>
 
             {/* DM Chat button */}
             <button
               onClick={() => setCommPanel(commPanel === 'dm' ? null : 'dm')}
               title="Chat with Teacher"
-              className={`p-2.5 rounded-xl transition-all flex items-center gap-1.5 text-xs font-bold ${
+              className={`p-3 rounded-2xl transition-all flex items-center gap-2 text-xs font-black uppercase tracking-widest border ${
                 commPanel === 'dm'
-                  ? 'bg-primary text-foreground shadow-lg shadow-primary/25'
-                  : 'bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-300 hover:bg-gray-200'
+                  ? 'bg-primary text-primary-foreground shadow-xl shadow-primary/20 border-primary'
+                  : 'bg-secondary text-muted-foreground hover:text-foreground hover:bg-background border-transparent hover:border-border shadow-sm'
               }`}
             >
-              <Icon icon="solar:chat-round-dots-bold-duotone" className="w-4 h-4" />
-              <span className="hidden sm:inline">Chat</span>
-            </button>
-
-            <button className="px-4 py-2.5 bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-300 rounded-xl font-bold text-sm hover:bg-gray-200 dark:hover:bg-zinc-700 transition-all flex items-center gap-2 shadow-sm">
-              Resources <Icon icon="solar:download-minimalistic-linear" />
+              <Icon icon="solar:chat-round-dots-bold-duotone" className="w-5 h-5" />
+              <span className="hidden xl:inline">Mentor</span>
             </button>
           </div>
         </header>
@@ -325,13 +323,15 @@ const Player = () => {
 
       {/* Communication Panel (right slide-in) */}
       {commPanel && (
-        <aside className="w-full max-w-sm flex flex-col border-l border-gray-100 dark:border-zinc-800 bg-background dark:bg-zinc-900 h-full flex-shrink-0">
-          {commPanel === 'dm' && (
-            <StudentChat courseId={courseId} onClose={() => setCommPanel(null)} />
-          )}
-          {commPanel === 'group' && (
-            <CourseGroupChat courseId={courseId} onClose={() => setCommPanel(null)} />
-          )}
+        <aside className="w-full max-w-sm flex flex-col border-l border-border bg-card h-full flex-shrink-0 shadow-2xl z-20 transition-all duration-500 animate-slide-in-right">
+          <div className="flex-1 overflow-hidden relative">
+            {commPanel === 'dm' && (
+              <StudentChat courseId={courseId} onClose={() => setCommPanel(null)} />
+            )}
+            {commPanel === 'group' && (
+              <CourseGroupChat courseId={courseId} onClose={() => setCommPanel(null)} />
+            )}
+          </div>
         </aside>
       )}
     </div>

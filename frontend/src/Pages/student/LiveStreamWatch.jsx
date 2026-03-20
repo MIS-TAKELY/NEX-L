@@ -55,18 +55,18 @@ const WatcherView = ({ courseName, courseId, call }) => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-950">
+    <div className="flex flex-col h-screen bg-background transition-colors duration-500">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 bg-gray-900/50 backdrop-blur-md border-b border-white/5">
+      <div className="flex items-center justify-between px-6 py-4 glass border-b border-border/50 sticky top-0 z-50">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center border border-red-500/20 shadow-inner">
-            <Icon icon="solar:tv-bold-duotone" className="w-7 h-7 text-red-400" />
+          <div className="w-12 h-12 rounded-2xl bg-destructive/10 flex items-center justify-center border border-destructive/20 shadow-inner group transition-all">
+            <Icon icon="solar:tv-bold-duotone" className="w-7 h-7 text-destructive group-hover:scale-110 transition-transform" />
           </div>
           <div>
-            <h1 className="text-foreground font-bold text-lg truncate max-w-xs tracking-tight">{courseName}</h1>
+            <h1 className="text-foreground font-black text-xl truncate max-w-xs tracking-tight">{courseName}</h1>
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              <p className="text-gray-400 text-xs font-medium">
+              <span className="w-2.5 h-2.5 rounded-full bg-destructive animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+              <p className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
                 {callingState === CallingState.JOINED
                   ? `LIVE · ${participantCount} viewer${participantCount !== 1 ? "s" : ""}`
                   : "Waiting for stream…"}
@@ -74,7 +74,8 @@ const WatcherView = ({ courseName, courseId, call }) => {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-1.5 bg-red-500/10 text-red-500 text-[10px] uppercase tracking-widest font-black px-4 py-1.5 rounded-full border border-red-500/20">
+        <div className="flex items-center gap-2 bg-destructive/10 text-destructive text-[10px] uppercase tracking-widest font-black px-4 py-2 rounded-full border border-destructive/20 shadow-sm">
+          <span className="w-1.5 h-1.5 rounded-full bg-destructive animate-ping" />
           LIVE
         </div>
       </div>
@@ -86,15 +87,19 @@ const WatcherView = ({ courseName, courseId, call }) => {
             {callingState === CallingState.JOINED ? (
               <LivestreamLayout />
             ) : (
-              <div className="flex flex-col items-center justify-center h-full text-foreground gap-6 bg-gray-950/50 backdrop-blur-3xl">
-                <div className="w-24 h-24 rounded-full bg-gray-900 flex items-center justify-center border border-white/5 shadow-2xl">
-                  <Icon icon="solar:tv-bold-duotone" className="w-12 h-12 text-gray-600 animate-pulse" />
+              <div className="flex flex-col items-center justify-center h-full text-foreground gap-8 bg-background/50 backdrop-blur-3xl transition-colors duration-500">
+                <div className="w-32 h-32 rounded-[2.5rem] bg-card flex items-center justify-center border border-border shadow-2xl relative group">
+                  <div className="absolute inset-0 bg-primary/5 rounded-[2.5rem] animate-pulse" />
+                  <Icon icon="solar:tv-bold-duotone" className="w-16 h-16 text-muted-foreground animate-pulse relative z-10" />
                 </div>
-                <div className="text-center">
-                  <p className="text-gray-300 text-lg font-medium">Waiting for teacher to go live…</p>
-                  <p className="text-gray-500 text-sm mt-1 mx-auto max-w-xs">Take a deep breath! The session will start automatically when the instructor arrives.</p>
+                <div className="text-center space-y-3 px-6">
+                  <h2 className="text-foreground text-3xl font-black tracking-tight">Hang tight!</h2>
+                  <p className="text-muted-foreground text-lg font-medium max-w-sm mx-auto leading-relaxed">The session will start automatically when the instructor arrives. Take a moment to prepare!</p>
                 </div>
-                <div className="w-10 h-10 border-t-2 border-red-500 rounded-full animate-spin mt-4" />
+                <div className="flex items-center gap-3 bg-secondary/50 px-6 py-3 rounded-full border border-border">
+                  <div className="w-5 h-5 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+                  <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Synchronizing Stream</span>
+                </div>
               </div>
             )}
 
@@ -118,14 +123,14 @@ const WatcherView = ({ courseName, courseId, call }) => {
         </div>
 
         {/* Sidebar */}
-        <div className="w-80 bg-gray-900 border-l border-white/5 flex flex-col hidden lg:flex shadow-2xl">
-          <div className="flex p-1 bg-black/20 m-4 rounded-xl border border-white/5">
+        <div className="w-96 bg-card border-l border-border flex flex-col hidden lg:flex shadow-2xl transition-colors duration-500">
+          <div className="flex p-1.5 bg-secondary m-6 rounded-2xl border border-border shadow-inner">
             <button
               onClick={() => setActiveTab("participants")}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold transition-all ${
+              className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
                 activeTab === "participants" 
-                  ? 'bg-white/10 text-white shadow-xl' 
-                  : 'text-gray-500 hover:text-gray-300'
+                  ? 'bg-background text-primary shadow-lg border border-border' 
+                  : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
               }`}
             >
               <Icon icon="solar:users-group-two-rounded-bold" className="w-4 h-4" />
@@ -133,10 +138,10 @@ const WatcherView = ({ courseName, courseId, call }) => {
             </button>
             <button
               onClick={() => setActiveTab("chat")}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold transition-all ${
+              className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
                 activeTab === "chat" 
-                  ? 'bg-white/10 text-white shadow-xl' 
-                  : 'text-gray-500 hover:text-gray-300'
+                  ? 'bg-background text-primary shadow-lg border border-border' 
+                  : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
               }`}
             >
               <Icon icon="solar:chat-round-dots-bold" className="w-4 h-4" />
@@ -161,15 +166,15 @@ const WatcherView = ({ courseName, courseId, call }) => {
       </div>
 
       {/* Controls / Footer */}
-      <div className="px-8 py-6 bg-gray-900 border-t border-white/5 flex items-center justify-between gap-6 z-50">
+      <div className="px-8 py-6 glass border-t border-border flex items-center justify-between gap-6 z-50">
         <div className="flex items-center gap-3">
           {/* Reaction Buttons */}
-          <div className="flex items-center gap-2 bg-black/40 p-1.5 rounded-2xl border border-white/5 shadow-inner">
+          <div className="flex items-center gap-2 bg-secondary/50 p-2 rounded-[2rem] border border-border shadow-inner">
             {['❤️', '👍', '🔥', '👏', '😮', '😂'].map((emoji) => (
               <button
                 key={emoji}
                 onClick={() => sendReaction('reaction', emoji)}
-                className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white/10 transition-all active:scale-90 text-xl"
+                className="w-12 h-12 flex items-center justify-center rounded-full hover:bg-background hover:scale-110 hover:shadow-lg transition-all active:scale-95 text-2xl shadow-sm border border-transparent hover:border-border"
               >
                 {emoji}
               </button>
@@ -179,9 +184,9 @@ const WatcherView = ({ courseName, courseId, call }) => {
 
         <button
           onClick={handleLeave}
-          className="flex items-center gap-3 bg-white/5 hover:bg-red-500/10 text-white/50 hover:text-red-400 font-bold px-10 py-4 rounded-2xl transition-all border border-white/5 hover:border-red-500/20 active:scale-95"
+          className="flex items-center gap-3 bg-secondary hover:bg-destructive/10 text-muted-foreground hover:text-destructive font-black text-xs uppercase tracking-[0.2em] px-10 py-5 rounded-[2rem] transition-all border border-border hover:border-destructive/20 active:scale-95 shadow-lg hover:shadow-destructive/5"
         >
-          <Icon icon="solar:exit-bold" className="w-5 h-5" />
+          <Icon icon="solar:exit-bold" className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
           LEAVE STREAM
         </button>
       </div>
@@ -258,25 +263,26 @@ const LiveStreamWatch = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-950 text-red-400 flex-col gap-6">
-        <div className="w-20 h-20 rounded-3xl bg-red-500/10 flex items-center justify-center border border-red-500/20">
-          <Icon icon="solar:danger-triangle-bold" className="w-10 h-10" />
+      <div className="flex items-center justify-center min-h-screen bg-background text-destructive flex-col gap-8 transition-colors duration-500">
+        <div className="w-24 h-24 rounded-[2rem] bg-destructive/10 flex items-center justify-center border border-destructive/20 shadow-2xl relative">
+          <div className="absolute inset-0 bg-destructive/5 animate-ping rounded-[2rem]" />
+          <Icon icon="solar:danger-triangle-bold" className="w-12 h-12 relative z-10" />
         </div>
-        <div className="text-center space-y-2">
-          <h2 className="text-xl font-bold text-white">Access Warning</h2>
-          <p className="text-gray-400 max-w-sm">{error}</p>
+        <div className="text-center space-y-3 px-6">
+          <h2 className="text-2xl font-black text-foreground tracking-tight">Access Warning</h2>
+          <p className="text-muted-foreground max-w-sm mx-auto leading-relaxed">{error}</p>
         </div>
-        <div className="flex gap-4 items-center">
+        <div className="flex flex-col sm:flex-row gap-4 items-center">
           <button
             onClick={() => window.location.reload()}
-            className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-xl shadow-red-500/20"
+            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-primary/20 active:scale-95"
           >
-            <Icon icon="solar:refresh-bold" />
-            RETRY
+            <Icon icon="solar:refresh-bold" className="w-4 h-4" />
+            RETRY NOW
           </button>
           <button
             onClick={() => navigate(-1)}
-            className="text-sm font-bold text-gray-500 hover:text-white transition-colors"
+            className="text-xs font-black uppercase tracking-widest text-muted-foreground hover:text-foreground transition-all px-6 py-2"
           >
             GO BACK
           </button>
@@ -287,14 +293,14 @@ const LiveStreamWatch = () => {
 
   if (!client || !call) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-950 text-gray-400 gap-6">
-        <div className="relative">
-          <div className="w-16 h-16 border-2 border-red-500/20 rounded-full" />
-          <div className="w-16 h-16 border-t-2 border-red-500 rounded-full animate-spin absolute top-0 left-0" />
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background text-muted-foreground gap-8 transition-colors duration-500">
+        <div className="relative group">
+          <div className="w-20 h-20 border-4 border-primary/10 rounded-[2rem] absolute animate-pulse" />
+          <div className="w-20 h-20 border-t-4 border-primary rounded-[2rem] animate-spin relative z-10" />
         </div>
-        <div className="text-center animate-pulse">
-          <p className="text-lg font-bold text-white tracking-widest">CONNECTING</p>
-          <p className="text-xs uppercase tracking-widest text-gray-500 mt-1">Securing connection to stream</p>
+        <div className="text-center space-y-2 px-6">
+          <p className="text-xl font-black text-foreground tracking-[0.2em] uppercase">CONNECTING</p>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-bold">Securing encrypted stream tunnel</p>
         </div>
       </div>
     );
