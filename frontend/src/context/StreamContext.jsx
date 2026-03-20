@@ -18,7 +18,8 @@ export const StreamContextProvider = ({ children }) => {
   useEffect(() => {
     if (!isAuthenticated || !userData?.id || !API_KEY || API_KEY === "your_stream_api_key") return;
 
-    let client;
+    let chatClientLocal;
+    let videoClientLocal;
 
     const connect = async () => {
       try {
@@ -29,9 +30,9 @@ export const StreamContextProvider = ({ children }) => {
           { withCredentials: true }
         );
 
-        client = StreamChat.getInstance(API_KEY);
-
-        await client.connectUser(
+        // Chat Client Setup
+        const cClient = StreamChat.getInstance(API_KEY);
+        await cClient.connectUser(
           {
             id: data.userId,
             name: data.userName,
@@ -39,7 +40,9 @@ export const StreamContextProvider = ({ children }) => {
           },
           data.token
         );
+        chatClientLocal = cClient;
 
+        // Video Client Setup
         const vClient = new StreamVideoClient({
           apiKey: API_KEY,
           user: {
@@ -49,9 +52,21 @@ export const StreamContextProvider = ({ children }) => {
           },
           token: data.token,
         });
+        
+        // Explicitly connect the video client
+        await vClient.connectUser(
+          {
+            id: data.userId,
+            name: data.userName,
+            image: userData.image || "",
+          },
+          data.token
+        );
+        videoClientLocal = vClient;
 
-        setChatClient(client);
+        setChatClient(cClient);
         setVideoClient(vClient);
+        console.log("Stream connected successfully for user:", data.userId);
       } catch (err) {
         console.error("Stream connect error:", err);
       } finally {
@@ -62,8 +77,16 @@ export const StreamContextProvider = ({ children }) => {
     connect();
 
     return () => {
-      if (client) client.disconnectUser().catch(console.error);
-      if (videoClient) videoClient.disconnectUser().catch(console.error);
+      if (chatClientLocal) {
+        chatClientLocal.disconnectUser()
+          .then(() => console.log("Chat client disconnected"))
+          .catch(err => console.error("Chat disconnect error:", err));
+      }
+      if (videoClientLocal) {
+        videoClientLocal.disconnectUser()
+          .then(() => console.log("Video client disconnected"))
+          .catch(err => console.error("Video disconnect error:", err));
+      }
     };
   }, [isAuthenticated, userData?.id]);
 

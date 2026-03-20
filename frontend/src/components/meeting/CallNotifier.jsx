@@ -12,17 +12,22 @@ const CallNotifier = () => {
     if (!videoClient) return;
 
     const handleEvent = (event) => {
+      console.log("CallNotifier: Received event:", event.type, event.call?.id);
       const call = event.call;
       if (call.id.startsWith("consult-")) {
+        console.log("CallNotifier: Detected consultation call:", call.id);
         setIncomingCall(call);
         
         try {
           const audio = new Audio("https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3");
-          audio.play().catch(() => {});
-        } catch (e) {}
+          audio.play().catch((err) => console.warn("Audio play failed:", err));
+        } catch (e) {
+          console.error("Audio error:", e);
+        }
       }
     };
 
+    console.log("CallNotifier: Registering event listeners...");
     const unsubCreated = videoClient.on("call.created", handleEvent);
     const unsubRing = videoClient.on("call.notification.ring", handleEvent);
 
