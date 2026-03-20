@@ -104,7 +104,7 @@ const ConsultationClient = ({ sessionId, onLeave, isInstructor }) => {
     );
   }
 
-  if (!client || !call) {
+  if (!videoClient || !call) {
     return (
       <div className="flex flex-col items-center justify-center h-full bg-[#0c0c0e] text-gray-400 gap-4 rounded-3xl min-h-[500px]">
         <div className="w-10 h-10 border-4 border-white/10 border-t-primary rounded-full animate-spin" />
