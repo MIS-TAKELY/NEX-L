@@ -24,13 +24,28 @@ const API_KEY = import.meta.env.VITE_STREAM_API_KEY || "";
 
 // Inner component – has access to call context
 const BroadcastControls = ({ call, courseId }) => {
-  const { useCallCallingState, useParticipantCount, useIsCallLive, useReactions } = useCallStateHooks();
+  const { useCallCallingState, useParticipantCount, useIsCallLive } = useCallStateHooks();
   const callingState = useCallCallingState();
   const participantCount = useParticipantCount();
   const isLive = useIsCallLive();
-  const reactions = useReactions();
+  const [reactions, setReactions] = useState([]);
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("participants"); // "participants" or "chat"
+
+  useEffect(() => {
+    const cleanup = call.on("call.reaction_new", (event) => {
+      const { reaction } = event;
+      if (reaction) {
+        setReactions((prev) => [...prev, reaction]);
+        // Remove reaction after 5 seconds to keep the overlay clean
+        setTimeout(() => {
+          setReactions((prev) => prev.filter((r) => r !== reaction));
+        }, 5000);
+      }
+    });
+
+    return () => cleanup();
+  }, [call]);
 
   const goLive = async () => {
     try {

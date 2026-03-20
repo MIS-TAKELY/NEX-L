@@ -1,7 +1,7 @@
 /**
  * LiveStreamWatch – Enrolled student watches the teacher's live stream.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
@@ -21,12 +21,26 @@ const BACKEND = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 const API_KEY = import.meta.env.VITE_STREAM_API_KEY || "";
 
 const WatcherView = ({ courseName, courseId, call }) => {
-  const { useCallCallingState, useParticipantCount, useReactions } = useCallStateHooks();
+  const { useCallCallingState, useParticipantCount } = useCallStateHooks();
   const callingState = useCallCallingState();
   const participantCount = useParticipantCount();
-  const reactions = useReactions();
+  const [reactions, setReactions] = useState([]);
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("participants"); // "participants" or "chat"
+
+  useEffect(() => {
+    const cleanup = call.on("call.reaction_new", (event) => {
+      const { reaction } = event;
+      if (reaction) {
+        setReactions((prev) => [...prev, reaction]);
+        // Remove reaction after 5 seconds to keep the overlay clean
+        setTimeout(() => {
+          setReactions((prev) => prev.filter((r) => r !== reaction));
+        }, 5000);
+      }
+    });
+    return () => cleanup();
+  }, [call]);
 
   const handleLeave = () => {
     navigate(-1);
