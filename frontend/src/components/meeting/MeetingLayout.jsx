@@ -177,7 +177,7 @@ const MeetingLayout = ({
       </div>
 
       {/* Bottom Control Bar */}
-      <div className={`relative z-20 transition-all duration-500 bg-[#202124] ${controlsVisible ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}`}>
+      <div className={`relative z-20 transition-all duration-500 ${controlsVisible ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}`} style={{ background: "var(--card)", borderTop: "1px solid var(--border)" }}>
         <ControlBar
           onLeave={onLeave}
           goLive={handleGoLive}

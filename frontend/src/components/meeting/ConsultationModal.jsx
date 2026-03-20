@@ -14,33 +14,52 @@ const ConsultationModal = ({ sessionId, onClose, isInstructor }) => {
         initial={{ y: 50, opacity: 0, scale: 0.95 }}
         animate={{ y: 0, opacity: 1, scale: 1 }}
         exit={{ y: 50, opacity: 0, scale: 0.95 }}
-        className={`${isExpanded ? 'w-full h-full' : 'w-[380px] h-[580px]'} bg-background rounded-[2.5rem] border border-border/50 shadow-3xl overflow-hidden relative pointer-events-auto flex flex-col premium-card glass transition-all duration-300`}
+        className={`${isExpanded ? 'w-full h-full' : 'w-[420px] h-[620px]'} rounded-2xl overflow-hidden relative pointer-events-auto flex flex-col transition-all duration-300`}
+        style={{
+          background: "var(--card)",
+          border: "1px solid var(--border)",
+          boxShadow: "0 32px 80px rgba(0,0,0,0.25), 0 0 0 1px var(--border)"
+        }}
       >
+        {/* Top gradient accent bar */}
+        <div className="h-0.5 w-full flex-shrink-0 bg-gradient-to-r from-primary via-accent to-primary" />
+
         {/* Header / Call Info */}
-        <div className="h-12 bg-secondary/30 border-b border-border/50 flex items-center justify-between px-6 flex-shrink-0 transition-colors">
+        <div
+          className="flex items-center justify-between px-5 py-2.5 flex-shrink-0"
+          style={{ background: "var(--card)", borderBottom: "1px solid var(--border)" }}
+        >
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Active Consultation</span>
+            <span className="flex h-2.5 w-2.5 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
+            </span>
+            <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>
+              One-on-One Consultation
+            </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <button
                onClick={() => setIsExpanded(!isExpanded)}
-               className="w-8 h-8 rounded-full flex items-center justify-center transition-all text-muted-foreground hover:bg-secondary/50 hover:text-foreground active:scale-95"
+               className="w-8 h-8 rounded-lg flex items-center justify-center transition-all active:scale-95"
+               style={{ color: "var(--muted-foreground)" }}
                title={isExpanded ? "Minimize" : "Expand"}
             >
-              <Icon icon={isExpanded ? "solar:minimize-square-3-bold-duotone" : "solar:maximize-square-3-bold-duotone"} className="w-5 h-5" />
+              <Icon icon={isExpanded ? "solar:minimize-square-3-bold-duotone" : "solar:maximize-square-3-bold-duotone"} className="w-4 h-4" />
             </button>
             <button 
               onClick={onClose}
-              className="w-8 h-8 rounded-full flex items-center justify-center transition-all text-muted-foreground hover:bg-destructive/10 hover:text-destructive active:scale-95"
+              className="w-8 h-8 rounded-lg flex items-center justify-center transition-all active:scale-95"
+              style={{ color: "var(--destructive)" }}
               title="End Call"
             >
-              <Icon icon="solar:phone-hang-up-bold" className="w-5 h-5" />
+              <Icon icon="fluent:call-end-24-filled" className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        <div className="flex-1 overflow-hidden relative">
+        {/* Video area - always dark for visibility */}
+        <div className="flex-1 overflow-hidden relative bg-[#1a1a2e]">
           <ConsultationClient 
             sessionId={sessionId} 
             onLeave={onClose} 

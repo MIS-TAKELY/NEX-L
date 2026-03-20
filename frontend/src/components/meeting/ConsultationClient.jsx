@@ -91,10 +91,23 @@ const ConsultationClient = ({ sessionId, onLeave, isInstructor, isExpanded }) =>
           if (!isMounted) return;
         }
 
-        // Join the call
-        console.log("Joining call...");
-        setStatus("Connecting to call...");
-        await videoCall.join();
+        // Student must call accept() — this signals to Stream that the ring was
+        // answered, preventing the SDK from auto-ending the session after the
+        // ring timeout (~30s). accept() also joins the call internally.
+        // Instructor uses join() since they originated the call (not ringing).
+        console.log(isInstructor ? "Joining call..." : "Accepting call...");
+        setStatus(isInstructor ? "Connecting to call..." : "Accepting call...");
+        if (isInstructor) {
+          await videoCall.join();
+        } else {
+          try {
+            await videoCall.accept(); // answers ring + joins in one step
+          } catch (acceptErr) {
+            // Fallback: if accept() fails (no active ring), join directly
+            console.warn("accept() failed, falling back to join():", acceptErr);
+            await videoCall.join();
+          }
+        }
         if (!isMounted) {
             videoCall.leave();
             return;
@@ -147,12 +160,13 @@ const ConsultationClient = ({ sessionId, onLeave, isInstructor, isExpanded }) =>
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-full bg-[#0c0c0e] text-red-400 gap-4 rounded-3xl p-8 min-h-[500px]">
+      <div className="flex flex-col items-center justify-center h-full gap-4 rounded-3xl p-8 min-h-[400px]" style={{ background: "var(--card)", color: "var(--destructive)" }}>
         <Icon icon="solar:danger-triangle-bold-duotone" className="w-16 h-16" />
         <p className="text-center font-bold text-lg max-w-sm">{error}</p>
         <button 
           onClick={onLeave} 
-          className="text-sm text-gray-400 hover:text-white underline mt-2"
+          className="text-sm underline mt-2"
+          style={{ color: "var(--muted-foreground)" }}
         >
           Close
         </button>
@@ -162,10 +176,10 @@ const ConsultationClient = ({ sessionId, onLeave, isInstructor, isExpanded }) =>
 
   if (!videoClient || !call) {
     return (
-      <div className="flex flex-col items-center justify-center h-full bg-[#0c0c0e] text-gray-400 gap-4 rounded-3xl min-h-[500px]">
-        <div className="w-10 h-10 border-4 border-white/10 border-t-primary rounded-full animate-spin" />
+      <div className="flex flex-col items-center justify-center h-full gap-4 rounded-3xl min-h-[400px]" style={{ background: "var(--card)", color: "var(--muted-foreground)" }}>
+        <div className="w-10 h-10 border-4 border-border border-t-primary rounded-full animate-spin" />
         <p className="font-bold tracking-widest uppercase text-xs">{status || "Initializing Consultation..."}</p>
-        {!videoClient && <p className="text-[10px] text-gray-600">Waiting for Stream Client...</p>}
+        {!videoClient && <p className="text-[10px] opacity-50">Waiting for Stream Client...</p>}
       </div>
     );
   }
