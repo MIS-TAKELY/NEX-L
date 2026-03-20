@@ -61,13 +61,16 @@ const ConsultationClient = ({ sessionId, onLeave, isInstructor }) => {
 
     const setup = async () => {
       try {
+        console.log("Starting consultation setup for session:", sessionId);
         const { data } = await axios.get(`${BACKEND}/api/v1/stream/consultation/${sessionId}`, { withCredentials: true });
         const { callId, callType, studentId, teacherId } = data;
         const members = [studentId, teacherId];
+        console.log("Consultation data fetched:", { callId, callType, members });
 
         const videoCall = videoClient.call(callType, callId);
         
         // Ensure call is created with members before joining
+        console.log("Creating/Getting call...");
         await videoCall.getOrCreate({
           data: {
             members: members.map(id => ({ user_id: id })),
@@ -76,11 +79,20 @@ const ConsultationClient = ({ sessionId, onLeave, isInstructor }) => {
         });
 
         // Join the call
+        console.log("Joining call...");
         await videoCall.join();
+        console.log("Joined call successfully");
 
         // If instructor, ring the call to notify the student
         if (isInstructor) {
-          await videoCall.ring();
+          console.log("Instructor mode: Ringing student...");
+          try {
+            await videoCall.ring();
+            console.log("Ring sent successfully");
+          } catch (ringErr) {
+            console.warn("Failed to ring student (they might be offline):", ringErr);
+            // Don't throw, we still want to enter the call
+          }
         }
         
         setCall(videoCall);
