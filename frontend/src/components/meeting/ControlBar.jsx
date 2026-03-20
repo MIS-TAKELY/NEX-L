@@ -20,38 +20,93 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
 
   if (isConsultation) {
     return (
-      <div className="flex items-center justify-center w-full bg-background px-4 py-4 border-t border-border/50 gap-4 transition-colors">
+      <div className="flex items-center justify-center w-full px-4 py-3 gap-6 transition-colors"
+        style={{ background: 'var(--card)', borderTop: '1px solid var(--border)' }}>
+
         {/* Mic Toggle */}
         <button
           onClick={toggleMic}
-          className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all duration-200 shadow-xl border border-border/50 active:scale-95 ${
-            micOff
-              ? 'bg-destructive/20 text-destructive hover:bg-destructive/30'
-              : 'bg-secondary/50 text-foreground hover:bg-secondary'
-          }`}
+          className="flex flex-col items-center gap-1.5 group"
+          title={micOff ? 'Unmute microphone' : 'Mute microphone'}
         >
-          <Icon icon={micOff ? 'solar:mic-broken-bold' : 'solar:mic-bold'} className="w-6 h-6" />
+          <span className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95 ${
+            micOff
+              ? 'bg-destructive shadow-lg shadow-destructive/30'
+              : 'bg-secondary hover:bg-secondary/70'
+          }`}>
+            {micOff ? (
+              /* Mic Off SVG */
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="1" y1="1" x2="23" y2="23" />
+                <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6" />
+                <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23" />
+                <line x1="12" y1="19" x2="12" y2="23" />
+                <line x1="8" y1="23" x2="16" y2="23" />
+              </svg>
+            ) : (
+              /* Mic On SVG */
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
+                style={{ color: 'var(--foreground)' }}>
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="23" />
+                <line x1="8" y1="23" x2="16" y2="23" />
+              </svg>
+            )}
+          </span>
+          <span className="text-[10px] font-medium" style={{ color: micOff ? 'var(--destructive)' : 'var(--muted-foreground)' }}>
+            {micOff ? 'Unmute' : 'Mute'}
+          </span>
         </button>
 
         {/* Camera Toggle */}
         <button
           onClick={toggleCam}
-          className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all duration-200 shadow-xl border border-border/50 active:scale-95 ${
-            camOff
-              ? 'bg-destructive/20 text-destructive hover:bg-destructive/30'
-              : 'bg-secondary/50 text-foreground hover:bg-secondary'
-          }`}
+          className="flex flex-col items-center gap-1.5 group"
+          title={camOff ? 'Turn on camera' : 'Turn off camera'}
         >
-          <Icon icon={camOff ? 'solar:videocamera-broken-bold' : 'solar:videocamera-bold'} className="w-6 h-6" />
+          <span className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95 ${
+            camOff
+              ? 'bg-destructive shadow-lg shadow-destructive/30'
+              : 'bg-secondary hover:bg-secondary/70'
+          }`}>
+            {camOff ? (
+              /* Camera Off SVG */
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2m5.66 0H14a2 2 0 0 1 2 2v3.34" />
+                <path d="M23 7l-7 5 7 5V7z" />
+                <line x1="1" y1="1" x2="23" y2="23" />
+              </svg>
+            ) : (
+              /* Camera On SVG */
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
+                style={{ color: 'var(--foreground)' }}>
+                <polygon points="23 7 16 12 23 17 23 7" />
+                <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+              </svg>
+            )}
+          </span>
+          <span className="text-[10px] font-medium" style={{ color: camOff ? 'var(--destructive)' : 'var(--muted-foreground)' }}>
+            {camOff ? 'Start Cam' : 'Stop Cam'}
+          </span>
         </button>
 
         {/* Leave Call */}
         {onLeave && (
           <button
             onClick={onLeave}
-            className="w-16 h-12 flex items-center justify-center rounded-2xl bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:shadow-lg shadow-destructive/20 transition-all duration-200 active:scale-95 ml-2 border border-destructive/50"
+            className="flex flex-col items-center gap-1.5 group"
+            title="End call"
           >
-            <Icon icon="solar:phone-hang-up-bold" className="w-6 h-6" />
+            <span className="w-12 h-12 flex items-center justify-center rounded-full bg-destructive hover:bg-destructive/80 shadow-lg shadow-destructive/30 transition-all duration-200 active:scale-95">
+              {/* Phone hang up SVG */}
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+                <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.01L6.6 10.8z"/>
+              </svg>
+            </span>
+            <span className="text-[10px] font-medium" style={{ color: 'var(--destructive)' }}>
+              End Call
+            </span>
           </button>
         )}
       </div>
@@ -59,7 +114,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
   }
 
   return (
-    <div className="flex items-center justify-between w-full bg-[#202124] px-4 py-3 md:px-6 md:py-4 border-t border-white/10">
+    <div className="flex items-center justify-between w-full px-4 py-3 md:px-6 md:py-4" style={{ background: "var(--card)", borderTop: "1px solid var(--border)" }}>
       
       {/* Left side: Meeting Info */}
       <div className="hidden md:flex items-center gap-4 min-w-[200px]">
@@ -74,8 +129,8 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
             onClick={toggleMic}
             className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95 ${
               micOff
-                ? 'bg-[#ea4335] text-white hover:bg-[#d93025]'
-                : 'bg-[#3c4043] text-white hover:bg-[#4d5154]'
+                ? 'bg-destructive text-white hover:bg-destructive/90'
+                : 'bg-secondary text-foreground hover:bg-secondary/70'
             }`}
           >
             <Icon
@@ -83,8 +138,8 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
               className="w-5 h-5 md:w-6 md:h-6"
             />
           </button>
-          <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#3c4043] text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-            {micOff ? 'Turn on microphone (ctrl + d)' : 'Turn off microphone (ctrl + d)'}
+          <span className="absolute -top-10 left-1/2 -translate-x-1/2 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap" style={{ background: "var(--popover)", color: "var(--popover-foreground)", border: "1px solid var(--border)" }}>
+            {micOff ? 'Turn on microphone' : 'Turn off microphone'}
           </span>
         </div>
 
@@ -94,8 +149,8 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
             onClick={toggleCam}
             className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95 ${
               camOff
-                ? 'bg-[#ea4335] text-white hover:bg-[#d93025]'
-                : 'bg-[#3c4043] text-white hover:bg-[#4d5154]'
+                ? 'bg-destructive text-white hover:bg-destructive/90'
+                : 'bg-secondary text-foreground hover:bg-secondary/70'
             }`}
           >
             <Icon
@@ -103,21 +158,21 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
               className="w-5 h-5 md:w-6 md:h-6"
             />
           </button>
-          <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#3c4043] text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-            {camOff ? 'Turn on camera (ctrl + e)' : 'Turn off camera (ctrl + e)'}
+          <span className="absolute -top-10 left-1/2 -translate-x-1/2 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap" style={{ background: "var(--popover)", color: "var(--popover-foreground)", border: "1px solid var(--border)" }}>
+            {camOff ? 'Turn on camera' : 'Turn off camera'}
           </span>
         </div>
 
         {/* Captions Toggle (Mock) */}
         <div className="group relative">
           <button
-            className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-[#3c4043] text-white hover:bg-[#4d5154] transition-all duration-200 active:scale-95"
+            className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-secondary text-foreground hover:bg-secondary/70 transition-all duration-200 active:scale-95"
             title="Turn on captions"
           >
             <Icon icon="material-symbols:closed-caption" className="w-5 h-5 md:w-6 md:h-6" />
           </button>
-          <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#3c4043] text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-            Turn on captions (c)
+          <span className="absolute -top-10 left-1/2 -translate-x-1/2 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap" style={{ background: "var(--popover)", color: "var(--popover-foreground)", border: "1px solid var(--border)" }}>
+            Turn on captions
           </span>
         </div>
 
@@ -125,12 +180,12 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
         <div className="group relative">
           <button
             onClick={() => sendReaction && sendReaction('reaction', '✋')}
-            className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-[#3c4043] text-white hover:bg-[#4d5154] transition-all duration-200 active:scale-95"
+            className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-secondary text-foreground hover:bg-secondary/70 transition-all duration-200 active:scale-95"
           >
             <Icon icon="material-symbols:back-hand" className="w-5 h-5 md:w-6 md:h-6" />
           </button>
-          <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#3c4043] text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-            Raise hand (ctrl + alt + h)
+          <span className="absolute -top-10 left-1/2 -translate-x-1/2 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap" style={{ background: "var(--popover)", color: "var(--popover-foreground)", border: "1px solid var(--border)" }}>
+            Raise hand
           </span>
         </div>
 
@@ -139,12 +194,12 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
           <button
             onClick={toggleShare}
             className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95 ${
-              isSharing ? 'bg-[#8ab4f8] text-[#202124]' : 'bg-[#3c4043] text-white hover:bg-[#4d5154]'
+              isSharing ? 'bg-primary text-primary-foreground' : 'bg-secondary text-foreground hover:bg-secondary/70'
             }`}
           >
             <Icon icon={isSharing ? 'material-symbols:stop-screen-share' : 'material-symbols:present-to-all'} className="w-5 h-5 md:w-6 md:h-6" />
           </button>
-          <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#3c4043] text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+          <span className="absolute -top-10 left-1/2 -translate-x-1/2 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap" style={{ background: "var(--popover)", color: "var(--popover-foreground)", border: "1px solid var(--border)" }}>
             {isSharing ? 'Stop presenting' : 'Present now'}
           </span>
         </div>
@@ -153,34 +208,34 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
         <div className="group relative">
           <button
             onClick={() => setShowMoreOptions(!showMoreOptions)}
-            className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-[#3c4043] text-white hover:bg-[#4d5154] transition-all duration-200 active:scale-95 ${showMoreOptions ? 'bg-[#4d5154]' : ''}`}
+            className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-secondary text-foreground hover:bg-secondary/70 transition-all duration-200 active:scale-95 ${showMoreOptions ? 'ring-2 ring-primary/40' : ''}`}
           >
             <Icon icon="material-symbols:more-vert" className="w-5 h-5 md:w-6 md:h-6" />
           </button>
           {showMoreOptions && (
-            <div className="absolute bottom-16 left-0 bg-[#3c4043] rounded-lg shadow-xl border border-white/10 py-2 w-56 flex flex-col z-50 animate-fade-in">
+            <div className="absolute bottom-16 left-0 rounded-xl shadow-2xl py-2 w-56 flex flex-col z-50 animate-fade-in" style={{ background: "var(--popover)", border: "1px solid var(--border)", color: "var(--popover-foreground)" }}>
               <button 
-                className="flex items-center gap-3 px-4 py-2 hover:bg-white/10 text-white text-sm"
+                className="flex items-center gap-3 px-4 py-2.5 hover:bg-secondary/60 text-sm transition-colors"
                 onClick={() => setIsRecording(!isRecording)}
               >
-                <Icon icon={isRecording ? 'material-symbols:stop-circle' : 'material-symbols:fiber-manual-record'} className={`w-5 h-5 ${isRecording ? 'text-red-500' : ''}`} />
+                <Icon icon={isRecording ? 'material-symbols:stop-circle' : 'material-symbols:fiber-manual-record'} className={`w-5 h-5 ${isRecording ? 'text-destructive' : ''}`} />
                 {isRecording ? 'Stop recording' : 'Record meeting'}
               </button>
-              <button className="flex items-center gap-3 px-4 py-2 hover:bg-white/10 text-white text-sm">
+              <button className="flex items-center gap-3 px-4 py-2.5 hover:bg-secondary/60 text-sm transition-colors">
                 <Icon icon="material-symbols:settings-outline" className="w-5 h-5" />
                 Settings
               </button>
-              <button className="flex items-center gap-3 px-4 py-2 hover:bg-white/10 text-white text-sm">
+              <button className="flex items-center gap-3 px-4 py-2.5 hover:bg-secondary/60 text-sm transition-colors">
                 <Icon icon="material-symbols:noise-control-off" className="w-5 h-5" />
                 Noise cancellation
               </button>
-              <button className="flex items-center gap-3 px-4 py-2 hover:bg-white/10 text-white text-sm">
+              <button className="flex items-center gap-3 px-4 py-2.5 hover:bg-secondary/60 text-sm transition-colors">
                 <Icon icon="material-symbols:help-outline" className="w-5 h-5" />
                 Report a problem
               </button>
             </div>
           )}
-          <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#3c4043] text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+          <span className="absolute -top-10 left-1/2 -translate-x-1/2 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap" style={{ background: "var(--popover)", color: "var(--popover-foreground)", border: "1px solid var(--border)" }}>
             More options
           </span>
         </div>
@@ -190,11 +245,11 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
           <div className="group relative">
             <button
               onClick={onLeave}
-              className="w-14 h-10 md:w-16 md:h-12 flex items-center justify-center rounded-3xl bg-[#ea4335] text-white hover:bg-[#d93025] hover:shadow-lg shadow-[#ea4335]/20 transition-all duration-200 active:scale-95"
+              className="w-14 h-10 md:w-16 md:h-12 flex items-center justify-center rounded-3xl bg-destructive text-white hover:bg-destructive/90 hover:shadow-lg shadow-destructive/20 transition-all duration-200 active:scale-95"
             >
               <Icon icon="material-symbols:call-end" className="w-6 h-6 md:w-7 md:h-7" />
             </button>
-            <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#3c4043] text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+            <span className="absolute -top-10 left-1/2 -translate-x-1/2 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap" style={{ background: "var(--popover)", color: "var(--popover-foreground)", border: "1px solid var(--border)" }}>
               Leave call
             </span>
           </div>
@@ -206,7 +261,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
         <button
           onClick={toggleParticipants}
           className={`w-10 h-10 flex items-center justify-center rounded-full transition-all ${
-            activePanel === 'participants' ? 'bg-[#8ab4f8] text-[#202124]' : 'text-white hover:bg-white/10'
+            activePanel === 'participants' ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-secondary'
           }`}
           title="Meeting details"
         >
@@ -216,7 +271,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
         <button
           onClick={toggleParticipants}
           className={`w-10 h-10 flex items-center justify-center rounded-full transition-all ${
-            activePanel === 'participants' ? 'bg-[#8ab4f8] text-[#202124]' : 'text-white hover:bg-white/10'
+            activePanel === 'participants' ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-secondary'
           }`}
           title="Show everyone"
         >
@@ -226,7 +281,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
         <button
           onClick={toggleChat}
           className={`w-10 h-10 flex items-center justify-center rounded-full transition-all ${
-            activePanel === 'chat' ? 'bg-[#8ab4f8] text-[#202124]' : 'text-white hover:bg-white/10'
+            activePanel === 'chat' ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-secondary'
           }`}
           title="Chat with everyone"
         >
@@ -234,7 +289,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
         </button>
 
         <button
-          className="w-10 h-10 flex items-center justify-center rounded-full text-white hover:bg-white/10 transition-all"
+          className="w-10 h-10 flex items-center justify-center rounded-full text-foreground hover:bg-secondary transition-all"
           title="Activities"
         >
           <Icon icon="material-symbols:category-outline" className="w-5 h-5 md:w-6 md:h-6" />
@@ -244,7 +299,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
             <button
                 onClick={goLive}
                 disabled={isJoining}
-                className="bg-[#ea4335] text-white px-4 py-2 rounded-lg hover:bg-[#d93025] transition-all font-bold text-xs tracking-wide disabled:opacity-70"
+                className="bg-destructive text-white px-4 py-2 rounded-lg hover:bg-destructive/90 transition-all font-bold text-xs tracking-wide disabled:opacity-70"
             >
                 {isJoining ? 'INITIALIZING...' : 'GO LIVE'}
             </button>

@@ -65,6 +65,7 @@ const CallNotifier = () => {
         setIncomingCall((prev) => {
           if (prev && prev.id === call.id) {
             console.log("CallNotifier: Call ended/rejected, clearing notification", call.id);
+            setShowModal(false); // Reset modal explicitly
             return null;
           }
           return prev;
@@ -72,8 +73,8 @@ const CallNotifier = () => {
         return; // Early return, don't trigger ring logic
       }
 
-      // Existing ring logic (call.created, call.notification.ring)
-      if (event.type === "call.created" || event.type === "call.notification.ring") {
+      // Existing ring logic (call.created, call.notification.ring, call.ring)
+      if (event.type === "call.created" || event.type === "call.notification.ring" || event.type === "call.ring") {
         if (isCallActiveRef.current) {
           console.log("CallNotifier: Call already active, ignoring ring event");
           return;
@@ -100,13 +101,15 @@ const CallNotifier = () => {
     };
 
     const unsubCreated = videoClient.on("call.created", handleEvent);
-    const unsubRing = videoClient.on("call.notification.ring", handleEvent);
+    const unsubNotificationRing = videoClient.on("call.notification.ring", handleEvent);
+    const unsubRing = videoClient.on("call.ring", handleEvent);
     const unsubEnded = videoClient.on("call.ended", handleEvent);
     const unsubRejected = videoClient.on("call.rejected", handleEvent);
     const unsubSessionEnded = videoClient.on("call.session_ended", handleEvent);
 
     return () => {
       unsubCreated();
+      unsubNotificationRing();
       unsubRing();
       unsubEnded();
       unsubRejected();
@@ -144,47 +147,78 @@ const CallNotifier = () => {
         <AnimatePresence>
           {incomingCall && (
             <motion.div 
-              initial={{ x: -100, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -100, opacity: 0 }}
-              className="fixed bottom-6 left-6 z-[10000] w-[350px] bg-background/95 backdrop-blur-xl border border-border/50 rounded-3xl p-5 flex items-center gap-4 shadow-2xl"
+              initial={{ y: 80, opacity: 0, scale: 0.9 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: 80, opacity: 0, scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 400, damping: 28 }}
+              className="fixed bottom-6 left-6 z-[10000] w-[340px] rounded-2xl overflow-hidden shadow-2xl"
+              style={{
+                background: "var(--card)",
+                border: "1px solid var(--border)",
+                boxShadow: "0 20px 60px rgba(0,0,0,0.2), 0 0 0 1px var(--border)"
+              }}
             >
-              {/* Avatar Area */}
-              <div className="relative flex-shrink-0">
-                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center overflow-hidden border border-border/50">
-                  {callerImage ? (
-                    <img src={callerImage} alt={callerName} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center">
-                      <Icon icon="solar:user-bold-duotone" className="w-7 h-7 text-primary" />
-                    </div>
-                  )}
-                </div>
-                {/* Pulsing indicator */}
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-background animate-pulse" />
-              </div>
+              {/* Top accent bar */}
+              <div className="h-1 w-full bg-gradient-to-r from-primary via-accent to-primary bg-[length:200%] animate-[gradient-shift_3s_ease_infinite]" />
 
-              {/* Text Content */}
-              <div className="flex-1 min-w-0">
-                <h4 className="text-foreground text-sm font-bold truncate">{callerName}</h4>
-                <p className="text-[10px] text-primary font-bold uppercase tracking-wider animate-pulse">Incoming call...</p>
+              <div className="p-4 flex items-center gap-4">
+                {/* Avatar */}
+                <div className="relative flex-shrink-0">
+                  <div
+                    className="w-14 h-14 rounded-xl flex items-center justify-center overflow-hidden text-white font-bold text-xl"
+                    style={{ background: "linear-gradient(135deg, var(--primary), var(--accent))" }}
+                  >
+                    {callerImage ? (
+                      <img src={callerImage} alt={callerName} className="w-full h-full object-cover" />
+                    ) : (
+                      <span>{callerName?.charAt(0)?.toUpperCase() || "T"}</span>
+                    )}
+                  </div>
+                  {/* Live pulse dot */}
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500 border-2 border-card" />
+                  </span>
+                </div>
+
+                {/* Text */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{ color: "var(--primary)" }}>
+                    📞 Consult Call
+                  </p>
+                  <h4 className="text-sm font-bold truncate" style={{ color: "var(--foreground)" }}>
+                    {callerName}
+                  </h4>
+                  <p className="text-xs animate-pulse mt-0.5" style={{ color: "var(--muted-foreground)" }}>
+                    is calling you...
+                  </p>
+                </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-3">
+              <div className="px-4 pb-4 flex gap-3">
+                {/* Decline */}
                 <button 
                   onClick={handleReject}
-                  className="w-12 h-12 rounded-2xl bg-destructive hover:bg-destructive/90 text-destructive-foreground transition-all flex items-center justify-center shadow-lg shadow-destructive/20 active:scale-95"
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 hover:brightness-110"
+                  style={{ background: "var(--destructive)", color: "#fff" }}
                   title="Decline"
                 >
-                  <Icon icon="solar:phone-hang-up-rounded-bold" className="w-6 h-6" />
+                  <Icon icon="fluent:call-end-24-filled" width={20} height={20} />
+                  Decline
                 </button>
+
+                {/* Accept — with ring animation */}
                 <button 
                   onClick={handleAccept}
-                  className="w-12 h-12 rounded-2xl bg-green-500 hover:bg-green-600 text-white transition-all flex items-center justify-center shadow-lg shadow-green-500/20 active:scale-95"
+                  className="flex-1 relative flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 hover:brightness-110"
+                  style={{ background: "#22c55e", color: "#fff" }}
                   title="Accept"
                 >
-                  <Icon icon="solar:phone-calling-rounded-bold" className="w-6 h-6" />
+                  {/* ring pulse behind button */}
+                  <span className="absolute inset-0 rounded-xl animate-ping opacity-30 bg-green-500 pointer-events-none" />
+                  <Icon icon="fluent:call-24-filled" width={20} height={20} />
+                  Accept
                 </button>
               </div>
             </motion.div>
