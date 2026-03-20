@@ -1,4 +1,3 @@
-import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -23,7 +22,7 @@ const CallUI = ({ onLeave, call, sessionId }) => {
 
   if (callingState === CallingState.LEFT) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-[#0c0c0e] text-white gap-4 w-screen">
+      <div className="flex flex-col items-center justify-center h-full bg-[#0c0c0e] text-white gap-4 rounded-3xl overflow-hidden min-h-[500px]">
         <Icon icon="solar:phone-hang-up-bold-duotone" className="w-20 h-20 text-red-500" />
         <h2 className="text-2xl font-bold">Consultation Ended</h2>
         <p className="text-gray-400">The session has been concluded.</p>
@@ -31,7 +30,7 @@ const CallUI = ({ onLeave, call, sessionId }) => {
           onClick={onLeave}
           className="bg-white/10 hover:bg-white/20 text-white px-8 py-3 rounded-2xl transition-all mt-4 font-bold border border-white/10"
         >
-          Return to Dashboard
+          Close Room
         </button>
       </div>
     );
@@ -52,9 +51,7 @@ const CallUI = ({ onLeave, call, sessionId }) => {
   );
 };
 
-const ConsultationPage = () => {
-  const { sessionId } = useParams();
-  const navigate = useNavigate();
+const ConsultationClient = ({ sessionId, onLeave }) => {
   const { userData } = useSelector((s) => s.auth);
   const [client, setClient] = useState(null);
   const [call, setCall] = useState(null);
@@ -109,23 +106,18 @@ const ConsultationPage = () => {
         client.disconnectUser().catch(console.error);
       }
     };
-  }, [sessionId, API_KEY]);
-
-  const handleLeave = () => {
-    client?.disconnectUser();
-    navigate("/instructor/consultations");
-  };
+  }, [sessionId]);
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-[#0c0c0e] text-red-400 gap-4 w-screen px-4">
+      <div className="flex flex-col items-center justify-center h-full bg-[#0c0c0e] text-red-400 gap-4 rounded-3xl p-8 min-h-[500px]">
         <Icon icon="solar:danger-triangle-bold-duotone" className="w-16 h-16" />
         <p className="text-center font-bold text-lg max-w-sm">{error}</p>
         <button 
-          onClick={() => navigate(-1)} 
+          onClick={onLeave} 
           className="text-sm text-gray-400 hover:text-white underline mt-2"
         >
-          Go Back
+          Close
         </button>
       </div>
     );
@@ -133,7 +125,7 @@ const ConsultationPage = () => {
 
   if (!client || !call) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-[#0c0c0e] text-gray-400 gap-4 w-screen">
+      <div className="flex flex-col items-center justify-center h-full bg-[#0c0c0e] text-gray-400 gap-4 rounded-3xl min-h-[500px]">
         <div className="w-10 h-10 border-4 border-white/10 border-t-primary rounded-full animate-spin" />
         <p className="font-bold tracking-widest uppercase text-xs">Initializing Consultation...</p>
       </div>
@@ -143,10 +135,10 @@ const ConsultationPage = () => {
   return (
     <StreamVideo client={client}>
       <StreamCall call={call}>
-        <CallUI onLeave={handleLeave} call={call} sessionId={sessionId} />
+        <CallUI onLeave={onLeave} call={call} sessionId={sessionId} />
       </StreamCall>
     </StreamVideo>
   );
 };
 
-export default ConsultationPage;
+export default ConsultationClient;

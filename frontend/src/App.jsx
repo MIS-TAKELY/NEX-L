@@ -41,7 +41,6 @@ import Statistics from "./Pages/instructor/Statistics";
 import LiveStreamBroadcast from "./Pages/instructor/LiveStreamBroadcast";
 import StudentsEnrolled from "./Pages/instructor/StudentsEnrolled";
 import Consultations from "./Pages/instructor/Consultations";
-import ConsultationPage from "./Pages/instructor/ConsultationPage";
 import StudentConsultations from "./Pages/student/StudentConsultations";
 
 // ADMIN PAGES
@@ -166,14 +165,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/student/consultation/:sessionId"
-            element={
-              <ProtectedRoute allowedRoles={["student"]}>
-                <ConsultationPage />
-              </ProtectedRoute>
-            }
-          />
 
         {/* Legacy support for /home redirecting or same element */}
         <Route
@@ -208,7 +199,6 @@ export default function App() {
           <Route path="livestream/:courseId" element={<LiveStreamBroadcast />} />
           <Route path="students-enrolled" element={<StudentsEnrolled />} />
           <Route path="consultations" element={<Consultations />} />
-          <Route path="consultation/:sessionId" element={<ConsultationPage />} />
         </Route>
 
         {/* ADMIN ROUTES */}

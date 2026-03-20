@@ -1,15 +1,16 @@
 import { useGetStudentSessionsQuery } from "@/store/slices/tutoringSessionApi";
 import { Icon } from "@iconify/react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import ConsultationModal from "@/components/meeting/ConsultationModal";
 
 const StudentConsultations = () => {
-  const navigate = useNavigate();
   const { data, isLoading } = useGetStudentSessionsQuery();
+  const [activeSessionId, setActiveSessionId] = useState(null);
 
   const sessions = data?.sessions || [];
 
   const handleJoin = (sessionId) => {
-    navigate(`/student/consultation/${sessionId}`);
+    setActiveSessionId(sessionId);
   };
 
   if (isLoading) {
@@ -95,6 +96,11 @@ const StudentConsultations = () => {
           ))
         )}
       </div>
+
+      <ConsultationModal 
+        sessionId={activeSessionId} 
+        onClose={() => setActiveSessionId(null)} 
+      />
     </div>
   );
 };
