@@ -41,6 +41,7 @@ export const liveClassApi = apiSlice.injectEndpoints({
                 { type: 'LiveClass', id: classId },
                 { type: 'LiveClass', id: `COURSE_${courseId}` },
                 { type: 'LiveClass', id: 'UPCOMING' },
+                { type: 'LiveClass', id: 'ACTIVE_INSTRUCTOR' },
             ],
         }),
         deleteLiveClass: builder.mutation({
@@ -61,6 +62,7 @@ export const liveClassApi = apiSlice.injectEndpoints({
             invalidatesTags: (result, error, courseId) => [
                 { type: 'LiveClass', id: `COURSE_${courseId}` },
                 { type: 'LiveClass', id: 'UPCOMING' },
+                { type: 'LiveClass', id: 'ACTIVE_INSTRUCTOR' },
             ],
         }),
     }),
