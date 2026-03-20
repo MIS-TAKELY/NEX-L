@@ -122,12 +122,21 @@ const LiveStreamWatch = () => {
       <div className="flex items-center justify-center h-screen bg-gray-950 text-red-400 flex-col gap-4">
         <Icon icon="solar:danger-triangle-bold" className="w-12 h-12" />
         <p className="text-center max-w-sm">{error}</p>
-        <button
-          onClick={() => navigate(-1)}
-          className="mt-2 text-sm text-gray-400 hover:text-foreground underline"
-        >
-          ← Go back
-        </button>
+        <div className="flex gap-4 items-center">
+          <button
+            onClick={() => window.location.reload()}
+            className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-xl font-medium transition-all"
+          >
+            <Icon icon="solar:refresh-bold" />
+            Retry
+          </button>
+          <button
+            onClick={() => navigate(-1)}
+            className="text-sm text-gray-400 hover:text-foreground underline"
+          >
+            ← Go back
+          </button>
+        </div>
       </div>
     );
   }
