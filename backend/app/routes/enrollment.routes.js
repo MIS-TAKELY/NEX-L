@@ -12,5 +12,7 @@ router.post("/", enrollInCourse);
 router.get("/user/:userId", getUserEnrollments);
 router.get("/instructor/:instructorId/stats", getInstructorStats);
 router.get("/instructor/:instructorId/students", getInstructorStudents);
+router.get("/:userId", getUserEnrollments); // Fallback for legacy frontend
+
 
 export default router;
