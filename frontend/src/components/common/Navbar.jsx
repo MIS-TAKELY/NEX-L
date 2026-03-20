@@ -9,7 +9,6 @@ import { useGetCartQuery } from "@/store/slices/cartApi";
 import logo from "../../assets/logoo.png";
 import ProfileDropdown from "./ProfileDropdown";
 import ModeToggle from "./ModeToggle";
-import { Search, ShoppingCart } from "lucide-react";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -24,8 +23,6 @@ const Navbar = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [active, setActive] = useState(location.pathname);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -49,17 +46,6 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
-        setIsSearchOpen((prev) => !prev);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
 
   // Update active when route changes
   useEffect(() => {
@@ -134,17 +120,9 @@ const Navbar = () => {
         </div>
 
         {/* Desktop Actions (Right) */}
-        <div className="hidden lg:flex items-center gap-8">
-          {/* CMD+K Search Trigger */}
+        <div className="hidden lg:flex items-center gap-6">
           <ModeToggle />
-          <button
-            onClick={() => setIsSearchOpen(true)}
-            className={`flex items-center gap-3 px-5 py-2.5 rounded-2xl text-[11px] font-bold transition-all border group glass border-border/50 text-muted-foreground hover:bg-secondary/50`}
-          >
-            <Search size={16} />
-            <span className="group-hover:text-foreground transition-colors uppercase tracking-widest">Search</span>
-            <span className={`px-2 py-0.5 rounded text-[10px] border bg-background/50 border-border`}>⌘K</span>
-          </button>
+          <div className="w-px h-6 bg-border/50 hidden md:block"></div>
 
           {isLoggedIn ? (
             <div className="flex items-center gap-6">
@@ -206,57 +184,6 @@ const Navbar = () => {
           />
         </button>
       </nav>
-
-      {/* Search Modal */}
-      {isSearchOpen && (
-        <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[20vh] px-4">
-          <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm" onClick={() => setIsSearchOpen(false)} />
-          <div className="relative w-full max-w-2xl bg-background dark:bg-zinc-900 rounded-3xl shadow-2xl border border-white/10 overflow-hidden transform animate-in fade-in zoom-in duration-300">
-            <div className="flex items-center gap-4 px-6 py-6 border-b border-gray-100 dark:border-zinc-800">
-              <Icon icon="solar:magnifer-linear" className="text-gray-400" size={24} />
-              <input 
-                autoFocus
-                type="text"
-                placeholder="Search for courses, topics, or skills..."
-                className="flex-1 bg-transparent border-none outline-none text-xl font-bold text-gray-900 dark:text-foreground placeholder:text-gray-400"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    navigate(`/course-list?search=${searchQuery}`);
-                    setIsSearchOpen(false);
-                  }
-                  if (e.key === "Escape") setIsSearchOpen(false);
-                }}
-              />
-              <button 
-                onClick={() => setIsSearchOpen(false)}
-                className="px-2 py-1 bg-gray-100 dark:bg-zinc-800 rounded text-[10px] font-bold text-gray-400 uppercase tracking-widest"
-              >
-                ESC
-              </button>
-            </div>
-            
-            <div className="p-4 max-h-[60vh] overflow-y-auto">
-              <div className="px-2 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Suggestions</div>
-              {["Web Development", "Data Science", "Digital Marketing", "Business Strategy"].map((suggestion) => (
-                <button
-                  key={suggestion}
-                  onClick={() => {
-                    setSearchQuery(suggestion);
-                    navigate(`/course-list?search=${suggestion}`);
-                    setIsSearchOpen(false);
-                  }}
-                  className="w-full text-left px-4 py-3 hover:bg-primary/5 rounded-xl transition-all flex items-center gap-3 group"
-                >
-                  <Icon icon="solar:history-linear" className="text-gray-300 group-hover:text-primary" size={18} />
-                  <span className="font-bold text-gray-600 dark:text-gray-300 group-hover:text-primary">{suggestion}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
 
       <div
         className={`fixed inset-0 bg-primary z-30 flex flex-col items-center justify-center space-y-8 transition-transform duration-300 lg:hidden ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
