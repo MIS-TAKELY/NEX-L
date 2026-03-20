@@ -5,7 +5,7 @@ const API_URL = `${import.meta.env.VITE_BACKEND_URL}/api/v1`;
 // Get all enrollments for a specific user
 export const getUserEnrollments = async (userId) => {
     try {
-        const response = await axios.get(`${API_URL}/enrollments/${userId}`, {
+        const response = await axios.get(`${API_URL}/enrollments/user/${userId}`, {
             withCredentials: true,
         });
         return response.data;
