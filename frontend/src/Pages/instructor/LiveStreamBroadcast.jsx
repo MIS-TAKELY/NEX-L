@@ -15,6 +15,7 @@ import {
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { Icon } from "@iconify/react";
 import MeetingLayout from "@/components/meeting/MeetingLayout";
+import { useGetCourseLiveClassesQuery, useUpdateLiveClassMutation } from "../../store/slices/liveClassApi";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 const API_KEY = import.meta.env.VITE_STREAM_API_KEY || "";
@@ -25,6 +26,9 @@ const BroadcastControls = ({ call, courseId }) => {
   const navigate = useNavigate();
   const { useIsCallLive } = useCallStateHooks();
   const isLive = useIsCallLive();
+
+  const { data: liveClasses = [] } = useGetCourseLiveClassesQuery(courseId);
+  const [updateLiveClass] = useUpdateLiveClassMutation();
 
   useEffect(() => {
     const cleanup = call.on("call.reaction_new", (event) => {
@@ -58,6 +62,16 @@ const BroadcastControls = ({ call, courseId }) => {
         await call.join({ create: true });
       }
       await call.goLive();
+
+      // Update database status to 'live'
+      const scheduledClass = liveClasses.find(lc => lc.status === 'scheduled');
+      if (scheduledClass) {
+        await updateLiveClass({ 
+          classId: scheduledClass._id, 
+          courseId,
+          payload: { status: 'live' } 
+        }).unwrap();
+      }
     } catch (err) {
       console.error("Failed to go live:", err);
       if (err.message?.includes("shall be called only once") || err.message?.includes("already live")) {
@@ -75,6 +89,17 @@ const BroadcastControls = ({ call, courseId }) => {
          await call.stopHLS();
       }
       await call.endCall();
+
+      // Update database status to 'completed'
+      const activeClass = liveClasses.find(lc => lc.status === 'live');
+      if (activeClass) {
+        await updateLiveClass({ 
+          classId: activeClass._id, 
+          courseId,
+          payload: { status: 'completed' } 
+        }).unwrap();
+      }
+
       navigate(-1);
     } catch (err) {
       console.error("Failed to end stream:", err);

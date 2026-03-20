@@ -9,6 +9,7 @@ import AssignmentPlayer from './AssignmentPlayer';
 import StudentChat from '../../components/student/StudentChat';
 import CourseGroupChat from '../../components/student/CourseGroupChat';
 import { useStream } from '../../context/StreamContext';
+import { useGetCourseLiveClassesQuery } from '../../store/slices/liveClassApi';
 
 const Player = () => {
   const formatDisplayName = (name, backupTitle) => {
@@ -33,6 +34,12 @@ const Player = () => {
   // Communication panel: null | 'dm' | 'group'
   const [commPanel, setCommPanel] = useState(null);
   const { chatClient } = useStream();
+
+  const { data: liveClasses = [] } = useGetCourseLiveClassesQuery(courseId, { 
+    skip: !courseId,
+    pollingInterval: 10000 
+  });
+  const isAnyClassLive = liveClasses.some(lc => lc.status === 'live');
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -262,14 +269,16 @@ const Player = () => {
 
           <div className="flex items-center gap-3">
             {/* Live Stream button */}
-            <button
-              onClick={() => navigate(`/student/live/${courseId}`)}
-              title="Watch Live Class"
-              className="p-3 bg-destructive/10 text-destructive rounded-2xl hover:bg-destructive shadow-lg shadow-destructive/10 hover:shadow-destructive/20 hover:text-white transition-all flex items-center gap-2 text-xs font-black uppercase tracking-widest"
-            >
-              <Icon icon="solar:play-stream-bold-duotone" className="w-5 h-5 animate-pulse" />
-              <span className="hidden xl:inline">Live Session</span>
-            </button>
+            {isAnyClassLive && (
+              <button
+                onClick={() => navigate(`/student/live/${courseId}`)}
+                title="Watch Live Class"
+                className="p-3 bg-destructive/10 text-destructive rounded-2xl hover:bg-destructive shadow-lg shadow-destructive/10 hover:shadow-destructive/20 hover:text-white transition-all flex items-center gap-2 text-xs font-black uppercase tracking-widest"
+              >
+                <Icon icon="solar:play-stream-bold-duotone" className="w-5 h-5 animate-pulse" />
+                <span className="hidden xl:inline">Live Session</span>
+              </button>
+            )}
 
             {/* Video Call button */}
             <button
