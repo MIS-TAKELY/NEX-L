@@ -13,6 +13,7 @@ import {
   StreamCall,
   LivestreamLayout,
   CallingState,
+  CallParticipantsList,
 } from "@stream-io/video-react-sdk";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { Icon } from "@iconify/react";
@@ -30,13 +31,22 @@ const BroadcastControls = ({ call }) => {
 
   const goLive = async () => {
     try {
-      await call.join({ create: true });
-      await call.stopBackstage(); // This allows students to join
-      await call.startHLS();
+      // If not already joined, join now. (Handles "shall be called only once" error)
+      if (callingState !== CallingState.JOINED) {
+        await call.join({ create: true });
+      }
+      
+      // goLive() is the standard method to start broadasting and stop backstage
+      await call.goLive();
       setIsLive(true);
     } catch (err) {
       console.error("Failed to go live:", err);
-      alert("Failed to start live stream. Check console for details.");
+      // If already live, just update UI
+      if (err.message?.includes("shall be called only once") || err.message?.includes("already live")) {
+        setIsLive(true);
+        return;
+      }
+      alert("Failed to start live stream: " + err.message);
     }
   };
 
@@ -71,15 +81,28 @@ const BroadcastControls = ({ call }) => {
       </div>
 
       {/* Preview / Stream */}
-      <div className="flex-1 relative overflow-hidden">
-        {callingState === CallingState.JOINED ? (
-          <LivestreamLayout />
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full text-foreground gap-6">
-            <Icon icon="solar:camera-add-bold-duotone" className="w-24 h-24 text-gray-600" />
-            <p className="text-gray-400 text-lg">Your camera preview will appear here</p>
+      <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 relative">
+          {callingState === CallingState.JOINED ? (
+            <LivestreamLayout />
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full text-foreground gap-6">
+              <Icon icon="solar:camera-add-bold-duotone" className="w-24 h-24 text-gray-600" />
+              <p className="text-gray-400 text-lg">Your camera preview will appear here</p>
+            </div>
+          )}
+        </div>
+        
+        {/* Participants Sidebar */}
+        <div className="w-72 bg-gray-900 border-l border-gray-800 flex flex-col hidden md:flex">
+          <div className="p-4 border-b border-gray-800 flex items-center gap-2">
+            <Icon icon="solar:users-group-two-rounded-bold" className="text-blue-400" />
+            <span className="font-bold text-sm text-foreground uppercase tracking-wider">Participants</span>
           </div>
-        )}
+          <div className="flex-1 overflow-y-auto">
+            <CallParticipantsList onClose={() => {}} />
+          </div>
+        </div>
       </div>
 
       {/* Controls */}

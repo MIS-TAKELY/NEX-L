@@ -11,6 +11,7 @@ import {
   LivestreamLayout,
   useCallStateHooks,
   CallingState,
+  CallParticipantsList,
 } from "@stream-io/video-react-sdk";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { Icon } from "@iconify/react";
@@ -46,16 +47,29 @@ const WatcherView = ({ courseName }) => {
       </div>
 
       {/* Stream content */}
-      <div className="flex-1 relative overflow-hidden">
-        {callingState === CallingState.JOINED ? (
-          <LivestreamLayout />
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full text-foreground gap-4">
-            <Icon icon="solar:tv-bold-duotone" className="w-20 h-20 text-gray-600 animate-pulse" />
-            <p className="text-gray-400 text-lg">Waiting for teacher to go live…</p>
-            <div className="w-8 h-8 border-2 border-gray-500 border-t-red-400 rounded-full animate-spin" />
+      <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 relative">
+          {callingState === CallingState.JOINED ? (
+            <LivestreamLayout />
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full text-foreground gap-4">
+              <Icon icon="solar:tv-bold-duotone" className="w-20 h-20 text-gray-600 animate-pulse" />
+              <p className="text-gray-400 text-lg">Waiting for teacher to go live…</p>
+              <div className="w-8 h-8 border-2 border-gray-500 border-t-red-400 rounded-full animate-spin" />
+            </div>
+          )}
+        </div>
+
+        {/* Participants Sidebar */}
+        <div className="w-64 bg-gray-900 border-l border-gray-800 flex flex-col hidden md:flex">
+          <div className="p-4 border-b border-gray-800 flex items-center gap-2">
+            <Icon icon="solar:users-group-two-rounded-bold" className="text-red-400" />
+            <span className="font-bold text-sm text-foreground uppercase tracking-wider">Viewers</span>
           </div>
-        )}
+          <div className="flex-1 overflow-y-auto">
+            <CallParticipantsList onClose={() => {}} />
+          </div>
+        </div>
       </div>
     </div>
   );
