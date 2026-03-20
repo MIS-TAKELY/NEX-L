@@ -141,6 +141,13 @@ const MyCourses = () => {
                             {/* Actions */}
                             <div className="flex flex-wrap items-center gap-2 shrink-0">
                                 <button
+                                    onClick={() => navigate(`/instructor/students-enrolled?courseId=${course._id}`)}
+                                    className="px-4 py-2 rounded-xl bg-secondary text-secondary-foreground hover:bg-primary/10 hover:text-primary transition-all text-sm font-medium flex items-center gap-2 border border-transparent hover:border-primary/20"
+                                >
+                                    <Icon icon="solar:users-group-rounded-bold-duotone" className="w-4 h-4" />
+                                    Students
+                                </button>
+                                <button
                                     onClick={() => handleScheduleClick(course)}
                                     className="px-4 py-2 rounded-xl bg-secondary text-secondary-foreground hover:bg-primary hover:text-primary-foreground transition-all text-sm font-medium flex items-center gap-2"
                                 >

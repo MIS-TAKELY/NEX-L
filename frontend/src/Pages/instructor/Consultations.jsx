@@ -1,16 +1,17 @@
 import { useGetTeacherSessionsQuery, useUpdateTutoringSessionStatusMutation } from "@/store/slices/tutoringSessionApi";
 import { Icon } from "@iconify/react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import ConsultationModal from "@/components/meeting/ConsultationModal";
 
 const Consultations = () => {
-  const navigate = useNavigate();
   const { data, isLoading } = useGetTeacherSessionsQuery();
   const [updateStatus] = useUpdateTutoringSessionStatusMutation();
+  const [activeSessionId, setActiveSessionId] = useState(null);
 
   const sessions = data?.sessions || [];
 
   const handleJoin = (sessionId) => {
-    navigate(`/instructor/consultation/${sessionId}`);
+    setActiveSessionId(sessionId);
   };
 
   const handleComplete = async (sessionId) => {
@@ -121,6 +122,11 @@ const Consultations = () => {
           ))
         )}
       </div>
+
+      <ConsultationModal 
+        sessionId={activeSessionId} 
+        onClose={() => setActiveSessionId(null)} 
+      />
     </div>
   );
 };

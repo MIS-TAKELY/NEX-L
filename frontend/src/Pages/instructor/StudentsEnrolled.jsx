@@ -1,11 +1,18 @@
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useGetInstructorStudentsQuery } from "@/store/slices/enrollmentApi";
 import { useCreateTutoringSessionMutation } from "@/store/slices/tutoringSessionApi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Icon } from "@iconify/react";
+import ConsultationModal from "@/components/meeting/ConsultationModal";
 
 const StudentsEnrolled = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const filterCourseId = searchParams.get("courseId");
+  
+  const [activeSessionId, setActiveSessionId] = useState(null);
+
   const { userData } = useSelector((state) => state.auth);
   const { data, isLoading } = useGetInstructorStudentsQuery(userData?.id, {
     skip: !userData?.id
@@ -13,23 +20,24 @@ const StudentsEnrolled = () => {
   
   const [createSession, { isLoading: isCreating }] = useCreateTutoringSessionMutation();
 
-  const students = data?.students || [];
+  const allStudents = data?.students || [];
+
+  // Filter by courseId if it exists in URL
+  const students = filterCourseId 
+    ? allStudents.filter(s => String(s.courseId) === filterCourseId)
+    : allStudents;
 
   const handleConsult = async (student) => {
     try {
-      // For now, create a session immediately and navigate
       const res = await createSession({
-        studentId: student.studentId || student.id, // Depending on backend mapping
+        studentId: student.studentId,
         courseId: student.courseId,
-        startTime: new Date(),
-        notes: `Consultation with ${student.name}`,
+        startTime: new Date().toISOString(),
       }).unwrap();
-
-      if (res.success) {
-        navigate(`/instructor/consultation/${res.session._id}`);
-      }
+      
+      setActiveSessionId(res.session._id);
     } catch (err) {
-      console.error("Failed to create session:", err);
+      console.error("Failed to start session:", err);
     }
   };
 
@@ -122,6 +130,11 @@ const StudentsEnrolled = () => {
           </table>
         </div>
       </div>
+
+      <ConsultationModal 
+        sessionId={activeSessionId} 
+        onClose={() => setActiveSessionId(null)} 
+      />
     </div>
   );
 };

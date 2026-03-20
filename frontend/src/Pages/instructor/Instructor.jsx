@@ -23,11 +23,6 @@ const Instructor = () => {
       path: "/instructor/courses",
     },
     {
-      name: "Students",
-      icon: "solar:users-group-rounded-linear",
-      path: "/instructor/students-enrolled",
-    },
-    {
       name: "Add Course",
       icon: "solar:add-circle-linear",
       path: "/instructor/add-course",
@@ -41,11 +36,6 @@ const Instructor = () => {
       name: "Messages",
       icon: "solar:chat-round-dots-linear",
       path: "/instructor/messages",
-    },
-    {
-      name: "Consultations",
-      icon: "solar:videocamera-record-linear",
-      path: "/instructor/consultations",
     },
     {
       name: "Settings",

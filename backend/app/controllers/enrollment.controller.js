@@ -201,8 +201,10 @@ export const getInstructorStudents = async (req, res) => {
       success: true,
       students: enrollments.map(e => ({
         id: e._id,
+        studentId: e.student?._id,
         name: e.student?.name || "Unknown",
         email: e.student?.email || "N/A",
+        courseId: e.course?._id,
         course: e.course?.title || "Deleted Course",
         progress: e.progress || 0,
         date: e.createdAt,
