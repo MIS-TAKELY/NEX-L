@@ -30,13 +30,22 @@ const BroadcastControls = ({ call }) => {
 
   const goLive = async () => {
     try {
-      await call.join({ create: true });
-      await call.stopBackstage(); // This allows students to join
-      await call.startHLS();
+      // If not already joined, join now. (Handles "shall be called only once" error)
+      if (callingState !== CallingState.JOINED) {
+        await call.join({ create: true });
+      }
+      
+      // goLive() is the standard method to start broadasting and stop backstage
+      await call.goLive();
       setIsLive(true);
     } catch (err) {
       console.error("Failed to go live:", err);
-      alert("Failed to start live stream. Check console for details.");
+      // If already live, just update UI
+      if (err.message?.includes("shall be called only once") || err.message?.includes("already live")) {
+        setIsLive(true);
+        return;
+      }
+      alert("Failed to start live stream: " + err.message);
     }
   };
 
