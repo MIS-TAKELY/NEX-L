@@ -18,7 +18,8 @@ import MeetingLayout from "@/components/meeting/MeetingLayout";
 import { 
   useGetCourseLiveClassesQuery, 
   useUpdateLiveClassMutation, 
-  useEndAllCourseLiveClassesMutation 
+  useEndAllCourseLiveClassesMutation,
+  useScheduleLiveClassMutation
 } from "../../store/slices/liveClassApi";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
@@ -34,6 +35,7 @@ const BroadcastControls = ({ call, courseId }) => {
   const { data: liveClasses = [] } = useGetCourseLiveClassesQuery(courseId);
   const [updateLiveClass] = useUpdateLiveClassMutation();
   const [endAllLiveClasses] = useEndAllCourseLiveClassesMutation();
+  const [scheduleLiveClass] = useScheduleLiveClassMutation();
   
   // Track the specific class ID we started
   const [currentClassId, setCurrentClassId] = useState(null);
@@ -60,6 +62,45 @@ const BroadcastControls = ({ call, courseId }) => {
 
     return () => cleanup();
   }, [call]);
+
+  // AUTO-SYNC: If Stream says we are live but we don't have a live class tracked in our DB, sync it.
+  useEffect(() => {
+    if (isLive && !currentClassId) {
+      console.log("Auto-sync: Stream is live, ensuring DB status is 'live'");
+      const syncDB = async () => {
+        try {
+          const scheduledClass = liveClasses.find(lc => lc.status === 'scheduled');
+          if (scheduledClass) {
+            await updateLiveClass({ 
+              classId: scheduledClass._id, 
+              courseId,
+              payload: { status: 'live' } 
+            }).unwrap();
+            setCurrentClassId(scheduledClass._id);
+          } else {
+            // Ad-hoc session creation
+            const adhocClass = await scheduleLiveClass({
+              courseId,
+              title: "Ad-hoc Live Session",
+              description: "Teacher started an unscheduled live broadcast",
+              startTime: new Date().toISOString(),
+              duration: 60,
+            }).unwrap();
+            
+            await updateLiveClass({
+              classId: adhocClass.liveClass._id,
+              courseId,
+              payload: { status: 'live' }
+            }).unwrap();
+            setCurrentClassId(adhocClass.liveClass._id);
+          }
+        } catch (err) {
+          console.error("Auto-sync failed:", err);
+        }
+      };
+      syncDB();
+    }
+  }, [isLive, currentClassId, liveClasses, courseId, updateLiveClass, scheduleLiveClass]);
 
   const [isJoining, setIsJoining] = useState(false);
 
@@ -88,6 +129,24 @@ const BroadcastControls = ({ call, courseId }) => {
           payload: { status: 'live' } 
         }).unwrap();
         setCurrentClassId(scheduledClass._id);
+      } else {
+        // Handle ad-hoc session: create a new live class record
+        const adhocClass = await scheduleLiveClass({
+          courseId,
+          title: "Ad-hoc Live Session",
+          description: "Teacher started an unscheduled live broadcast",
+          startTime: new Date().toISOString(),
+          duration: 60,
+        }).unwrap();
+        
+        // The newly created class is usually 'scheduled' by default, update to 'live'
+        // unless the backend was modified to accept status in creation
+        await updateLiveClass({
+          classId: adhocClass.liveClass._id,
+          courseId,
+          payload: { status: 'live' }
+        }).unwrap();
+        setCurrentClassId(adhocClass.liveClass._id);
       }
     } catch (err) {
       console.error("Failed to go live:", err);
