@@ -166,7 +166,7 @@ const LiveStreamWatch = () => {
   return (
     <StreamVideo client={client}>
       <StreamCall call={call}>
-        <WatcherView courseName={courseName} courseId={courseId} call={call} callType={call.type} />
+        <WatcherView courseName={courseName} courseId={courseId} call={call} callType="livestream" />
       </StreamCall>
     </StreamVideo>
   );

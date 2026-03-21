@@ -303,7 +303,7 @@ const LiveStreamBroadcast = () => {
   return (
     <StreamVideo client={client}>
       <StreamCall call={call}>
-        <BroadcastControls call={call} courseId={courseId} callType={call.type} />
+        <BroadcastControls call={call} courseId={courseId} callType="livestream" />
       </StreamCall>
     </StreamVideo>
   );

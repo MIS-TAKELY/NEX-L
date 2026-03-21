@@ -148,6 +148,9 @@ export const getOrCreateGroupChannel = async (req, res) => {
     });
 
     await channel.create();
+    // Explicitly add the current user as a member to handle cases where the channel 
+    // already existed but the user was not yet a member.
+    await channel.addMembers([user.id]);
 
     res.json({
       channelId,
@@ -321,12 +324,20 @@ export const createVideoCall = async (req, res) => {
 
     const callId = `videocall-${courseId}-${user.id}`;
     
+    // Ensure the group chat channel exists
+    const channelId = `course-${courseId}`;
+    const chatChannel = client.channel("messaging", channelId, {
+      course_id: courseId,
+    });
+    await chatChannel.create();
+    await chatChannel.addMembers([user.id]);
+
     // Also return channel info if possible
     res.json({ 
       callId, 
       callType: "default", 
       courseId,
-      channelId: `course-${courseId}`, // Default to course group chat
+      channelId,
       channelType: "messaging"
     });
   } catch (error) {
@@ -356,6 +367,13 @@ export const createConsultationCall = async (req, res) => {
     
     // For consultation, we use the DM channel between student and teacher
     const channelId = `dm-${[String(session.student), String(session.teacher)].sort().join("-")}`;
+    const client = getStreamClient();
+    const chatChannel = client.channel("messaging", channelId, {
+      members: [String(session.student), String(session.teacher)],
+      name: `Consultation: ${sessionId}`,
+      created_by_id: user.id,
+    });
+    await chatChannel.create();
 
     res.json({ 
       callId, 
