@@ -176,7 +176,8 @@ const MeetingLayout = ({
                     </div>
                 ) : (
                     <div className="flex items-center gap-2 text-xs text-gray-300">
-                       <Icon icon="material-symbols:person-outline-rounded" className="w-4 h-4" />
+                       <span className={`w-2 h-2 rounded-full bg-[#ea4335] animate-pulse`} />
+                       <Icon icon="material-symbols:person-outline-rounded" className="w-4 h-4 ml-1" />
                        {participantCount}
                     </div>
                 )}
@@ -216,6 +217,7 @@ const MeetingLayout = ({
             onClose={() => togglePanel(null)}
             courseId={courseId}
             isInstructor={isInstructor}
+            callType={callType}
           />
         </div>
 
@@ -224,11 +226,12 @@ const MeetingLayout = ({
           <div className="md:hidden fixed inset-0 z-[110] flex flex-col">
             <div className="absolute inset-0 bg-black/40" onClick={() => togglePanel(null)} />
             <div className="relative mt-auto h-[70vh] bg-background rounded-t-2xl border-t border-border/50 shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300">
-              <SidePanel
+            <SidePanel
                 activePanel={activePanel}
                 onClose={() => togglePanel(null)}
                 courseId={courseId}
                 isInstructor={isInstructor}
+                callType={callType}
               />
             </div>
           </div>

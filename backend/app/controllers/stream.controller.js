@@ -148,6 +148,9 @@ export const getOrCreateGroupChannel = async (req, res) => {
     });
 
     await channel.create();
+    // Explicitly add the current user as a member to handle cases where the channel 
+    // already existed but the user was not yet a member.
+    await channel.addMembers([user.id]);
 
     res.json({
       channelId,
@@ -269,7 +272,7 @@ export const createLiveStream = async (req, res) => {
 
     res.json({
       callId,
-      callType: "livestream",
+      callType: "default",
       courseId,
       courseName: course.title,
     });
@@ -296,7 +299,7 @@ export const getLiveStream = async (req, res) => {
     }
 
     const callId = `live-${courseId}`;
-    res.json({ callId, callType: "livestream", courseId, courseName: course.title });
+    res.json({ callId, callType: "default", courseId, courseName: course.title });
   } catch (error) {
     console.error("getLiveStream error:", error);
     res.status(500).json({ message: "Failed to get live stream" });
@@ -320,7 +323,23 @@ export const createVideoCall = async (req, res) => {
     }
 
     const callId = `videocall-${courseId}-${user.id}`;
-    res.json({ callId, callType: "default", courseId });
+    
+    // Ensure the group chat channel exists
+    const channelId = `course-${courseId}`;
+    const chatChannel = client.channel("messaging", channelId, {
+      course_id: courseId,
+    });
+    await chatChannel.create();
+    await chatChannel.addMembers([user.id]);
+
+    // Also return channel info if possible
+    res.json({ 
+      callId, 
+      callType: "default", 
+      courseId,
+      channelId,
+      channelType: "messaging"
+    });
   } catch (error) {
     console.error("createVideoCall error:", error);
     res.status(500).json({ message: "Failed to create video call" });
@@ -345,12 +364,25 @@ export const createConsultationCall = async (req, res) => {
     }
 
     const callId = `consult-${sessionId}`;
+    
+    // For consultation, we use the DM channel between student and teacher
+    const channelId = `dm-${[String(session.student), String(session.teacher)].sort().join("-")}`;
+    const client = getStreamClient();
+    const chatChannel = client.channel("messaging", channelId, {
+      members: [String(session.student), String(session.teacher)],
+      name: `Consultation: ${sessionId}`,
+      created_by_id: user.id,
+    });
+    await chatChannel.create();
+
     res.json({ 
       callId, 
       callType: "default", 
       sessionId,
       studentId: String(session.student),
-      teacherId: String(session.teacher)
+      teacherId: String(session.teacher),
+      channelId,
+      channelType: "messaging"
     });
   } catch (error) {
     console.error("createConsultationCall error:", error);
