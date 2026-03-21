@@ -26,7 +26,7 @@ const BACKEND = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 const API_KEY = import.meta.env.VITE_STREAM_API_KEY || "";
 
 // Inner component – has access to call context
-const BroadcastControls = ({ call, courseId }) => {
+const BroadcastControls = ({ call, courseId, callType }) => {
   const [reactions, setReactions] = useState([]);
   const navigate = useNavigate();
   const { useIsCallLive } = useCallStateHooks();
@@ -118,7 +118,10 @@ const BroadcastControls = ({ call, courseId }) => {
       if (state !== CallingState.JOINED) {
         await call.join({ create: true });
       }
-      await call.goLive();
+      
+      if (callType === 'livestream') {
+        await call.goLive();
+      }
 
       // Update database status to 'live'
       const scheduledClass = liveClasses.find(lc => lc.status === 'scheduled');
@@ -200,7 +203,7 @@ const BroadcastControls = ({ call, courseId }) => {
         isInstructor={true}
         goLive={goLive}
         reactions={reactions}
-        callType="livestream"
+        callType={callType}
     />
   );
 };
@@ -300,7 +303,7 @@ const LiveStreamBroadcast = () => {
   return (
     <StreamVideo client={client}>
       <StreamCall call={call}>
-        <BroadcastControls call={call} courseId={courseId} />
+        <BroadcastControls call={call} courseId={courseId} callType={call.type} />
       </StreamCall>
     </StreamVideo>
   );

@@ -16,7 +16,7 @@ import MeetingLayout from "@/components/meeting/MeetingLayout";
 const BACKEND = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 const API_KEY = import.meta.env.VITE_STREAM_API_KEY || "";
 
-const WatcherView = ({ courseName, courseId, call }) => {
+const WatcherView = ({ courseName, courseId, call, callType }) => {
   const [reactions, setReactions] = useState([]);
   const navigate = useNavigate();
 
@@ -45,7 +45,7 @@ const WatcherView = ({ courseName, courseId, call }) => {
         onLeave={handleLeave}
         isInstructor={false}
         reactions={reactions}
-        callType="livestream"
+        callType={callType || 'default'}
         autoJoin={true}
     />
   );
@@ -166,7 +166,7 @@ const LiveStreamWatch = () => {
   return (
     <StreamVideo client={client}>
       <StreamCall call={call}>
-        <WatcherView courseName={courseName} courseId={courseId} call={call} />
+        <WatcherView courseName={courseName} courseId={courseId} call={call} callType={call.type} />
       </StreamCall>
     </StreamVideo>
   );

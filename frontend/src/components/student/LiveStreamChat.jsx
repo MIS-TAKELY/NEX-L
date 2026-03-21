@@ -15,32 +15,67 @@ import "stream-chat-react/dist/css/v2/index.css";
 import { useStream } from "@/context/StreamContext";
 import { Icon } from "@iconify/react";
 
-const LiveStreamChat = ({ courseId }) => {
+import axios from "axios";
+
+const BACKEND = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
+const LiveStreamChat = ({ courseId, callType = 'livestream' }) => {
   const { chatClient, loading: contextLoading } = useStream();
   const [channel, setChannel] = useState(null);
   const [error, setError] = useState(null);
+  const [isInitializing, setIsInitializing] = useState(false);
 
   useEffect(() => {
     if (!chatClient || !courseId) return;
 
     const init = async () => {
       try {
-        const channelId = `course-${courseId}`;
-        const ch = chatClient.channel("messaging", channelId);
+        setIsInitializing(true);
+        setError(null);
+
+        let targetChannelId;
+        let targetChannelType = "messaging";
+
+        // For livestream and videocall, we ensure the group channel exists
+        if (callType === 'livestream' || callType === 'videocall') {
+          const { data } = await axios.get(
+            `${BACKEND}/api/v1/stream/group/${courseId}`,
+            { withCredentials: true }
+          );
+          targetChannelId = data.channelId;
+          targetChannelType = data.channelType;
+        } 
+        // For consultation, we use the DM channel between participants
+        else if (callType === 'consultation') {
+          const { data } = await axios.get(
+            `${BACKEND}/api/v1/stream/consultation/${courseId}`,
+            { withCredentials: true }
+          );
+          targetChannelId = data.channelId;
+          targetChannelType = data.channelType;
+        }
+
+        if (!targetChannelId) {
+            throw new Error("Could not determine chat channel");
+        }
+
+        const ch = chatClient.channel(targetChannelType, targetChannelId);
         
         // Watch the channel to get updates
         await ch.watch();
         setChannel(ch);
       } catch (err) {
         console.error("LiveStreamChat init error:", err);
-        setError("Failed to connect to chat");
+        setError(err.response?.data?.message || "Failed to connect to chat");
+      } finally {
+        setIsInitializing(false);
       }
     };
 
     init();
-  }, [chatClient, courseId]);
+  }, [chatClient, courseId, callType]);
 
-  if (contextLoading || (!channel && !error)) {
+  if (contextLoading || (isInitializing && !channel)) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-gray-500 gap-3">
         <LoadingIndicator size={20} />

@@ -269,7 +269,7 @@ export const createLiveStream = async (req, res) => {
 
     res.json({
       callId,
-      callType: "livestream",
+      callType: "default",
       courseId,
       courseName: course.title,
     });
@@ -296,7 +296,7 @@ export const getLiveStream = async (req, res) => {
     }
 
     const callId = `live-${courseId}`;
-    res.json({ callId, callType: "livestream", courseId, courseName: course.title });
+    res.json({ callId, callType: "default", courseId, courseName: course.title });
   } catch (error) {
     console.error("getLiveStream error:", error);
     res.status(500).json({ message: "Failed to get live stream" });
@@ -320,7 +320,15 @@ export const createVideoCall = async (req, res) => {
     }
 
     const callId = `videocall-${courseId}-${user.id}`;
-    res.json({ callId, callType: "default", courseId });
+    
+    // Also return channel info if possible
+    res.json({ 
+      callId, 
+      callType: "default", 
+      courseId,
+      channelId: `course-${courseId}`, // Default to course group chat
+      channelType: "messaging"
+    });
   } catch (error) {
     console.error("createVideoCall error:", error);
     res.status(500).json({ message: "Failed to create video call" });
@@ -345,12 +353,18 @@ export const createConsultationCall = async (req, res) => {
     }
 
     const callId = `consult-${sessionId}`;
+    
+    // For consultation, we use the DM channel between student and teacher
+    const channelId = `dm-${[String(session.student), String(session.teacher)].sort().join("-")}`;
+
     res.json({ 
       callId, 
       callType: "default", 
       sessionId,
       studentId: String(session.student),
-      teacherId: String(session.teacher)
+      teacherId: String(session.teacher),
+      channelId,
+      channelType: "messaging"
     });
   } catch (error) {
     console.error("createConsultationCall error:", error);

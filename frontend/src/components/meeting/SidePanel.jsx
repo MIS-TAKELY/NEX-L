@@ -3,7 +3,7 @@ import { Icon } from '@iconify/react';
 import LiveStreamChat from '@/components/student/LiveStreamChat';
 import ParticipantsList from './ParticipantsList';
 
-const SidePanel = ({ activePanel, onClose, courseId, isInstructor }) => {
+const SidePanel = ({ activePanel, onClose, courseId, isInstructor, callType }) => {
   if (!activePanel) return null;
 
   return (
@@ -31,7 +31,7 @@ const SidePanel = ({ activePanel, onClose, courseId, isInstructor }) => {
           </div>
         ) : (
           <div className="h-full flex flex-col dark:bg-[#202124]">
-             <LiveStreamChat courseId={courseId} />
+             <LiveStreamChat courseId={courseId} callType={callType} />
           </div>
         )}
       </div>
