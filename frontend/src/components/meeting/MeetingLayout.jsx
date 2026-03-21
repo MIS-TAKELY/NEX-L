@@ -4,6 +4,7 @@ import ControlBar from './ControlBar';
 import SidePanel from './SidePanel';
 import JoinScreen from './JoinScreen';
 import VideoGrid from './VideoGrid';
+import DeviceSettingsModal from './DeviceSettingsModal';
 import { Icon } from '@iconify/react';
 // import FloatingSelfView from './FloatingSelfView'; // Left out as stream layouts handle self view nicely
 
@@ -19,12 +20,54 @@ const MeetingLayout = ({
   autoJoin = false,
   isCompact,
 }) => {
-  const { useCallCallingState, useParticipantCount, useIsCallLive } = useCallStateHooks();
+  const { 
+    useCallCallingState, 
+    useParticipantCount, 
+    useIsCallLive,
+  } = useCallStateHooks();
   const callingState = useCallCallingState();
   const participantCount = useParticipantCount();
   const isLive = useIsCallLive();
 
+  // Custom reaction buffering since SDK hook is missing
+  const [sdkReactions, setSdkReactions] = useState([]);
+
+  useEffect(() => {
+    if (!call) return;
+
+    const unsubscribe = call.on('call.reaction_new', (event) => {
+      const { reaction, user } = event;
+      if (!reaction) return;
+
+      const newReaction = {
+        id: Date.now() + Math.random(),
+        reaction: reaction,
+        participant: {
+          user: user,
+          userId: user?.id,
+          name: user?.name,
+          image: user?.image
+        },
+        emoji_code: reaction.emoji_code
+      };
+
+      setSdkReactions((prev) => [...prev, newReaction]);
+
+      // Remove after 5 seconds
+      setTimeout(() => {
+        setSdkReactions((prev) => prev.filter((r) => r.id !== newReaction.id));
+      }, 5000);
+    });
+
+    return () => unsubscribe();
+  }, [call]);
+  
+  // Use reactions from SDK if local prop is empty
+  const activeReactions = (reactions && reactions.length > 0) ? reactions : sdkReactions;
+
   const [activePanel, setActivePanel] = useState(null); // 'chat' or 'participants'
+  const [layout, setLayout] = useState('grid'); // 'grid' | 'speaker'
+  const [showDeviceSettings, setShowDeviceSettings] = useState(false);
 
   // Auto-hide controls state
   const [controlsVisible, setControlsVisible] = useState(true);
@@ -145,12 +188,12 @@ const MeetingLayout = ({
         {/* Main Video Area */}
         <div className={`flex-1 relative flex flex-col items-center justify-center overflow-hidden transition-all duration-300 ${activePanel ? 'mr-0' : ''}`}>
           <div className="w-full h-full p-2 lg:p-4 flex items-center justify-center">
-               <VideoGrid callType={callType} isInstructor={isInstructor} />
+               <VideoGrid callType={callType} isInstructor={isInstructor} layout={layout} />
           </div>
 
           {/* Reactions Layer */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden h-full w-full z-10">
-            {reactions?.map((reaction, i) => (
+            {activeReactions?.map((reaction, i) => (
               <div
                 key={i}
                 className="absolute bottom-28 left-1/2 -translate-x-1/2 animate-float-up text-5xl"
@@ -166,14 +209,30 @@ const MeetingLayout = ({
           </div>
         </div>
 
-        {/* Side Panel for Chat & Participants */}
-        <div className={`transition-all duration-300 ease-in-out ${activePanel ? 'w-full md:w-80 lg:w-96' : 'w-0'} overflow-hidden h-full relative border-l border-white/10`}>
+        {/* Side Panel for Chat & Participants — desktop: inline, mobile: overlay */}
+        <div className={`hidden md:block transition-all duration-300 ease-in-out ${activePanel ? 'md:w-80 lg:w-96' : 'w-0'} overflow-hidden h-full relative border-l border-white/10`}>
           <SidePanel
             activePanel={activePanel}
             onClose={() => togglePanel(null)}
             courseId={courseId}
+            isInstructor={isInstructor}
           />
         </div>
+
+        {/* Mobile overlay panel */}
+        {activePanel && (
+          <div className="md:hidden fixed inset-0 z-[110] flex flex-col">
+            <div className="absolute inset-0 bg-black/40" onClick={() => togglePanel(null)} />
+            <div className="relative mt-auto h-[70vh] bg-background rounded-t-2xl border-t border-border/50 shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300">
+              <SidePanel
+                activePanel={activePanel}
+                onClose={() => togglePanel(null)}
+                courseId={courseId}
+                isInstructor={isInstructor}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Bottom Control Bar */}
@@ -190,8 +249,14 @@ const MeetingLayout = ({
           isVideoCall={callType === 'videocall' || callType === 'consultation'}
           isJoining={isJoining}
           isConsultation={layoutCompact}
+          layout={layout}
+          onLayoutChange={callType !== 'livestream' ? setLayout : undefined}
+          onOpenDeviceSettings={() => setShowDeviceSettings(true)}
         />
       </div>
+      {showDeviceSettings && (
+        <DeviceSettingsModal onClose={() => setShowDeviceSettings(false)} />
+      )}
     </div>
   );
 };

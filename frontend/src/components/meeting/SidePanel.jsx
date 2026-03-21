@@ -1,9 +1,9 @@
 import React from 'react';
-import { CallParticipantsList } from '@stream-io/video-react-sdk';
 import { Icon } from '@iconify/react';
 import LiveStreamChat from '@/components/student/LiveStreamChat';
+import ParticipantsList from './ParticipantsList';
 
-const SidePanel = ({ activePanel, onClose, courseId }) => {
+const SidePanel = ({ activePanel, onClose, courseId, isInstructor }) => {
   if (!activePanel) return null;
 
   return (
@@ -26,8 +26,8 @@ const SidePanel = ({ activePanel, onClose, courseId }) => {
       {/* Panel Content */}
       <div className="flex-1 overflow-hidden h-full">
         {activePanel === 'participants' ? (
-          <div className="h-full flex flex-col px-4 pb-4 overflow-y-auto override-stream-theme">
-             <CallParticipantsList onClose={onClose} />
+          <div className="h-full flex flex-col overflow-hidden">
+             <ParticipantsList isInstructor={isInstructor} />
           </div>
         ) : (
           <div className="h-full flex flex-col dark:bg-[#202124]">

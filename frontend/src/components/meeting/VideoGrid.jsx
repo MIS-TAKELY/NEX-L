@@ -1,22 +1,61 @@
 import React from 'react';
-import { PaginatedGridLayout, SpeakerLayout, LivestreamLayout } from '@stream-io/video-react-sdk';
+import { 
+  PaginatedGridLayout, 
+  SpeakerLayout, 
+  LivestreamLayout,
+  ParticipantView,
+} from '@stream-io/video-react-sdk';
+import { Icon } from '@iconify/react';
 
-const VideoGrid = ({ isLivestream, isInstructor, callType }) => {
-  // Use appropriate layout based on call type
-  
+const CustomParticipantView = (props) => {
+  const { participant } = props;
+  const isHandRaised = !!participant.raised_hand_at;
+  const isSpeaking = participant.isSpeaking;
+
+  return (
+    <ParticipantView {...props}>
+      {/* Hand Raised Indicator */}
+      {isHandRaised && (
+        <div className="absolute top-4 left-4 z-20 flex items-center justify-center w-8 h-8 bg-yellow-500 rounded-full shadow-lg border-2 border-white animate-bounce-subtle">
+          <Icon icon="material-symbols:back-hand" className="w-5 h-5 text-white" />
+        </div>
+      )}
+      
+      {/* Custom Nameplate / Speaking Indicator */}
+      {isSpeaking && !props.isLocalParticipant && (
+        <div className="absolute inset-0 z-10 border-4 border-primary rounded-xl pointer-events-none animate-pulse-slow" />
+      )}
+    </ParticipantView>
+  );
+};
+
+const VideoGrid = ({ isLivestream, isInstructor, callType, layout = 'grid' }) => {
   if (callType === 'livestream') {
-    // For livestreaming, instructor uses standard layout, student uses Livestream layout for immersive view
     return isInstructor ? (
-       <SpeakerLayout participantsBarPosition="bottom" />
+       <SpeakerLayout 
+         ParticipantView={CustomParticipantView}
+         participantsBarPosition="bottom" 
+       />
     ) : (
-       <LivestreamLayout />
+       <LivestreamLayout ParticipantView={CustomParticipantView} />
     );
   }
 
-  // Google Meet style Video Call Grid
+  if (layout === 'speaker') {
+    return (
+      <div className="w-full h-full [&>div]:h-full [&>div]:w-full rounded-2xl overflow-hidden shadow-2xl bg-background">
+        <SpeakerLayout
+          ParticipantView={CustomParticipantView}
+          participantsBarPosition="bottom"
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full h-full [&>div]:h-full [&>div]:w-full rounded-2xl overflow-hidden shadow-2xl">
+    <div className="w-full h-full [&>div]:h-full [&>div]:w-full rounded-2xl overflow-hidden shadow-2xl bg-background">
        <PaginatedGridLayout 
+           ParticipantView={CustomParticipantView}
            groupSize={12} 
            includeAudioOnly={true}
            theme="dark"

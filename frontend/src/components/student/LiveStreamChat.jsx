@@ -59,21 +59,70 @@ const LiveStreamChat = ({ courseId }) => {
   }
 
   return (
-    <div className="flex flex-col h-full str-chat-livestream bg-background transition-colors duration-500">
-      <div className="flex-1 overflow-hidden relative">
+    <div className="flex flex-col h-full str-chat-livestream bg-background transition-colors duration-500 overflow-hidden">
+      <div className="flex-1 overflow-hidden relative flex flex-col">
         <Chat client={chatClient} theme="str-chat__theme-dark">
           <Channel channel={channel}>
-            <Window>
-              <MessageList hideDeletedMessages />
-              <MessageInput 
-                focus 
-                grow 
-                noFiles
+            <div className="flex flex-col h-full bg-card/30 backdrop-blur-sm">
+              <MessageList 
+                hideDeletedMessages 
+                messageActions={['react', 'reply']}
+                showAdmingActions={false}
               />
-            </Window>
+              <div className="p-4 bg-background/50 border-t border-border/50">
+                <MessageInput 
+                  focus 
+                  grow 
+                  noFiles
+                  placeholder="Send a message to everyone"
+                />
+              </div>
+            </div>
           </Channel>
         </Chat>
       </div>
+      
+      <style dangerouslySetInnerHTML={{ __html: `
+        .str-chat {
+          --str-chat__primary-color: var(--primary);
+          --str-chat__background-color: transparent;
+          --str-chat__secondary-background-color: var(--secondary);
+          --str-chat__message-bubble-background-color: var(--secondary);
+          --str-chat__message-bubble-text-color: var(--foreground);
+          --str-chat__font-family: 'Outfit', sans-serif;
+        }
+        .str-chat__list {
+          background: transparent !important;
+        }
+        .str-chat__message-simple {
+          padding: 8px 16px !important;
+        }
+        .str-chat__message-inner {
+          max-width: 85% !important;
+        }
+        .str-chat__message-bubble {
+          border-radius: 12px !important;
+          border: 1px solid var(--border) !important;
+          box-shadow: none !important;
+          background: var(--secondary) !important;
+        }
+        .str-chat__input-flat {
+          background: var(--secondary) !important;
+          border-radius: 24px !important;
+          border: 1px solid var(--border) !important;
+          padding: 4px 12px !important;
+        }
+        .str-chat__input-flat-wrapper {
+          background: transparent !important;
+          border: none !important;
+        }
+        .str-chat__send-button {
+          color: var(--primary) !important;
+        }
+        .str-chat__message-list {
+          padding-top: 20px !important;
+        }
+      `}} />
     </div>
   );
 };
