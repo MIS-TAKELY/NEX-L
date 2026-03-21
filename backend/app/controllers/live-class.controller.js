@@ -118,7 +118,10 @@ export const getStudentUpcomingClasses = async (req, res) => {
 
     const upcomingClasses = await LiveClass.find({
       course: { $in: courseIds },
-      startTime: { $gte: new Date() },
+      $or: [
+        { status: "live" },
+        { startTime: { $gte: new Date() } }
+      ]
     })
       .populate("course", "title thumbnail")
       .populate("teacher", "name image")

@@ -24,7 +24,10 @@ const CourseDetails = () => {
   const [addToCartApi] = useAddToCartMutation();
   const [removeFromCartApi] = useRemoveFromCartMutation();
   const [recordCourseView] = useRecordCourseViewMutation();
-  const { data: liveClasses = [] } = useGetCourseLiveClassesQuery(id, { skip: !id });
+  const { data: liveClasses = [] } = useGetCourseLiveClassesQuery(id, { 
+    skip: !id,
+    pollingInterval: 10000 // Poll every 10s to catch live status
+  });
   const { showToast } = useToast();
 
   const [couponCode, setCouponCode] = useState("");

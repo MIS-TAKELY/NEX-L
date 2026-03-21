@@ -21,7 +21,8 @@ const MyEnrollments = () => {
   const navigate = useNavigate();
 
   const { data: upcomingClasses = [], isLoading: loadingClasses } = useGetUpcomingLiveClassesQuery(undefined, {
-    skip: !userData?._id && !userData?.id
+    skip: !userData?._id && !userData?.id,
+    pollingInterval: 10000 // Poll every 10s to catch new live classes
   });
 
   useEffect(() => {
@@ -118,7 +119,7 @@ const MyEnrollments = () => {
               >
                 <div className="absolute top-0 right-0 p-4">
                    <div className="flex items-center gap-1.5 bg-red-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-lg shadow-red-500/30 animate-pulse uppercase tracking-wider">
-                      <div className="w-1.5 h-1.5 bg-white rounded-full" /> LIVE SOON
+                      <div className="w-1.5 h-1.5 bg-white rounded-full" /> {liveClass.status === 'live' ? 'LIVE NOW' : 'LIVE SOON'}
                    </div>
                 </div>
                 <div className="flex items-center gap-5 mb-6">
