@@ -12,7 +12,7 @@ const ParticipantRow = ({ participant, isLocal, canMute, canKick, call }) => {
   const hasVideo = participant.publishedTracks?.some(
     (t) => t === 2 || t === 'TRACK_TYPE_VIDEO' || t === 'video'
   );
-  const isHandRaised = !!participant.raised_hand_at;
+  const isHandRaised = !!participant.raisedHandAt;
   const isSpeaking = participant.isSpeaking;
 
   const handleMuteAudio = async () => {
@@ -167,8 +167,8 @@ const ParticipantsList = ({ isInstructor }) => {
   const sortedParticipants = [...(participants || [])].sort((a, b) => {
     if (a.userId === localParticipant?.userId) return -1;
     if (b.userId === localParticipant?.userId) return 1;
-    if (a.raised_hand_at && !b.raised_hand_at) return -1;
-    if (!a.raised_hand_at && b.raised_hand_at) return 1;
+    if (a.raisedHandAt && !b.raisedHandAt) return -1;
+    if (!a.raisedHandAt && b.raisedHandAt) return 1;
     return (a.name || '').localeCompare(b.name || '');
   });
 
