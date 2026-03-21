@@ -15,13 +15,24 @@ const EMOJIS = [
 
 const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipants, activePanel, sendReaction, isLive, isVideoCall, isJoining, isConsultation, layout, onLayoutChange, onOpenDeviceSettings }) => {
   const call = useCall();
-  const { useMicrophoneState, useCameraState, useScreenShareState, useLocalParticipant, useIsCallRecordingInProgress } = useCallStateHooks();
+  const { 
+    useMicrophoneState, 
+    useCameraState, 
+    useScreenShareState, 
+    useLocalParticipant, 
+    useIsCallRecordingInProgress,
+    useOwnCapabilities 
+  } = useCallStateHooks();
 
   const { microphone, optionsAwareIsMute: micOff } = useMicrophoneState({ optimisticUpdates: true });
   const { camera, optionsAwareIsMute: camOff } = useCameraState({ optimisticUpdates: true });
   const { screenShare, isSharing } = useScreenShareState();
   const localParticipant = useLocalParticipant();
   const isRecording = useIsCallRecordingInProgress();
+  const ownCapabilities = useOwnCapabilities() || [];
+  
+  const canRaiseHand = ownCapabilities.includes('raise-hand');
+  const canRequestPermissions = ownCapabilities.includes('send-permissions-request');
   
   const isHandRaised = !!localParticipant?.raisedHandAt;
 
@@ -53,24 +64,39 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
       if (isHandRaised) {
         if (typeof call.lowerHand === 'function') {
           await call.lowerHand();
-        } else if (typeof call.requestPermissions === 'function') {
-          // Fallback: In some SDK versions, lowering hand is done by requesting permissions without it 
-          // or a specific negative permission, but usually raiseHand/lowerHand are preferred.
-          // If they are missing, we try the requestPermissions approach if available.
+        } else if (canRequestPermissions) {
+          // Fallback: In some SDK versions, lowering hand is done by requesting permissions without it
           await call.requestPermissions({ permissions: [] }); 
+        } else {
+          console.warn("User lacks permission to lower hand via requestPermissions fallback");
         }
       } else {
+        // Prefer the dedicated method if available
         if (typeof call.raiseHand === 'function') {
-          await call.raiseHand();
-        } else if (typeof call.requestPermissions === 'function') {
+          try {
+            await call.raiseHand();
+          } catch (internalErr) {
+            // If the dedicated method fails with a permission error, try the fallback if allowed
+            if (canRequestPermissions) {
+              await call.requestPermissions({ permissions: ['raise-hand'] });
+            } else {
+              throw internalErr;
+            }
+          }
+        } else if (canRequestPermissions) {
           // Fallback: request 'raise-hand' permission which is the underlying mechanism
           await call.requestPermissions({ permissions: ['raise-hand'] });
         } else {
-          throw new Error("Hand raise methods not found on call object");
+          // Final fallback: If everything else fails, send a reaction so the host at least knows
+          if (sendReaction) {
+            sendReaction('reaction', '✋');
+          }
+          throw new Error("Hand raise not allowed: missing 'RaiseHand' and 'SendPermissionsRequest' capabilities");
         }
       }
     } catch (err) {
       console.error("Failed to toggle hand raise:", err);
+      // Optional: show a toast or notification to the user
     }
   };
 
