@@ -253,7 +253,7 @@ const MeetingLayout = ({
           isJoining={isJoining}
           isConsultation={layoutCompact}
           layout={layout}
-          onLayoutChange={callType !== 'livestream' ? setLayout : undefined}
+          onLayoutChange={setLayout}
           onOpenDeviceSettings={() => setShowDeviceSettings(true)}
         />
       </div>

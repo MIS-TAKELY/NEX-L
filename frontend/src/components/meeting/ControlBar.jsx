@@ -23,7 +23,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
   const localParticipant = useLocalParticipant();
   const isRecording = useIsCallRecordingInProgress();
   
-  const isHandRaised = !!localParticipant?.raised_hand_at;
+  const isHandRaised = !!localParticipant?.raisedHandAt;
 
   const toggleMic = () => microphone.toggle();
   const toggleCam = () => camera.toggle();

@@ -9,7 +9,7 @@ import { Icon } from '@iconify/react';
 
 const CustomParticipantView = (props) => {
   const { participant } = props;
-  const isHandRaised = !!participant.raised_hand_at;
+  const isHandRaised = !!participant.raisedHandAt;
   const isSpeaking = participant.isSpeaking;
 
   return (
@@ -30,6 +30,19 @@ const CustomParticipantView = (props) => {
 };
 
 const VideoGrid = ({ isLivestream, isInstructor, callType, layout = 'grid' }) => {
+  if (layout === 'grid') {
+    return (
+      <div className="w-full h-full [&>div]:h-full [&>div]:w-full rounded-2xl overflow-hidden shadow-2xl bg-background">
+         <PaginatedGridLayout 
+             ParticipantView={CustomParticipantView}
+             groupSize={12} 
+             includeAudioOnly={true}
+             theme="dark"
+         />
+      </div>
+    );
+  }
+
   if (callType === 'livestream') {
     return isInstructor ? (
        <SpeakerLayout 
