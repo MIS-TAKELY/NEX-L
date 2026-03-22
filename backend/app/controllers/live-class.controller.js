@@ -12,28 +12,43 @@ const isEnrolled = async (studentId, courseId) => {
   return !!enrollment;
 };
 
-// ─── Helper: mark stale live classes as completed ─────────────────────────────
 const autoCompleteStaleClasses = async (courseId) => {
   try {
     const now = new Date();
-    // Find all classes that are "live" for this course
-    const liveClasses = await LiveClass.find({
-      course: courseId,
-      status: "live",
-    });
+    // Find all classes for this course
+    const sessions = await LiveClass.find({ course: courseId });
 
-    for (const lc of liveClasses) {
-      // If session is older than 6 hours since startTime, it's definitely stale
-      // Or if it's 2 hours past its scheduled duration
+    for (const lc of sessions) {
+      if (lc.status === "completed") {
+        await lc.deleteOne();
+        continue;
+      }
+
       const startTime = new Date(lc.startTime);
-      const scheduledEndTime = new Date(startTime.getTime() + (lc.duration || 60) * 60000);
-      const staleThreshold = new Date(scheduledEndTime.getTime() + 2 * 60 * 60000); // 2 hours after scheduled end
-      const maxAgeThreshold = new Date(startTime.getTime() + 6 * 60 * 60000); // 6 hours total age
+      const duration = lc.duration || 60;
+      const scheduledEndTime = new Date(startTime.getTime() + duration * 60000);
 
-      if (now > staleThreshold || now > maxAgeThreshold) {
-        lc.status = "completed";
-        await lc.save();
-        console.log(`Auto-completed stale live class: ${lc._id} for course ${courseId}`);
+      // 1. If status is "live", it's stale if it's 2 hours past its scheduled duration
+      // or if it's more than 6 hours old in total.
+      if (lc.status === "live") {
+        const staleThreshold = new Date(scheduledEndTime.getTime() + 2 * 60 * 60000);
+        const maxAgeThreshold = new Date(startTime.getTime() + 6 * 60 * 60000);
+
+        if (now > staleThreshold || now > maxAgeThreshold) {
+          await lc.deleteOne();
+          console.log(`Auto-removed stale live class: ${lc._id}`);
+          continue;
+        }
+      }
+
+      // 2. If status is "scheduled", it's expired if it's more than 4 hours past its START time
+      // and haven't been started. This allows some flexibility for late starts.
+      if (lc.status === "scheduled") {
+        const expiryThreshold = new Date(startTime.getTime() + 4 * 60 * 60000);
+        if (now > expiryThreshold) {
+          await lc.deleteOne();
+          console.log(`Auto-removed expired scheduled class: ${lc._id}`);
+        }
       }
     }
   } catch (error) {
@@ -81,7 +96,6 @@ export const getCourseLiveClasses = async (req, res) => {
   try {
     const { courseId } = req.params;
     const user = req.user;
-
     const course = await Course.findById(courseId);
     if (!course) return res.status(404).json({ message: "Course not found" });
 
@@ -92,7 +106,7 @@ export const getCourseLiveClasses = async (req, res) => {
       return res.status(403).json({ message: "Access denied. Purchase the course first." });
     }
 
-    // Attempt to clear any stale "live" sessions first
+    // Attempt to clear any stale or expired sessions first
     await autoCompleteStaleClasses(courseId);
 
     const liveClasses = await LiveClass.find({ course: courseId }).sort({ startTime: 1 });
@@ -148,6 +162,13 @@ export const updateLiveClass = async (req, res) => {
       return res.status(403).json({ message: "Access denied" });
     }
 
+    if (status === "completed") {
+      await liveClass.deleteOne();
+      return res.json({
+        message: "Live class completed and removed successfully",
+      });
+    }
+
     liveClass.title = title || liveClass.title;
     liveClass.description = description || liveClass.description;
     liveClass.startTime = startTime || liveClass.startTime;
@@ -200,15 +221,15 @@ export const endAllCourseLiveClasses = async (req, res) => {
       return res.status(403).json({ message: "Only the instructor can end live sessions" });
     }
 
-    // Set all "live" classes for this course to "completed"
-    const result = await LiveClass.updateMany(
-      { course: courseId, status: "live" },
-      { $set: { status: "completed" } }
-    );
+    // Remove all "live" classes for this course
+    const result = await LiveClass.deleteMany({
+      course: courseId,
+      status: "live",
+    });
 
     res.json({
-      message: "Successfully completed all live sessions for the course",
-      count: result.modifiedCount,
+      message: "Successfully removed all live sessions for the course",
+      count: result.deletedCount,
     });
   } catch (error) {
     console.error("endAllCourseLiveClasses error:", error);

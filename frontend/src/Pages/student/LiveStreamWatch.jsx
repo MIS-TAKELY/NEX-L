@@ -56,6 +56,7 @@ const LiveStreamWatch = () => {
   const navigate = useNavigate();
   const [client, setClient] = useState(null);
   const [call, setCall] = useState(null);
+  const [callTypeFromBackend, setCallTypeFromBackend] = useState("livestream");
   const [courseName, setCourseName] = useState("Live Class");
   const [error, setError] = useState(null);
   const clientRef = useRef(null);
@@ -93,6 +94,7 @@ const LiveStreamWatch = () => {
         if (clientRef.current === videoClient) {
           setClient(videoClient);
           setCall(videoCall);
+          setCallTypeFromBackend(callType);
         }
       } catch (err) {
         console.error("LiveStreamWatch setup error:", err);
@@ -166,7 +168,7 @@ const LiveStreamWatch = () => {
   return (
     <StreamVideo client={client}>
       <StreamCall call={call}>
-        <WatcherView courseName={courseName} courseId={courseId} call={call} callType="livestream" />
+        <WatcherView courseName={courseName} courseId={courseId} call={call} callType={callTypeFromBackend} />
       </StreamCall>
     </StreamVideo>
   );

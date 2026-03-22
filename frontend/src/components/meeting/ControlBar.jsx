@@ -33,12 +33,42 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
   
   const canRaiseHand = ownCapabilities.includes('raise-hand');
   const canRequestPermissions = ownCapabilities.includes('send-permissions-request');
+  const canScreenShare = ownCapabilities.includes('screenshare');
   
   const isHandRaised = !!localParticipant?.raisedHandAt;
 
   const toggleMic = () => microphone.toggle();
   const toggleCam = () => camera.toggle();
-  const toggleShare = () => screenShare.toggle();
+  const toggleShare = async () => {
+    if (isSharing) {
+      try {
+        await screenShare.stop();
+      } catch (err) {
+        console.error("Failed to stop screen share:", err);
+      }
+      return;
+    }
+
+    if (!canScreenShare) {
+      if (canRequestPermissions) {
+        try {
+          await call.requestPermissions({ permissions: ['screenshare'] });
+          alert("Screen share request sent to the instructor.");
+        } catch (err) {
+          console.error("Failed to request screenshare permission:", err);
+        }
+      } else {
+        alert("You don't have permission to share screen in this live stream.");
+      }
+      return;
+    }
+
+    try {
+      await screenShare.start();
+    } catch (err) {
+      console.error("Failed to start screen share:", err);
+    }
+  };
 
   const [isRecordingToggling, setIsRecordingToggling] = useState(false);
 
@@ -355,13 +385,20 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
           <button
             onClick={toggleShare}
             className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95 ${
-              isSharing ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20' : 'bg-secondary text-foreground hover:bg-secondary/70'
+              isSharing 
+                ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20' 
+                : !canScreenShare && !canRequestPermissions
+                  ? 'bg-secondary text-muted-foreground opacity-50 cursor-not-allowed'
+                  : 'bg-secondary text-foreground hover:bg-secondary/70'
             }`}
           >
-            <Icon icon={isSharing ? 'material-symbols:stop-screen-share' : 'material-symbols:present-to-all'} className="w-5 h-5 md:w-6 md:h-6" />
+            <Icon 
+              icon={isSharing ? 'material-symbols:stop-screen-share' : 'material-symbols:present-to-all'} 
+              className={`w-5 h-5 md:w-6 md:h-6 ${!canScreenShare && !canRequestPermissions ? 'opacity-50' : ''}`} 
+            />
           </button>
           <span className="absolute -top-10 left-1/2 -translate-x-1/2 text-[10px] px-2 py-1 rounded bg-popover text-popover-foreground border border-border opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-sm">
-            {isSharing ? 'Stop presenting' : 'Present now'}
+            {isSharing ? 'Stop presenting' : !canScreenShare && canRequestPermissions ? 'Request Screen Share' : 'Present now'}
           </span>
         </div>
 

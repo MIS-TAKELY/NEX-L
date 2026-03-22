@@ -1,14 +1,15 @@
 import { NavLink } from 'react-router-dom';
+import { Icon } from '@iconify/react';
 import logo from '../../assets/logoo.png';
 
 const StudentSidebar = () => {
   const menuItems = [
-    { name: 'Dashboard', icon: 'HH', path: '/student/dashboard' },
-    { name: 'My Enrollments', icon: '🎓', path: '/student/my-enrollments' },
-    { name: 'Inbox', icon: '✉️', path: '/inbox' },
-    { name: 'Lesson', icon: '📖', path: '/lessons' },
-    { name: 'Task', icon: '📝', path: '/tasks' },
-    { name: 'Group', icon: '👥', path: '/groups' },
+    { name: 'Dashboard', icon: 'solar:widget-3-bold-duotone', path: '/student/dashboard' },
+    { name: 'My Enrollments', icon: 'solar:notebook-bold-duotone', path: '/student/my-enrollments' },
+    { name: 'Inbox', icon: 'solar:letter-bold-duotone', path: '/inbox' },
+    { name: 'Lesson', icon: 'solar:book-open-bold-duotone', path: '/lessons' },
+    { name: 'Task', icon: 'solar:checklist-minimalistic-bold-duotone', path: '/tasks' },
+    { name: 'Group', icon: 'solar:users-group-rounded-bold-duotone', path: '/groups' },
   ];
 
   const friends = [
@@ -18,46 +19,51 @@ const StudentSidebar = () => {
   ];
 
   return (
-    <div className="w-64 bg-background min-h-screen border-r border-gray-100 flex flex-col p-6 hidden md:flex font-outfit">
+    <div className="w-72 bg-card min-h-screen border-r border-border/50 flex flex-col p-8 hidden md:flex font-outfit shadow-sm">
 
       {/* Brand */}
-      <div className="flex items-center gap-2 mb-10 text-gray-900">
-        <img src={logo} alt="N" className="h-8 w-auto" />
-        <span className="text-2xl font-bold text-primary tracking-tight">EXL</span>
+      <div className="flex items-center gap-3 mb-12 px-2">
+        <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
+          <img src={logo} alt="N" className="h-6 w-auto" />
+        </div>
+        <span className="text-2xl font-black text-foreground tracking-tighter">NEX<span className="text-primary">L</span></span>
       </div>
 
       {/* Overview Menu */}
-      <div className="mb-8">
-        <p className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-wider">Overview</p>
-        <nav className="space-y-2">
+      <div className="mb-10">
+        <p className="px-4 text-[10px] font-black text-muted-foreground mb-4 uppercase tracking-[0.2em] opacity-60">Overview</p>
+        <nav className="space-y-1.5">
           {menuItems.map((item) => (
             <NavLink
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
-                  ? 'bg-gray-50 text-gray-900 font-bold border-l-4 border-primary'
-                  : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                `flex items-center gap-3.5 px-4 py-3.5 rounded-xl transition-all duration-300 group ${isActive
+                  ? 'bg-primary/10 text-primary shadow-sm shadow-primary/5'
+                  : 'text-muted-foreground hover:bg-secondary/50 hover:text-foreground'
                 }`
               }
             >
-              <span className="text-lg w-5">{item.icon === 'HH' ? '::' : item.icon}</span> {/* Dashboard Icon Placeholder */}
-              <span className="font-medium">{item.name}</span>
+              <Icon icon={item.icon} className={`text-xl transition-transform duration-300 group-hover:scale-110 ${window.location.pathname === item.path ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`} />
+              <span className="font-bold text-sm tracking-tight">{item.name}</span>
             </NavLink>
           ))}
         </nav>
       </div>
 
       {/* Friends Section */}
-      <div className="mb-8">
-        <p className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-wider">Friends</p>
-        <div className="space-y-4">
+      <div className="mb-10 lg:block hidden">
+        <p className="px-4 text-[10px] font-black text-muted-foreground mb-4 uppercase tracking-[0.2em] opacity-60">Connections</p>
+        <div className="space-y-3">
           {friends.map((friend, idx) => (
-            <div key={idx} className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-xl transition-colors">
-              <img src={friend.avatar} alt={friend.name} className="w-8 h-8 rounded-full bg-gray-100" />
-              <div>
-                <p className="text-sm font-bold text-gray-900">{friend.name}</p>
-                <p className="text-xs text-gray-500">{friend.status}</p>
+            <div key={idx} className="flex items-center gap-3.5 cursor-pointer hover:bg-secondary/50 px-4 py-2.5 rounded-xl transition-all group">
+              <div className="relative">
+                <img src={friend.avatar} alt={friend.name} className="w-9 h-9 rounded-xl bg-secondary object-cover border border-border/50 group-hover:border-primary/30 transition-colors" />
+                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-card" />
+              </div>
+              <div className="overflow-hidden">
+                <p className="text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors">{friend.name}</p>
+                <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">{friend.status}</p>
               </div>
             </div>
           ))}
@@ -65,16 +71,16 @@ const StudentSidebar = () => {
       </div>
 
       {/* Bottom Settings */}
-      <div className="mt-auto pt-6 border-t border-gray-100">
-        <p className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-wider">Settings</p>
-        <nav className="space-y-2">
-          <NavLink to="/student/settings" className={({ isActive }) => `flex items-center gap-3 px-4 py-2 w-full rounded-xl transition-colors ${isActive ? 'bg-gray-50 text-gray-900 font-bold border-l-4 border-primary' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}>
-            <span>⚙️</span>
-            <span className="font-medium">Settings</span>
+      <div className="mt-auto pt-8 border-t border-border/50">
+        <p className="px-4 text-[10px] font-black text-muted-foreground mb-4 uppercase tracking-[0.2em] opacity-60">System</p>
+        <nav className="space-y-1.5">
+          <NavLink to="/student/settings" className={({ isActive }) => `flex items-center gap-3.5 px-4 py-3 w-full rounded-xl transition-all duration-300 group ${isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-secondary/50 hover:text-foreground'}`}>
+            <Icon icon="solar:settings-bold-duotone" className="text-xl group-hover:rotate-45 transition-transform duration-500" />
+            <span className="font-bold text-sm tracking-tight">Settings</span>
           </NavLink>
-          <button className="flex items-center gap-3 px-4 py-2 w-full text-red-500 hover:bg-red-50 rounded-xl transition-colors">
-            <span>🚪</span>
-            <span className="font-medium">Logout</span>
+          <button className="flex items-center gap-3.5 px-4 py-3 w-full text-destructive/70 hover:text-destructive hover:bg-destructive/5 rounded-xl transition-all group">
+            <Icon icon="solar:logout-bold-duotone" className="text-xl group-hover:-translate-x-1 transition-transform" />
+            <span className="font-bold text-sm tracking-tight">Sign Out</span>
           </button>
         </nav>
       </div>

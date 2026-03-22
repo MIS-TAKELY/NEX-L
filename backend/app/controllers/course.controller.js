@@ -183,7 +183,7 @@ export const getCourseSections = async (req, res) => {
       .select("-embedding")
       .populate("teacher")
       .sort({ createdAt: -1 })
-      .limit(8);
+      .limit(4);
     // Note: In a real app, you'd calculate a trend score based on recent enrollments.
 
     // 2. Top Deals: Highest discount
@@ -313,11 +313,24 @@ export const getCourseSections = async (req, res) => {
       }
     }
 
+    // 5. Category-wise Sections
+    const distinctCategories = await Course.distinct("category", { status: "published" });
+    const categorySections = await Promise.all(
+      distinctCategories.map(async (cat) => {
+        const courses = await Course.find({ category: cat, status: "published" })
+          .select("-embedding")
+          .populate("teacher")
+          .limit(4);
+        return { category: cat, courses };
+      })
+    );
+
     res.json({
       trending,
       recentlyViewed,
       recommendations,
       topDeals: populatedTopDeals,
+      categorySections,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
