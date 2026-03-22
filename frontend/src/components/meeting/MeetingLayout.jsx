@@ -59,9 +59,22 @@ const MeetingLayout = ({
       }, 5000);
     });
 
-    return () => unsubscribe();
-  }, [call]);
-  
+    const unsubscribePermissionRequest = call.on('call.permission_request', (event) => {
+      if (!isInstructor) return;
+      const { user, permissions } = event;
+      if (permissions.includes('screenshare')) {
+        const confirmed = window.confirm(`${user.name || user.id} wants to share their screen. Allow?`);
+        if (confirmed) {
+          call.grantPermissions(user.id, ['screenshare']).catch(console.error);
+        }
+      }
+    });
+
+    return () => {
+      unsubscribe();
+      unsubscribePermissionRequest();
+    };
+  }, [call, isInstructor]);
   // Use reactions from SDK if local prop is empty
   const activeReactions = (reactions && reactions.length > 0) ? reactions : sdkReactions;
 
@@ -159,7 +172,7 @@ const MeetingLayout = ({
   const layoutCompact = isCompact !== undefined ? isCompact : isConsultation;
 
   return (
-    <div className={`${layoutCompact ? 'relative w-full h-full' : 'fixed inset-0'} z-[100] flex flex-col bg-background text-foreground overflow-hidden text-sm font-sans font-medium`}>
+    <div className={`${(layoutCompact || isConsultation) ? 'relative w-full h-full' : 'fixed inset-0'} z-[100] flex flex-col bg-background text-foreground overflow-hidden text-sm font-sans font-medium`}>
       
       {/* Top Header - Meeting Info (Hidden in Consultation) */}
       {!layoutCompact && (

@@ -164,14 +164,19 @@ const BroadcastControls = ({ call, courseId, callType }) => {
 
   const endStream = async () => {
     try {
-      if (isLive) {
-         await call.stopHLS();
+      // 1. Try to stop the stream and end the call with Stream SDK
+      // We wrap these in their own try-catch so they don't block the DB update if they fail
+      try {
+        if (isLive) {
+          await call.stopHLS();
+        }
+        await call.endCall();
+      } catch (sdkErr) {
+        console.warn("Stream SDK endCall/stopHLS failed (usually harmless if уже stopped):", sdkErr);
       }
-      await call.endCall();
 
-      // Robust ending: 
-      // 1. Try to update the specific class we tracked
-      // 2. Also call the "end all live" endpoint as a safety measure
+      // 2. Robust ending in our database: 
+      // This is the most critical part to ensure the UI stays in sync
       if (currentClassId) {
         try {
           await updateLiveClass({ 
@@ -180,16 +185,22 @@ const BroadcastControls = ({ call, courseId, callType }) => {
             payload: { status: 'completed' } 
           }).unwrap();
         } catch (updateErr) {
-          console.error("Failed to update specific class status:", updateErr);
+          console.error("Failed to update specific class status in DB:", updateErr);
         }
       }
       
-      // Safety: ensure no zombie live status remains for this course
-      await endAllLiveClasses(courseId).unwrap();
+      // Safety: ensure no zombie live status remains for this course in our DB
+      try {
+        await endAllLiveClasses(courseId).unwrap();
+      } catch (endAllErr) {
+        console.error("Failed to end all live classes for course:", endAllErr);
+      }
 
+      // 3. Always navigate back
       navigate(-1);
     } catch (err) {
-      console.error("Failed to end stream:", err);
+      console.error("Critical failure in endStream handler:", err);
+      // Ensure we at least navigate away even on critical errors
       navigate(-1);
     }
   };
@@ -213,6 +224,7 @@ const LiveStreamBroadcast = () => {
   const { courseId } = useParams();
   const [client, setClient] = useState(null);
   const [call, setCall] = useState(null);
+  const [callTypeFromBackend, setCallTypeFromBackend] = useState("livestream");
   const [error, setError] = useState(null);
   const clientRef = useRef(null);
 
@@ -247,6 +259,7 @@ const LiveStreamBroadcast = () => {
         if (clientRef.current === videoClient) {
           setClient(videoClient);
           setCall(videoCall);
+          setCallTypeFromBackend(callType);
         }
       } catch (err) {
         console.error("LiveStreamBroadcast setup error:", err);
@@ -303,7 +316,7 @@ const LiveStreamBroadcast = () => {
   return (
     <StreamVideo client={client}>
       <StreamCall call={call}>
-        <BroadcastControls call={call} courseId={courseId} callType="livestream" />
+        <BroadcastControls call={call} courseId={courseId} callType={callTypeFromBackend} />
       </StreamCall>
     </StreamVideo>
   );

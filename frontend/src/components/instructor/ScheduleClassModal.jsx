@@ -1,39 +1,60 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
-import { useScheduleLiveClassMutation } from '@/store/slices/liveClassApi';
+import { useScheduleLiveClassMutation, useUpdateLiveClassMutation } from '@/store/slices/liveClassApi';
 import { useToast } from '@/context/ToastContext';
+import dayjs from 'dayjs';
 
-const ScheduleClassModal = ({ isOpen, onClose, courseId, courseTitle }) => {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [startTime, setStartTime] = useState('');
-    const [duration, setDuration] = useState(60);
+const ScheduleClassModal = ({ isOpen, onClose, courseId, courseTitle, editClass = null }) => {
+    const isEditMode = !!editClass;
+    const [title, setTitle] = useState(editClass?.title || '');
+    const [description, setDescription] = useState(editClass?.description || '');
+    const [startTime, setStartTime] = useState(editClass ? dayjs(editClass.startTime).format('YYYY-MM-DDTHH:mm') : '');
+    const [duration, setDuration] = useState(editClass?.duration || 60);
     const { showToast } = useToast();
     
-    const [scheduleLiveClass, { isLoading }] = useScheduleLiveClassMutation();
+    const [scheduleLiveClass, { isLoading: isScheduling }] = useScheduleLiveClassMutation();
+    const [updateLiveClass, { isLoading: isUpdating }] = useUpdateLiveClassMutation();
+
+    const isLoading = isScheduling || isUpdating;
 
     if (!isOpen) return null;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await scheduleLiveClass({
-                courseId,
-                title,
-                description,
-                startTime,
-                duration: Number(duration)
-            }).unwrap();
-            showToast("Class scheduled successfully!", "success");
+            if (isEditMode) {
+                await updateLiveClass({
+                    classId: editClass._id,
+                    courseId,
+                    payload: {
+                        title,
+                        description,
+                        startTime,
+                        duration: Number(duration)
+                    }
+                }).unwrap();
+                showToast("Class updated successfully!", "success");
+            } else {
+                await scheduleLiveClass({
+                    courseId,
+                    title,
+                    description,
+                    startTime,
+                    duration: Number(duration)
+                }).unwrap();
+                showToast("Class scheduled successfully!", "success");
+            }
             onClose();
-            // Reset form
-            setTitle('');
-            setDescription('');
-            setStartTime('');
-            setDuration(60);
+            if (!isEditMode) {
+                // Reset form only if not editing (or we can always reset)
+                setTitle('');
+                setDescription('');
+                setStartTime('');
+                setDuration(60);
+            }
         } catch (error) {
-            console.error("Failed to schedule class:", error);
-            showToast(error.data?.message || "Failed to schedule class", "error");
+            console.error(`Failed to ${isEditMode ? 'update' : 'schedule'} class:`, error);
+            showToast(error.data?.message || `Failed to ${isEditMode ? 'update' : 'schedule'} class`, "error");
         }
     };
 
@@ -42,7 +63,9 @@ const ScheduleClassModal = ({ isOpen, onClose, courseId, courseTitle }) => {
             <div className="bg-background w-full max-w-lg rounded-2xl shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in duration-200">
                 <div className="flex items-center justify-between p-6 border-b border-gray-100">
                     <div>
-                        <h2 className="text-xl font-bold text-gray-900 line-clamp-1">Schedule Live Class</h2>
+                        <h2 className="text-xl font-bold text-gray-900 line-clamp-1">
+                            {isEditMode ? 'Edit Live Class' : 'Schedule Live Class'}
+                        </h2>
                         <p className="text-sm text-gray-500">{courseTitle}</p>
                     </div>
                     <button 
@@ -113,14 +136,14 @@ const ScheduleClassModal = ({ isOpen, onClose, courseId, courseTitle }) => {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="flex-1 px-4 py-2 bg-blue-600 text-foreground font-semibold rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            className={`flex-1 px-4 py-2 ${isEditMode ? 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/20' : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/20'} text-foreground font-semibold rounded-xl transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2`}
                         >
                             {isLoading ? (
                                 <div className="w-5 h-5 border-2 border-foreground border-t-transparent rounded-full animate-spin" />
                             ) : (
-                                <Icon icon="solar:calendar-add-bold" className="w-5 h-5" />
+                                <Icon icon={isEditMode ? "solar:pen-new-square-bold" : "solar:calendar-add-bold"} className="w-5 h-5" />
                             )}
-                            Schedule Class
+                            {isEditMode ? 'Update Class' : 'Schedule Class'}
                         </button>
                     </div>
                 </form>

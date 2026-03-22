@@ -84,30 +84,26 @@ const CoursesList = () => {
       
       <Navbar />
 
-      <main className="flex-1 relative z-10 pt-32 pb-20">
+      <main className="flex-1 relative z-10 pt-28 pb-20">
         <div className="container mx-auto px-6">
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10 mb-20">
-            <div className="space-y-4">
-              <h1 className="text-4xl md:text-6xl font-black text-foreground leading-tight tracking-tight">
-                Discover <span className="text-gradient italic">Knowledge</span>
-              </h1>
-              <p className="text-muted-foreground text-lg max-w-xl leading-relaxed">
-                Unlock your potential with our world-class courses designed to take your skills to the next level.
-              </p>
-            </div>
+          {/* Compact Header & Search */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12 pb-8 border-b border-border/40">
+            <h1 className="text-3xl font-black text-foreground tracking-tight">
+              Explore <span className="text-gradient">Catalog</span>
+            </h1>
 
-            <div className="relative w-full lg:max-w-md group">
-              <div className="absolute inset-0 bg-primary/20 blur-2xl group-focus-within:bg-primary/30 transition-all duration-500 rounded-3xl" />
-              <div className="relative flex items-center glass border border-border/50 rounded-2xl overflow-hidden group-focus-within:border-primary/50 transition-all duration-300">
+            <div className="relative w-full md:max-w-md group">
+              <div className="absolute inset-0 bg-primary/5 blur-xl group-focus-within:bg-primary/10 transition-all duration-500 rounded-2xl" />
+              <div className="relative flex items-center glass-card border border-border/50 rounded-xl overflow-hidden group-focus-within:border-primary/40 transition-all duration-300">
                 <Icon
                   icon="solar:magnifer-linear"
-                  className="ml-5 text-muted-foreground group-focus-within:text-primary transition-colors"
-                  size={24}
+                  className="ml-4 text-muted-foreground group-focus-within:text-primary transition-colors"
+                  size={20}
                 />
                 <input
                   type="text"
-                  placeholder="Search for courses..."
-                  className="w-full pl-4 pr-6 py-5 bg-transparent outline-none text-lg placeholder:text-muted-foreground/50"
+                  placeholder="What do you want to learn today?"
+                  className="w-full pl-3 pr-4 py-3.5 bg-transparent outline-none text-sm placeholder:text-muted-foreground/40"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={handleSearch}
@@ -138,7 +134,7 @@ const CoursesList = () => {
               <>
                 {sectionsLoading ? (
                   <div className="space-y-16">
-                    {["Recently Viewed", "Recommendations"].map((title) => (
+                    {["Recently Viewed", "Recommendations", "Trending"].map((title) => (
                       <div key={title} className="mb-16">
                         <div className="flex flex-col mb-8">
                           <div className="h-10 bg-muted rounded-lg w-64 mb-2 animate-pulse"></div>
@@ -154,13 +150,20 @@ const CoursesList = () => {
                   </div>
                 ) : (
                   <div className="space-y-4">
+                    {renderSection("Trending Now", sections.trending, "The most popular courses right now.")}
+                    {renderSection("Recommended for You", sections.recommendations, "Hand-picked for your learning path.")}
                     {renderSection("Recently Viewed", sections.recentlyViewed, "Pick up where you left off.")}
-                    {renderSection("Recommendations", sections.recommendations, "Hand-picked for your learning path.")}
-                    {renderSection("Trending", sections.trending, "The most popular courses right now.")}
-                    {renderSection("Top Deals", sections.topdeals, "Premium content at exclusive prices.")}
+                    
+                    {/* Category-wise Sections */}
+                    {sections.categorySections?.map((catSection) => (
+                      renderSection(catSection.category, catSection.courses, `Top courses in ${catSection.category}`)
+                    ))}
+
+                    {renderSection("Exclusive Deals", sections.topdeals, "Premium content at exclusive prices.")}
 
                     {(!sections.recentlyViewed?.length &&
                       !sections.recommendations?.length &&
+                      !sections.categorySections?.length &&
                       !sections.trending?.length &&
                       !sections.topdeals?.length) && (
                         <div className="text-center py-32 glass rounded-3xl border border-dashed border-border">

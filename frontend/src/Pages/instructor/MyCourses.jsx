@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useGetInstructorCoursesQuery, useDeleteCourseMutation } from '@/store/slices/courseApi';
 import ConfirmModal from '@/components/common/ConfirmModal';
-import ScheduleClassModal from '@/components/instructor/ScheduleClassModal';
+import LiveClassManagementModal from '@/components/instructor/LiveClassManagementModal';
 import { useToast } from '@/context/ToastContext';
 import { 
     useGetInstructorActiveClassesQuery, 
@@ -32,13 +32,13 @@ const MyCourses = () => {
     const [endAllLiveClasses] = useEndAllCourseLiveClassesMutation();
 
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-    const [isScheduleOpen, setIsScheduleOpen] = useState(false);
+    const [isManagementOpen, setIsManagementOpen] = useState(false);
     const [courseToDelete, setCourseToDelete] = useState(null);
     const [selectedCourse, setSelectedCourse] = useState(null);
 
-    const handleScheduleClick = (course) => {
+    const handleManageScheduleClick = (course) => {
         setSelectedCourse(course);
-        setIsScheduleOpen(true);
+        setIsManagementOpen(true);
     };
 
     const handleDeleteClick = (id) => {
@@ -148,11 +148,11 @@ const MyCourses = () => {
                                     Students
                                 </button>
                                 <button
-                                    onClick={() => handleScheduleClick(course)}
-                                    className="px-4 py-2 rounded-xl bg-secondary text-secondary-foreground hover:bg-primary hover:text-primary-foreground transition-all text-sm font-medium flex items-center gap-2"
+                                    onClick={() => handleManageScheduleClick(course)}
+                                    className="px-4 py-2 rounded-xl bg-secondary text-secondary-foreground hover:bg-primary/10 hover:text-primary transition-all text-sm font-medium flex items-center gap-2 border border-transparent hover:border-primary/20"
                                 >
-                                    <Icon icon="solar:calendar-add-bold-duotone" className="w-4 h-4" />
-                                    Schedule
+                                    <Icon icon="solar:calendar-bold-duotone" className="w-4 h-4" />
+                                    Sessions
                                 </button>
                                 {activeClasses.some(ac => ac.course?._id === course._id) ? (
                                     <button
@@ -208,9 +208,9 @@ const MyCourses = () => {
                 confirmText="Delete"
                 type="danger"
             />
-            <ScheduleClassModal
-                isOpen={isScheduleOpen}
-                onClose={() => setIsScheduleOpen(false)}
+            <LiveClassManagementModal
+                isOpen={isManagementOpen}
+                onClose={() => setIsManagementOpen(false)}
                 courseId={selectedCourse?._id}
                 courseTitle={selectedCourse?.title}
             />
