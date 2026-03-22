@@ -35,11 +35,11 @@ const CoursesList = () => {
   const sections = sectionsResp || {};
   const isSearching = debouncedQuery.length >= 2;
 
-  const renderSection = (title, courses, subtitle) => {
+  const renderSection = (title, courses, subtitle, key) => {
     if (!courses || courses.length === 0) return null;
 
     return (
-      <div className="mb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div key={key} className="mb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="flex flex-col mb-10">
           <h2 className="text-3xl font-bold text-foreground flex items-center gap-3">
             {title}
@@ -134,7 +134,7 @@ const CoursesList = () => {
               <>
                 {sectionsLoading ? (
                   <div className="space-y-16">
-                    {["Recently Viewed", "Recommendations", "Trending"].map((title) => (
+                    {["Trending", "Recommendations", "Recently Viewed"].map((title) => (
                       <div key={title} className="mb-16">
                         <div className="flex flex-col mb-8">
                           <div className="h-10 bg-muted rounded-lg w-64 mb-2 animate-pulse"></div>
@@ -150,13 +150,13 @@ const CoursesList = () => {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {renderSection("Trending Now", sections.trending, "The most popular courses right now.")}
-                    {renderSection("Recommended for You", sections.recommendations, "Hand-picked for your learning path.")}
-                    {renderSection("Recently Viewed", sections.recentlyViewed, "Pick up where you left off.")}
+                    {renderSection("Trending Now", sections.trending, "The most popular courses right now.", "trending")}
+                    {renderSection("Recommended for You", sections.recommendations, "Hand-picked for your learning path.", "recommendations")}
+                    {renderSection("Recently Viewed", sections.recentlyViewed, "Pick up where you left off.", "recently-viewed")}
                     
                     {/* Category-wise Sections */}
                     {sections.categorySections?.map((catSection) => (
-                      renderSection(catSection.category, catSection.courses, `Top courses in ${catSection.category}`)
+                      renderSection(catSection.category, catSection.courses, `Top courses in ${catSection.category}`, catSection.category)
                     ))}
 
                     {renderSection("Exclusive Deals", sections.topdeals, "Premium content at exclusive prices.")}
