@@ -1,5 +1,5 @@
 import React from "react";
-import { useCallStateHooks } from "@stream-io/video-react-sdk";
+import { useCallStateHooks, useCall } from "@stream-io/video-react-sdk";
 import { Icon } from "@iconify/react";
 
 const CallControls = ({ onLeave }) => {
@@ -7,13 +7,32 @@ const CallControls = ({ onLeave }) => {
     useMicrophoneState,
     useCameraState,
     useScreenShareState,
+    useOwnCapabilities,
   } = useCallStateHooks();
+
+  const call = useCall();
+  const ownCapabilities = useOwnCapabilities() || [];
+  
+  const canSendAudio = ownCapabilities.includes('send-audio');
+  const canSendVideo = ownCapabilities.includes('send-video');
+  const canScreenShare = ownCapabilities.includes('screen-share');
+  const canRequestPermissions = ownCapabilities.includes('send-permissions-request');
 
   const { microphone, isMuted: isMicMuted } = useMicrophoneState();
   const { camera, isMuted: isCamMuted } = useCameraState();
   const { screenShare, isSharing } = useScreenShareState();
 
   const toggleMicrophone = async () => {
+    if (!canSendAudio) {
+      try {
+        await call.requestPermissions({ permissions: ['send-audio'] });
+        alert("Microphone permission request sent.");
+      } catch (err) {
+        console.error("Failed to request microphone permission:", err);
+        alert("Unable to request microphone access. Please ask the instructor to grant permissions.");
+      }
+      return;
+    }
     try {
       await microphone.toggle();
     } catch (err) {
@@ -22,6 +41,16 @@ const CallControls = ({ onLeave }) => {
   };
 
   const toggleCamera = async () => {
+    if (!canSendVideo) {
+      try {
+        await call.requestPermissions({ permissions: ['send-video'] });
+        alert("Camera permission request sent.");
+      } catch (err) {
+        console.error("Failed to request camera permission:", err);
+        alert("Unable to request camera access. Please ask the instructor to grant permissions.");
+      }
+      return;
+    }
     try {
       await camera.toggle();
     } catch (err) {
@@ -30,6 +59,25 @@ const CallControls = ({ onLeave }) => {
   };
 
   const toggleScreenShare = async () => {
+    if (isSharing) {
+      try {
+        await screenShare.toggle();
+      } catch (err) {
+        console.error("Failed to stop screen share:", err);
+      }
+      return;
+    }
+
+    if (!canScreenShare) {
+      try {
+        await call.requestPermissions({ permissions: ['screen-share'] });
+        alert("Screen share request sent.");
+      } catch (err) {
+        console.error("Failed to request screenshare permission:", err);
+        alert("Unable to request screen share. Please ask the instructor to grant permissions.");
+      }
+      return;
+    }
     try {
       await screenShare.toggle();
     } catch (err) {
@@ -44,14 +92,16 @@ const CallControls = ({ onLeave }) => {
         onClick={toggleMicrophone}
         className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-300 ${
           isMicMuted
-            ? "bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/20"
+            ? !canSendAudio && !canRequestPermissions
+              ? "bg-white/5 text-gray-500 opacity-50 cursor-not-allowed"
+              : "bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/20"
             : "bg-white/10 text-white hover:bg-white/20 border border-white/5"
         }`}
-        title={isMicMuted ? "Turn on microphone" : "Turn off microphone"}
+        title={isMicMuted ? (!canSendAudio && canRequestPermissions ? "Request Microphone" : "Turn on microphone") : "Turn off microphone"}
       >
         <Icon
           icon={isMicMuted ? "solar:microphone-off-bold" : "solar:microphone-bold"}
-          className="w-6 h-6"
+          className={`w-6 h-6 ${!canSendAudio && !canRequestPermissions ? 'opacity-50' : ''}`}
         />
       </button>
 
@@ -60,14 +110,16 @@ const CallControls = ({ onLeave }) => {
         onClick={toggleCamera}
         className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-300 ${
           isCamMuted
-            ? "bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/20"
+            ? !canSendVideo && !canRequestPermissions
+              ? "bg-white/5 text-gray-500 opacity-50 cursor-not-allowed"
+              : "bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/20"
             : "bg-white/10 text-white hover:bg-white/20 border border-white/5"
         }`}
-        title={isCamMuted ? "Turn on camera" : "Turn off camera"}
+        title={isCamMuted ? (!canSendVideo && canRequestPermissions ? "Request Camera" : "Turn on camera") : "Turn off camera"}
       >
         <Icon
           icon={isCamMuted ? "solar:videocamera-off-bold" : "solar:videocamera-bold"}
-          className="w-6 h-6"
+          className={`w-6 h-6 ${!canSendVideo && !canRequestPermissions ? 'opacity-50' : ''}`}
         />
       </button>
 
@@ -77,13 +129,15 @@ const CallControls = ({ onLeave }) => {
         className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-300 ${
           isSharing
             ? "bg-primary text-primary-foreground hover:bg-primary/90"
-            : "bg-white/10 text-white hover:bg-white/20 border border-white/5"
+            : !canScreenShare && !canRequestPermissions
+              ? "bg-white/5 text-gray-500 opacity-50 cursor-not-allowed"
+              : "bg-white/10 text-white hover:bg-white/20 border border-white/5"
         }`}
-        title={isSharing ? "Stop sharing" : "Share screen"}
+        title={isSharing ? "Stop sharing" : !canScreenShare && canRequestPermissions ? "Request Screen Share" : "Share screen"}
       >
         <Icon
           icon={isSharing ? "solar:screen-share-bold" : "solar:screen-share-outline"}
-          className="w-6 h-6"
+          className={`w-6 h-6 ${!canScreenShare && !canRequestPermissions ? 'opacity-50' : ''}`}
         />
       </button>
 
