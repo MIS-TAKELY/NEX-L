@@ -272,7 +272,7 @@ export const createLiveStream = async (req, res) => {
 
     res.json({
       callId,
-      callType: "livestream",
+      callType: "default",
       courseId,
       courseName: course.title,
     });
@@ -299,7 +299,7 @@ export const getLiveStream = async (req, res) => {
     }
 
     const callId = `live-${courseId}`;
-    res.json({ callId, callType: "livestream", courseId, courseName: course.title });
+    res.json({ callId, callType: "default", courseId, courseName: course.title });
   } catch (error) {
     console.error("getLiveStream error:", error);
     res.status(500).json({ message: "Failed to get live stream" });

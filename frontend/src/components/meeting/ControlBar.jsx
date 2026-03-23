@@ -32,17 +32,51 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
   const ownCapabilities = useOwnCapabilities() || [];
   
   const canRaiseHand = ownCapabilities.includes('raise-hand');
-  const canRequestPermissions = ownCapabilities.includes('send-permissions-request');
-  const canScreenShare = ownCapabilities.includes('screenshare');
+  const canSendAudio = ownCapabilities.includes('send-audio');
+  const canSendVideo = ownCapabilities.includes('send-video');
+  const canScreenShare = ownCapabilities.includes('screen-share');
   
   const isHandRaised = !!localParticipant?.raisedHandAt;
 
-  const toggleMic = () => microphone.toggle();
-  const toggleCam = () => camera.toggle();
+  const toggleMic = async () => {
+    if (!canSendAudio) {
+      try {
+        await call.requestPermissions({ permissions: ['send-audio'] });
+        alert("Microphone permission request sent to the instructor.");
+      } catch (err) {
+        console.error("Failed to request microphone permission:", err);
+        alert("Unable to request microphone access. Please ask the instructor to grant permissions.");
+      }
+      return;
+    }
+    try {
+      await microphone.toggle();
+    } catch (err) {
+      console.error("Failed to toggle microphone:", err);
+    }
+  };
+
+  const toggleCam = async () => {
+    if (!canSendVideo) {
+      try {
+        await call.requestPermissions({ permissions: ['send-video'] });
+        alert("Camera permission request sent to the instructor.");
+      } catch (err) {
+        console.error("Failed to request camera permission:", err);
+        alert("Unable to request camera access. Please ask the instructor to grant permissions.");
+      }
+      return;
+    }
+    try {
+      await camera.toggle();
+    } catch (err) {
+      console.error("Failed to toggle camera:", err);
+    }
+  };
   const toggleShare = async () => {
     if (isSharing) {
       try {
-        await screenShare.stop();
+        await screenShare.toggle();
       } catch (err) {
         console.error("Failed to stop screen share:", err);
       }
@@ -50,21 +84,18 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
     }
 
     if (!canScreenShare) {
-      if (canRequestPermissions) {
-        try {
-          await call.requestPermissions({ permissions: ['screenshare'] });
-          alert("Screen share request sent to the instructor.");
-        } catch (err) {
-          console.error("Failed to request screenshare permission:", err);
-        }
-      } else {
-        alert("You don't have permission to share screen in this live stream.");
+      try {
+        await call.requestPermissions({ permissions: ['screen-share'] });
+        alert("Screen share request sent to the instructor.");
+      } catch (err) {
+        console.error("Failed to request screenshare permission:", err);
+        alert("Unable to request screen share. Please ask the instructor to grant permissions.");
       }
       return;
     }
 
     try {
-      await screenShare.start();
+      await screenShare.toggle();
     } catch (err) {
       console.error("Failed to start screen share:", err);
     }
@@ -106,22 +137,20 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
           try {
             await call.raiseHand();
           } catch (internalErr) {
-            // If the dedicated method fails with a permission error, try the fallback if allowed
-            if (canRequestPermissions) {
+            try {
               await call.requestPermissions({ permissions: ['raise-hand'] });
-            } else {
-              throw internalErr;
+            } catch(e) {
+              console.error("Hand raise fallback failed:", e);
             }
           }
-        } else if (canRequestPermissions) {
-          // Fallback: request 'raise-hand' permission which is the underlying mechanism
-          await call.requestPermissions({ permissions: ['raise-hand'] });
         } else {
-          // Final fallback: If everything else fails, send a reaction so the host at least knows
-          if (sendReaction) {
-            sendReaction('reaction', '✋');
+          try {
+            await call.requestPermissions({ permissions: ['raise-hand'] });
+          } catch(e) {
+            if (sendReaction) {
+              sendReaction('reaction', '✋');
+            }
           }
-          throw new Error("Hand raise not allowed: missing 'RaiseHand' and 'SendPermissionsRequest' capabilities");
         }
       }
     } catch (err) {
@@ -149,7 +178,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
         <button
           onClick={toggleMic}
           className="flex flex-col items-center gap-1.5 group"
-          title={micOff ? 'Unmute microphone' : 'Mute microphone'}
+          title={micOff ? (!canSendAudio ? 'Request Microphone' : 'Unmute microphone') : 'Mute microphone'}
         >
           <span className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95 ${
             micOff
@@ -183,7 +212,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
         <button
           onClick={toggleCam}
           className="flex flex-col items-center gap-1.5 group"
-          title={camOff ? 'Turn on camera' : 'Turn off camera'}
+          title={camOff ? (!canSendVideo ? 'Request Camera' : 'Turn on camera') : 'Turn off camera'}
         >
           <span className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95 ${
             camOff
@@ -310,7 +339,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
             />
           </button>
           <span className="absolute -top-10 left-1/2 -translate-x-1/2 text-[10px] px-2 py-1 rounded bg-popover text-popover-foreground border border-border opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-sm">
-            {micOff ? 'Turn on microphone' : 'Turn off microphone'}
+            {micOff ? (!canSendAudio ? 'Request Microphone' : 'Turn on microphone') : 'Turn off microphone'}
           </span>
         </div>
 
@@ -330,7 +359,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
             />
           </button>
           <span className="absolute -top-10 left-1/2 -translate-x-1/2 text-[10px] px-2 py-1 rounded bg-popover text-popover-foreground border border-border opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-sm">
-            {camOff ? 'Turn on camera' : 'Turn off camera'}
+            {camOff ? (!canSendVideo ? 'Request Camera' : 'Turn on camera') : 'Turn off camera'}
           </span>
         </div>
 
@@ -387,18 +416,16 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
             className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95 ${
               isSharing 
                 ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20' 
-                : !canScreenShare && !canRequestPermissions
-                  ? 'bg-secondary text-muted-foreground opacity-50 cursor-not-allowed'
-                  : 'bg-secondary text-foreground hover:bg-secondary/70'
+                : 'bg-secondary text-foreground hover:bg-secondary/70'
             }`}
           >
             <Icon 
               icon={isSharing ? 'material-symbols:stop-screen-share' : 'material-symbols:present-to-all'} 
-              className={`w-5 h-5 md:w-6 md:h-6 ${!canScreenShare && !canRequestPermissions ? 'opacity-50' : ''}`} 
+              className="w-5 h-5 md:w-6 md:h-6" 
             />
           </button>
           <span className="absolute -top-10 left-1/2 -translate-x-1/2 text-[10px] px-2 py-1 rounded bg-popover text-popover-foreground border border-border opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-sm">
-            {isSharing ? 'Stop presenting' : !canScreenShare && canRequestPermissions ? 'Request Screen Share' : 'Present now'}
+            {isSharing ? 'Stop presenting' : (!canScreenShare ? 'Request Screen Share' : 'Present now')}
           </span>
         </div>
 
