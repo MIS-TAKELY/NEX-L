@@ -9,16 +9,16 @@ const ConsultationModal = ({ sessionId, onClose, isInstructor }) => {
   if (!sessionId) return null;
 
   return (
-    <div className={`fixed z-[9999] pointer-events-none transition-all duration-300 ${isExpanded ? 'inset-4 md:inset-8 lg:inset-12' : 'bottom-6 right-6'}`}>
+    <div className={`fixed z-[9999] pointer-events-none transition-all duration-300 ${isExpanded ? 'inset-0' : 'bottom-6 right-6'}`}>
       <motion.div 
         initial={{ y: 50, opacity: 0, scale: 0.95 }}
         animate={{ y: 0, opacity: 1, scale: 1 }}
         exit={{ y: 50, opacity: 0, scale: 0.95 }}
-        className={`${isExpanded ? 'w-full h-full' : 'w-[420px] h-[620px]'} rounded-2xl overflow-hidden relative pointer-events-auto flex flex-col transition-all duration-300`}
+        className={`${isExpanded ? 'w-full h-full rounded-none' : 'w-[420px] h-[620px] rounded-2xl'} overflow-hidden relative pointer-events-auto flex flex-col transition-all duration-300`}
         style={{
           background: "var(--card)",
-          border: "1px solid var(--border)",
-          boxShadow: "0 32px 80px rgba(0,0,0,0.25), 0 0 0 1px var(--border)"
+          border: isExpanded ? "none" : "1px solid var(--border)",
+          boxShadow: isExpanded ? "none" : "0 32px 80px rgba(0,0,0,0.25), 0 0 0 1px var(--border)"
         }}
       >
         {/* Top gradient accent bar */}
