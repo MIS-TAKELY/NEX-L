@@ -5,8 +5,8 @@ import SidePanel from './SidePanel';
 import JoinScreen from './JoinScreen';
 import VideoGrid from './VideoGrid';
 import DeviceSettingsModal from './DeviceSettingsModal';
+import PermissionRequestToast from './PermissionRequestToast';
 import { Icon } from '@iconify/react';
-// import FloatingSelfView from './FloatingSelfView'; // Left out as stream layouts handle self view nicely
 
 const MeetingLayout = ({
   courseName,
@@ -28,6 +28,23 @@ const MeetingLayout = ({
   const callingState = useCallCallingState();
   const participantCount = useParticipantCount();
   const isLive = useIsCallLive();
+
+  // Permission request queue (instructor only)
+  const [permissionRequests, setPermissionRequests] = useState([]);
+
+  const handleGrantPermission = async (userId, permissions) => {
+    try {
+      await call.grantPermissions(userId, permissions);
+    } catch (err) {
+      console.error('Failed to grant permissions:', err);
+    } finally {
+      setPermissionRequests((prev) => prev.filter((r) => r.userId !== userId));
+    }
+  };
+
+  const handleDenyPermission = (userId) => {
+    setPermissionRequests((prev) => prev.filter((r) => r.userId !== userId));
+  };
 
   // Custom reaction buffering since SDK hook is missing
   const [sdkReactions, setSdkReactions] = useState([]);
@@ -62,12 +79,16 @@ const MeetingLayout = ({
     const unsubscribePermissionRequest = call.on('call.permission_request', (event) => {
       if (!isInstructor) return;
       const { user, permissions } = event;
-      if (permissions.includes('screenshare')) {
-        const confirmed = window.confirm(`${user.name || user.id} wants to share their screen. Allow?`);
-        if (confirmed) {
-          call.grantPermissions(user.id, ['screenshare']).catch(console.error);
+      setPermissionRequests((prev) => {
+        // Avoid duplicate entries for the same user
+        const exists = prev.some((r) => r.userId === user.id);
+        if (exists) {
+          return prev.map((r) =>
+            r.userId === user.id ? { ...r, permissions } : r
+          );
         }
-      }
+        return [...prev, { userId: user.id, userName: user.name || user.id, permissions }];
+      });
     });
 
     return () => {
@@ -272,6 +293,15 @@ const MeetingLayout = ({
       </div>
       {showDeviceSettings && (
         <DeviceSettingsModal onClose={() => setShowDeviceSettings(false)} />
+      )}
+
+      {/* Permission request toasts — instructor only */}
+      {isInstructor && (
+        <PermissionRequestToast
+          requests={permissionRequests}
+          onGrant={handleGrantPermission}
+          onDeny={handleDenyPermission}
+        />
       )}
     </div>
   );

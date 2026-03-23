@@ -32,21 +32,29 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
   const ownCapabilities = useOwnCapabilities() || [];
   
   const canRaiseHand = ownCapabilities.includes('raise-hand');
-  const canSendAudio = ownCapabilities.includes('send-audio');
-  const canSendVideo = ownCapabilities.includes('send-video');
-  const canScreenShare = ownCapabilities.includes('screen-share');
+  const canSendAudio = isInstructor || ownCapabilities.includes('send-audio');
+  const canSendVideo = isInstructor || ownCapabilities.includes('send-video');
+  const canScreenShare = isInstructor || ownCapabilities.includes('screen-share');
   
   const isHandRaised = !!localParticipant?.raisedHandAt;
 
+  // Track pending permission requests to show feedback on buttons
+  const [pendingPermissions, setPendingPermissions] = useState({});
+
+  const requestPermission = async (permission) => {
+    if (pendingPermissions[permission]) return; // already requested
+    setPendingPermissions((prev) => ({ ...prev, [permission]: true }));
+    try {
+      await call.requestPermissions({ permissions: [permission] });
+    } catch (err) {
+      console.error(`Failed to request ${permission} permission:`, err);
+    }
+    // Keep the pending state visually — it resets when capability is granted
+  };
+
   const toggleMic = async () => {
     if (!canSendAudio) {
-      try {
-        await call.requestPermissions({ permissions: ['send-audio'] });
-        alert("Microphone permission request sent to the instructor.");
-      } catch (err) {
-        console.error("Failed to request microphone permission:", err);
-        alert("Unable to request microphone access. Please ask the instructor to grant permissions.");
-      }
+      await requestPermission('send-audio');
       return;
     }
     try {
@@ -58,13 +66,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
 
   const toggleCam = async () => {
     if (!canSendVideo) {
-      try {
-        await call.requestPermissions({ permissions: ['send-video'] });
-        alert("Camera permission request sent to the instructor.");
-      } catch (err) {
-        console.error("Failed to request camera permission:", err);
-        alert("Unable to request camera access. Please ask the instructor to grant permissions.");
-      }
+      await requestPermission('send-video');
       return;
     }
     try {
@@ -84,13 +86,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
     }
 
     if (!canScreenShare) {
-      try {
-        await call.requestPermissions({ permissions: ['screen-share'] });
-        alert("Screen share request sent to the instructor.");
-      } catch (err) {
-        console.error("Failed to request screenshare permission:", err);
-        alert("Unable to request screen share. Please ask the instructor to grant permissions.");
-      }
+      await requestPermission('screen-share');
       return;
     }
 
