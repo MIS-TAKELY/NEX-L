@@ -4,7 +4,7 @@ import logo from '../../assets/logoo.png';
 
 const Footer = () => {
     return (
-        <footer className="bg-primary text-foreground pt-16 pb-8 font-sans">
+        <footer className="bg-[#455672] text-foreground pt-16 pb-8 font-sans">
             <div className="container mx-auto px-6 lg:px-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
                     {/* Column 1: About */}
