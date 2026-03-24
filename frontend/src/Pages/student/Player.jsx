@@ -31,8 +31,7 @@ const Player = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  // Communication panel: null | 'dm' | 'group'
-  const [commPanel, setCommPanel] = useState(null);
+  const [activeTab, setActiveTab] = useState('lesson'); // 'lesson' | 'community' | 'mentor'
   const { chatClient } = useStream();
 
   const { data: liveClasses = [] } = useGetCourseLiveClassesQuery(courseId, { 
@@ -94,6 +93,70 @@ const Player = () => {
     if (window.innerWidth < 1024) setIsSidebarOpen(false);
   };
 
+  const renderTabbedLayout = (mainContent) => {
+    return (
+      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        {mainContent}
+
+        {/* Tab Navigation */}
+        <div className="flex items-center gap-2 p-1.5 bg-card/80 backdrop-blur-xl rounded-2xl border border-border/50 w-full sm:w-fit shadow-sm overflow-x-auto no-scrollbar">
+          {[
+            { id: 'lesson', label: 'Lesson Info', icon: 'solar:notes-bold-duotone' },
+            { id: 'community', label: 'Community', icon: 'solar:users-group-rounded-bold-duotone' },
+            { id: 'mentor', label: 'Ask Mentor', icon: 'solar:chat-round-dots-bold-duotone' }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2.5 px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 whitespace-nowrap ${
+                activeTab === tab.id
+                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+              }`}
+            >
+              <Icon icon={tab.icon} className="w-4 h-4" />
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="transition-all duration-500 min-h-[500px]">
+          {activeTab === 'lesson' && (
+            <div className="animate-in fade-in slide-in-from-left-4">
+              {/* For videos, we already showed the player above, so we just show description here */}
+              {/* For other types, they might have their own layout but we can provide a default card if needed */}
+              {activeLesson?.description || activeLesson?.summary ? (
+                <div className="bg-card p-10 rounded-3xl border border-border/80 shadow-sm transition-all duration-500 premium-card hover:shadow-md">
+                   <h2 className="text-3xl font-black text-foreground mb-4 tracking-tight">
+                    {formatDisplayName(activeResource.name, activeLesson?.title)}
+                  </h2>
+                  <p className="text-muted-foreground leading-relaxed font-medium text-lg max-w-4xl">
+                    {activeLesson?.description || activeLesson?.summary}
+                  </p>
+                </div>
+              ) : (
+                <div className="bg-card/50 p-10 rounded-3xl border border-dashed border-border flex flex-col items-center justify-center text-center">
+                   <Icon icon="solar:document-text-bold" size={48} className="text-muted-foreground opacity-20 mb-4" />
+                   <p className="text-muted-foreground font-medium">No additional notes provided for this lesson.</p>
+                </div>
+              )}
+            </div>
+          )}
+          {activeTab === 'community' && (
+            <div className="h-[650px] rounded-3xl overflow-hidden border border-border bg-card shadow-xl animate-in fade-in slide-in-from-right-4">
+              <CourseGroupChat courseId={courseId} />
+            </div>
+          )}
+          {activeTab === 'mentor' && (
+            <div className="h-[650px] rounded-3xl overflow-hidden border border-border bg-card shadow-xl animate-in fade-in slide-in-from-right-4">
+              <StudentChat courseId={courseId} />
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   const renderContent = () => {
     if (!activeResource) return (
       <div className="flex items-center justify-center h-full text-gray-400">
@@ -106,89 +169,79 @@ const Player = () => {
 
     switch (type) {
       case 'video':
-        return (
-          <div className="space-y-8">
-            <div className="aspect-video w-full bg-black rounded-2xl overflow-hidden shadow-2xl border border-border/30 group relative transition-transform duration-500 hover:scale-[1.005]">
-              <video
-                key={url}
-                controls
-                className="w-full h-full"
-                src={url}
-                poster={course?.thumbnail}
-              >
-                Your browser does not support the video tag.
-              </video>
-            </div>
-            <div className="bg-card p-10 rounded-2xl border border-border/80 shadow-sm transition-all duration-500 premium-card hover:shadow-md">
-              <h2 className="text-3xl font-black text-foreground mb-4 tracking-tight">
-                {formatDisplayName(activeResource.name, activeLesson?.title)}
-              </h2>
-              <p className="text-muted-foreground leading-relaxed font-medium text-lg max-w-4xl">
-                {activeLesson?.description || activeLesson?.summary || "No description provided for this lesson."}
-              </p>
-            </div>
+        return renderTabbedLayout(
+          <div className="aspect-video w-full bg-black rounded-3xl overflow-hidden shadow-2xl border border-white/5 group relative transition-all duration-500 hover:shadow-primary/5">
+            <video
+              key={url}
+              controls
+              className="w-full h-full"
+              src={url}
+              poster={course?.thumbnail}
+            >
+              Your browser does not support the video tag.
+            </video>
           </div>
         );
       case 'pdf':
       case 'file':
-        return (
-          <div className="flex flex-col items-center justify-center py-24 bg-card rounded-2xl border border-border/80 shadow-sm px-10 text-center premium-card transition-all duration-500 hover:shadow-md">
-            <div className="w-24 h-24 bg-primary/5 rounded-2xl flex items-center justify-center mb-8 relative group">
+        return renderTabbedLayout(
+          <div className="flex flex-col items-center justify-center py-20 bg-card rounded-3xl border border-border/80 shadow-sm px-10 text-center premium-card transition-all duration-500 hover:shadow-md">
+            <div className="w-20 h-20 bg-primary/5 rounded-2xl flex items-center justify-center mb-6 relative group">
               <div className="absolute inset-0 bg-primary/5 rounded-2xl animate-pulse" />
-              <Icon icon="solar:document-bold-duotone" className="text-primary relative z-10" size={48} />
+              <Icon icon="solar:document-bold-duotone" className="text-primary relative z-10" size={40} />
             </div>
-            <h2 className="text-4xl font-black text-foreground mb-4 tracking-tight">
+            <h2 className="text-3xl font-black text-foreground mb-4 tracking-tight">
               {formatDisplayName(activeResource.name, activeLesson?.title)}
             </h2>
-            <p className="text-muted-foreground mb-10 max-w-md font-medium text-lg leading-relaxed">This resource is a <span className="text-primary font-bold">{type}</span>. You can view it by clicking the button below.</p>
+            <p className="text-muted-foreground mb-8 max-w-md font-medium text-lg leading-relaxed">This resource is a <span className="text-primary font-bold">{type}</span>. Click below to view it.</p>
 
             <a
               href={url}
               target="_blank"
               rel="noreferrer"
-              className="px-12 py-5 bg-primary text-primary-foreground rounded-xl font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:shadow-2xl hover:shadow-primary/30 transition-all active:scale-95 shadow-xl shadow-primary/10"
+              className="px-10 py-4 bg-primary text-primary-foreground rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2.5 hover:shadow-2xl hover:shadow-primary/30 transition-all active:scale-95 shadow-xl shadow-primary/10"
             >
-              <Icon icon="solar:download-minimalistic-bold" className="w-5 h-5" /> Open Resource
+              <Icon icon="solar:download-minimalistic-bold" className="w-4 h-4" /> Open Resource
             </a>
           </div>
         );
       case 'note':
       case 'article':
-        return (
-          <div className="prose prose-lg dark:prose-invert max-w-none bg-card p-12 md:p-20 rounded-2xl border border-border/80 shadow-sm premium-card transition-all duration-500 hover:shadow-md">
-            <h1 className="text-5xl font-black text-foreground mb-12 tracking-tight">
+        return renderTabbedLayout(
+          <div className="prose prose-lg dark:prose-invert max-w-none bg-card p-10 md:p-16 rounded-3xl border border-border/80 shadow-sm premium-card transition-all duration-500 hover:shadow-md">
+            <h1 className="text-4xl font-black text-foreground mb-10 tracking-tight">
               {formatDisplayName(activeResource?.name, activeLesson?.title)}
             </h1>
-            <div className="text-foreground/90 whitespace-pre-wrap leading-relaxed font-medium text-xl">
+            <div className="text-foreground/90 whitespace-pre-wrap leading-relaxed font-medium text-lg">
               {activeLesson?.description || activeLesson?.summary || "No description provided."}
             </div>
           </div>
         );
       case 'quiz':
-        return (
+        return renderTabbedLayout(
             <QuizPlayer 
-                quizData={activeLesson?.quizData} 
+                quizData={activeLesson?.quiz} 
                 courseId={courseId}
                 contentId={activeLesson?._id}
             />
         );
       case 'assignment':
-        return (
+        return renderTabbedLayout(
             <AssignmentPlayer 
-                assignmentData={activeLesson?.assignmentData} 
+                assignmentData={activeLesson?.assignment} 
                 courseId={courseId}
                 contentId={activeLesson?._id}
             />
         );
       default:
-        return (
-          <div className="flex flex-col items-center justify-center py-24 bg-secondary/30 rounded-[2rem] border-2 border-dashed border-border transition-colors duration-500">
-            <Icon icon="solar:document-text-bold" className="text-primary/40 mb-6 animate-pulse" size={64} />
-            <p className="text-muted-foreground font-black uppercase tracking-widest text-sm">Preview Unavailable</p>
+        return renderTabbedLayout(
+          <div className="flex flex-col items-center justify-center py-20 bg-secondary/30 rounded-3xl border-2 border-dashed border-border transition-colors duration-500">
+            <Icon icon="solar:document-text-bold" className="text-primary/40 mb-6 animate-pulse" size={56} />
+            <p className="text-muted-foreground font-black uppercase tracking-widest text-xs">Preview Unavailable</p>
             <p className="text-foreground font-medium text-lg mt-2">Interactive "{type}" module coming soon!</p>
             {url && (
-              <a href={url} target="_blank" rel="noreferrer" className="mt-8 text-primary font-black uppercase tracking-wider text-xs hover:underline flex items-center gap-2 bg-background px-6 py-3 rounded-xl border border-border shadow-sm hover:shadow-md transition-all">
-                Access Resource File <Icon icon="solar:arrow-right-up-bold" className="w-4 h-4" />
+              <a href={url} target="_blank" rel="noreferrer" className="mt-8 text-primary font-black uppercase tracking-wider text-[10px] hover:underline flex items-center gap-2 bg-background px-6 py-3 rounded-xl border border-border shadow-sm hover:shadow-md transition-all">
+                Access Resource File <Icon icon="solar:arrow-right-up-bold" className="w-3.5 h-3.5" />
               </a>
             )}
           </div>
@@ -280,10 +333,10 @@ const Player = () => {
 
             {/* Group Chat button */}
             <button
-              onClick={() => setCommPanel(commPanel === 'group' ? null : 'group')}
+              onClick={() => setActiveTab('community')}
               title="Group Chat"
               className={`px-5 py-3 rounded-xl transition-all duration-300 flex items-center gap-2.5 text-xs font-black uppercase tracking-widest border ${
-                commPanel === 'group'
+                activeTab === 'community'
                   ? 'bg-primary text-primary-foreground shadow-xl shadow-primary/20 border-primary'
                   : 'bg-secondary/40 text-muted-foreground hover:text-foreground hover:bg-background border-border/40 hover:border-border shadow-sm'
               }`}
@@ -294,10 +347,10 @@ const Player = () => {
 
             {/* DM Chat button */}
             <button
-              onClick={() => setCommPanel(commPanel === 'dm' ? null : 'dm')}
+              onClick={() => setActiveTab('mentor')}
               title="Chat with Teacher"
               className={`px-5 py-3 rounded-xl transition-all duration-300 flex items-center gap-2.5 text-xs font-black uppercase tracking-widest border ${
-                commPanel === 'dm'
+                activeTab === 'mentor'
                   ? 'bg-primary text-primary-foreground shadow-xl shadow-primary/20 border-primary'
                   : 'bg-secondary/40 text-muted-foreground hover:text-foreground hover:bg-background border-border/40 hover:border-border shadow-sm'
               }`}
@@ -316,19 +369,7 @@ const Player = () => {
         </div>
       </main>
 
-      {/* Communication Panel (right slide-in) */}
-      {commPanel && (
-        <aside className="w-full max-w-sm flex flex-col border-l border-border bg-card h-full flex-shrink-0 shadow-2xl z-20 transition-all duration-500 animate-slide-in-right">
-          <div className="flex-1 overflow-hidden relative">
-            {commPanel === 'dm' && (
-              <StudentChat courseId={courseId} onClose={() => setCommPanel(null)} />
-            )}
-            {commPanel === 'group' && (
-              <CourseGroupChat courseId={courseId} onClose={() => setCommPanel(null)} />
-            )}
-          </div>
-        </aside>
-      )}
+
     </div>
   );
 };

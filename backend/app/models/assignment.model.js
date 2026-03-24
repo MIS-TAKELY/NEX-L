@@ -6,6 +6,9 @@ const assignmentSchema = new mongoose.Schema(
     description: { type: String, default: "" },
     dueDate: { type: Date },
     course: { type: mongoose.Schema.Types.ObjectId, ref: "Course", required: true },
+    autoGrade: { type: Boolean, default: false },
+    gradingCriteria: { type: String, default: "" },
+    maxScore: { type: Number, default: 100 },
     submissions: [
       {
         student: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },

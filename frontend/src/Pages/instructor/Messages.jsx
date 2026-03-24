@@ -31,6 +31,9 @@ const Messages = () => {
   const sort = { last_message_at: -1 };
   const options = { limit: 30 };
 
+  const { theme } = useSelector((s) => s.ui);
+  const streamTheme = `str-chat__theme-${theme || 'light'}`;
+
   if (!chatClient) {
     return (
       <div className="h-[calc(100vh-12rem)] flex items-center justify-center text-gray-500 font-outfit">
@@ -47,8 +50,8 @@ const Messages = () => {
 
   return (
     <div className="h-[calc(100vh-12rem)] font-outfit">
-      <div className="bg-background rounded-xl shadow-sm border border-gray-100 h-full flex overflow-hidden">
-        <Chat client={chatClient} theme="str-chat__theme-light">
+      <div className="bg-background rounded-xl shadow-sm border border-border h-full flex overflow-hidden transition-colors duration-500">
+        <Chat client={chatClient} theme={streamTheme}>
           {/* Threads / Channel List */}
           <div className="w-80 border-r border-gray-100 flex flex-col flex-shrink-0">
             <div className="p-5 border-b border-gray-100">

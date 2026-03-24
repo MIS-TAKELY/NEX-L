@@ -23,6 +23,8 @@ const BACKEND = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 const CourseGroupChat = ({ courseId, onClose }) => {
   const { chatClient } = useStream();
   const { userData } = useSelector((s) => s.auth);
+  const { theme } = useSelector((s) => s.ui);
+  const streamTheme = `str-chat__theme-${theme || 'light'}`;
   const [channels, setChannels] = useState([]);
   const [activeChannel, setActiveChannel] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -159,7 +161,7 @@ const CourseGroupChat = ({ courseId, onClose }) => {
 
         {/* Stream Chat UI */}
         <div className="flex-1 overflow-hidden relative">
-          <Chat client={chatClient} theme="str-chat__theme-light">
+          <Chat client={chatClient} theme={streamTheme}>
             <Channel channel={activeChannel}>
               <Window>
                 <MessageList />

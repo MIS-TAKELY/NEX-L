@@ -98,9 +98,11 @@ export const submitQuiz = async (req, res) => {
         success: true, 
         message: "Quiz submitted successfully", 
         data: {
-            totalScore,
+            score: totalScore,
+            totalQuestions: quiz.questions.length,
+            percentage: (totalScore / totalPossiblePoints) * 100,
             passed,
-            evaluatedAnswers: quiz.autoGrade ? evaluatedAnswers : [] // Hide results if not auto-graded until instructor reviews
+            evaluatedAnswers: quiz.autoGrade ? evaluatedAnswers : []
         } 
     });
 

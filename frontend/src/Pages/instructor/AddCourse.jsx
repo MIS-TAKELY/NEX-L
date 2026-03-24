@@ -131,7 +131,9 @@ const AddCourse = () => {
         title: "",
         description: "",
         dueDate: "",
-        totalMarks: 100,
+        autoGrade: false,
+        gradingCriteria: "",
+        maxScore: 100,
         instructions: "",
       };
     } else {
@@ -380,6 +382,8 @@ const AddCourse = () => {
             title: cont.title,
             type: cont.type,
             description: cont.description,
+            quizData: cont.quizData,
+            assignmentData: cont.assignmentData,
             resources: cont.resources.map((r) => ({
               name: r.name,
               url: r.url,
