@@ -171,7 +171,7 @@ const AboutPage = () => {
       </section>
 
       {/* ── STATS STRIP ──────────────────────────────────── */}
-      <section className="py-14 bg-primary">
+      <section className="py-14 bg-[#455672]">
         <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-8">
           {stats.map((s, i) => (
             <div key={i} className="flex flex-col items-center text-center gap-2">
@@ -242,7 +242,7 @@ const AboutPage = () => {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────── */}
-      <section className="py-16 px-6 bg-primary">
+      <section className="py-16 px-6 bg-[#455672]">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-primary-foreground mb-4">
             Ready to Start Learning?
