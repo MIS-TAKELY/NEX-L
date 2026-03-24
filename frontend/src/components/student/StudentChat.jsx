@@ -17,11 +17,14 @@ import {
 import "stream-chat-react/dist/css/v2/index.css";
 import { useStream } from "@/context/StreamContext";
 import { Icon } from "@iconify/react";
+import { useSelector } from "react-redux";
 
 const BACKEND = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
 const StudentChat = ({ courseId, onClose }) => {
   const { chatClient, loading } = useStream();
+  const { theme } = useSelector((s) => s.ui);
+  const streamTheme = `str-chat__theme-${theme || 'light'}`;
   const [channel, setChannel] = useState(null);
   const [error, setError] = useState(null);
 
@@ -86,7 +89,7 @@ const StudentChat = ({ courseId, onClose }) => {
 
       {/* Stream Chat UI */}
       <div className="flex-1 overflow-hidden">
-        <Chat client={chatClient} theme="str-chat__theme-light">
+        <Chat client={chatClient} theme={streamTheme}>
           <Channel channel={channel}>
             <Window>
               <MessageList />

@@ -145,28 +145,35 @@ export default function App() {
           <Route path="dashboard" element={<Home />} />
           <Route path="my-enrollments" element={<MyEnrollments />} />
           <Route path="consultations" element={<StudentConsultations />} />
-          <Route path="player/:courseId" element={<Player />} />
           <Route path="cart" element={<Cart />} />
           <Route path="settings" element={<StudentSettings />} />
         </Route>
 
-          {/* Student standalone communication pages */}
-          <Route
-            path="/student/live/:courseId"
-            element={
-              <ProtectedRoute allowedRoles={["student"]}>
-                <LiveStreamWatch />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/student/video-call/:courseId"
-            element={
-              <ProtectedRoute allowedRoles={["student"]}>
-                <VideoCallPage />
-              </ProtectedRoute>
-            }
-          />
+        {/* Standalone Student Pages (Full-page experience without StudentLayout nesting) */}
+        <Route
+          path="/student/player/:courseId"
+          element={
+            <ProtectedRoute allowedRoles={["student"]}>
+              <Player />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/live/:courseId"
+          element={
+            <ProtectedRoute allowedRoles={["student"]}>
+              <LiveStreamWatch />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/video-call/:courseId"
+          element={
+            <ProtectedRoute allowedRoles={["student"]}>
+              <VideoCallPage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Legacy support for /home redirecting or same element */}
         <Route

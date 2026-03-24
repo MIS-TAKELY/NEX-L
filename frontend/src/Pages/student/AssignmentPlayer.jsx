@@ -24,6 +24,8 @@ const AssignmentPlayer = ({ assignmentData, courseId, contentId }) => {
     const [submitted, setSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const [result, setResult] = useState(null);
+
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             setFile(e.target.files[0]);
@@ -38,17 +40,14 @@ const AssignmentPlayer = ({ assignmentData, courseId, contentId }) => {
 
         setIsSubmitting(true);
         try {
-            // For a real implementation we would likely use a FormData object to upload the file
-            // along with the submission text to `submitAssignment` API.
-            // Simulating success here for UI purposes assuming the backend route handles it.
             const response = await submitAssignment(contentId, {
                 text: submissionText,
-                // file handle or URL would go here after uploading to a bucket
             });
             
-            if (response?.success || true) { // Fallback true for demo
+            if (response?.success) {
                 setSubmitted(true);
-                showToast("Assignment submitted successfully!", "success");
+                setResult(response);
+                showToast("Assignment submitted and graded successfully!", "success");
             }
         } catch (err) {
             console.error(err);
@@ -58,21 +57,36 @@ const AssignmentPlayer = ({ assignmentData, courseId, contentId }) => {
         }
     };
 
-    if (submitted) {
+    if (submitted && result) {
         return (
             <div className="bg-background p-10 rounded-3xl border border-gray-100 shadow-sm text-center max-w-2xl mx-auto mt-8">
                 <div className="w-24 h-24 rounded-full mx-auto flex items-center justify-center mb-6 bg-green-100 text-green-500">
                     <Icon icon="solar:check-circle-bold" size={48} />
                 </div>
                 <h2 className="text-3xl font-extrabold text-gray-900 mb-2 italic">Assignment Submitted</h2>
+                
+                {result.grade !== undefined && (
+                    <div className="my-8 p-6 bg-green-50 rounded-2xl border border-green-100">
+                        <p className="text-gray-500 font-bold uppercase tracking-widest text-xs mb-2">Automated Grade</p>
+                        <div className="text-4xl font-black text-green-600">
+                            {result.grade} <span className="text-xl text-green-400">/ {result.maxScore || assignmentData.maxScore}</span>
+                        </div>
+                        <p className="mt-4 text-green-700 font-medium text-sm">
+                            Your submission was automatically evaluated based on the instructor's criteria.
+                        </p>
+                    </div>
+                )}
+
                 <p className="text-gray-500 font-medium mb-8">
-                    Your work has been sent to the instructor for review. You will be notified once it's graded.
+                    {result.grade !== undefined 
+                        ? "Your grade has been recorded. You can review your submission below."
+                        : "Your work has been sent to the instructor for review. You will be notified once it's graded."}
                 </p>
                 <button 
-                    onClick={() => { setSubmitted(false); setSubmissionText(""); setFile(null); }}
+                    onClick={() => { setSubmitted(false); setSubmissionText(""); setFile(null); setResult(null); }}
                     className="px-8 py-3 bg-gray-100 text-gray-600 rounded-xl font-bold hover:bg-gray-200 transition-all font-medium"
                 >
-                    Resubmit (Demo)
+                    Resubmit
                 </button>
             </div>
         );

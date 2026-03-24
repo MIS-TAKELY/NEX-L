@@ -220,7 +220,7 @@ const Player = () => {
       case 'quiz':
         return renderTabbedLayout(
             <QuizPlayer 
-                quizData={activeLesson?.quizData} 
+                quizData={activeLesson?.quiz} 
                 courseId={courseId}
                 contentId={activeLesson?._id}
             />
@@ -228,7 +228,7 @@ const Player = () => {
       case 'assignment':
         return renderTabbedLayout(
             <AssignmentPlayer 
-                assignmentData={activeLesson?.assignmentData} 
+                assignmentData={activeLesson?.assignment} 
                 courseId={courseId}
                 contentId={activeLesson?._id}
             />

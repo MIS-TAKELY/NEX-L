@@ -127,6 +127,10 @@ export const createCourse = async (req, res) => {
         populate: {
           path: "contents",
           model: "Content",
+          populate: [
+            { path: "quiz" },
+            { path: "assignment" }
+          ]
         },
       });
 
@@ -433,6 +437,10 @@ export const getCourseById = async (req, res) => {
         populate: {
           path: "contents",
           model: "Content",
+          populate: [
+            { path: "quiz" },
+            { path: "assignment" }
+          ]
         },
       });
 
@@ -621,6 +629,10 @@ export const updateCourse = async (req, res) => {
         populate: {
           path: "contents",
           model: "Content",
+          populate: [
+            { path: "quiz" },
+            { path: "assignment" }
+          ]
         },
       });
 

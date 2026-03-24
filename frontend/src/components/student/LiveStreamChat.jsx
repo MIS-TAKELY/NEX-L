@@ -14,6 +14,7 @@ import {
 import "stream-chat-react/dist/css/v2/index.css";
 import { useStream } from "@/context/StreamContext";
 import { Icon } from "@iconify/react";
+import { useSelector } from "react-redux";
 
 import axios from "axios";
 
@@ -21,6 +22,8 @@ const BACKEND = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
 const LiveStreamChat = ({ courseId, callType = 'livestream' }) => {
   const { chatClient, loading: contextLoading } = useStream();
+  const { theme } = useSelector((s) => s.ui);
+  const streamTheme = `str-chat__theme-${theme || 'dark'}`;
   const [channel, setChannel] = useState(null);
   const [error, setError] = useState(null);
   const [isInitializing, setIsInitializing] = useState(false);
@@ -96,7 +99,7 @@ const LiveStreamChat = ({ courseId, callType = 'livestream' }) => {
   return (
     <div className="flex flex-col h-full str-chat-livestream bg-background transition-colors duration-500 overflow-hidden">
       <div className="flex-1 overflow-hidden relative flex flex-col">
-        <Chat client={chatClient} theme="str-chat__theme-dark">
+        <Chat client={chatClient} theme={streamTheme}>
           <Channel channel={channel}>
             <div className="flex flex-col h-full bg-card/30 backdrop-blur-sm">
               <MessageList 
