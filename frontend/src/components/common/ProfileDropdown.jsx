@@ -7,15 +7,20 @@ import { useNavigate } from 'react-router-dom';
 
 import { signOut } from '@/lib/auth.client';
 import { setTheme as reduxSetTheme } from '@/store/slices/uiSlice';
+import { base_url } from '@/apis/auth.api';
+import axios from 'axios';
+import { useToast } from '@/context/ToastContext';
 
 const ProfileDropdown = () => {
     const dispatch = useDispatch();
     const { userData, userRole } = useSelector((state) => state.auth);
     const { theme } = useSelector((state) => state.ui);
+    const { showToast } = useToast();
     const [isOpen, setIsOpen] = useState(false);
     const [view, setView] = useState('main'); // 'main' or 'display'
     const dropdownRef = useRef(null);
     const fileInputRef = useRef(null);
+    const [isUploading, setIsUploading] = useState(false);
     const navigate = useNavigate();
 
     // Close dropdown on click outside
@@ -41,14 +46,46 @@ const ProfileDropdown = () => {
         }
     };
 
-    const handleImageChange = (e) => {
+    const handleImageChange = async (e) => {
         const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                dispatch(updateUser({ image: reader.result }));
-            };
-            reader.readAsDataURL(file);
+        if (!file) return;
+
+        // Validations
+        if (!file.type.startsWith('image/')) {
+            showToast('Please select an image file', 'error');
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) { // 5MB limit
+            showToast('Image size must be less than 5MB', 'error');
+            return;
+        }
+
+        setIsUploading(true);
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            // 1. Upload to Cloudinary via backend
+            const uploadResponse = await axios.post(`${base_url}/upload/upload`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+                withCredentials: true
+            });
+
+            const imageUrl = uploadResponse.data.url;
+
+            // 2. Update user profile on backend
+            await axios.put(`${base_url}/users/me`, { image: imageUrl }, {
+                withCredentials: true
+            });
+
+            // 3. Update local state
+            dispatch(updateUser({ image: imageUrl }));
+            showToast('Profile picture updated successfully', 'success');
+        } catch (error) {
+            console.error("Image upload failed", error);
+            showToast(error.response?.data?.message || 'Failed to update profile picture', 'error');
+        } finally {
+            setIsUploading(false);
         }
     };
 
@@ -98,7 +135,12 @@ const ProfileDropdown = () => {
                                         <div className="flex items-center gap-4">
                                             <div className="relative group/avatar">
                                                 <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-background shadow-sm">
-                                                    {userData?.image ? (
+                                                    {isUploading ? (
+                                                        <div className="flex flex-col items-center gap-1">
+                                                            <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                                                            <span className="text-[8px] font-bold text-primary animate-pulse uppercase tracking-tighter">Uploading</span>
+                                                        </div>
+                                                    ) : userData?.image ? (
                                                         <img src={userData.image} alt="Profile" className="w-full h-full object-cover" />
                                                     ) : (
                                                         <Icon icon="solar:user-circle-bold-duotone" size={40} className="text-muted-foreground" />
@@ -106,7 +148,8 @@ const ProfileDropdown = () => {
                                                 </div>
                                                 <button
                                                     onClick={() => fileInputRef.current.click()}
-                                                    className="absolute bottom-0 right-0 w-6 h-6 bg-card rounded-full shadow-md flex items-center justify-center text-foreground hover:text-primary transition-colors border border-border"
+                                                    disabled={isUploading}
+                                                    className={`absolute bottom-0 right-0 w-6 h-6 bg-card rounded-full shadow-md flex items-center justify-center text-foreground hover:text-primary transition-colors border border-border ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                 >
                                                     <Icon icon="solar:camera-bold" size={14} />
                                                 </button>

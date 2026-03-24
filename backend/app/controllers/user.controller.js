@@ -35,7 +35,10 @@ export const getUserById = async (req, res) => {
 // Update user
 export const updateUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const id = req.params.id || req.user?.id;
+    if (!id) return res.status(400).json({ message: "User ID is required" });
+
+    const user = await User.findByIdAndUpdate(id, req.body, { new: true });
     res.json(user);
   } catch (err) {
     res.status(500).json({ message: err.message });
