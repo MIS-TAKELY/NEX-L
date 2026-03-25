@@ -37,16 +37,16 @@ export const createCourse = async (req, res) => {
     // Generate embedding
     let embedding = [];
     try {
-      const textToEmbed = `${title} ${description} ${category} ${tags ? tags.join(" ") : ""}`;
-      embedding = await getEmbedding(textToEmbed);
-      // Double check it's flattened for DB safety
-      if (Array.isArray(embedding[0])) {
-        embedding = embedding[0];
+      const textToEmbed = `${title || ""} ${description || ""} ${category || ""} ${Array.isArray(tags) ? tags.join(" ") : ""}`.trim();
+      if (textToEmbed) {
+        embedding = await getEmbedding(textToEmbed);
+        // Ensure it's a flat array
+        if (Array.isArray(embedding[0])) {
+          embedding = embedding[0];
+        }
       }
     } catch (embedErr) {
-      console.error("Failed to generate embedding:", embedErr);
-      // Proceed without embedding or fail? Usually proceed, but for this task embedding is key.
-      // We will log it.
+      console.error("[Course] Failed to generate embedding:", embedErr.message);
     }
 
     const course = await Course.create({
@@ -524,19 +524,27 @@ export const updateCourse = async (req, res) => {
     const course = await Course.findById(id);
     if (!course) return res.status(404).json({ message: "Course not found" });
 
-    // Generate embedding if content changed
-    let embedding = course.embedding;
-    const oldText = `${course.title} ${course.description} ${course.category} ${course.tags ? course.tags.join(" ") : ""}`;
-    const newText = `${title} ${description} ${category} ${tags ? tags.join(" ") : ""}`;
+    // Generate embedding if content changed or is missing
+    let embedding = course.embedding || [];
+    const updatedTitle = title !== undefined ? title : course.title;
+    const updatedDescription = description !== undefined ? description : course.description;
+    const updatedCategory = category !== undefined ? category : course.category;
+    const updatedTags = tags !== undefined ? tags : course.tags;
 
-    if (oldText !== newText) {
+    const oldText = `${course.title || ""} ${course.description || ""} ${course.category || ""} ${Array.isArray(course.tags) ? course.tags.join(" ") : ""}`.trim();
+    const newText = `${updatedTitle || ""} ${updatedDescription || ""} ${updatedCategory || ""} ${Array.isArray(updatedTags) ? updatedTags.join(" ") : ""}`.trim();
+
+    if (oldText !== newText || !embedding || embedding.length === 0 || embedding.length !== 384) {
       try {
-        embedding = await getEmbedding(newText);
-        if (Array.isArray(embedding[0])) {
-          embedding = embedding[0];
+        if (newText) {
+          console.log(`[Course] Refreshing embedding for "${updatedTitle}" (Dimensions: ${embedding.length} -> 384)`);
+          embedding = await getEmbedding(newText);
+          if (Array.isArray(embedding[0])) {
+            embedding = embedding[0];
+          }
         }
       } catch (embedErr) {
-        console.error("Failed to update embedding:", embedErr);
+        console.error("[Course] Failed to update embedding:", embedErr.message);
       }
     }
 
@@ -683,5 +691,89 @@ export const generateContent = async (req, res) => {
       message: `Failed to generate AI content: ${err.message}`,
       success: false,
     });
+  }
+};
+
+// Get instructor analytics
+export const getInstructorAnalytics = async (req, res) => {
+  try {
+    const { teacherId } = req.params;
+
+    const courses = await Course.find({ teacher: teacherId });
+    if (!courses || courses.length === 0) {
+      return res.status(200).json({
+        success: true,
+        data: {
+          overview: { totalViews: 0, totalCompletions: 0, activeStudents: 0, avgRating: 0 },
+          courseStats: []
+        }
+      });
+    }
+
+    const courseIds = courses.map((c) => c._id);
+    const enrollments = await Enrollment.find({ course: { $in: courseIds } });
+
+    let totalViews = 0;
+    let totalCompletions = 0;
+    let activeStudents = 0;
+    let totalRating = 0;
+    let ratedCoursesCount = 0;
+
+    const courseStats = courses.map(course => {
+      const courseEnrollments = enrollments.filter(e => e.course.toString() === course._id.toString());
+      
+      const views = courseEnrollments.length; // Approximate views as enrollments
+      let completions = 0;
+      let active = 0;
+      let totalCourseProgress = 0;
+
+      courseEnrollments.forEach(enrollment => {
+        totalCourseProgress += (enrollment.progress || 0);
+        if (enrollment.status === 'completed' || enrollment.progress === 100) {
+          completions += 1;
+        } else {
+          active += 1;
+        }
+      });
+
+      const averageProgress = courseEnrollments.length > 0 ? Math.round(totalCourseProgress / courseEnrollments.length) : 0;
+      const rating = course.ratings?.average || 0;
+      
+      totalViews += views;
+      totalCompletions += completions;
+      activeStudents += active;
+      if (rating > 0) {
+        totalRating += rating;
+        ratedCoursesCount += 1;
+      }
+
+      return {
+        _id: course._id,
+        name: course.title,
+        views,
+        completions,
+        averageProgress,
+        rating,
+      };
+    });
+
+    const avgRating = ratedCoursesCount > 0 ? (totalRating / ratedCoursesCount).toFixed(1) : 0;
+
+    res.status(200).json({
+      success: true,
+      data: {
+        overview: {
+          totalViews,
+          totalCompletions,
+          activeStudents,
+          avgRating,
+        },
+        courseStats,
+      }
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message, success: false });
   }
 };

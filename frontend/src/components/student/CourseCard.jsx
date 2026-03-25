@@ -15,66 +15,80 @@ const CourseCard = ({ enrollment }) => {
       transition={{ duration: 0.5 }}
       whileHover={{ y: -5 }}
       onClick={() => navigate(`/student/player/${course._id}`)}
-      className="group cursor-pointer bg-card rounded-xl border border-border/50 p-4 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 flex flex-col h-full premium-card glass-card max-w-[280px] mx-auto w-full"
+      className="group cursor-pointer glass-card premium-card rounded-3xl border border-white/10 p-4 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20 flex flex-col h-full relative overflow-hidden w-full max-w-[320px] mx-auto bg-card"
     >
+      {/* Background glow effect on hover */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
       {/* Thumbnail */}
-      <div className="relative aspect-[4/3] mb-4 overflow-hidden rounded-xl bg-muted">
+      <div className="relative aspect-[16/9] mb-4 overflow-hidden rounded-2xl border border-white/5 shadow-inner">
         <img
           src={course.thumbnail || "https://via.placeholder.com/400x225?text=No+Thumbnail"}
           alt={course.title}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
         
-        <div className="absolute top-3 left-3 px-3 py-1.5 bg-background/80 backdrop-blur-md text-primary text-[10px] font-bold rounded-full border border-white/10 uppercase tracking-widest shadow-lg">
+        <div className="absolute top-3 left-3 px-3 py-1 bg-black/40 backdrop-blur-md text-white text-[10px] font-black rounded-full border border-white/20 uppercase tracking-widest shadow-xl flex items-center gap-1.5">
+          <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(var(--primary),0.8)]" />
           {course.category}
         </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex flex-col px-1">
-        <h3 className="text-base font-bold text-foreground mb-1.5 line-clamp-1 group-hover:text-primary transition-colors font-outfit" title={course.title}>
+      <div className="flex-1 flex flex-col relative z-10 px-0.5">
+        <h3 className="text-lg font-bold text-foreground mb-1.5 line-clamp-2 group-hover:text-primary transition-colors tracking-tight leading-tight">
           {course.title}
         </h3>
 
-        <p className="text-[10px] text-muted-foreground mb-4 line-clamp-2 italic font-medium opacity-80">
+        <p className="text-xs text-muted-foreground mb-4 line-clamp-2 font-medium leading-relaxed">
           {course.description}
         </p>
 
-        <div className="mt-auto space-y-2">
+        <div className="mt-auto space-y-2.5 bg-secondary/50 dark:bg-white/5 p-3 rounded-xl border border-border/50">
           <div className="flex items-center justify-between">
-            <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest">Progress</span>
-            <span className="text-[10px] font-black text-primary">{progress}%</span>
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
+              <Icon icon="solar:chart-line-bold" className="text-primary w-3.5 h-3.5" />
+              Progress
+            </span>
+            <span className="text-xs font-black text-primary">{progress}%</span>
           </div>
 
           {/* Progress Bar */}
-          <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden border border-border/20">
+          <div className="w-full h-1.5 bg-muted/60 rounded-full overflow-hidden border border-border/50">
             <motion.div
               initial={{ width: 0 }}
               whileInView={{ width: `${progress}%` }}
-              transition={{ duration: 1, ease: "easeOut" }}
-              className="h-full bg-primary shadow-[0_0_10px_rgba(99,102,241,0.5)]"
-            />
+              transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
+              className="h-full bg-primary relative"
+            >
+              <div className="absolute inset-0 w-full h-full relative overflow-hidden">
+                <div className="absolute top-0 bottom-0 left-[-100%] w-[50%] bg-gradient-to-r from-transparent via-white/30 to-transparent animate-[shimmer_2s_infinite]" />
+              </div>
+            </motion.div>
           </div>
         </div>
       </div>
 
       {/* Footer / Instructor */}
-      <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between px-0.5">
-        <div className="flex items-center gap-1.5">
-          <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
-            <Icon icon="solar:user-bold" className="text-primary text-[10px]" />
+      <div className="mt-4 pt-4 border-t border-border/50 flex items-center justify-between px-0.5 relative z-10">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20 shadow-inner">
+            <Icon icon="solar:user-bold" className="text-primary w-4 h-4" />
           </div>
-          <span className="text-[11px] font-semibold text-foreground/80">
-            {course.teacher?.name || "Instructor"}
-          </span>
+          <div className="flex flex-col">
+            <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest mb-0.5">Instructor</span>
+            <span className="text-xs font-bold text-foreground line-clamp-1 max-w-[100px]">
+              {course.teacher?.name || "Instructor"}
+            </span>
+          </div>
         </div>
 
         <button
-          className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300 group/btn shadow-sm"
+          className="w-10 h-10 rounded-lg bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-all duration-300 group/btn shadow-lg shadow-primary/30 active:scale-95"
           title="Continue Learning"
         >
-          <Icon icon="solar:play-bold" className="text-xs group-hover/btn:scale-110 transition-transform" />
+          <Icon icon="solar:play-bold" className="w-5 h-5 group-hover/btn:scale-110 transition-transform ml-0.5" />
         </button>
       </div>
     </motion.div>

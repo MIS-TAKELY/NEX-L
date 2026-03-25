@@ -12,6 +12,10 @@ export const courseApi = apiSlice.injectEndpoints({
                     ]
                     : [{ type: 'Course', id: 'LIST' }],
         }),
+        getInstructorAnalytics: builder.query({
+            query: (instructorId) => `/courses/instructor/${instructorId}/analytics`,
+            providesTags: ['Course'],
+        }),
         getCourseById: builder.query({
             query: (id) => `/courses/${id}`,
             providesTags: (result, error, id) => [{ type: 'Course', id }],
@@ -75,11 +79,24 @@ export const courseApi = apiSlice.injectEndpoints({
                 body: payload,
             }),
         }),
+        getEnrollmentByCourse: builder.query({
+            query: ({ studentId, courseId }) => `/enrollments/get-by-course/${studentId}/${courseId}`,
+            providesTags: ['Course'],
+        }),
+        markContentCompleted: builder.mutation({
+            query: (payload) => ({
+                url: '/enrollments/mark-completed',
+                method: 'POST',
+                body: payload,
+            }),
+            invalidatesTags: ['Course'],
+        }),
     }),
 });
 
 export const {
     useGetInstructorCoursesQuery,
+    useGetInstructorAnalyticsQuery,
     useGetCourseByIdQuery,
     useUpdateCourseMutation,
     useCreateCourseMutation,
@@ -88,4 +105,6 @@ export const {
     useRecordCourseViewMutation,
     useSearchCoursesVectorQuery,
     useGenerateContentMutation,
+    useGetEnrollmentByCourseQuery,
+    useMarkContentCompletedMutation,
 } = courseApi;

@@ -24,6 +24,7 @@ import SignUp from "./Pages/student/SignUp";
 import StudentLayout from "./Pages/student/StudentLayout";
 import LiveStreamWatch from "./Pages/student/LiveStreamWatch";
 import VideoCallPage from "./Pages/student/VideoCallPage";
+import Badges from "./Pages/student/Badges";
 
 const CoursesList = lazy(() => import("./Pages/student/CoursesList"));
 const Search = lazy(() => import("./Pages/student/Search"));
@@ -147,6 +148,7 @@ export default function App() {
           <Route path="consultations" element={<StudentConsultations />} />
           <Route path="cart" element={<Cart />} />
           <Route path="settings" element={<StudentSettings />} />
+          <Route path="badges" element={<Badges />} />
         </Route>
 
         {/* Standalone Student Pages (Full-page experience without StudentLayout nesting) */}

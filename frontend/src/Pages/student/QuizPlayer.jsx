@@ -3,6 +3,7 @@ import { Icon } from '@iconify/react';
 import { submitQuizAttempt } from '../../apis/course.api';
 import { useSelector } from 'react-redux';
 import { useToast } from '../../context/ToastContext';
+import BadgeNotification from '../../components/student/BadgeNotification';
 
 const QuizPlayer = ({ quizData, courseId, contentId }) => {
     const { userData } = useSelector((state) => state.auth);
@@ -23,6 +24,7 @@ const QuizPlayer = ({ quizData, courseId, contentId }) => {
     const [submitted, setSubmitted] = useState(false);
     const [result, setResult] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [newBadges, setNewBadges] = useState([]);
 
     const handleOptionSelect = (qIndex, optionIndex) => {
         if (submitted) return;
@@ -57,6 +59,10 @@ const QuizPlayer = ({ quizData, courseId, contentId }) => {
             if (response.success) {
                 setSubmitted(true);
                 setResult(response.data);
+                // Show badge notification if any were earned
+                if (response.data?.newBadges?.length) {
+                    setNewBadges(response.data.newBadges);
+                }
                 showToast("Quiz submitted successfully!", "success");
             }
         } catch (err) {
@@ -158,6 +164,10 @@ const QuizPlayer = ({ quizData, courseId, contentId }) => {
     }
 
     return (
+        <>
+        {newBadges.length > 0 && (
+            <BadgeNotification badges={newBadges} onClose={() => setNewBadges([])} />
+        )}
         <div className="max-w-3xl mx-auto">
             <div className="bg-background p-8 rounded-3xl border border-gray-100 shadow-sm mb-8 premium-card">
                 <div className="flex items-center gap-4 mb-4">
@@ -242,6 +252,7 @@ const QuizPlayer = ({ quizData, courseId, contentId }) => {
                 </button>
             </div>
         </div>
+        </>
     );
 };
 

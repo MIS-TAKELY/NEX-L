@@ -1,45 +1,35 @@
-import { InferenceClient } from "@huggingface/inference";
-import dotenv from "dotenv";
+import { pipeline, env } from "@xenova/transformers";
 
-dotenv.config();
+// Optional: Configure local cache behavior
+env.allowRemoteModels = true;
 
-const HF_TOKEN = process.env.HF_TOKEN;
-
-if (!HF_TOKEN) {
-  console.error("Error: HF_TOKEN is not set in .env file");
-  process.exit(1);
-}
-
-if (typeof HF_TOKEN !== "string" || !HF_TOKEN.startsWith("hf_")) {
-  console.error(
-    "Error: HF_TOKEN does not look like a valid Hugging Face token",
-  );
-  process.exit(1);
-}
-
-const client = new InferenceClient(HF_TOKEN);
-
-console.log("Client initialized successfully");
+// Singleton pattern to ensure we only load the 80MB model once per server process.
+let extractorPromise = null;
 
 async function getEmbedding(text) {
   try {
-    console.log("Generating embedding for:", text);
+    if (!extractorPromise) {
+      console.log("Loading local embedding model (Xenova/all-MiniLM-L6-v2)...");
+      extractorPromise = pipeline("feature-extraction", "Xenova/all-MiniLM-L6-v2");
+    }
 
-    const output = await client.featureExtraction({
-      model: "Qwen/Qwen3-Embedding-8B",
-      inputs: text,
-    });
+    const extractor = await extractorPromise;
+    console.log("Generating embedding for text length:", text.length);
 
-    console.log("Embedding generated successfully");
-    console.log("Output length:", output.length);
-
-    // Flatten to ensure it's a 1D array of numbers.
-    const flatEmbedding = Array.isArray(output[0]) ? output[0] : output;
+    // Generate embeddings (output is a tensor)
+    // We pool mean and normalize for cosine similarity readiness.
+    const output = await extractor(text, { pooling: 'mean', normalize: true });
+    
+    // Convert Float32Array to standard JavaScript Array
+    const flatEmbedding = Array.from(output.data);
+    
+    console.log("Embedding generated successfully. Dimensions:", flatEmbedding.length);
 
     return flatEmbedding;
   } catch (err) {
-    console.error("Embedding error:");
+    console.error("Embedding generation failed:");
     console.error(err);
+    // return an empty array or throw. We throw to let the caller handle it.
     throw err;
   }
 }

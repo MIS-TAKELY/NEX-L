@@ -1,6 +1,7 @@
 import Quiz from "../models/quiz.model.js";
 import QuizSubmission from "../models/submission.model.js";
 import Course from "../models/course.model.js";
+import { checkAndAwardBadges } from "../utils/badge.service.js";
 
 // Create a new quiz
 export const createQuiz = async (req, res) => {
@@ -94,15 +95,30 @@ export const submitQuiz = async (req, res) => {
 
     await submission.save();
 
+    // ── Badge evaluation ──────────────────────────────────────────────────────
+    const scorePercentage = totalPossiblePoints > 0
+      ? (totalScore / totalPossiblePoints) * 100
+      : 0;
+
+    let newBadges = [];
+    try {
+      newBadges = await checkAndAwardBadges(studentId, quiz.course, {
+        quizScore: scorePercentage,
+      });
+    } catch (badgeErr) {
+      console.error("[Badge] Error during badge evaluation:", badgeErr.message);
+    }
+
     res.status(201).json({ 
         success: true, 
         message: "Quiz submitted successfully", 
         data: {
             score: totalScore,
             totalQuestions: quiz.questions.length,
-            percentage: (totalScore / totalPossiblePoints) * 100,
+            percentage: scorePercentage,
             passed,
-            evaluatedAnswers: quiz.autoGrade ? evaluatedAnswers : []
+            evaluatedAnswers: quiz.autoGrade ? evaluatedAnswers : [],
+            newBadges: newBadges.map((ub) => ub.badge),
         } 
     });
 

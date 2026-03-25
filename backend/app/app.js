@@ -18,6 +18,7 @@ import quizRouter from "../app/routes/quiz.routes.js";
 import streamRouter from "../app/routes/stream.routes.js";
 import liveClassRouter from "../app/routes/live-class.routes.js";
 import tutoringSessionRouter from "../app/routes/tutoring-session.routes.js";
+import badgeRouter from "../app/routes/badge.routes.js";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth.js";
 
@@ -268,6 +269,7 @@ app.use("/api/v1/quizzes", quizRouter);
 app.use("/api/v1/stream", streamRouter);
 app.use("/api/v1/live-classes", liveClassRouter);
 app.use("/api/v1/tutoring-sessions", tutoringSessionRouter);
+app.use("/api/v1/badges", badgeRouter);
 
 // Error logger - MUST BE LAST
 app.use((err, req, res, next) => {

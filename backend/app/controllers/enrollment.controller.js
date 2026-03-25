@@ -98,7 +98,59 @@ export const deleteEnrollment = async (req, res) => {
   }
 };
 
-// Update enrollment progress (optional)
+// Mark content as completed and update progress percentage
+export const markContentCompleted = async (req, res) => {
+  try {
+    const { enrollmentId, contentId } = req.body;
+
+    const enrollment = await Enrollment.findById(enrollmentId).populate({
+      path: 'course',
+      populate: {
+        path: 'sections',
+        populate: {
+          path: 'contents'
+        }
+      }
+    });
+
+    if (!enrollment) {
+      return res.status(404).json({ message: "Enrollment not found" });
+    }
+
+    // Add content to completedContents if not already there
+    if (!enrollment.completedContents.includes(contentId)) {
+      enrollment.completedContents.push(contentId);
+    }
+
+    // Calculate new progress percentage
+    let totalContents = 0;
+    enrollment.course.sections.forEach(section => {
+      totalContents += section.contents.length;
+    });
+
+    const completedCount = enrollment.completedContents.length;
+    const progress = totalContents > 0 ? Math.round((completedCount / totalContents) * 100) : 0;
+
+    enrollment.progress = progress;
+    if (progress === 100) {
+      enrollment.status = 'completed';
+    }
+
+    await enrollment.save();
+
+    res.json({ 
+      success: true, 
+      message: "Content marked as completed", 
+      progress,
+      completedContents: enrollment.completedContents 
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+// Update enrollment progress (optional legacy)
 export const updateProgress = async (req, res) => {
   try {
     const { progress } = req.body;
@@ -183,6 +235,23 @@ export const getInstructorStats = async (req, res) => {
 };
 
 // Get list of students for an instructor
+// Get enrollment by student and course
+export const getEnrollmentByCourse = async (req, res) => {
+  try {
+    const { studentId, courseId } = req.params;
+    const enrollment = await Enrollment.findOne({ student: studentId, course: courseId });
+    
+    if (!enrollment) {
+      return res.status(404).json({ success: false, message: "Enrollment not found" });
+    }
+
+    res.json({ success: true, enrollment });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 export const getInstructorStudents = async (req, res) => {
   try {
     const { instructorId } = req.params;

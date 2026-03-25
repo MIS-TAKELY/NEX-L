@@ -76,38 +76,42 @@ const MyCourses = () => {
 
     if (isError) {
         return (
-            <div className="p-8 text-center">
-                <p className="text-red-500 mb-4">Failed to load courses</p>
+            <div className="p-8 text-center bg-card rounded-2xl border border-border/50 max-w-md mx-auto mt-10 premium-card">
+                <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Icon icon="solar:danger-bold-duotone" className="w-8 h-8 text-destructive" />
+                </div>
+                <p className="text-destructive font-bold mb-4">Failed to load courses</p>
                 <button
                     onClick={refetch}
-                    className="px-4 py-2 bg-blue-600 text-foreground rounded-lg hover:bg-blue-700"
+                    className="px-6 py-2.5 bg-primary text-primary-foreground rounded-xl hover:opacity-90 transition-all font-bold shadow-lg shadow-primary/20"
                 >
-                    Retry
+                    Retry Connection
                 </button>
             </div>
         );
     }
 
     return (
-        <div className="space-y-6 animate-fade-in">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-card/50 backdrop-blur-sm p-6 rounded-2xl border border-border/50 shadow-soft">
+        <div className="space-y-6 animate-fade-in group/container">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-card/50 backdrop-blur-md p-7 rounded-3xl border border-border/50 shadow-soft premium-card">
                 <div>
-                    <h1 className="text-2xl font-bold text-foreground">My Courses</h1>
-                    <p className="text-sm text-muted-foreground mt-1">Manage and monitor your educational content</p>
+                    <h1 className="text-2xl font-black text-foreground tracking-tight">My Courses</h1>
+                    <p className="text-sm text-muted-foreground mt-1 font-medium italic">Manage and monitor your educational content</p>
                 </div>
                 <button
                     onClick={() => navigate('/instructor/add-course')}
-                    className="w-full md:w-auto px-6 py-2.5 bg-primary text-primary-foreground rounded-xl hover:opacity-90 transition-all shadow-lg shadow-primary/20 font-medium flex items-center justify-center gap-2"
+                    className="w-full md:w-auto px-7 py-3 bg-primary text-primary-foreground rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/25 font-black flex items-center justify-center gap-2.5 uppercase tracking-wider text-sm"
                 >
                     <Icon icon="solar:add-circle-bold" className="w-5 h-5" />
-                    Add New Course
+                    Create New Course
                 </button>
             </div>
 
-            <div className="grid gap-4">
+            <div className="grid gap-5">
                 {courses.length > 0 ? (
                     courses.map((course) => (
-                        <div key={course._id} className="group bg-card hover:bg-accent/5 transition-all duration-300 rounded-2xl border border-border/50 p-5 flex flex-col lg:flex-row lg:items-center gap-6 shadow-soft hover:shadow-lg hover:border-primary/20">
+                        <div key={course._id} className="group bg-card hover:bg-muted/30 transition-all duration-500 rounded-3xl border border-border/50 p-6 flex flex-col lg:flex-row lg:items-center gap-6 shadow-soft hover:shadow-2xl hover:border-primary/30 premium-card relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-1 h-full bg-primary/0 group-hover:bg-primary transition-all duration-500"></div>
                             {/* Course Info */}
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-3 mb-2">
