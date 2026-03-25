@@ -37,16 +37,16 @@ export const createCourse = async (req, res) => {
     // Generate embedding
     let embedding = [];
     try {
-      const textToEmbed = `${title} ${description} ${category} ${tags ? tags.join(" ") : ""}`;
-      embedding = await getEmbedding(textToEmbed);
-      // Double check it's flattened for DB safety
-      if (Array.isArray(embedding[0])) {
-        embedding = embedding[0];
+      const textToEmbed = `${title || ""} ${description || ""} ${category || ""} ${Array.isArray(tags) ? tags.join(" ") : ""}`.trim();
+      if (textToEmbed) {
+        embedding = await getEmbedding(textToEmbed);
+        // Ensure it's a flat array
+        if (Array.isArray(embedding[0])) {
+          embedding = embedding[0];
+        }
       }
     } catch (embedErr) {
-      console.error("Failed to generate embedding:", embedErr);
-      // Proceed without embedding or fail? Usually proceed, but for this task embedding is key.
-      // We will log it.
+      console.error("[Course] Failed to generate embedding:", embedErr.message);
     }
 
     const course = await Course.create({
@@ -525,23 +525,26 @@ export const updateCourse = async (req, res) => {
     if (!course) return res.status(404).json({ message: "Course not found" });
 
     // Generate embedding if content changed or is missing
-    let embedding = course.embedding;
+    let embedding = course.embedding || [];
     const updatedTitle = title !== undefined ? title : course.title;
     const updatedDescription = description !== undefined ? description : course.description;
     const updatedCategory = category !== undefined ? category : course.category;
     const updatedTags = tags !== undefined ? tags : course.tags;
 
-    const oldText = `${course.title} ${course.description} ${course.category} ${course.tags ? course.tags.join(" ") : ""}`;
-    const newText = `${updatedTitle} ${updatedDescription} ${updatedCategory} ${updatedTags && updatedTags.length > 0 ? updatedTags.join(" ") : ""}`;
+    const oldText = `${course.title || ""} ${course.description || ""} ${course.category || ""} ${Array.isArray(course.tags) ? course.tags.join(" ") : ""}`.trim();
+    const newText = `${updatedTitle || ""} ${updatedDescription || ""} ${updatedCategory || ""} ${Array.isArray(updatedTags) ? updatedTags.join(" ") : ""}`.trim();
 
-    if (oldText !== newText || !embedding || embedding.length === 0) {
+    if (oldText !== newText || !embedding || embedding.length === 0 || embedding.length !== 384) {
       try {
-        embedding = await getEmbedding(newText);
-        if (Array.isArray(embedding[0])) {
-          embedding = embedding[0];
+        if (newText) {
+          console.log(`[Course] Refreshing embedding for "${updatedTitle}" (Dimensions: ${embedding.length} -> 384)`);
+          embedding = await getEmbedding(newText);
+          if (Array.isArray(embedding[0])) {
+            embedding = embedding[0];
+          }
         }
       } catch (embedErr) {
-        console.error("Failed to update embedding:", embedErr);
+        console.error("[Course] Failed to update embedding:", embedErr.message);
       }
     }
 
