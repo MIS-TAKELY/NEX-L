@@ -10,6 +10,8 @@ import StudentChat from '../../components/student/StudentChat';
 import CourseGroupChat from '../../components/student/CourseGroupChat';
 import { useStream } from '../../context/StreamContext';
 import { useGetCourseLiveClassesQuery } from '../../store/slices/liveClassApi';
+import { useGetCourseByIdQuery, useGetEnrollmentByCourseQuery, useMarkContentCompletedMutation } from '../../store/slices/courseApi';
+import { useSelector } from 'react-redux';
 
 const Player = () => {
   const formatDisplayName = (name, backupTitle) => {
@@ -25,11 +27,8 @@ const Player = () => {
   const { courseId } = useParams();
 
   const navigate = useNavigate();
-  const [course, setCourse] = useState(null);
   const [activeLesson, setActiveLesson] = useState(null);
   const [activeResource, setActiveResource] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('lesson'); // 'lesson' | 'community' | 'mentor'
   const { chatClient } = useStream();
@@ -39,47 +38,52 @@ const Player = () => {
     pollingInterval: 10000 
   });
   const isAnyClassLive = liveClasses.some(lc => lc.status === 'live');
+  const { userData } = useSelector((state) => state.auth);
+
+  const { data: courseRes, isLoading: courseLoading, error: courseError } = useGetCourseByIdQuery(courseId, { skip: !courseId });
+  const { data: enrollmentRes } = useGetEnrollmentByCourseQuery({ studentId: userData?.id, courseId }, { skip: !userData?.id || !courseId });
+  const [markCompleted, { isLoading: markingCompleted }] = useMarkContentCompletedMutation();
+
+  const course = courseRes?.data;
+  const enrollment = enrollmentRes?.enrollment;
 
   useEffect(() => {
-    const fetchCourse = async () => {
-      try {
-        setLoading(true);
-        const response = await getCourseById(courseId);
-        if (response.success) {
-          setCourse(response.data);
-          // Set initial content if available
-          const firstSection = response.data.sections?.[0];
-          const firstLesson = firstSection?.contents?.[0];
-          if (firstLesson) {
-            setActiveLesson(firstLesson);
-            if (firstLesson.resources?.[0]) {
-              setActiveResource(firstLesson.resources[0]);
-            } else if (firstLesson.url) {
-              setActiveResource({ url: firstLesson.url, type: firstLesson.type, name: firstLesson.title });
-            }
-          }
-        } else {
-          setError("Course not found");
+    if (course && !activeLesson) {
+      const firstSection = course.sections?.[0];
+      const firstLesson = firstSection?.contents?.[0];
+      if (firstLesson) {
+        setActiveLesson(firstLesson);
+        if (firstLesson.resources?.[0]) {
+          setActiveResource(firstLesson.resources[0]);
+        } else if (firstLesson.url) {
+          setActiveResource({ url: firstLesson.url, type: firstLesson.type, name: firstLesson.title });
         }
-      } catch (err) {
-        console.error("Failed to fetch course details:", err);
-        setError("Unable to load course details. Please try again later.");
-      } finally {
-        setLoading(false);
       }
-    };
+    }
+  }, [course, activeLesson]);
 
-    fetchCourse();
-  }, [courseId]);
+  const handleMarkAsCompleted = async () => {
+    if (!enrollment?._id || !activeLesson?._id) return;
+    try {
+      await markCompleted({
+        enrollmentId: enrollment._id,
+        contentId: activeLesson._id
+      }).unwrap();
+    } catch (err) {
+      console.error("Failed to mark as completed", err);
+    }
+  };
 
-  if (loading) return <Loading />;
+  const isCompleted = enrollment?.completedContents?.includes(activeLesson?._id);
 
-  if (error) {
+  if (courseLoading) return <Loading />;
+
+  if (courseError) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center px-4">
         <Icon icon="solar:danger-bold" className="text-red-500 mb-4" size={64} />
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Error Occurred</h2>
-        <p className="text-gray-600 mb-8">{error}</p>
+        <p className="text-gray-600 mb-8">{courseError.data?.message || "Unable to load course details."}</p>
         <button onClick={() => navigate(-1)} className="px-8 py-3 bg-primary text-foreground rounded-2xl font-bold">
           Go Back
         </button>
@@ -125,11 +129,34 @@ const Player = () => {
             <div className="animate-in fade-in slide-in-from-left-4">
               {/* For videos, we already showed the player above, so we just show description here */}
               {/* For other types, they might have their own layout but we can provide a default card if needed */}
-              {activeLesson?.description || activeLesson?.summary ? (
+            {activeLesson?.description || activeLesson?.summary ? (
                 <div className="bg-card p-10 rounded-3xl border border-border/80 shadow-sm transition-all duration-500 premium-card hover:shadow-md">
-                   <h2 className="text-3xl font-black text-foreground mb-4 tracking-tight">
-                    {formatDisplayName(activeResource.name, activeLesson?.title)}
-                  </h2>
+                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+                     <h2 className="text-3xl font-black text-foreground tracking-tight">
+                      {formatDisplayName(activeResource.name, activeLesson?.title)}
+                    </h2>
+                    
+                    {enrollment && (
+                      <button
+                        onClick={handleMarkAsCompleted}
+                        disabled={markingCompleted || isCompleted}
+                        className={`flex items-center gap-2.5 px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${
+                          isCompleted 
+                            ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 cursor-default'
+                            : 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-xl active:scale-95'
+                        }`}
+                      >
+                        {markingCompleted ? (
+                           <Icon icon="solar:restart-bold-duotone" className="w-4 h-4 animate-spin" />
+                        ) : isCompleted ? (
+                          <Icon icon="solar:check-circle-bold-duotone" className="w-4 h-4" />
+                        ) : (
+                          <Icon icon="solar:verified-check-bold-duotone" className="w-4 h-4" />
+                        )}
+                        {isCompleted ? 'Completed' : 'Mark as Done'}
+                      </button>
+                    )}
+                   </div>
                   <p className="text-muted-foreground leading-relaxed font-medium text-lg max-w-4xl">
                     {activeLesson?.description || activeLesson?.summary}
                   </p>

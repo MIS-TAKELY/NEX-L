@@ -690,3 +690,87 @@ export const generateContent = async (req, res) => {
     });
   }
 };
+
+// Get instructor analytics
+export const getInstructorAnalytics = async (req, res) => {
+  try {
+    const { teacherId } = req.params;
+
+    const courses = await Course.find({ teacher: teacherId });
+    if (!courses || courses.length === 0) {
+      return res.status(200).json({
+        success: true,
+        data: {
+          overview: { totalViews: 0, totalCompletions: 0, activeStudents: 0, avgRating: 0 },
+          courseStats: []
+        }
+      });
+    }
+
+    const courseIds = courses.map((c) => c._id);
+    const enrollments = await Enrollment.find({ course: { $in: courseIds } });
+
+    let totalViews = 0;
+    let totalCompletions = 0;
+    let activeStudents = 0;
+    let totalRating = 0;
+    let ratedCoursesCount = 0;
+
+    const courseStats = courses.map(course => {
+      const courseEnrollments = enrollments.filter(e => e.course.toString() === course._id.toString());
+      
+      const views = courseEnrollments.length; // Approximate views as enrollments
+      let completions = 0;
+      let active = 0;
+      let totalCourseProgress = 0;
+
+      courseEnrollments.forEach(enrollment => {
+        totalCourseProgress += (enrollment.progress || 0);
+        if (enrollment.status === 'completed' || enrollment.progress === 100) {
+          completions += 1;
+        } else {
+          active += 1;
+        }
+      });
+
+      const averageProgress = courseEnrollments.length > 0 ? Math.round(totalCourseProgress / courseEnrollments.length) : 0;
+      const rating = course.ratings?.average || 0;
+      
+      totalViews += views;
+      totalCompletions += completions;
+      activeStudents += active;
+      if (rating > 0) {
+        totalRating += rating;
+        ratedCoursesCount += 1;
+      }
+
+      return {
+        _id: course._id,
+        name: course.title,
+        views,
+        completions,
+        averageProgress,
+        rating,
+      };
+    });
+
+    const avgRating = ratedCoursesCount > 0 ? (totalRating / ratedCoursesCount).toFixed(1) : 0;
+
+    res.status(200).json({
+      success: true,
+      data: {
+        overview: {
+          totalViews,
+          totalCompletions,
+          activeStudents,
+          avgRating,
+        },
+        courseStats,
+      }
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message, success: false });
+  }
+};
