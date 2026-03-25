@@ -524,12 +524,17 @@ export const updateCourse = async (req, res) => {
     const course = await Course.findById(id);
     if (!course) return res.status(404).json({ message: "Course not found" });
 
-    // Generate embedding if content changed
+    // Generate embedding if content changed or is missing
     let embedding = course.embedding;
-    const oldText = `${course.title} ${course.description} ${course.category} ${course.tags ? course.tags.join(" ") : ""}`;
-    const newText = `${title} ${description} ${category} ${tags ? tags.join(" ") : ""}`;
+    const updatedTitle = title !== undefined ? title : course.title;
+    const updatedDescription = description !== undefined ? description : course.description;
+    const updatedCategory = category !== undefined ? category : course.category;
+    const updatedTags = tags !== undefined ? tags : course.tags;
 
-    if (oldText !== newText) {
+    const oldText = `${course.title} ${course.description} ${course.category} ${course.tags ? course.tags.join(" ") : ""}`;
+    const newText = `${updatedTitle} ${updatedDescription} ${updatedCategory} ${updatedTags && updatedTags.length > 0 ? updatedTags.join(" ") : ""}`;
+
+    if (oldText !== newText || !embedding || embedding.length === 0) {
       try {
         embedding = await getEmbedding(newText);
         if (Array.isArray(embedding[0])) {

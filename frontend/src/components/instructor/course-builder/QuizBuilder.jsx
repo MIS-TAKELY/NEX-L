@@ -74,138 +74,147 @@ const QuizBuilder = ({ content, onChange }) => {
   };
 
   return (
-    <div className="space-y-6 bg-gray-50/30 p-5 rounded-2xl border border-gray-100">
+    <div className="space-y-6 bg-[#0F0F1A]/50 p-6 rounded-2xl border border-white/5 shadow-inner">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+          <label className="block text-[10px] font-black text-[#A0A0B8] uppercase tracking-widest mb-2">
             Time Limit (Minutes)
           </label>
           <div className="relative">
-            <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Clock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#A0A0B8]" />
             <input
               type="number"
-              value={quizData.timeLimit || 0}
+              value={quizData.timeLimit || ""}
               onChange={(e) => updateQuiz("timeLimit", Number(e.target.value))}
               placeholder="0 for unlimited"
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-100 focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm shadow-sm"
+              className="w-full pl-11 pr-5 py-4 bg-[#1A1A2E] rounded-xl border border-white/5 focus:ring-2 focus:ring-violet-500/30 focus:border-violet-500 outline-none transition-all duration-300 text-sm shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)] text-white placeholder:text-[#6B6B80]"
             />
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <input
-            type="checkbox"
-            id={`autoGrade-${content.title}`}
-            checked={quizData.autoGrade}
-            onChange={(e) => updateQuiz("autoGrade", e.target.checked)}
-            className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
-          />
-          <label htmlFor={`autoGrade-${content.title}`} className="text-sm font-bold text-gray-700">
+        <div className="flex items-center justify-between bg-[#1A1A2E] p-4 rounded-xl border border-white/5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)] mt-6">
+          <label htmlFor={`autoGrade-${content.title}`} className="text-sm font-bold text-white cursor-pointer tracking-wide">
             Auto-grade submissions
           </label>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={quizData.autoGrade}
+            onClick={() => updateQuiz("autoGrade", !quizData.autoGrade)}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 focus:ring-offset-[#0F0F1A] ${
+              quizData.autoGrade ? "bg-violet-500" : "bg-white/10"
+            }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                quizData.autoGrade ? "translate-x-6" : "translate-x-1"
+              }`}
+            />
+          </button>
         </div>
       </div>
 
       <div className="space-y-4">
-        <h4 className="text-xs font-black text-gray-800 uppercase tracking-wide flex items-center justify-between">
+        <h4 className="text-xs font-black text-[#A0A0B8] uppercase tracking-wider flex items-center justify-between px-1">
           Questions
-          <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full text-[10px]">
+          <span className="bg-violet-500/10 text-violet-400 border border-violet-500/20 px-2.5 py-0.5 rounded-full text-[10px] tracking-widest">
             {quizData.questions?.length || 0}
           </span>
         </h4>
 
         {quizData.questions?.map((q, qIndex) => (
-          <div key={qIndex} className="bg-background p-4 rounded-xl border border-gray-200 shadow-sm relative group">
+          <div key={qIndex} className="bg-[#1A1A2E] p-6 rounded-2xl border border-white/5 shadow-xl relative group">
             <button
               onClick={() => removeQuestion(qIndex)}
-              className="absolute top-2 right-2 text-gray-300 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-all"
+              className="absolute top-4 right-4 text-[#6B6B80] hover:text-pink-500 hover:bg-pink-500/10 p-2 rounded-xl transition-all"
             >
-              <Trash2 size={16} />
+              <Trash2 size={18} />
             </button>
 
-            <div className="space-y-4 pr-6">
+            <div className="space-y-6 pr-8">
               <div>
-                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+                <label className="block text-[10px] font-black text-[#A0A0B8] uppercase tracking-widest mb-2">
                   Question Text
                 </label>
                 <input
                   type="text"
                   value={q.question}
                   onChange={(e) => updateQuestion(qIndex, "question", e.target.value)}
-                  className="w-full px-3 py-2 text-sm border-b-2 border-transparent hover:border-gray-200 focus:border-blue-500 bg-transparent outline-none transition-all font-semibold"
+                  className="w-full px-4 py-3 text-base border-b-2 border-transparent hover:border-white/10 focus:border-violet-500 bg-black/20 outline-none transition-all font-bold text-white rounded-t-xl"
+                  placeholder="e.g. What is the capital of France?"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+                  <label className="block text-[10px] font-black text-[#A0A0B8] uppercase tracking-widest mb-2">
                     Question Type
                   </label>
                   <select
                     value={q.type}
                     onChange={(e) => updateQuestion(qIndex, "type", e.target.value)}
-                    className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-100 rounded-lg outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full px-4 py-3 text-sm bg-black/20 text-white border border-white/5 rounded-xl outline-none focus:ring-2 focus:ring-violet-500/30 appearance-none cursor-pointer"
                   >
-                    <option value="mcq">Multiple Choice</option>
-                    <option value="shortanswer">Short Answer</option>
+                    <option value="mcq" className="bg-[#1A1A2E] text-white">Multiple Choice</option>
+                    <option value="shortanswer" className="bg-[#1A1A2E] text-white">Short Answer</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+                  <label className="block text-[10px] font-black text-[#A0A0B8] uppercase tracking-widest mb-2">
                     Points
                   </label>
                   <input
                     type="number"
                     value={q.points}
                     onChange={(e) => updateQuestion(qIndex, "points", Number(e.target.value))}
-                    className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-100 rounded-lg outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full px-4 py-3 text-sm bg-black/20 text-white border border-white/5 rounded-xl outline-none focus:ring-2 focus:ring-violet-500/30 font-bold"
                   />
                 </div>
               </div>
 
               {q.type === "mcq" ? (
-                <div className="space-y-2 mt-4">
-                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+                <div className="space-y-3 mt-6">
+                  <label className="block text-[10px] font-black text-[#A0A0B8] uppercase tracking-widest mb-2">
                     Answers (Select correct one)
                   </label>
                   {q.options.map((opt, oIndex) => (
-                    <div key={oIndex} className="flex items-center gap-2">
+                    <div key={oIndex} className="flex items-center gap-3">
                        <button
                          onClick={() => updateQuestion(qIndex, "correctAnswer", opt)}
-                         className={`w-5 h-5 rounded-full flex items-center justify-center border transition-all ${
+                         className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center border-2 transition-all ${
                            q.correctAnswer === opt
-                             ? "bg-green-500 border-green-500 text-foreground shadow-md shadow-green-200"
-                             : "border-gray-300 hover:border-green-400"
+                             ? "bg-emerald-500 border-emerald-500 text-[#0F0F1A] shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                             : "border-white/20 hover:border-emerald-500/50"
                          }`}
                        >
-                         {q.correctAnswer === opt && <CheckCircle2 size={12} />}
+                         {q.correctAnswer === opt && <CheckCircle2 size={14} className="stroke-[3]" />}
                        </button>
                       <input
                         type="text"
                         value={opt}
                         onChange={(e) => updateOption(qIndex, oIndex, e.target.value)}
-                        className={`flex-1 px-3 py-1.5 text-sm outline-none rounded-md transition-all ${
-                           q.correctAnswer === opt ? "bg-green-50/50 font-semibold" : "bg-gray-50 focus:bg-background border border-transparent focus:border-gray-200"
+                        className={`flex-1 px-4 py-2.5 text-sm outline-none rounded-xl transition-all ${
+                           q.correctAnswer === opt ? "bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20" : "bg-black/20 text-white border border-white/5 focus:border-violet-500/50"
                         }`}
                       />
                       <button
                         onClick={() => removeOption(qIndex, oIndex)}
-                        className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-1 rounded transition-colors"
+                        className="text-[#6B6B80] hover:text-pink-500 hover:bg-pink-500/10 p-2 rounded-lg transition-colors"
                       >
-                         <Trash2 size={14} />
+                         <Trash2 size={16} />
                       </button>
                     </div>
                   ))}
                   <button
                     onClick={() => addOption(qIndex)}
-                    className="text-xs font-bold text-blue-500 hover:text-blue-700 mt-2 flex items-center gap-1"
+                    className="text-xs font-bold text-violet-400 hover:text-violet-300 mt-4 flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-violet-500/10 transition-colors"
                   >
-                    <Plus size={12} /> Add option
+                    <Plus size={14} className="stroke-[3]" /> Add multiple choice option
                   </button>
                 </div>
               ) : (
-                <div className="mt-4">
-                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+                <div className="mt-6">
+                  <label className="block text-[10px] font-black text-[#A0A0B8] uppercase tracking-widest mb-2">
                     Acceptable Answer (Case Insensitive)
                   </label>
                   <input
@@ -213,7 +222,7 @@ const QuizBuilder = ({ content, onChange }) => {
                     value={q.correctAnswer || ""}
                     onChange={(e) => updateQuestion(qIndex, "correctAnswer", e.target.value)}
                     placeholder="e.g. Paris"
-                    className="w-full px-3 py-2 text-sm border-b-2 border-transparent bg-gray-50 hover:bg-background focus:border-blue-500 outline-none transition-all rounded-t-md"
+                    className="w-full px-4 py-3 text-sm bg-black/20 text-emerald-400 placeholder:text-emerald-500/30 border border-emerald-500/20 focus:border-emerald-500 outline-none transition-all rounded-xl font-bold"
                   />
                 </div>
               )}
@@ -222,14 +231,15 @@ const QuizBuilder = ({ content, onChange }) => {
         ))}
 
         {(!quizData.questions || quizData.questions.length === 0) && (
-          <div className="text-center py-6 bg-background border border-dashed border-gray-200 rounded-xl">
-             <p className="text-sm font-medium text-gray-400 mb-2">No questions yet</p>
+          <div className="text-center py-10 bg-[#1A1A2E]/50 border-2 border-dashed border-white/10 rounded-2xl">
+             <p className="text-sm font-bold text-[#6B6B80] mb-2 tracking-wide">No questions yet</p>
+             <p className="text-[10px] text-[#6B6B80]">Click below to create your first question</p>
           </div>
         )}
 
         <button
           onClick={addQuestion}
-          className="w-full py-3 border border-dashed border-blue-200 text-blue-600 bg-blue-50/50 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-blue-50 transition-all text-sm"
+          className="w-full py-4 border-2 border-dashed border-white/10 text-[#A0A0B8] hover:text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-white/5 hover:border-violet-500/30 transition-all duration-300 text-sm tracking-wide"
         >
           <Plus size={16} /> Add Question
         </button>
