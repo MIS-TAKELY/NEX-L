@@ -7,10 +7,10 @@ const StudentLayout = () => {
   const menuItems = [
     { name: 'Dashboard', icon: "solar:widget-2-linear", path: '/student/dashboard' },
     { name: 'Enrolled Courses', icon: "solar:notebook-linear", path: '/student/my-enrollments' },
-    { name: 'Inbox', icon: "solar:letter-linear", path: '/student/inbox' },
-    { name: 'Lesson', icon: "solar:notebook-linear", path: '/student/lessons' },
-    { name: 'Task', icon: "solar:clipboard-check-linear", path: '/student/tasks' },
-    { name: 'Group', icon: "solar:users-group-rounded-linear", path: '/student/groups' },
+    { name: 'My Badges', icon: "solar:medal-ribbons-star-bold", path: '/student/badges' },
+    { name: 'Consultations', icon: "solar:calendar-mark-linear", path: '/student/consultations' },
+    { name: 'Cart', icon: "solar:cart-linear", path: '/student/cart' },
+    { name: 'Settings', icon: "solar:settings-linear", path: '/student/settings' },
   ];
 
   return (

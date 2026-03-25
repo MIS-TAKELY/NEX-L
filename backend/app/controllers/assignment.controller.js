@@ -1,6 +1,7 @@
 import Assignment from "../models/assignment.model.js";
 import Course from "../models/course.model.js";
 import getEmbedding from "../utils/embedding.js";
+import { checkAndAwardBadges } from "../utils/badge.service.js";
 
 // Helper for cosine similarity
 const cosineSimilarity = (vecA, vecB) => {
@@ -66,7 +67,20 @@ export const submitAssignment = async (req, res) => {
     });
     await assignment.save();
 
-    res.json({ success: true, data: assignment });
+    // ── Badge evaluation ──────────────────────────────────────────────────────
+    let newBadges = [];
+    if (grade !== null) {
+      const gradePercentage = ((grade / (assignment.maxScore || 100)) * 100);
+      try {
+        newBadges = await checkAndAwardBadges(studentId, assignment.course, {
+          assignmentGrade: gradePercentage,
+        });
+      } catch (badgeErr) {
+        console.error("[Badge] Error during badge evaluation:", badgeErr.message);
+      }
+    }
+
+    res.json({ success: true, data: assignment, newBadges: newBadges.map((ub) => ub.badge) });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

@@ -3,6 +3,7 @@ import { Icon } from '@iconify/react';
 import { submitAssignment } from '../../apis/course.api';
 import { useSelector } from 'react-redux';
 import { useToast } from '../../context/ToastContext';
+import BadgeNotification from '../../components/student/BadgeNotification';
 
 const AssignmentPlayer = ({ assignmentData, courseId, contentId }) => {
     const { userData } = useSelector((state) => state.auth);
@@ -23,8 +24,8 @@ const AssignmentPlayer = ({ assignmentData, courseId, contentId }) => {
     const [file, setFile] = useState(null);
     const [submitted, setSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-
     const [result, setResult] = useState(null);
+    const [newBadges, setNewBadges] = useState([]);
 
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
@@ -46,7 +47,13 @@ const AssignmentPlayer = ({ assignmentData, courseId, contentId }) => {
             
             if (response?.success) {
                 setSubmitted(true);
-                setResult(response);
+                setResult(response.data || response);
+                // Show badge notification if any were earned
+                if (response.data?.newBadges?.length) {
+                    setNewBadges(response.data.newBadges);
+                } else if (response.newBadges?.length) {
+                    setNewBadges(response.newBadges);
+                }
                 showToast("Assignment submitted and graded successfully!", "success");
             }
         } catch (err) {
@@ -93,6 +100,10 @@ const AssignmentPlayer = ({ assignmentData, courseId, contentId }) => {
     }
 
     return (
+        <>
+        {newBadges.length > 0 && (
+            <BadgeNotification badges={newBadges} onClose={() => setNewBadges([])} />
+        )}
         <div className="max-w-4xl mx-auto space-y-8">
             <div className="bg-background p-8 md:p-10 rounded-3xl border border-gray-100 shadow-sm premium-card">
                 <div className="flex items-center gap-4 mb-6">
@@ -213,6 +224,7 @@ const AssignmentPlayer = ({ assignmentData, courseId, contentId }) => {
                 </div>
             </div>
         </div>
+        </>
     );
 };
 

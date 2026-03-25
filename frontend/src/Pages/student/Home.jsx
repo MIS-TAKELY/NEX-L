@@ -3,25 +3,31 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Icon } from '@iconify/react';
 import { getAllCourses } from '../../apis/course.api';
+import { getMyBadges } from '../../apis/badge.api';
 
 const Home = () => {
     const { userData } = useSelector((state) => state.auth);
     const [courses, setCourses] = useState([]);
+    const [earnedBadges, setEarnedBadges] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchCourses = async () => {
+        const fetchDashboardData = async () => {
             try {
-                const data = await getAllCourses();
-                setCourses(data);
+                const [coursesData, badgesData] = await Promise.all([
+                    getAllCourses(),
+                    getMyBadges()
+                ]);
+                setCourses(coursesData);
+                setEarnedBadges(badgesData.data || []);
             } catch (error) {
-                console.error("Error fetching courses:", error);
+                console.error("Error fetching dashboard data:", error);
             } finally {
                 setLoading(false);
             }
         };
-        fetchCourses();
+        fetchDashboardData();
     }, []);
 
     const getIcon = (category) => {
@@ -171,6 +177,59 @@ const Home = () => {
                     </div>
                     {/* Background flare */}
                     <div className="absolute -bottom-20 -left-20 w-48 h-48 bg-primary/5 rounded-full blur-3xl"></div>
+                </div>
+
+                {/* Badges Widget */}
+                <div className="px-2">
+                    <div className="flex justify-between items-center mb-8 px-4">
+                        <h3 className="text-xl font-black text-foreground serif">My <span className="text-primary italic">Badges</span></h3>
+                        <button 
+                            onClick={() => navigate('/student/badges')}
+                            className="text-xs font-bold text-primary hover:underline uppercase tracking-widest"
+                        >
+                            View All
+                        </button>
+                    </div>
+
+                    <div className="bg-card backdrop-blur-xl rounded-3xl p-6 border border-border shadow-xl shadow-black/5 premium-card">
+                        {loading ? (
+                            <div className="grid grid-cols-4 gap-4 animate-pulse">
+                                {[1, 2, 3, 4].map(i => (
+                                    <div key={i} className="w-12 h-12 rounded-xl bg-muted"></div>
+                                ))}
+                            </div>
+                        ) : earnedBadges.length > 0 ? (
+                            <div className="flex flex-wrap gap-4">
+                                {earnedBadges.slice(0, 4).map((ub) => (
+                                    <div 
+                                        key={ub._id} 
+                                        className="w-14 h-14 rounded-xl bg-primary/5 flex items-center justify-center text-2xl border border-primary/10 hover:scale-110 transition-transform cursor-help group relative"
+                                        title={ub.badge?.name}
+                                    >
+                                        {ub.badge?.icon || '🏅'}
+                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-popover text-popover-foreground text-[10px] rounded border border-border opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                            {ub.badge?.name}
+                                        </div>
+                                    </div>
+                                ))}
+                                {earnedBadges.length > 4 && (
+                                    <div className="w-14 h-14 rounded-xl bg-secondary flex items-center justify-center text-xs font-bold text-muted-foreground border border-border">
+                                        +{earnedBadges.length - 4}
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="text-center py-4">
+                                <p className="text-xs text-muted-foreground mb-4">No badges earned yet. Keep learning!</p>
+                                <button 
+                                    onClick={() => navigate('/course-list')}
+                                    className="text-[10px] font-bold text-primary uppercase tracking-widest hover:underline"
+                                >
+                                    Explore Courses
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* Mentors Section */}
