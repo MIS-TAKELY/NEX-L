@@ -1,0 +1,129 @@
+
+\subsection{Development Roadmap -- Agile (Iterative \& Incremental) Model}
+
+The NEXL platform was developed following an \textbf{Agile Iterative and Incremental} approach, where the system was built and delivered in short, focused development cycles called \textbf{Sprints}. Each sprint lasted approximately two weeks, producing a potentially shippable increment of the product. This approach allowed the team to continuously refine features, incorporate feedback, and adapt to emerging requirements throughout the development lifecycle.
+
+% -------------------------------------------------------
+\subsubsection*{Sprint 1: Project Setup \& Core Authentication \hfill \textit{(Completed)}}
+
+\textbf{Goal:} Establish the foundational project infrastructure and implement secure user identity management.
+
+\textbf{Deliverables:}
+\begin{itemize}
+    \item Initialized the frontend project using \textbf{React} and \textbf{Vite} with \textbf{Tailwind CSS} configured as the styling framework.
+    \item Set up the backend server using \textbf{Node.js} and \textbf{Express.js}, with \textbf{MongoDB} as the primary database.
+    \item Implemented robust user authentication using \texttt{better-auth} and \textbf{JWT} (JSON Web Tokens).
+    \item Enforced secure password storage using \texttt{bcrypt} hashing.
+    \item Established a role-based access control (RBAC) routing system differentiating Student, Instructor, and Administrator roles.
+\end{itemize}
+
+% -------------------------------------------------------
+\subsubsection*{Sprint 2: Landing Page \& Course Discovery \hfill \textit{(Completed)}}
+
+\textbf{Goal:} Build the public-facing interface and course browsing experience.
+
+\textbf{Deliverables:}
+\begin{itemize}
+    \item Designed and implemented the \textbf{landing page} with platform branding, feature highlights, and call-to-action elements.
+    \item Built the \textbf{course search and discovery} interface, enabling users to browse, filter, and explore available courses.
+    \item Integrated \textbf{Cloudinary} for optimized media delivery, including course thumbnails and preview assets.
+    \item Connected the frontend to backend REST API endpoints for dynamic course listing.
+\end{itemize}
+
+% -------------------------------------------------------
+\subsubsection*{Sprint 3: Course Engine \& AI Metadata Generation \hfill \textit{(Completed)}}
+
+\textbf{Goal:} Develop full course management capabilities for instructors, augmented by AI assistance.
+
+\textbf{Deliverables:}
+\begin{itemize}
+    \item Implemented complete \textbf{CRUD operations} (Create, Read, Update, Delete) for course management via the Instructor dashboard.
+    \item Integrated the \textbf{Hugging Face Inference API} for automated AI-assisted course metadata generation (titles, descriptions, and tags).
+    \item Built \textbf{specialized content players} for multi-modal learning delivery, including video, quiz, and assignment players.
+    \item Connected media uploads to the \textbf{Cloudinary} pipeline for scalable storage and streaming.
+\end{itemize}
+
+% -------------------------------------------------------
+\subsubsection*{Sprint 4: Assessment System \& Gamification \hfill \textit{(Completed)}}
+
+\textbf{Goal:} Introduce interactive assessments and a rewards system to drive student engagement.
+
+\textbf{Deliverables:}
+\begin{itemize}
+    \item Developed a fully functional \textbf{Quiz system}, allowing instructors to author questions and students to attempt and receive instant feedback.
+    \item Built the \textbf{Assignment submission and grading} module with instructor review capabilities.
+    \item Implemented an \textbf{automated digital badge system} that awards badges to students upon reaching defined progress milestones, incentivizing continuous learning.
+\end{itemize}
+
+% -------------------------------------------------------
+\subsubsection*{Sprint 5: E-Commerce \& Payment Integration \hfill \textit{(Completed)}}
+
+\textbf{Goal:} Enable monetization of courses through a complete e-commerce and payment pipeline.
+
+\textbf{Deliverables:}
+\begin{itemize}
+    \item Developed the \textbf{cart management system}, allowing students to add, remove, and manage courses before purchase.
+    \item Implemented \textbf{coupon and discount logic} for promotional pricing.
+    \item Built the complete \textbf{payment checkout flow} integrated with the \textbf{eSewa} payment gateway, supporting local NPR transactions.
+\end{itemize}
+
+% -------------------------------------------------------
+\subsubsection*{Sprint 6: Live Communication Features \hfill \textit{(Completed)}}
+
+\textbf{Goal:} Enable real-time interaction between instructors and students.
+
+\textbf{Deliverables:}
+\begin{itemize}
+    \item Integrated \textbf{live-streaming} functionality using the \textbf{Stream SDK}, enabling instructors to host live classes.
+    \item Implemented \textbf{real-time chat} within live sessions, allowing students to interact, ask questions, and receive responses during classes.
+\end{itemize}
+
+% -------------------------------------------------------
+\subsubsection*{Sprint 7: Performance Tuning \& Cross-Platform Refinement \hfill \textit{(In Progress)}}
+
+\textbf{Goal:} Harden the system for production quality, optimizing speed and cross-device usability.
+
+\textbf{Planned Deliverables:}
+\begin{itemize}
+    \item Optimizing \textbf{database queries} and reducing AI inference response times to achieve low-latency interactions under typical Nepali broadband conditions.
+    \item Fine-tuning \textbf{UI responsiveness} for tablet and mobile viewports to ensure a seamless cross-device experience.
+    \item Conducting \textbf{security auditing} of all authentication flows, authorization guards, and API endpoints.
+\end{itemize}
+
+% -------------------------------------------------------
+\subsubsection*{Sprint 8: Final Testing \& Deployment \hfill \textit{(Planned)}}
+
+\textbf{Goal:} Validate the complete system and deploy to a production cloud environment.
+
+\textbf{Planned Deliverables:}
+\begin{itemize}
+    \item Conducting comprehensive \textbf{end-to-end regression testing} across all user roles and platform features.
+    \item Finalizing \textbf{cloud hosting configuration}, including server provisioning, environment variable management, and domain setup.
+    \item Configuring a \textbf{CI/CD pipeline} for automated and repeatable deployments.
+    \item Setting up \textbf{SSL certificates} and reverse proxy (e.g., Nginx) for secure production traffic.
+    \item Performing \textbf{production smoke testing} post-deployment to confirm system stability.
+\end{itemize}
+
+% -------------------------------------------------------
+\subsubsection*{Sprint Summary}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|c|l|l|c|}
+\hline
+\textbf{Sprint} & \textbf{Focus Area} & \textbf{Key Deliverable} & \textbf{Status} \\
+\hline
+1 & Project Setup \& Auth         & Auth system, RBAC routing, project scaffolding        & Completed   \\
+2 & Landing Page \& Discovery     & Landing page, course search, Cloudinary integration   & Completed   \\
+3 & Course Engine \& AI           & CRUD, AI metadata, content players                    & Completed   \\
+4 & Assessment \& Gamification    & Quiz, assignments, digital badge system               & Completed   \\
+5 & E-Commerce \& Payments        & Cart, coupons, eSewa checkout                         & Completed   \\
+6 & Live Communication            & Live streaming, real-time chat (Stream SDK)           & Completed   \\
+7 & Performance \& Refinement     & Query optimization, mobile UI, security audit         & In Progress \\
+8 & Testing \& Deployment         & Regression testing, cloud deployment, CI/CD           & Planned     \\
+\hline
+\end{tabular}
+\caption{NEXL Development Roadmap -- Agile Sprint Summary}
+\label{tab:agile-sprints}
+\end{table}

@@ -132,8 +132,8 @@ const Player = () => {
             {activeLesson?.description || activeLesson?.summary ? (
                 <div className="bg-card p-10 rounded-3xl border border-border/80 shadow-sm transition-all duration-500 premium-card hover:shadow-md">
                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
-                     <h2 className="text-3xl font-black text-foreground tracking-tight">
-                      {formatDisplayName(activeResource.name, activeLesson?.title)}
+                    <h2 className="text-3xl font-black text-foreground tracking-tight">
+                      {formatDisplayName(activeResource?.name, activeLesson?.title)}
                     </h2>
                     
                     {enrollment && (
@@ -185,11 +185,15 @@ const Player = () => {
   };
 
   const renderContent = () => {
-    if (!activeResource) return (
+    if (!activeResource && activeTab === 'lesson') return (
       <div className="flex items-center justify-center h-full text-gray-400">
         Select a lesson or resource from the sidebar to begin
       </div>
     );
+
+    if (!activeResource && (activeTab === 'community' || activeTab === 'mentor')) {
+      return renderTabbedLayout(null);
+    }
 
     const type = activeResource.type || activeLesson?.type;
     const url = activeResource.url || activeLesson?.url;

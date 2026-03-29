@@ -9,7 +9,7 @@ import Quiz from "../models/quiz.model.js";
 import Assignment from "../models/assignment.model.js";
 import getEmbedding from "../utils/embedding.js";
 import { cosineSimilarity, getAggregateVector } from "../utils/vector-utils.js";
-import { generateCourseContent as generateAIContent } from "../utils/ai-generator.js";
+import { generateCourseContent as generateAIContent, summarizeText } from "../utils/ai-generator.js";
 
 // Create a new course
 export const createCourse = async (req, res) => {
@@ -366,53 +366,100 @@ export const searchCoursesVector = async (req, res) => {
       if (maxPrice && maxPrice !== "all") filter.price.$lte = Number(maxPrice);
     }
 
-    console.log(`[Search] Mongoose filter:`, JSON.stringify(filter));
+    // 3. Hybrid matching: Use text search if query exists
+    let courses = [];
+    if (q) {
+      // Try text search + filtering
+      courses = await Course.find(
+        { ...filter, $text: { $search: q } },
+        { score: { $meta: "textScore" } }
+      ).populate("teacher");
 
-    // 3. Fetch courses with filters - EXPLICITLY check embedding exists
-    const courses = await Course.find(filter).populate("teacher");
+      // Complement with semantic search if text matches are low
+      if (courses.length < 5) {
+        const semanticFiltered = await Course.find({
+          ...filter,
+          _id: { $nin: courses.map(c => c._id) },
+          embedding: { $exists: true, $not: { $size: 0 } }
+        }).populate("teacher").limit(20);
+        courses = [...courses, ...semanticFiltered];
+      }
+    } else {
+      courses = await Course.find(filter).populate("teacher");
+    }
+
     console.log(
-      `[Search] Found ${courses.length} courses matching basic filters`,
+      `[Search] Found ${courses.length} potential courses matching query/filters`,
     );
 
     let results = [];
 
     if (queryVector) {
-      // 4. Calculate similarity and score if query exists
+      // 4. Calculate similarity and apply ranking boosts
       const scoredCourses = courses
         .filter((c) => {
           const hasEmbedding = c.embedding && c.embedding.length > 0;
-          if (!hasEmbedding)
-            console.log(`[Search] Excluded course ${c.title} (no embedding)`);
           return hasEmbedding;
         })
         .map((course) => {
-          const similarity = cosineSimilarity(queryVector, course.embedding);
-          return { course, similarity };
+          const vectorSimilarity = cosineSimilarity(queryVector, course.embedding);
+          
+          // Heuristic Boosts
+          let boost = 1.0;
+          
+          // Title Keyword Match Boost (High Priority)
+          const lowerTitle = (course.title || "").toLowerCase();
+          const lowerQuery = (q || "").toLowerCase();
+          if (lowerTitle.includes(lowerQuery)) {
+            boost += 0.6; // Strong boost for exact title substrings
+          }
+          
+          // Quality Boost (Ratings)
+          if (course.ratings?.average) {
+            boost += (course.ratings.average / 5) * 0.2; // Up to +0.2 boost
+          }
+          
+          // Popularity Boost (Enrollments)
+          if (course.enrollments?.length) {
+            boost += Math.min(course.enrollments.length / 100, 1) * 0.1; // Up to +0.1 boost
+          }
+
+          // Combine Similarity and Text Match Score
+          // Note: course.score is the MongoDB text search score
+          const textScore = course._doc?.score || 0;
+          const normalizedTextScore = Math.min(textScore / 5, 2.0); // Cap text score impact
+          
+          const finalScore = (vectorSimilarity * 1.0 + (normalizedTextScore * 0.2)) * boost;
+
+          return { course, similarity: vectorSimilarity, finalScore };
         });
 
-      // 5. Sort by similarity
+      // 5. Sort by the calculated final score
       results = scoredCourses
-        .sort((a, b) => b.similarity - a.similarity)
-        .slice(0, 20)
+        .sort((a, b) => b.finalScore - a.finalScore)
+        .slice(0, 30)
         .map((item) => {
           const c = item.course.toObject();
           delete c.embedding;
           c.similarityScore = item.similarity;
+          c.searchRank = item.finalScore; // Debug info
           return c;
         });
 
       if (results.length > 0) {
         console.log(
-          `[Search] Top similarity score: ${results[0].similarityScore} for "${results[0].title}"`,
+          `[Search] Top rank score: ${results[0].searchRank.toFixed(4)} for "${results[0].title}"`,
         );
       }
     } else {
-      // Switch to simple list if no search query
-      results = courses.map((course) => {
-        const c = course.toObject();
-        delete c.embedding;
-        return c;
-      });
+      // Sort by recency if no query
+      results = courses
+        .sort((a, b) => b.createdAt - a.createdAt)
+        .map((course) => {
+          const c = course.toObject();
+          delete c.embedding;
+          return c;
+        });
     }
 
     res.json(results);
@@ -777,3 +824,25 @@ export const getInstructorAnalytics = async (req, res) => {
     res.status(500).json({ message: err.message, success: false });
   }
 };
+
+// Summarize lesson content using AI
+export const summarizeContent = async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text) {
+      return res.status(400).json({ message: "Text is required", success: false });
+    }
+
+    const summary = await summarizeText(text);
+    res.status(200).json({
+      success: true,
+      data: summary,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: `Failed to summarize content: ${err.message}`,
+      success: false,
+    });
+  }
+};
+

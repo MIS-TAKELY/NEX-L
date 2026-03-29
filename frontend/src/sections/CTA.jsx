@@ -53,6 +53,7 @@ export function CTA() {
                 size="lg"
                 variant="outline"
                 className="border-white/30 text-primary-foreground bg-background/30 hover:bg-background/10 px-8 py-6 text-lg"
+                onClick={() => navigate("/contact")}
               >
                 Contact Sales
               </Button>

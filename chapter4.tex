@@ -1,0 +1,105 @@
+\chapter{System Design}
+\label{ch:system_design}
+
+This chapter describes the system design of the NEX-L platform, following an Object-Oriented approach. It details the refined architectural components, database design, and algorithmic processes that enable the core functionalities of the Learning Management System.
+
+\section{Design Overview}
+The NEX-L platform is designed using a modern, scalable architecture. The decision to follow an \textit{Object-Oriented Design (OOD)} approach ensures that the system components are modular, reusable, and easy to maintain. By modeling the system using objects such as Courses, Users, Enrollments, and Payments, we can effectively manage the complex logic and relationships inherent in a professional LMS.
+
+\section{Architecture Design}
+The system follows a three-tier architecture:
+\begin{enumerate}
+    \item \textbf{Presentation Layer (Frontend):} Developed using React and Vite, providing a responsive and interactive user interface.
+    \item \textbf{Application Layer (Backend):} Built with Node.js and Express, implementing the business logic, API endpoints, and integration with external services.
+    \item \textbf{Data Layer (Database):} Utilizing MongoDB for flexible, document-oriented data storage, managed through Mongoose models.
+\end{enumerate}
+
+\section{Refined UML Diagrams}
+In this section, we provide the refined UML diagrams that represent the system's static and dynamic behavior.
+
+\subsection{Class Diagram}
+The class diagram outlines the core entities and their relationships.
+\begin{itemize}
+    \item \textbf{User Class:} Manages authentication and user roles (Student, Instructor, Admin).
+    \item \textbf{Course Class:} The central entity containing sections, contents (video, pdf, etc.), and ratings.
+    \item \textbf{Enrollment Class:} Tracks the relationship between a Student and a Course, including progress and completion status.
+    \item \textbf{Payment Class:} Handles transaction data, gateway-specific IDs (eSewa, Khalti), and payment status.
+    \item \textbf{Section and Content Classes:} Define the hierarchical structure of course materials.
+\end{itemize}
+
+\subsection{Sequence Diagram}
+The payment and enrollment sequence represents the interaction during a successful transaction:
+\begin{enumerate}
+    \item The \textbf{User} initiates a payment request from the frontend.
+    \item The \textbf{Payment Controller} (Backend) creates a pending payment record and generates a signed payload for the gateway.
+    \item The \textbf{Payment Gateway} (eSewa/Khalti) processes the transaction and redirects back to the backend verification URL.
+    \item The \textbf{Payment Controller} verifies the transaction with the gateway's server.
+    \item Upon successful verification, the backend creates an \textbf{Enrollment} record and updates the \textbf{Course} enrollment count.
+\end{enumerate}
+
+\subsection{Activity Diagram}
+The course creation and AI content generation process follows this flow:
+\begin{enumerate}
+    \item The \textbf{Instructor} provides a title and description for a new course.
+    \item The system generates \textbf{Vector Embeddings} for the course content using OpenAI's API.
+    \item If AI-assisted content generation is requested, the \textbf{AI Generator} produces lesson summaries and quiz questions based on the course topic.
+    \item The \textbf{Course Controller} saves the hierarchical structure (Sections, Contents) and the embedding to the database.
+\end{enumerate}
+
+\section{Database Design (Physical Schema)}
+The database design incorporates MongoDB's schema-less nature with Mongoose's validation and relationship capabilities (Object Data Modeling).
+\begin{itemize}
+    \item \textbf{Courses Collection:} Stores course metadata, including a 384-dimensional vector embedding for semantic search.
+    \item \textbf{Enrollments Collection:} References both User and Course, maintaining the progress state of the student.
+    \item \textbf{Payments Collection:} Stores transaction history, coupon usage, and financial records.
+\end{itemize}
+
+\section{Algorithm Details}
+\label{sec:algorithm_details}
+NEX-L leverages advanced algorithms to enhance discovery and security.
+
+\subsection{Recommendation Algorithm}
+The recommendation system uses vector similarity to suggest courses based on user interests. The similarity between the user profile and available courses is calculated using the following mathematical foundations:
+
+\begin{itemize}
+    \item \textbf{Dot Product:} $A \cdot B = \sum_{i=1}^n (A_i \times B_i)$
+    \item \textbf{Magnitude:} $\|A\| = \sqrt{\sum_{i=1}^n (A_i^2)}$
+    \item \textbf{Similarity Formula:} 
+    \[ \text{Similarity} = \cos(\theta) = \frac{A \cdot B}{\|A\| \times \|B\|} \]
+\end{itemize}
+
+\begin{enumerate}
+    \item \textbf{Input:} User's context (recently viewed, cart, enrolled courses).
+    \item \textbf{Embedding Generation:} The system aggregates the vector embeddings of courses in the user's context to create a \textbf{User Interest Vector} ($V_u$).
+    \item \textbf{Similarity Calculation:} The system performs \textit{Cosine Similarity} between the User Interest Vector and all other published course embeddings ($E_c$).
+    \item \textbf{Ranking:} The top $N$ courses with the highest similarity scores, which are not already owned by the user, are suggested.
+\end{enumerate}
+
+\subsection{Payment Verification Algorithm}
+To ensure secure transactions, the following algorithm is implemented for payment verification using cryptographic signatures.
+
+\textbf{Cryptographic Security (HMAC-SHA256)} \\
+The verification process utilizes HMAC-SHA256. It takes a piece of data (like a transaction ID or a user ID) and a \textit{Secret Key} to create a unique digital signature. This ensures that the payment confirmation is authentic and has not been tampered with.
+
+\begin{enumerate}
+    \item Receive the transaction identifier ($UUID$) and confirmation status from the gateway.
+    \item Generate a \textbf{Signature} using a secure HMAC SHA-256 algorithm with a secret merchant key.
+    \item Send an asynchronous HTTP GET/POST request to the \textbf{Gateway Verification API} with the signed parameters.
+    \item Compare the API response status. If equal to `COMPLETE`, update the local payment record and grant course access.
+\end{enumerate}
+
+\subsection{Hybrid Search Algorithm}
+The search function combines traditional keyword matching with semantic understanding using a \textbf{Multi-Factor Ranking \& Scoring} mechanism.
+
+\begin{itemize}
+    \item \textbf{Hybrid Score:} It combines Vector Similarity ($1.0$ weight) with Text Match Score ($0.2$ weight).
+    \item \textbf{Heuristic Boost:} Applies a ``Boost'' to results based on exact title matches, high ratings, and enrollment popularity.
+\end{itemize}
+
+\begin{enumerate}
+    \item Generate a vector embedding for the search query, $Q$.
+    \item Perform a \textbf{Text-Based Search} in MongoDB using indexed fields (Title, Tags).
+    \item Calculate \textbf{Semantic Similarity} for filtered results.
+    \item Apply the multi-factor ranking and boost logic.
+    \item Return the ranked results to the user.
+\end{enumerate}
