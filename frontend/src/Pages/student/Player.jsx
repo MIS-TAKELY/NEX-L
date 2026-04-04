@@ -82,9 +82,9 @@ const Player = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center px-4">
         <Icon icon="solar:danger-bold" className="text-red-500 mb-4" size={64} />
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Error Occurred</h2>
-        <p className="text-gray-600 mb-8">{courseError.data?.message || "Unable to load course details."}</p>
-        <button onClick={() => navigate(-1)} className="px-8 py-3 bg-primary text-foreground rounded-2xl font-bold">
+        <h2 className="text-2xl font-bold text-foreground mb-2">Error Occurred</h2>
+        <p className="text-muted-foreground mb-8">{courseError.data?.message || "Unable to load course details."}</p>
+        <button onClick={() => navigate(-1)} className="px-8 py-3 bg-primary text-foreground rounded-md font-bold">
           Go Back
         </button>
       </div>
@@ -103,7 +103,7 @@ const Player = () => {
         {mainContent}
 
         {/* Tab Navigation */}
-        <div className="flex items-center gap-2 p-1.5 bg-card/80 backdrop-blur-xl rounded-2xl border border-border/50 w-full sm:w-fit shadow-sm overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-2 p-1.5 bg-card/80 backdrop-blur-xl rounded-md border border-border/50 w-full sm:w-fit shadow-sm overflow-x-auto no-scrollbar">
           {[
             { id: 'lesson', label: 'Lesson Info', icon: 'solar:notes-bold-duotone' },
             { id: 'community', label: 'Community', icon: 'solar:users-group-rounded-bold-duotone' },
@@ -112,7 +112,7 @@ const Player = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2.5 px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 whitespace-nowrap ${
+              className={`flex items-center gap-2.5 px-6 py-3 rounded-md text-xs font-black uppercase tracking-widest transition-all duration-300 whitespace-nowrap ${
                 activeTab === tab.id
                   ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
                   : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
@@ -130,7 +130,7 @@ const Player = () => {
               {/* For videos, we already showed the player above, so we just show description here */}
               {/* For other types, they might have their own layout but we can provide a default card if needed */}
             {activeLesson?.description || activeLesson?.summary ? (
-                <div className="bg-card p-10 rounded-3xl border border-border/80 shadow-sm transition-all duration-500 premium-card hover:shadow-md">
+                <div className="bg-card p-10 rounded-md border border-border/80 shadow-sm transition-all duration-500 premium-card hover:shadow-md">
                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
                     <h2 className="text-3xl font-black text-foreground tracking-tight">
                       {formatDisplayName(activeResource?.name, activeLesson?.title)}
@@ -140,7 +140,7 @@ const Player = () => {
                       <button
                         onClick={handleMarkAsCompleted}
                         disabled={markingCompleted || isCompleted}
-                        className={`flex items-center gap-2.5 px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${
+                        className={`flex items-center gap-2.5 px-6 py-3 rounded-md text-xs font-black uppercase tracking-widest transition-all duration-300 ${
                           isCompleted 
                             ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 cursor-default'
                             : 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-xl active:scale-95'
@@ -162,7 +162,7 @@ const Player = () => {
                   </p>
                 </div>
               ) : (
-                <div className="bg-card/50 p-10 rounded-3xl border border-dashed border-border flex flex-col items-center justify-center text-center">
+                <div className="bg-card/50 p-10 rounded-md border border-dashed border-border flex flex-col items-center justify-center text-center">
                    <Icon icon="solar:document-text-bold" size={48} className="text-muted-foreground opacity-20 mb-4" />
                    <p className="text-muted-foreground font-medium">No additional notes provided for this lesson.</p>
                 </div>
@@ -170,12 +170,12 @@ const Player = () => {
             </div>
           )}
           {activeTab === 'community' && (
-            <div className="h-[650px] rounded-3xl overflow-hidden border border-border bg-card shadow-xl animate-in fade-in slide-in-from-right-4">
+            <div className="h-[650px] rounded-md overflow-hidden border border-border bg-card shadow-xl animate-in fade-in slide-in-from-right-4">
               <CourseGroupChat courseId={courseId} />
             </div>
           )}
           {activeTab === 'mentor' && (
-            <div className="h-[650px] rounded-3xl overflow-hidden border border-border bg-card shadow-xl animate-in fade-in slide-in-from-right-4">
+            <div className="h-[650px] rounded-md overflow-hidden border border-border bg-card shadow-xl animate-in fade-in slide-in-from-right-4">
               <StudentChat courseId={courseId} />
             </div>
           )}
@@ -186,7 +186,7 @@ const Player = () => {
 
   const renderContent = () => {
     if (!activeResource && activeTab === 'lesson') return (
-      <div className="flex items-center justify-center h-full text-gray-400">
+      <div className="flex items-center justify-center h-full text-muted-foreground">
         Select a lesson or resource from the sidebar to begin
       </div>
     );
@@ -201,7 +201,7 @@ const Player = () => {
     switch (type) {
       case 'video':
         return renderTabbedLayout(
-          <div className="aspect-video w-full bg-black rounded-3xl overflow-hidden shadow-2xl border border-white/5 group relative transition-all duration-500 hover:shadow-primary/5">
+          <div className="aspect-video w-full bg-black rounded-md overflow-hidden shadow-2xl border border-white/5 group relative transition-all duration-500 hover:shadow-primary/5">
             <video
               key={url}
               controls
@@ -216,9 +216,9 @@ const Player = () => {
       case 'pdf':
       case 'file':
         return renderTabbedLayout(
-          <div className="flex flex-col items-center justify-center py-20 bg-card rounded-3xl border border-border/80 shadow-sm px-10 text-center premium-card transition-all duration-500 hover:shadow-md">
-            <div className="w-20 h-20 bg-primary/5 rounded-2xl flex items-center justify-center mb-6 relative group">
-              <div className="absolute inset-0 bg-primary/5 rounded-2xl animate-pulse" />
+          <div className="flex flex-col items-center justify-center py-20 bg-card rounded-md border border-border/80 shadow-sm px-10 text-center premium-card transition-all duration-500 hover:shadow-md">
+            <div className="w-20 h-20 bg-primary/5 rounded-md flex items-center justify-center mb-6 relative group">
+              <div className="absolute inset-0 bg-primary/5 rounded-md animate-pulse" />
               <Icon icon="solar:document-bold-duotone" className="text-primary relative z-10" size={40} />
             </div>
             <h2 className="text-3xl font-black text-foreground mb-4 tracking-tight">
@@ -230,7 +230,7 @@ const Player = () => {
               href={url}
               target="_blank"
               rel="noreferrer"
-              className="px-10 py-4 bg-primary text-primary-foreground rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2.5 hover:shadow-2xl hover:shadow-primary/30 transition-all active:scale-95 shadow-xl shadow-primary/10"
+              className="px-10 py-4 bg-primary text-primary-foreground rounded-md font-black text-[10px] uppercase tracking-widest flex items-center gap-2.5 hover:shadow-2xl hover:shadow-primary/30 transition-all active:scale-95 shadow-xl shadow-primary/10"
             >
               <Icon icon="solar:download-minimalistic-bold" className="w-4 h-4" /> Open Resource
             </a>
@@ -239,7 +239,7 @@ const Player = () => {
       case 'note':
       case 'article':
         return renderTabbedLayout(
-          <div className="prose prose-lg dark:prose-invert max-w-none bg-card p-10 md:p-16 rounded-3xl border border-border/80 shadow-sm premium-card transition-all duration-500 hover:shadow-md">
+          <div className="prose prose-lg dark:prose-invert max-w-none bg-card p-10 md:p-16 rounded-md border border-border/80 shadow-sm premium-card transition-all duration-500 hover:shadow-md">
             <h1 className="text-4xl font-black text-foreground mb-10 tracking-tight">
               {formatDisplayName(activeResource?.name, activeLesson?.title)}
             </h1>
@@ -266,12 +266,12 @@ const Player = () => {
         );
       default:
         return renderTabbedLayout(
-          <div className="flex flex-col items-center justify-center py-20 bg-secondary/30 rounded-3xl border-2 border-dashed border-border transition-colors duration-500">
+          <div className="flex flex-col items-center justify-center py-20 bg-secondary/30 rounded-md border-2 border-dashed border-border transition-colors duration-500">
             <Icon icon="solar:document-text-bold" className="text-primary/40 mb-6 animate-pulse" size={56} />
             <p className="text-muted-foreground font-black uppercase tracking-widest text-xs">Preview Unavailable</p>
             <p className="text-foreground font-medium text-lg mt-2">Interactive "{type}" module coming soon!</p>
             {url && (
-              <a href={url} target="_blank" rel="noreferrer" className="mt-8 text-primary font-black uppercase tracking-wider text-[10px] hover:underline flex items-center gap-2 bg-background px-6 py-3 rounded-xl border border-border shadow-sm hover:shadow-md transition-all">
+              <a href={url} target="_blank" rel="noreferrer" className="mt-8 text-primary font-black uppercase tracking-wider text-[10px] hover:underline flex items-center gap-2 bg-background px-6 py-3 rounded-md border border-border shadow-sm hover:shadow-md transition-all">
                 Access Resource File <Icon icon="solar:arrow-right-up-bold" className="w-3.5 h-3.5" />
               </a>
             )}
@@ -286,7 +286,7 @@ const Player = () => {
       {!isSidebarOpen && (
         <button
           onClick={() => setIsSidebarOpen(true)}
-          className="fixed bottom-8 right-8 z-50 p-5 bg-primary text-primary-foreground rounded-full shadow-[0_20px_50px_rgba(79,70,229,0.3)] lg:hidden active:scale-90 transition-all group"
+          className="fixed bottom-8 right-8 z-50 p-5 bg-primary text-primary-foreground rounded-md shadow-[0_20px_50px_rgba(79,70,229,0.3)] lg:hidden active:scale-90 transition-all group"
         >
           <Icon icon="solar:menu-dots-bold" size={28} className="group-hover:rotate-90 transition-transform" />
         </button>
@@ -301,7 +301,7 @@ const Player = () => {
           <div className="p-8 border-b border-border flex items-center justify-between">
             <h2 className="text-2xl font-black text-foreground truncate pr-4 tracking-tight leading-tight">{course?.title}</h2>
 
-            <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 hover:bg-secondary rounded-xl transition-colors">
+            <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 hover:bg-secondary rounded-md transition-colors">
               <Icon icon="solar:close-circle-bold" size={28} className="text-muted-foreground hover:text-destructive" />
             </button>
           </div>
@@ -314,9 +314,9 @@ const Player = () => {
             />
           </div>
 
-          <div className="p-6 bg-secondary/30 m-6 rounded-2xl border border-border/50 shadow-inner group hover:bg-secondary/40 transition-colors">
+          <div className="p-6 bg-secondary/30 m-6 rounded-md border border-border/50 shadow-inner group hover:bg-secondary/40 transition-colors">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center border border-accent/20 shadow-sm group-hover:scale-105 transition-transform">
+              <div className="w-12 h-12 rounded-md bg-accent/10 flex items-center justify-center border border-accent/20 shadow-sm group-hover:scale-105 transition-transform">
                 <Icon icon="solar:user-bold-duotone" className="text-accent w-6 h-6" />
               </div>
               <div className="overflow-hidden">
@@ -337,7 +337,7 @@ const Player = () => {
           <div className="flex items-center gap-6">
             <button
               onClick={() => navigate(-1)}
-              className="w-12 h-12 flex items-center justify-center bg-secondary/80 hover:bg-background rounded-2xl transition-all text-muted-foreground hover:text-primary active:scale-95 border border-transparent hover:border-border shadow-sm group"
+              className="w-12 h-12 flex items-center justify-center bg-secondary/80 hover:bg-background rounded-md transition-all text-muted-foreground hover:text-primary active:scale-95 border border-transparent hover:border-border shadow-sm group"
             >
               <Icon icon="solar:alt-arrow-left-bold" size={24} className="group-hover:-translate-x-0.5 transition-transform" />
             </button>
@@ -355,7 +355,7 @@ const Player = () => {
               <button
                 onClick={() => navigate(`/student/live/${courseId}`)}
                 title="Watch Live Class"
-                className="px-5 py-3 bg-destructive/10 text-destructive rounded-xl hover:bg-destructive shadow-lg shadow-destructive/10 hover:shadow-destructive/20 hover:text-white transition-all flex items-center gap-2.5 text-xs font-black uppercase tracking-widest border border-destructive/20"
+                className="px-5 py-3 bg-destructive/10 text-destructive rounded-md hover:bg-destructive shadow-lg shadow-destructive/10 hover:shadow-destructive/20 hover:text-white transition-all flex items-center gap-2.5 text-xs font-black uppercase tracking-widest border border-destructive/20"
               >
                 <Icon icon="solar:play-stream-bold-duotone" className="w-5 h-5 animate-pulse" />
                 <span className="hidden xl:inline">Live Session</span>
@@ -366,7 +366,7 @@ const Player = () => {
             <button
               onClick={() => setActiveTab('community')}
               title="Group Chat"
-              className={`px-5 py-3 rounded-xl transition-all duration-300 flex items-center gap-2.5 text-xs font-black uppercase tracking-widest border ${
+              className={`px-5 py-3 rounded-md transition-all duration-300 flex items-center gap-2.5 text-xs font-black uppercase tracking-widest border ${
                 activeTab === 'community'
                   ? 'bg-primary text-primary-foreground shadow-xl shadow-primary/20 border-primary'
                   : 'bg-secondary/40 text-muted-foreground hover:text-foreground hover:bg-background border-border/40 hover:border-border shadow-sm'
@@ -380,7 +380,7 @@ const Player = () => {
             <button
               onClick={() => setActiveTab('mentor')}
               title="Chat with Teacher"
-              className={`px-5 py-3 rounded-xl transition-all duration-300 flex items-center gap-2.5 text-xs font-black uppercase tracking-widest border ${
+              className={`px-5 py-3 rounded-md transition-all duration-300 flex items-center gap-2.5 text-xs font-black uppercase tracking-widest border ${
                 activeTab === 'mentor'
                   ? 'bg-primary text-primary-foreground shadow-xl shadow-primary/20 border-primary'
                   : 'bg-secondary/40 text-muted-foreground hover:text-foreground hover:bg-background border-border/40 hover:border-border shadow-sm'

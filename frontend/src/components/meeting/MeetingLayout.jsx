@@ -177,13 +177,13 @@ const MeetingLayout = ({
   if (callingState !== CallingState.JOINED && autoJoin) {
       return (
         <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#202124] text-white font-sans gap-6">
-            <div className="w-24 h-24 rounded-full bg-[#3c4043] flex items-center justify-center shadow-lg relative">
-              <div className="absolute inset-0 bg-[#8ab4f8]/20 rounded-full animate-ping" />
-              <Icon icon="solar:tv-bold-duotone" className="w-10 h-10 text-gray-400" />
+            <div className="w-24 h-24 rounded-md bg-[#3c4043] flex items-center justify-center shadow-lg relative">
+              <div className="absolute inset-0 bg-[#8ab4f8]/20 rounded-md animate-ping" />
+              <Icon icon="solar:tv-bold-duotone" className="w-10 h-10 text-muted-foreground" />
             </div>
             <div className="text-center space-y-2">
                 <h2 className="text-2xl font-medium tracking-wide">Waiting for host...</h2>
-                <p className="text-gray-400 pt-2 font-light">The session will start automatically when the instructor arrives.</p>
+                <p className="text-muted-foreground pt-2 font-light">The session will start automatically when the instructor arrives.</p>
             </div>
         </div>
       );
@@ -200,17 +200,17 @@ const MeetingLayout = ({
         <div className={`absolute top-0 left-0 p-4 lg:p-6 flex items-center gap-3 z-20 pointer-events-none transition-opacity duration-500 ${controlsVisible ? 'opacity-100' : 'opacity-0'}`}>
             <div className="pointer-events-auto flex items-center gap-3 text-white">
                 <h1 className="font-medium text-base truncate max-w-[200px] md:max-w-xs">{courseName || "Meeting"}</h1>
-                <div className="w-[1px] h-4 bg-white/20 mx-1" />
+                <div className="w-[1px] h-4 bg-card/20 mx-1" />
                 {callType === 'livestream' ? (
                     <div className="flex items-center gap-2">
-                        <span className={`w-2 h-2 rounded-full ${isLive ? 'bg-[#ea4335] animate-pulse' : 'bg-gray-400'}`} />
+                        <span className={`w-2 h-2 rounded-md ${isLive ? 'bg-[#ea4335] animate-pulse' : 'bg-gray-400'}`} />
                         <span className="text-xs text-gray-300">
                           {isLive ? `${participantCount} viewers` : "Backstage"}
                         </span>
                     </div>
                 ) : (
                     <div className="flex items-center gap-2 text-xs text-gray-300">
-                       <span className={`w-2 h-2 rounded-full bg-[#ea4335] animate-pulse`} />
+                       <span className={`w-2 h-2 rounded-md bg-[#ea4335] animate-pulse`} />
                        <Icon icon="material-symbols:person-outline-rounded" className="w-4 h-4 ml-1" />
                        {participantCount}
                     </div>

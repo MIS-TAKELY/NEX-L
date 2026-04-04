@@ -7,21 +7,21 @@ export function CTA() {
   return (
     <section className="relative py-16 lg:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-3xl">
+        <div className="relative overflow-hidden rounded-md">
           {/* Background Gradient */}
           <div className="absolute inset-0  bg-[#455672]" />
 
           {/* Animated Background Elements */}
           <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-0 left-0 w-64 h-64 bg-background/10 rounded-full blur-[80px]" />
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-background/10 rounded-full blur-[100px]" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-background/5 rounded-full blur-[120px]" />
+            <div className="absolute top-0 left-0 w-64 h-64 bg-background/10 rounded-md blur-[80px]" />
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-background/10 rounded-md blur-[100px]" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-background/5 rounded-md blur-[120px]" />
           </div>
 
           {/* Content */}
           <div className="relative z-10 px-8 py-16 lg:px-16 lg:py-24 text-center">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-background/10 backdrop-blur-sm mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-background/10 backdrop-blur-sm mb-8">
               <Sparkles className="w-4 h-4 text-primary-foreground" />
               <span className="text-sm text-primary-foreground/90">
                 Start Your Journey Today

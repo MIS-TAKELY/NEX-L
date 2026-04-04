@@ -12,6 +12,9 @@ dayjs.extend(relativeTime);
 
 import { motion } from 'motion/react';
 
+import { Skeleton } from '@/components/ui/skeleton';
+import CourseSkeleton from '../../components/skeletons/CourseSkeleton';
+
 const MyEnrollments = () => {
 
   const { userData } = useSelector((state) => state.auth);
@@ -46,9 +49,16 @@ const MyEnrollments = () => {
 
   if (loading || loadingClasses) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px]">
-        <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-gray-500 font-medium animate-pulse">Fetching your learning journey...</p>
+      <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-12">
+        <div className="space-y-4">
+          <Skeleton className="h-12 w-64 md:h-16" />
+          <Skeleton className="h-6 w-96 max-w-full" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <CourseSkeleton key={i} />
+          ))}
+        </div>
       </div>
     );
   }
@@ -56,14 +66,14 @@ const MyEnrollments = () => {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-center px-4">
-        <div className="w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center mb-6">
+        <div className="w-20 h-20 bg-red-50 rounded-md flex items-center justify-center mb-6">
           <Icon icon="solar:danger-bold" className="text-red-500" size={40} />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Oops! Something went wrong</h2>
-        <p className="text-gray-600 max-w-md mb-8">{error}</p>
+        <h2 className="text-2xl font-bold text-foreground mb-2">Oops! Something went wrong</h2>
+        <p className="text-muted-foreground max-w-md mb-8">{error}</p>
         <button
           onClick={() => window.location.reload()}
-          className="px-8 py-3 bg-primary text-foreground rounded-2xl font-bold hover:bg-primary-hover transition-all shadow-lg"
+          className="px-8 py-3 bg-primary text-foreground rounded-md font-bold hover:bg-primary-hover transition-all shadow-lg"
         >
           Try Again
         </button>
@@ -100,7 +110,7 @@ const MyEnrollments = () => {
           className="mb-16"
         >
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center border border-red-500/20 shadow-lg shadow-red-500/5">
+            <div className="w-12 h-12 rounded-md bg-red-500/10 flex items-center justify-center border border-red-500/20 shadow-lg shadow-red-500/5">
               <Icon icon="solar:videocamera-record-bold-duotone" className="text-red-500 w-7 h-7" />
             </div>
             <div>
@@ -115,15 +125,15 @@ const MyEnrollments = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-                className="glass-card premium-card rounded-3xl p-6 relative overflow-hidden group"
+                className="glass-card premium-card rounded-md p-6 relative overflow-hidden group"
               >
                 <div className="absolute top-0 right-0 p-4">
-                   <div className="flex items-center gap-1.5 bg-red-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-lg shadow-red-500/30 animate-pulse uppercase tracking-wider">
-                      <div className="w-1.5 h-1.5 bg-white rounded-full" /> {liveClass.status === 'live' ? 'LIVE NOW' : 'LIVE SOON'}
+                   <div className="flex items-center gap-1.5 bg-red-500 text-white text-[10px] font-black px-3 py-1.5 rounded-md shadow-lg shadow-red-500/30 animate-pulse uppercase tracking-wider">
+                      <div className="w-1.5 h-1.5 bg-card rounded-md" /> {liveClass.status === 'live' ? 'LIVE NOW' : 'LIVE SOON'}
                    </div>
                 </div>
                 <div className="flex items-center gap-5 mb-6">
-                  <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white/10 shadow-xl">
+                  <div className="w-14 h-14 rounded-md overflow-hidden border-2 border-white/10 shadow-xl">
                     <img src={liveClass.course?.thumbnail || '/placeholder-course.png'} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                   </div>
                   <div>
@@ -132,16 +142,16 @@ const MyEnrollments = () => {
                   </div>
                 </div>
                 <div className="space-y-4 mb-8">
-                  <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium bg-white/5 p-3 rounded-2xl border border-white/5">
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium bg-card/5 p-3 rounded-md border border-white/5">
                     <Icon icon="solar:calendar-bold" className="text-primary w-5 h-5" />
                     <span>{dayjs(liveClass.startTime).format('MMM D, YYYY')}</span>
                   </div>
-                  <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium bg-white/5 p-3 rounded-2xl border border-white/5">
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium bg-card/5 p-3 rounded-md border border-white/5">
                     <Icon icon="solar:clock-circle-bold" className="text-primary w-5 h-5" />
                     <span>{dayjs(liveClass.startTime).format('h:mm A')} ({liveClass.duration} min)</span>
                   </div>
-                  <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium bg-white/5 p-3 rounded-2xl border border-white/5">
-                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium bg-card/5 p-3 rounded-md border border-white/5">
+                    <div className="w-6 h-6 rounded-md bg-primary/20 flex items-center justify-center">
                       <Icon icon="solar:user-bold" className="text-primary w-3.5 h-3.5" />
                     </div>
                     <span className="text-xs font-bold uppercase tracking-widest">by {liveClass.teacher?.name}</span>
@@ -149,7 +159,7 @@ const MyEnrollments = () => {
                 </div>
                 <button
                   onClick={() => navigate(`/student/live/${liveClass.course?._id}`)}
-                  className="w-full py-4 bg-red-500 text-white font-black rounded-2xl hover:bg-red-600 transition-all shadow-xl shadow-red-500/20 flex items-center justify-center gap-3 group/btn active:scale-[0.98] uppercase tracking-widest text-xs"
+                  className="w-full py-4 bg-red-500 text-white font-black rounded-md hover:bg-red-600 transition-all shadow-xl shadow-red-500/20 flex items-center justify-center gap-3 group/btn active:scale-[0.98] uppercase tracking-widest text-xs"
                 >
                   <Icon icon="solar:play-bold" className="group-hover/btn:scale-110 transition-transform" />
                   Join Room
@@ -169,7 +179,7 @@ const MyEnrollments = () => {
           className="flex flex-col items-center justify-center py-24 glass-card premium-card rounded-[2.5rem] text-center px-4 overflow-hidden relative"
         >
           <div className="absolute inset-0 bg-primary/5 pointer-events-none" />
-          <div className="w-28 h-28 bg-primary/10 rounded-3xl flex items-center justify-center mb-8 border border-primary/20 shadow-2xl relative z-10">
+          <div className="w-28 h-28 bg-primary/10 rounded-md flex items-center justify-center mb-8 border border-primary/20 shadow-2xl relative z-10">
             <Icon icon="solar:globus-bold-duotone" className="text-primary w-14 h-14" />
           </div>
           <div className="relative z-10">
@@ -179,7 +189,7 @@ const MyEnrollments = () => {
             </p>
             <button
               onClick={() => window.location.href = '/course-list'}
-              className="px-12 py-5 bg-primary text-primary-foreground rounded-2xl font-black text-xs tracking-[0.2em] uppercase hover:bg-primary/90 transition-all shadow-2xl shadow-primary/20 active:scale-95 flex items-center gap-3 mx-auto group"
+              className="px-12 py-5 bg-primary text-primary-foreground rounded-md font-black text-xs tracking-[0.2em] uppercase hover:bg-primary/90 transition-all shadow-2xl shadow-primary/20 active:scale-95 flex items-center gap-3 mx-auto group"
             >
               Explore Courses 
               <Icon icon="solar:arrow-right-bold" className="group-hover:translate-x-1 transition-transform" />

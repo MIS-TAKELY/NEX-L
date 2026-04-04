@@ -52,7 +52,7 @@ const CoursesSection = () => {
         <div className="flex justify-start">
           <button
             onClick={() => navigate("/course-list")}
-            className="px-12 py-6 bg-primary text-primary-foreground rounded-3xl font-bold text-xl hover:bg-primary-hover transition-all duration-500 shadow-2xl shadow-primary/10 flex items-center gap-4 group"
+            className="px-12 py-6 bg-primary text-primary-foreground rounded-md font-bold text-xl hover:bg-primary-hover transition-all duration-500 shadow-2xl shadow-primary/10 flex items-center gap-4 group"
           >
             Explore All Courses
             <span className="group-hover:translate-x-2 transition-transform duration-300">→</span>

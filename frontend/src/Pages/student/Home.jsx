@@ -5,6 +5,8 @@ import { Icon } from '@iconify/react';
 import { getAllCourses } from '../../apis/course.api';
 import { getMyBadges } from '../../apis/badge.api';
 
+import StudentDashboardSkeleton from '../../components/skeletons/StudentDashboardSkeleton';
+
 const Home = () => {
     const { userData } = useSelector((state) => state.auth);
     const [courses, setCourses] = useState([]);
@@ -30,6 +32,10 @@ const Home = () => {
         fetchDashboardData();
     }, []);
 
+    if (loading) {
+        return <StudentDashboardSkeleton />;
+    }
+
     const getIcon = (category) => {
         switch (category?.toUpperCase()) {
             case 'UI/UX DESIGN': return 'solar:palet-2-bold';
@@ -52,7 +58,7 @@ const Home = () => {
             {/* Middle Column - Main Content */}
             <div className="flex-1 flex flex-col gap-12">
                 {/* Banner Section */}
-                <div className="bg-primary/5 rounded-3xl p-12 md:p-16 relative overflow-hidden border border-primary/10">
+                <div className="bg-primary/5 rounded-md p-10 md:p-12 relative overflow-hidden border border-primary/10">
                     <div className="relative z-10 max-w-xl">
                         <p className="text-primary text-xs font-bold tracking-widest uppercase mb-4 serif italic">Welcome back, {userData?.name?.split(' ')[0] || 'Scholar'}</p>
                         <h1 className="text-4xl md:text-5xl font-black mb-8 leading-[1.1] text-foreground serif">
@@ -60,7 +66,7 @@ const Home = () => {
                         </h1>
                         <button 
                             onClick={() => navigate("/course-list")}
-                            className="bg-primary text-foreground hover:bg-primary-hover px-10 py-4 rounded-2xl font-bold text-base transition-all shadow-xl shadow-primary/20 flex items-center gap-3 group"
+                            className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-3.5 rounded-md font-bold text-base transition-all shadow-xl shadow-primary/20 flex items-center gap-3 group"
                         >
                             Explore Global Courses
                             <Icon icon="solar:alt-arrow-right-linear" className="group-hover:translate-x-1 transition-transform" />
@@ -76,13 +82,13 @@ const Home = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {loading ? (
                         [1, 2, 3].map((_, i) => (
-                            <div key={i} className="bg-card backdrop-blur-xl p-6 rounded-2xl animate-pulse h-32 border border-border"></div>
+                            <div key={i} className="bg-card backdrop-blur-xl p-6 rounded-md animate-pulse h-32 border border-border"></div>
                         ))
                     ) : courses.length > 0 ? (
                         courses.slice(0, 3).map((course) => (
-                            <div key={course._id} className="bg-card backdrop-blur-xl p-6 rounded-2xl flex items-center justify-between border border-border hover:shadow-xl transition-all cursor-pointer group premium-card">
+                            <div key={course._id} className="bg-card backdrop-blur-xl p-6 rounded-md flex items-center justify-between border border-border hover:shadow-xl transition-all cursor-pointer group premium-card">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-2xl">
+                                    <div className="w-12 h-12 rounded-md bg-primary/10 text-primary flex items-center justify-center text-2xl">
                                         <Icon icon={getIcon(course.category)} />
                                     </div>
                                     <div>
@@ -105,11 +111,11 @@ const Home = () => {
                             <div className="w-12 h-1 bg-primary/20 mt-2"></div>
                         </div>
                         <div className="flex gap-4">
-                            <button className="w-12 h-12 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:bg-secondary transition-all">
-                                <Icon icon="solar:alt-arrow-left-linear" size={20} />
+                            <button className="w-10 h-10 rounded-md border border-border flex items-center justify-center text-muted-foreground hover:bg-secondary transition-all">
+                                <Icon icon="solar:alt-arrow-left-linear" size={18} />
                             </button>
-                            <button className="w-12 h-12 rounded-full bg-primary text-foreground flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-105 transition-all">
-                                <Icon icon="solar:alt-arrow-right-linear" size={20} />
+                            <button className="w-10 h-10 rounded-md bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-105 transition-all">
+                                <Icon icon="solar:alt-arrow-right-linear" size={18} />
                             </button>
                         </div>
                     </div>
@@ -117,16 +123,16 @@ const Home = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                         {loading ? (
                             [1, 2].map((_, i) => (
-                                <div key={i} className="bg-card p-6 rounded-3xl border border-border animate-pulse h-80"></div>
+                                <div key={i} className="bg-card p-6 rounded-md border border-border animate-pulse h-80"></div>
                             ))
                         ) : courses.length > 0 ? (
                             courses.slice(0, 2).map((course) => (
-                                <div key={course._id} className="bg-card backdrop-blur-xl p-6 rounded-3xl border border-border hover:shadow-2xl transition-all group cursor-pointer premium-card" onClick={() => navigate(`/student/player/${course._id}`)}>
-                                    <div className="h-48 bg-secondary rounded-2xl mb-6 relative overflow-hidden">
+                                <div key={course._id} className="bg-card backdrop-blur-xl p-6 rounded-md border border-border hover:shadow-2xl transition-all group cursor-pointer premium-card" onClick={() => navigate(`/student/player/${course._id}`)}>
+                                    <div className="h-48 bg-secondary rounded-md mb-6 relative overflow-hidden">
                                         <img src={course.thumbnail || "https://images.unsplash.com/photo-1593720213428-28a5b9e94613?q=80&w=500&auto=format&fit=crop"} alt={course.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                                        <div className="absolute top-4 right-4 bg-background/20 backdrop-blur-md p-3 rounded-full text-foreground hover:bg-background/40 transition-all">
-                                            <Icon icon="solar:heart-bold" size={20} />
+                                        <div className="absolute top-4 right-4 bg-background/20 backdrop-blur-md p-2 rounded-md text-foreground hover:bg-background/40 transition-all">
+                                            <Icon icon="solar:heart-bold" size={18} />
                                         </div>
                                     </div>
                                     <div>
@@ -134,7 +140,7 @@ const Home = () => {
                                         <h3 className="text-2xl font-black text-foreground mb-6 leading-tight group-hover:text-primary transition-colors line-clamp-2 serif">{course.title}</h3>
                                         <div className="flex items-center justify-between border-t border-border pt-6">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold serif italic overflow-hidden">
+                                                <div className="w-10 h-10 rounded-md bg-primary/10 flex items-center justify-center text-primary font-bold serif italic overflow-hidden">
                                                     {course.teacher?.avatar ? <img src={course.teacher.avatar} className="w-full h-full object-cover" /> : course.teacher?.name?.[0]}
                                                 </div>
                                                 <div>
@@ -155,15 +161,15 @@ const Home = () => {
             {/* Right Sidebar - Refined statistics */}
             <div className="w-full lg:w-96 flex flex-col gap-12 lg:sticky lg:top-32 h-fit">
                 {/* Profile/Stat Card */}
-                <div className="bg-card backdrop-blur-xl rounded-3xl p-10 border border-border shadow-xl shadow-black/5 text-center relative overflow-hidden premium-card">
+                <div className="bg-card backdrop-blur-xl rounded-md p-8 border border-border shadow-xl shadow-black/5 text-center relative overflow-hidden premium-card">
                     <div className="relative z-10">
                         <div className="relative inline-block mb-8">
-                            <div className="w-32 h-32 rounded-full p-2 border-2 border-dashed border-primary/20 flex items-center justify-center">
-                                <div className="w-full h-full rounded-full bg-primary/5 flex items-center justify-center text-primary overflow-hidden">
-                                    {userData?.avatar ? <img src={userData.avatar} className="w-full h-full object-cover" /> : <Icon icon="solar:user-circle-bold-duotone" size={80} />}
+                            <div className="w-28 h-28 rounded-md p-2 border-2 border-dashed border-primary/20 flex items-center justify-center">
+                                <div className="w-full h-full rounded-md bg-primary/5 flex items-center justify-center text-primary overflow-hidden">
+                                    {userData?.avatar ? <img src={userData.avatar} className="w-full h-full object-cover" /> : <Icon icon="solar:user-circle-bold-duotone" size={60} />}
                                 </div>
                             </div>
-                            <div className="absolute -bottom-2 right-2 bg-primary text-foreground text-xs font-black px-4 py-1.5 rounded-full shadow-lg border-4 border-card">
+                            <div className="absolute -bottom-2 right-2 bg-primary text-primary-foreground text-[10px] font-black px-3 py-1 rounded-md shadow-lg border-2 border-card">
                                 32%
                             </div>
                         </div>
@@ -176,7 +182,7 @@ const Home = () => {
                         </p>
                     </div>
                     {/* Background flare */}
-                    <div className="absolute -bottom-20 -left-20 w-48 h-48 bg-primary/5 rounded-full blur-3xl"></div>
+                    <div className="absolute -bottom-20 -left-20 w-48 h-48 bg-primary/5 rounded-md blur-3xl"></div>
                 </div>
 
                 {/* Badges Widget */}
@@ -191,11 +197,11 @@ const Home = () => {
                         </button>
                     </div>
 
-                    <div className="bg-card backdrop-blur-xl rounded-3xl p-6 border border-border shadow-xl shadow-black/5 premium-card">
+                    <div className="bg-card backdrop-blur-xl rounded-md p-6 border border-border shadow-xl shadow-black/5 premium-card">
                         {loading ? (
                             <div className="grid grid-cols-4 gap-4 animate-pulse">
                                 {[1, 2, 3, 4].map(i => (
-                                    <div key={i} className="w-12 h-12 rounded-xl bg-muted"></div>
+                                    <div key={i} className="w-12 h-12 rounded-md bg-muted"></div>
                                 ))}
                             </div>
                         ) : earnedBadges.length > 0 ? (
@@ -203,17 +209,17 @@ const Home = () => {
                                 {earnedBadges.slice(0, 4).map((ub) => (
                                     <div 
                                         key={ub._id} 
-                                        className="w-14 h-14 rounded-xl bg-primary/5 flex items-center justify-center text-2xl border border-primary/10 hover:scale-110 transition-transform cursor-help group relative"
+                                        className="w-14 h-14 rounded-md bg-primary/5 flex items-center justify-center text-2xl border border-primary/10 hover:scale-110 transition-transform cursor-help group relative"
                                         title={ub.badge?.name}
                                     >
                                         {ub.badge?.icon || '🏅'}
-                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-popover text-popover-foreground text-[10px] rounded border border-border opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-popover text-popover-foreground text-[10px] rounded-md border border-border opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
                                             {ub.badge?.name}
                                         </div>
                                     </div>
                                 ))}
                                 {earnedBadges.length > 4 && (
-                                    <div className="w-14 h-14 rounded-xl bg-secondary flex items-center justify-center text-xs font-bold text-muted-foreground border border-border">
+                                    <div className="w-14 h-14 rounded-md bg-secondary flex items-center justify-center text-xs font-bold text-muted-foreground border border-border">
                                         +{earnedBadges.length - 4}
                                     </div>
                                 )}
@@ -236,19 +242,19 @@ const Home = () => {
                 <div className="px-2">
                     <div className="flex justify-between items-center mb-8 px-4">
                         <h3 className="text-xl font-black text-foreground serif">Top <span className="text-primary italic">Mentors</span></h3>
-                        <button className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center text-primary shadow-sm hover:scale-105 transition-all">
+                        <button className="w-10 h-10 rounded-md bg-card border border-border flex items-center justify-center text-primary shadow-sm hover:scale-105 transition-all">
                             <Icon icon="solar:add-circle-linear" size={20} />
                         </button>
                     </div>
 
-                    <div className="bg-card backdrop-blur-xl rounded-3xl p-8 border border-border shadow-xl shadow-black/5 space-y-8 premium-card">
+                    <div className="bg-card backdrop-blur-xl rounded-md p-8 border border-border shadow-xl shadow-black/5 space-y-8 premium-card">
                         {loading ? (
                             [1, 2].map((_, i) => (
                                 <div key={i} className="flex items-center gap-4 animate-pulse">
-                                    <div className="w-12 h-12 rounded-full bg-muted"></div>
+                                    <div className="w-12 h-12 rounded-md bg-muted"></div>
                                     <div className="flex-1 space-y-2">
-                                        <div className="h-3 w-24 bg-muted rounded"></div>
-                                        <div className="h-2 w-16 bg-muted rounded"></div>
+                                        <div className="h-3 w-24 bg-muted rounded-md"></div>
+                                        <div className="h-2 w-16 bg-muted rounded-md"></div>
                                     </div>
                                 </div>
                             ))
@@ -256,7 +262,7 @@ const Home = () => {
                             mentors.slice(0, 3).map((mentor) => (
                                 <div key={mentor._id} className="flex items-center justify-between group cursor-pointer">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-14 h-14 rounded-xl bg-secondary flex items-center justify-center text-primary border border-border overflow-hidden transition-transform group-hover:scale-110">
+                                        <div className="w-14 h-14 rounded-md bg-secondary flex items-center justify-center text-primary border border-border overflow-hidden transition-transform group-hover:scale-110">
                                             {mentor.avatar ? <img src={mentor.avatar} alt={mentor.name} className="w-full h-full object-cover" /> : <Icon icon="solar:user-circle-bold-duotone" size={32} />}
                                         </div>
                                         <div>
@@ -264,14 +270,14 @@ const Home = () => {
                                             <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Master Mentor</p>
                                         </div>
                                     </div>
-                                    <button className="text-primary hover:text-primary-hover transition-colors p-2 bg-primary/5 rounded-xl">
+                                    <button className="text-primary hover:text-primary-hover transition-colors p-2 bg-primary/5 rounded-md">
                                         <Icon icon="solar:user-plus-linear" size={20} />
                                     </button>
                                 </div>
                             ))
                         ) : null}
 
-                        <button className="w-full py-5 bg-primary/10 text-primary font-bold rounded-2xl text-xs hover:bg-primary/20 transition-all uppercase tracking-widest mt-4">
+                        <button className="w-full py-5 bg-primary/10 text-primary font-bold rounded-md text-xs hover:bg-primary/20 transition-all uppercase tracking-widest mt-4">
                             See All Mentors
                         </button>
                     </div>

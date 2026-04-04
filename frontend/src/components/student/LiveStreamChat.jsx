@@ -80,7 +80,7 @@ const LiveStreamChat = ({ courseId, callType = 'livestream' }) => {
 
   if (contextLoading || (isInitializing && !channel)) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-gray-500 gap-3">
+      <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-3">
         <LoadingIndicator size={20} />
         <span className="text-xs font-bold tracking-widest uppercase opacity-50">Connecting to Chat</span>
       </div>

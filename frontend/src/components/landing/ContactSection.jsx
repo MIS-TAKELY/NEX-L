@@ -53,19 +53,19 @@ const ContactSection = () => {
   return (
     <section id="contact" className="py-20 bg-background relative overflow-hidden">
       {/* Decorative background blobs */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary/5 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-md -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary/5 rounded-md translate-y-1/2 -translate-x-1/2 blur-3xl pointer-events-none" />
 
       <div className="container mx-auto px-6 relative z-10">
         {/* Header */}
         <div className="text-center mb-14">
-          <span className="inline-block px-4 py-1.5 mb-4 text-xs font-semibold tracking-widest uppercase rounded-full bg-primary/10 text-primary border border-primary/20">
+          <span className="inline-block px-4 py-1.5 mb-4 text-xs font-semibold tracking-widest uppercase rounded-md bg-primary/10 text-primary border border-primary/20">
             Get In Touch
           </span>
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-800 mb-4">
             Contact Us
           </h2>
-          <p className="text-gray-500 max-w-xl mx-auto">
+          <p className="text-muted-foreground max-w-xl mx-auto">
             Have questions or feedback? We'd love to hear from you. Fill in the
             form and our team will get back to you shortly.
           </p>
@@ -77,13 +77,13 @@ const ContactSection = () => {
             {contactInfo.map((item, idx) => (
               <div
                 key={idx}
-                className="flex items-start gap-4 p-5 rounded-xl bg-primary/5 border border-primary/15 hover:bg-primary/10 transition-all duration-300"
+                className="flex items-start gap-4 p-5 rounded-md bg-primary/5 border border-primary/15 hover:bg-primary/10 transition-all duration-300"
               >
-                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/15 flex items-center justify-center text-primary">
+                <div className="flex-shrink-0 w-10 h-10 rounded-md bg-primary/15 flex items-center justify-center text-primary">
                   {item.icon}
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm mb-0.5">{item.label}</p>
+                  <p className="text-muted-foreground text-sm mb-0.5">{item.label}</p>
                   <p className="text-gray-800 font-semibold">{item.value}</p>
                 </div>
               </div>
@@ -91,7 +91,7 @@ const ContactSection = () => {
 
             {/* Divider + tagline */}
             <div className="mt-auto pt-6 border-t border-primary/15">
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 We typically respond within{" "}
                 <span className="text-primary font-medium">24 hours</span> on
                 business days.
@@ -100,14 +100,14 @@ const ContactSection = () => {
           </div>
 
           {/* Form Panel */}
-          <div className="lg:col-span-3 bg-background rounded-2xl shadow-2xl p-8 md:p-10">
+          <div className="lg:col-span-3 bg-background rounded-md shadow-2xl p-8 md:p-10">
             {submitted ? (
               <div className="flex flex-col items-center justify-center h-full py-12 gap-4 text-center">
                 <CheckCircle className="w-16 h-16 text-primary" />
                 <h3 className="text-2xl font-bold text-gray-800">
                   Message Sent!
                 </h3>
-                <p className="text-gray-500 max-w-xs">
+                <p className="text-muted-foreground max-w-xs">
                   Thank you for reaching out. We'll get back to you as soon as
                   possible.
                 </p>
@@ -116,7 +116,7 @@ const ContactSection = () => {
                     setSubmitted(false);
                     setFormData({ name: "", email: "", subject: "", message: "" });
                   }}
-                  className="mt-4 px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary-hover transition-colors duration-200"
+                  className="mt-4 px-6 py-2.5 rounded-md bg-primary text-primary-foreground font-semibold hover:bg-primary-hover transition-colors duration-200"
                 >
                   Send Another
                 </button>
@@ -125,7 +125,7 @@ const ContactSection = () => {
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid sm:grid-cols-2 gap-5">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-medium text-gray-700">
+                    <label className="text-sm font-medium text-foreground">
                       Full Name <span className="text-red-400">*</span>
                     </label>
                     <input
@@ -135,11 +135,11 @@ const ContactSection = () => {
                       onChange={handleChange}
                       required
                       placeholder="siddhant dhungel"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:border-primary focus:outline-none transition-colors duration-200"
+                      className="w-full px-4 py-3 border-2 border-border rounded-md text-gray-800 placeholder-gray-400 focus:border-primary focus:outline-none transition-colors duration-200"
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-medium text-gray-700">
+                    <label className="text-sm font-medium text-foreground">
                       Email Address <span className="text-red-400">*</span>
                     </label>
                     <input
@@ -149,13 +149,13 @@ const ContactSection = () => {
                       onChange={handleChange}
                       required
                       placeholder="nexl6911@gmail.com"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:border-primary focus:outline-none transition-colors duration-200"
+                      className="w-full px-4 py-3 border-2 border-border rounded-md text-gray-800 placeholder-gray-400 focus:border-primary focus:outline-none transition-colors duration-200"
                     />
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-medium text-foreground">
                     Subject <span className="text-red-400">*</span>
                   </label>
                   <input
@@ -165,12 +165,12 @@ const ContactSection = () => {
                     onChange={handleChange}
                     required
                     placeholder="How can we help you?"
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-gray-800 placeholder-gray-400 focus:border-primary focus:outline-none transition-colors duration-200"
+                    className="w-full px-4 py-3 border-2 border-border rounded-md text-gray-800 placeholder-gray-400 focus:border-primary focus:outline-none transition-colors duration-200"
                   />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-medium text-foreground">
                     Message <span className="text-red-400">*</span>
                   </label>
                   <textarea
@@ -180,18 +180,18 @@ const ContactSection = () => {
                     required
                     rows={5}
                     placeholder="Tell us more about your query..."
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-gray-800 placeholder-gray-400 focus:border-primary focus:outline-none transition-colors duration-200 resize-none"
+                    className="w-full px-4 py-3 border-2 border-border rounded-md text-gray-800 placeholder-gray-400 focus:border-primary focus:outline-none transition-colors duration-200 resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-primary text-primary-foreground rounded-lg font-bold hover:bg-primary-hover active:scale-[0.98] transition-all duration-200 shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-primary text-primary-foreground rounded-md font-bold hover:bg-primary-hover active:scale-[0.98] transition-all duration-200 shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>
-                      <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                      <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-md animate-spin" />
                       Sending...
                     </>
                   ) : (

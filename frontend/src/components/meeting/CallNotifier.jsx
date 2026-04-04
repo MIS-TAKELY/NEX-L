@@ -151,7 +151,7 @@ const CallNotifier = () => {
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: 80, opacity: 0, scale: 0.9 }}
               transition={{ type: "spring", stiffness: 400, damping: 28 }}
-              className="fixed bottom-6 left-6 z-[10000] w-[340px] rounded-2xl overflow-hidden shadow-2xl"
+              className="fixed bottom-6 left-6 z-[10000] w-[340px] rounded-md overflow-hidden shadow-2xl"
               style={{
                 background: "var(--card)",
                 border: "1px solid var(--border)",
@@ -165,7 +165,7 @@ const CallNotifier = () => {
                 {/* Avatar */}
                 <div className="relative flex-shrink-0">
                   <div
-                    className="w-14 h-14 rounded-xl flex items-center justify-center overflow-hidden text-white font-bold text-xl"
+                    className="w-14 h-14 rounded-md flex items-center justify-center overflow-hidden text-white font-bold text-xl"
                     style={{ background: "linear-gradient(135deg, var(--primary), var(--accent))" }}
                   >
                     {callerImage ? (
@@ -176,8 +176,8 @@ const CallNotifier = () => {
                   </div>
                   {/* Live pulse dot */}
                   <span className="absolute -top-1 -right-1 flex h-4 w-4">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500 border-2 border-card" />
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-md bg-green-400 opacity-75" />
+                    <span className="relative inline-flex rounded-md h-4 w-4 bg-green-500 border-2 border-card" />
                   </span>
                 </div>
 
@@ -200,7 +200,7 @@ const CallNotifier = () => {
                 {/* Decline */}
                 <button 
                   onClick={handleReject}
-                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 hover:brightness-110"
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-md font-semibold text-sm transition-all active:scale-95 hover:brightness-110"
                   style={{ background: "var(--destructive)", color: "#fff" }}
                   title="Decline"
                 >
@@ -211,12 +211,12 @@ const CallNotifier = () => {
                 {/* Accept — with ring animation */}
                 <button 
                   onClick={handleAccept}
-                  className="flex-1 relative flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 hover:brightness-110"
+                  className="flex-1 relative flex items-center justify-center gap-2 py-3 rounded-md font-semibold text-sm transition-all active:scale-95 hover:brightness-110"
                   style={{ background: "#22c55e", color: "#fff" }}
                   title="Accept"
                 >
                   {/* ring pulse behind button */}
-                  <span className="absolute inset-0 rounded-xl animate-ping opacity-30 bg-green-500 pointer-events-none" />
+                  <span className="absolute inset-0 rounded-md animate-ping opacity-30 bg-green-500 pointer-events-none" />
                   <Icon icon="fluent:call-24-filled" width={20} height={20} />
                   Accept
                 </button>

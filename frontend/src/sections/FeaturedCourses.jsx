@@ -120,7 +120,7 @@ export function FeaturedCourses() {
               key={course.id}
               variants={itemVariants}
               whileHover={{ y: -5 }}
-              className="group bg-card rounded-2xl overflow-hidden border border-border shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col"
+              className="group bg-card rounded-md overflow-hidden border border-border shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col"
             >
               {/* Image */}
               <div className="relative aspect-[4/3] overflow-hidden">

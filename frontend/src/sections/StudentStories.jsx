@@ -92,7 +92,7 @@ export function StudentStories() {
               key={testimonial.id}
               variants={itemVariants}
               whileHover={{ y: -5 }}
-              className="group relative bg-card rounded-3xl p-8 border border-border shadow-sm hover:shadow-xl transition-all duration-300"
+              className="group relative bg-card rounded-md p-8 border border-border shadow-sm hover:shadow-xl transition-all duration-300"
             >
               {/* Quote Icon */}
               <div className="mb-6">
@@ -109,7 +109,7 @@ export function StudentStories() {
                 <img
                   src={testimonial.avatar}
                   alt={testimonial.name}
-                  className="w-12 h-12 rounded-full object-cover"
+                  className="w-12 h-12 rounded-md object-cover"
                 />
 
                 <div>
@@ -123,7 +123,7 @@ export function StudentStories() {
               </div>
 
               {/* Decorative Gradient */}
-              <div className="absolute -bottom-1 -right-1 w-24 h-24 bg-gradient-to-br from-primary/10 to-accent/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
+              <div className="absolute -bottom-1 -right-1 w-24 h-24 bg-gradient-to-br from-primary/10 to-accent/10 rounded-md blur-2xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
             </motion.div>
           ))}
         </motion.div>

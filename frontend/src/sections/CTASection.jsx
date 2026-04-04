@@ -42,7 +42,7 @@ export function CTASection() {
         {/* Badge */}
         <motion.div
           variants={itemVariants}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-8"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-card/10 backdrop-blur-sm rounded-md mb-8"
         >
           <Sparkles className="w-4 h-4 text-amber-300" />
           <span className="text-sm font-medium text-white/90">
@@ -79,7 +79,7 @@ export function CTASection() {
           >
             <Button
               size="lg"
-              className="w-full sm:w-auto px-8 py-6 h-auto bg-white text-primary hover:bg-white/90 rounded-2xl font-semibold text-lg transition-all hover:shadow-xl"
+              className="w-full sm:w-auto px-8 py-6 h-auto bg-card text-primary hover:bg-card/90 rounded-md font-semibold text-lg transition-all hover:shadow-xl"
             >
               Get started for free
               <ArrowRight className="w-5 h-5 ml-2" />
@@ -93,7 +93,7 @@ export function CTASection() {
             <Button
               size="lg"
               variant="outline"
-              className="w-full sm:w-auto px-8 py-6 h-auto bg-transparent border-2 border-white/30 text-white hover:bg-white/10 rounded-2xl font-semibold text-lg transition-all"
+              className="w-full sm:w-auto px-8 py-6 h-auto bg-transparent border-2 border-white/30 text-white hover:bg-card/10 rounded-md font-semibold text-lg transition-all"
             >
               View all courses
             </Button>

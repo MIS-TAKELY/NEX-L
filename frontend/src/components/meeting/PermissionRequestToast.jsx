@@ -24,10 +24,10 @@ const PermissionRequestToast = ({ requests, onGrant, onDeny }) => {
         return (
           <div
             key={req.userId}
-            className="pointer-events-auto flex items-start gap-3 bg-popover border border-border rounded-xl shadow-2xl px-4 py-3 w-80 animate-in slide-in-from-right-4 duration-300"
+            className="pointer-events-auto flex items-start gap-3 bg-popover border border-border rounded-md shadow-2xl px-4 py-3 w-80 animate-in slide-in-from-right-4 duration-300"
           >
             {/* Icon */}
-            <div className="mt-0.5 w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+            <div className="mt-0.5 w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-md bg-primary/10 text-primary">
               <Icon icon={permIcons[0]} className="w-5 h-5" />
             </div>
 
@@ -44,13 +44,13 @@ const PermissionRequestToast = ({ requests, onGrant, onDeny }) => {
               <div className="flex items-center gap-2 mt-2.5">
                 <button
                   onClick={() => onGrant(req.userId, req.permissions)}
-                  className="flex-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors active:scale-95"
+                  className="flex-1 text-xs font-semibold px-3 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors active:scale-95"
                 >
                   Approve
                 </button>
                 <button
                   onClick={() => onDeny(req.userId)}
-                  className="flex-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-secondary text-foreground hover:bg-secondary/70 transition-colors active:scale-95"
+                  className="flex-1 text-xs font-semibold px-3 py-1.5 rounded-md bg-secondary text-foreground hover:bg-secondary/70 transition-colors active:scale-95"
                 >
                   Deny
                 </button>

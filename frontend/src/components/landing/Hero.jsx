@@ -2,7 +2,7 @@ import React from 'react';
 
 const Hero = () => {
   return (
-    <div className="min-h-screen flex flex-col min-w-full overflow-x-hidden relative">
+    <section className="min-h-screen flex flex-col min-w-full overflow-x-hidden relative">
       <header className="relative flex-1 flex flex-col justify-center overflow-hidden min-h-[645px] h-[92vh] pb-10">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
@@ -29,33 +29,33 @@ const Hero = () => {
       <div className="relative z-20 px-4 md:px-12 -mt-4 md:-mt-12 lg:-mt-8 pb-12">
         <div
           className="
-            bg-white/95 backdrop-blur-md
+            bg-card/95 backdrop-blur-md
             shadow-[0_20px_60px_rgba(0,0,0,0.25)]
             hover:shadow-[0_25px_70px_rgba(0,0,0,0.3)]
             hover:-translate-y-1
             transition-all duration-500
             p-6 md:px-8 lg:px-12 md:py-10
-            border-4 border-primary
-            rounded-2xl
+            border-2 border-primary/20
+            rounded-md
             group
           "
         >
           <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
             <div className="w-full md:w-auto flex items-center justify-start gap-4 md:mr-4">
-              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform duration-500 shrink-0">
+              <div className="w-12 h-12 md:w-14 md:h-14 rounded-md bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform duration-500 shrink-0">
                 📘
               </div>
               <div className="text-left">
                 <h3 className="text-xl md:text-2xl lg:text-3xl font-extrabold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
                   Start Learning
                 </h3>
-                <p className="text-xs md:text-sm font-medium text-gray-500">
+                <p className="text-xs md:text-sm font-medium text-muted-foreground">
                   Premium quality courses await you
                 </p>
               </div>
             </div>
 
-            <select className="w-full md:w-56 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary outline-none">
+            <select className="w-full md:w-56 px-4 py-3 border-2 border-border bg-card text-foreground rounded-md focus:border-primary outline-none">
               <option>All Categories</option>
               <option>Web Development</option>
               <option>Data Science</option>
@@ -63,7 +63,7 @@ const Hero = () => {
               <option>Other</option>
             </select>
 
-            <select className="w-full md:w-56 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary outline-none">
+            <select className="w-full md:w-56 px-4 py-3 border-2 border-border bg-card text-foreground rounded-md focus:border-primary outline-none">
               <option>All Levels</option>
               <option>Beginner</option>
               <option>Intermediate</option>
@@ -72,14 +72,11 @@ const Hero = () => {
 
             <button
               onClick={() => navigate("/course-list")}
-              className="w-full md:w-auto px-8 py-3 bg-primary text-white rounded-lg font-bold hover:bg-primary-hover transition shadow-md"
+              className="w-full md:w-auto px-8 py-3 bg-primary text-primary-foreground rounded-md font-bold hover:bg-primary/90 transition shadow-md"
             >
               Search
             </button>
           </div>
-          <button className="px-8 py-3.5 bg-[#171717] text-foreground rounded-[1.5rem] text-sm font-medium hover:bg-black transition-colors shrink-0">
-            Search
-          </button>
         </div>
       </div>
     </section>

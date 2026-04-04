@@ -14,7 +14,7 @@ const ConsultationModal = ({ sessionId, onClose, isInstructor }) => {
         initial={{ y: 50, opacity: 0, scale: 0.95 }}
         animate={{ y: 0, opacity: 1, scale: 1 }}
         exit={{ y: 50, opacity: 0, scale: 0.95 }}
-        className={`${isExpanded ? 'w-full h-full rounded-none' : 'w-[420px] h-[620px] rounded-2xl'} overflow-hidden relative pointer-events-auto flex flex-col transition-all duration-300`}
+        className={`${isExpanded ? 'w-full h-full rounded-none' : 'w-[420px] h-[620px] rounded-md'} overflow-hidden relative pointer-events-auto flex flex-col transition-all duration-300`}
         style={{
           background: "var(--card)",
           border: isExpanded ? "none" : "1px solid var(--border)",
@@ -31,8 +31,8 @@ const ConsultationModal = ({ sessionId, onClose, isInstructor }) => {
         >
           <div className="flex items-center gap-2">
             <span className="flex h-2.5 w-2.5 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-md bg-green-400 opacity-75" />
+              <span className="relative inline-flex rounded-md h-2.5 w-2.5 bg-green-500" />
             </span>
             <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>
               One-on-One Consultation
@@ -41,7 +41,7 @@ const ConsultationModal = ({ sessionId, onClose, isInstructor }) => {
           <div className="flex items-center gap-1">
             <button
                onClick={() => setIsExpanded(!isExpanded)}
-               className="w-8 h-8 rounded-lg flex items-center justify-center transition-all active:scale-95"
+               className="w-8 h-8 rounded-md flex items-center justify-center transition-all active:scale-95"
                style={{ color: "var(--muted-foreground)" }}
                title={isExpanded ? "Minimize" : "Expand"}
             >
@@ -49,7 +49,7 @@ const ConsultationModal = ({ sessionId, onClose, isInstructor }) => {
             </button>
             <button 
               onClick={onClose}
-              className="w-8 h-8 rounded-lg flex items-center justify-center transition-all active:scale-95"
+              className="w-8 h-8 rounded-md flex items-center justify-center transition-all active:scale-95"
               style={{ color: "var(--destructive)" }}
               title="End Call"
             >

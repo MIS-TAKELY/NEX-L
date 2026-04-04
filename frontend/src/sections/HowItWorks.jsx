@@ -47,7 +47,7 @@ export function HowItWorks() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 lg:mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-md glass-card mb-6">
             <span className="text-sm text-muted-foreground">
               Simple Process
             </span>
@@ -79,10 +79,10 @@ export function HowItWorks() {
                 </div>
 
                 {/* Card */}
-                <div className="glass-card rounded-2xl p-6 pt-10 relative z-10 h-full group-hover:bg-secondary/80 transition-all duration-300">
+                <div className="glass-card rounded-md p-6 pt-10 relative z-10 h-full group-hover:bg-secondary/80 transition-all duration-300">
                   {/* Icon */}
                   <div
-                    className={`w-14 h-14 rounded-xl bg-gradient-to-r ${step.color} flex items-center justify-center mb-5 shadow-lg`}
+                    className={`w-14 h-14 rounded-md bg-gradient-to-r ${step.color} flex items-center justify-center mb-5 shadow-lg`}
                   >
                     <step.icon className="w-7 h-7 text-primary-foreground" />
                   </div>

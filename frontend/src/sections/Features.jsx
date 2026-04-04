@@ -90,8 +90,8 @@ export function Features() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 lg:mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-6">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-md glass-card mb-6">
+            <span className="w-2 h-2 rounded-md bg-primary animate-pulse" />
             <span className="text-sm text-muted-foreground">
               Powerful Features
             </span>
@@ -112,12 +112,12 @@ export function Features() {
           {features.map((feature, index) => (
             <div
               key={feature.title}
-              className="group glass-card rounded-2xl p-6 hover:bg-card/80 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1"
+              className="group glass-card rounded-md p-6 hover:bg-card/80 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               {/* Icon */}
               <div
-                className={`w-14 h-14 rounded-xl ${feature.bgColor} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}
+                className={`w-14 h-14 rounded-md ${feature.bgColor} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}
               >
                 <feature.icon className={`w-7 h-7 ${feature.iconColor}`} />
               </div>
@@ -132,7 +132,7 @@ export function Features() {
 
               {/* Hover Gradient Border Effect */}
               <div
-                className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${feature.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300 -z-10`}
+                className={`absolute inset-0 rounded-md bg-gradient-to-r ${feature.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300 -z-10`}
               />
             </div>
           ))}

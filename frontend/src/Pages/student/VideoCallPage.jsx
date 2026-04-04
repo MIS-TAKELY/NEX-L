@@ -28,10 +28,10 @@ const CallUI = ({ onLeave, call, courseId }) => {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-[#202124] text-white gap-4 w-screen">
         <Icon icon="solar:phone-hang-up-bold-duotone" className="w-16 h-16 text-[#ea4335]" />
-        <p className="text-gray-400">Call ended</p>
+        <p className="text-muted-foreground">Call ended</p>
         <button
           onClick={onLeave}
-          className="bg-[#3c4043] hover:bg-[#4d5154] text-white px-6 py-2 rounded-full transition-all mt-2 border border-white/10"
+          className="bg-[#3c4043] hover:bg-[#4d5154] text-white px-6 py-2 rounded-md transition-all mt-2 border border-white/10"
         >
           ← Go Back
         </button>
@@ -120,7 +120,7 @@ const VideoCallPage = () => {
       <div className="flex items-center justify-center h-screen bg-[#202124] text-[#ea4335] flex-col gap-4 w-screen">
         <Icon icon="solar:danger-triangle-bold" className="w-12 h-12" />
         <p className="text-center max-w-sm">{error}</p>
-        <button onClick={() => navigate(-1)} className="text-sm text-gray-400 hover:text-white underline">
+        <button onClick={() => navigate(-1)} className="text-sm text-muted-foreground hover:text-white underline">
           ← Go back
         </button>
       </div>
@@ -129,8 +129,8 @@ const VideoCallPage = () => {
 
   if (!client || !call) {
     return (
-      <div className="flex items-center justify-center h-screen bg-[#202124] text-gray-400 gap-3 w-screen">
-        <div className="w-6 h-6 border-2 border-gray-400 border-t-[#8ab4f8] rounded-full animate-spin" />
+      <div className="flex items-center justify-center h-screen bg-[#202124] text-muted-foreground gap-3 w-screen">
+        <div className="w-6 h-6 border-2 border-gray-400 border-t-[#8ab4f8] rounded-md animate-spin" />
         Connecting video call…
       </div>
     );

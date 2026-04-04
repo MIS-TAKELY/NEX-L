@@ -11,6 +11,9 @@ import {
     useEndAllCourseLiveClassesMutation 
 } from '@/store/slices/liveClassApi';
 
+import { Skeleton } from '@/components/ui/skeleton';
+import CourseSkeleton from '@/components/skeletons/CourseSkeleton';
+
 const MyCourses = () => {
     const navigate = useNavigate();
     const { userData } = useSelector((state) => state.auth);
@@ -71,19 +74,33 @@ const MyCourses = () => {
     };
 
     if (isLoading) {
-        return <div className="p-8 text-center text-gray-500">Loading courses...</div>;
+        return (
+            <div className="space-y-6 animate-fade-in">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-card/50 backdrop-blur-md p-7 rounded-md border border-border/50 shadow-soft premium-card">
+                    <div className="space-y-2">
+                        <Skeleton className="h-8 w-48" />
+                        <Skeleton className="h-4 w-64" />
+                    </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                        <CourseSkeleton key={i} />
+                    ))}
+                </div>
+            </div>
+        );
     }
 
     if (isError) {
         return (
-            <div className="p-8 text-center bg-card rounded-2xl border border-border/50 max-w-md mx-auto mt-10 premium-card">
-                <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="p-8 text-center bg-card rounded-md border border-border/50 max-w-md mx-auto mt-10 premium-card">
+                <div className="w-16 h-16 bg-destructive/10 rounded-md flex items-center justify-center mx-auto mb-4">
                     <Icon icon="solar:danger-bold-duotone" className="w-8 h-8 text-destructive" />
                 </div>
                 <p className="text-destructive font-bold mb-4">Failed to load courses</p>
                 <button
                     onClick={refetch}
-                    className="px-6 py-2.5 bg-primary text-primary-foreground rounded-xl hover:opacity-90 transition-all font-bold shadow-lg shadow-primary/20"
+                    className="px-6 py-2.5 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-all font-bold shadow-lg shadow-primary/20"
                 >
                     Retry Connection
                 </button>
@@ -93,14 +110,14 @@ const MyCourses = () => {
 
     return (
         <div className="space-y-6 animate-fade-in group/container">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-card/50 backdrop-blur-md p-7 rounded-3xl border border-border/50 shadow-soft premium-card">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-card/50 backdrop-blur-md p-7 rounded-md border border-border/50 shadow-soft premium-card">
                 <div>
                     <h1 className="text-2xl font-black text-foreground tracking-tight">My Courses</h1>
                     <p className="text-sm text-muted-foreground mt-1 font-medium italic">Manage and monitor your educational content</p>
                 </div>
                 <button
                     onClick={() => navigate('/instructor/add-course')}
-                    className="w-full md:w-auto px-7 py-3 bg-primary text-primary-foreground rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/25 font-black flex items-center justify-center gap-2.5 uppercase tracking-wider text-sm"
+                    className="w-full md:w-auto px-7 py-3 bg-primary text-primary-foreground rounded-md hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/25 font-black flex items-center justify-center gap-2.5 uppercase tracking-wider text-sm"
                 >
                     <Icon icon="solar:add-circle-bold" className="w-5 h-5" />
                     Create New Course
@@ -110,16 +127,16 @@ const MyCourses = () => {
             <div className="grid gap-5">
                 {courses.length > 0 ? (
                     courses.map((course) => (
-                        <div key={course._id} className="group bg-card hover:bg-muted/30 transition-all duration-500 rounded-3xl border border-border/50 p-6 flex flex-col lg:flex-row lg:items-center gap-6 shadow-soft hover:shadow-2xl hover:border-primary/30 premium-card relative overflow-hidden">
+                        <div key={course._id} className="group bg-card hover:bg-muted/30 transition-all duration-500 rounded-md border border-border/50 p-6 flex flex-col lg:flex-row lg:items-center gap-6 shadow-soft hover:shadow-2xl hover:border-primary/30 premium-card relative overflow-hidden">
                             <div className="absolute top-0 left-0 w-1 h-full bg-primary/0 group-hover:bg-primary transition-all duration-500"></div>
                             {/* Course Info */}
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-3 mb-2">
-                                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
+                                    <span className="px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
                                         {course.category}
                                     </span>
                                     {course.isPublished && (
-                                        <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                                        <span className="px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
                                             Published
                                         </span>
                                     )}
@@ -146,14 +163,14 @@ const MyCourses = () => {
                             <div className="flex flex-wrap items-center gap-2 shrink-0">
                                 <button
                                     onClick={() => navigate(`/instructor/students-enrolled?courseId=${course._id}`)}
-                                    className="px-4 py-2 rounded-xl bg-secondary text-secondary-foreground hover:bg-primary/10 hover:text-primary transition-all text-sm font-medium flex items-center gap-2 border border-transparent hover:border-primary/20"
+                                    className="px-4 py-2 rounded-md bg-secondary text-secondary-foreground hover:bg-primary/10 hover:text-primary transition-all text-sm font-medium flex items-center gap-2 border border-transparent hover:border-primary/20"
                                 >
                                     <Icon icon="solar:users-group-rounded-bold-duotone" className="w-4 h-4" />
                                     Students
                                 </button>
                                 <button
                                     onClick={() => handleManageScheduleClick(course)}
-                                    className="px-4 py-2 rounded-xl bg-secondary text-secondary-foreground hover:bg-primary/10 hover:text-primary transition-all text-sm font-medium flex items-center gap-2 border border-transparent hover:border-primary/20"
+                                    className="px-4 py-2 rounded-md bg-secondary text-secondary-foreground hover:bg-primary/10 hover:text-primary transition-all text-sm font-medium flex items-center gap-2 border border-transparent hover:border-primary/20"
                                 >
                                     <Icon icon="solar:calendar-bold-duotone" className="w-4 h-4" />
                                     Sessions
@@ -161,7 +178,7 @@ const MyCourses = () => {
                                 {activeClasses.some(ac => ac.course?._id === course._id) ? (
                                     <button
                                         onClick={() => handleEndSession(course._id)}
-                                        className="px-4 py-2 rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-all text-sm font-bold flex items-center gap-2 shadow-lg shadow-destructive/20"
+                                        className="px-4 py-2 rounded-md bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-all text-sm font-bold flex items-center gap-2 shadow-lg shadow-destructive/20"
                                     >
                                         <Icon icon="solar:stop-circle-bold-duotone" className="w-4 h-4" />
                                         End Session
@@ -169,7 +186,7 @@ const MyCourses = () => {
                                 ) : (
                                     <button
                                         onClick={() => navigate(`/instructor/livestream/${course._id}`)}
-                                        className="px-4 py-2 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all text-sm font-medium flex items-center gap-2 border border-red-500/20"
+                                        className="px-4 py-2 rounded-md bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all text-sm font-medium flex items-center gap-2 border border-red-500/20"
                                     >
                                         <Icon icon="solar:play-stream-bold-duotone" className="w-4 h-4" />
                                         Go Live
@@ -177,14 +194,14 @@ const MyCourses = () => {
                                 )}
                                 <button
                                     onClick={() => navigate(`/instructor/edit-course/${course._id}`)}
-                                    className="p-2 rounded-xl bg-secondary text-secondary-foreground hover:bg-primary/10 hover:text-primary transition-all border border-transparent hover:border-primary/20"
+                                    className="p-2 rounded-md bg-secondary text-secondary-foreground hover:bg-primary/10 hover:text-primary transition-all border border-transparent hover:border-primary/20"
                                     title="Edit Course"
                                 >
                                     <Icon icon="solar:pen-new-square-bold-duotone" className="w-5 h-5" />
                                 </button>
                                 <button
                                     onClick={() => handleDeleteClick(course._id)}
-                                    className="p-2 rounded-xl bg-secondary text-secondary-foreground hover:bg-destructive/10 hover:text-destructive transition-all border border-transparent hover:border-destructive/20"
+                                    className="p-2 rounded-md bg-secondary text-secondary-foreground hover:bg-destructive/10 hover:text-destructive transition-all border border-transparent hover:border-destructive/20"
                                     title="Delete Course"
                                 >
                                     <Icon icon="solar:trash-bin-trash-bold-duotone" className="w-5 h-5" />
@@ -193,8 +210,8 @@ const MyCourses = () => {
                         </div>
                     ))
                 ) : (
-                    <div className="text-center py-20 bg-card/30 rounded-3xl border border-dashed border-border/50">
-                        <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="text-center py-20 bg-card/30 rounded-md border border-dashed border-border/50">
+                        <div className="w-16 h-16 bg-muted rounded-md flex items-center justify-center mx-auto mb-4">
                             <Icon icon="solar:folder-error-bold-duotone" className="w-8 h-8 text-muted-foreground" />
                         </div>
                         <h3 className="text-lg font-medium text-foreground">No courses found</h3>

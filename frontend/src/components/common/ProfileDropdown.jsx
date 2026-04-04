@@ -107,7 +107,7 @@ const ProfileDropdown = () => {
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center gap-3 pl-2 focus:outline-none group"
             >
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-primary overflow-hidden border-2 border-white shadow-sm transition-transform active:scale-95 group-hover:border-primary/20">
+                <div className="w-10 h-10 rounded-md bg-primary/10 flex items-center justify-center text-primary overflow-hidden border-2 border-white shadow-sm transition-transform active:scale-95 group-hover:border-primary/20">
                     {userData?.image ? (
                         <img src={userData.image} alt="Profile" className="w-full h-full object-cover" />
                     ) : (
@@ -125,19 +125,19 @@ const ProfileDropdown = () => {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: view === 'main' ? 20 : -20 }}
                         transition={{ duration: 0.2, ease: "easeOut" }}
-                        className="absolute right-0 mt-2 w-80 bg-card rounded-2xl shadow-2xl border border-border overflow-hidden z-[100]"
+                        className="absolute right-0 mt-2 w-80 bg-card rounded-md shadow-2xl border border-border overflow-hidden z-[100]"
                     >
                         <div className="p-4">
                             {view === 'main' ? (
                                 <>
                                     {/* User Info Card */}
-                                    <div className="bg-card rounded-xl shadow-sm border border-border p-4 mb-4">
+                                    <div className="bg-card rounded-md shadow-sm border border-border p-4 mb-4">
                                         <div className="flex items-center gap-4">
                                             <div className="relative group/avatar">
-                                                <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-background shadow-sm">
+                                                <div className="w-16 h-16 rounded-md bg-muted flex items-center justify-center overflow-hidden border-2 border-background shadow-sm">
                                                     {isUploading ? (
                                                         <div className="flex flex-col items-center gap-1">
-                                                            <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                                                            <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-md animate-spin" />
                                                             <span className="text-[8px] font-bold text-primary animate-pulse uppercase tracking-tighter">Uploading</span>
                                                         </div>
                                                     ) : userData?.image ? (
@@ -149,7 +149,7 @@ const ProfileDropdown = () => {
                                                 <button
                                                     onClick={() => fileInputRef.current.click()}
                                                     disabled={isUploading}
-                                                    className={`absolute bottom-0 right-0 w-6 h-6 bg-card rounded-full shadow-md flex items-center justify-center text-foreground hover:text-primary transition-colors border border-border ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                    className={`absolute bottom-0 right-0 w-6 h-6 bg-card rounded-md shadow-md flex items-center justify-center text-foreground hover:text-primary transition-colors border border-border ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                 >
                                                     <Icon icon="solar:camera-bold" size={14} />
                                                 </button>
@@ -181,10 +181,10 @@ const ProfileDropdown = () => {
                                                         navigate(item.path);
                                                     }
                                                 }}
-                                                className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-muted transition-colors group"
+                                                className="w-full flex items-center justify-between p-3 rounded-md hover:bg-muted transition-colors group"
                                             >
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-9 h-9 bg-muted rounded-full flex items-center justify-center text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                                                    <div className="w-9 h-9 bg-muted rounded-md flex items-center justify-center text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                                                         <Icon icon={item.icon} size={20} />
                                                     </div>
                                                     <span className="text-sm font-semibold text-foreground/80">{item.label}</span>
@@ -200,7 +200,7 @@ const ProfileDropdown = () => {
                                     <div className="flex items-center gap-3 mb-4">
                                         <button
                                             onClick={() => setView('main')}
-                                            className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-foreground"
+                                            className="w-8 h-8 rounded-md hover:bg-muted flex items-center justify-center text-foreground"
                                         >
                                             <Icon icon="solar:alt-arrow-left-linear" size={20} />
                                         </button>
@@ -210,7 +210,7 @@ const ProfileDropdown = () => {
                                     <div className="space-y-4 px-2">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-9 h-9 bg-muted rounded-full flex items-center justify-center text-muted-foreground">
+                                                <div className="w-9 h-9 bg-muted rounded-md flex items-center justify-center text-muted-foreground">
                                                     <Icon icon="solar:sun-bold-duotone" size={20} />
                                                 </div>
                                                 <div>
@@ -229,7 +229,7 @@ const ProfileDropdown = () => {
 
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-9 h-9 bg-muted rounded-full flex items-center justify-center text-muted-foreground">
+                                                <div className="w-9 h-9 bg-muted rounded-md flex items-center justify-center text-muted-foreground">
                                                     <Icon icon="solar:moon-bold-duotone" size={20} />
                                                 </div>
                                                 <div>
@@ -246,7 +246,7 @@ const ProfileDropdown = () => {
                                             />
                                         </div>
 
-                                        <p className="text-[11px] text-primary italic mt-4 bg-primary/10 p-3 rounded-lg border border-primary/20">
+                                        <p className="text-[11px] text-primary italic mt-4 bg-primary/10 p-3 rounded-md border border-primary/20">
                                             Theme settings are applied instantly across the entire application.
                                         </p>
                                     </div>
@@ -255,10 +255,10 @@ const ProfileDropdown = () => {
 
                             <button
                                 onClick={handleLogout}
-                                className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-red-500/10 transition-colors group"
+                                className="w-full flex items-center justify-between p-3 rounded-md hover:bg-red-500/10 transition-colors group"
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 bg-red-500/10 rounded-full flex items-center justify-center text-red-500 group-hover:bg-red-500/20 transition-colors">
+                                    <div className="w-9 h-9 bg-red-500/10 rounded-md flex items-center justify-center text-red-500 group-hover:bg-red-500/20 transition-colors">
                                         <Icon icon="solar:logout-bold-duotone" size={20} />
                                     </div>
                                     <span className="text-sm font-semibold text-red-500">Log out</span>

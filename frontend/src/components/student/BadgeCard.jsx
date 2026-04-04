@@ -40,7 +40,7 @@ const BadgeCard = ({ badge, earned = false, awardedAt = null, awardedFor = "" })
 
   return (
     <div
-      className={`relative rounded-2xl p-5 border transition-all duration-300 bg-gradient-to-br
+      className={`relative rounded-md p-5 border transition-all duration-300 bg-gradient-to-br
         ${earned
           ? `${level.color} ${level.border} shadow-lg ${level.glow} hover:scale-[1.02] hover:shadow-xl`
           : "from-muted/30 to-muted/10 border-border/30 opacity-50 grayscale"
@@ -48,22 +48,22 @@ const BadgeCard = ({ badge, earned = false, awardedAt = null, awardedFor = "" })
     >
       {/* Earned glow overlay */}
       {earned && (
-        <div className="absolute inset-0 rounded-2xl pointer-events-none overflow-hidden">
-          <div className="absolute -top-6 -right-6 w-24 h-24 bg-primary/5 rounded-full blur-2xl" />
+        <div className="absolute inset-0 rounded-md pointer-events-none overflow-hidden">
+          <div className="absolute -top-6 -right-6 w-24 h-24 bg-primary/5 rounded-md blur-2xl" />
         </div>
       )}
 
       {/* Top row: icon + level badge */}
       <div className="flex items-start justify-between mb-4 relative z-10">
-        <div className="w-14 h-14 rounded-xl bg-background/50 flex items-center justify-center text-3xl border border-border/50 shadow-inner backdrop-blur">
+        <div className="w-14 h-14 rounded-md bg-background/50 flex items-center justify-center text-3xl border border-border/50 shadow-inner backdrop-blur">
           {badge?.icon || "🏅"}
         </div>
         <div className="flex flex-col items-end gap-1.5">
-          <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border ${level.badge}`}>
+          <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md border ${level.badge}`}>
             {level.icon} {level.label}
           </span>
           {earned && (
-            <span className="text-[10px] font-bold text-emerald-400 bg-emerald-400/10 border border-emerald-400/30 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-bold text-emerald-400 bg-emerald-400/10 border border-emerald-400/30 px-2 py-0.5 rounded-md">
               ✓ Earned
             </span>
           )}

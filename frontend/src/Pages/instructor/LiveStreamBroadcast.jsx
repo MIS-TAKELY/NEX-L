@@ -281,16 +281,16 @@ const LiveStreamBroadcast = () => {
   if (error) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-950 text-red-400 flex-col gap-6">
-        <div className="w-20 h-20 rounded-3xl bg-red-500/10 flex items-center justify-center border border-red-500/20">
+        <div className="w-20 h-20 rounded-md bg-red-500/10 flex items-center justify-center border border-red-500/20">
           <Icon icon="solar:danger-triangle-bold" className="w-10 h-10" />
         </div>
         <div className="text-center space-y-2">
           <h2 className="text-xl font-bold text-white">Broadcast Error</h2>
-          <p className="text-gray-400 max-w-sm">{error}</p>
+          <p className="text-muted-foreground max-w-sm">{error}</p>
         </div>
         <button 
           onClick={() => window.location.reload()}
-          className="bg-white/5 hover:bg-white/10 text-white px-8 py-3 rounded-xl border border-white/10 transition-all font-bold"
+          className="bg-card/5 hover:bg-card/10 text-white px-8 py-3 rounded-md border border-white/10 transition-all font-bold"
         >
           RETRY
         </button>
@@ -300,14 +300,14 @@ const LiveStreamBroadcast = () => {
 
   if (!client || !call) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-950 text-gray-400 gap-6">
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-950 text-muted-foreground gap-6">
         <div className="relative">
-          <div className="w-16 h-16 border-2 border-red-500/20 rounded-full" />
-          <div className="w-16 h-16 border-t-2 border-red-500 rounded-full animate-spin absolute top-0 left-0" />
+          <div className="w-16 h-16 border-2 border-red-500/20 rounded-md" />
+          <div className="w-16 h-16 border-t-2 border-red-500 rounded-md animate-spin absolute top-0 left-0" />
         </div>
         <div className="text-center animate-pulse">
           <p className="text-lg font-bold text-white tracking-widest">INITIALIZING</p>
-          <p className="text-xs uppercase tracking-widest text-gray-500 mt-1">Setting up your broadcast studio</p>
+          <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">Setting up your broadcast studio</p>
         </div>
       </div>
     );

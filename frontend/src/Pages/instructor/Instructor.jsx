@@ -45,7 +45,7 @@ const Instructor = () => {
   ];
   // 
   const extraContent = (
-    <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl p-4">
+    <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-md p-4">
       <p className="text-[10px] font-bold text-muted-foreground/60 mb-3 uppercase tracking-wider">
         Quick Stats
       </p>
@@ -84,7 +84,7 @@ const Instructor = () => {
           <div className="flex items-center gap-4">
             <button
                 onClick={() => dispatch(toggleTheme())}
-                className="w-10 h-10 bg-secondary/50 rounded-xl flex items-center justify-center text-muted-foreground hover:text-primary hover:shadow-lg hover:shadow-primary/10 transition-all border border-border/50 group"
+                className="w-10 h-10 bg-secondary/50 rounded-md flex items-center justify-center text-muted-foreground hover:text-primary hover:shadow-lg hover:shadow-primary/10 transition-all border border-border/50 group"
             >
                 <Icon
                     icon="solar:sun-bold-duotone"

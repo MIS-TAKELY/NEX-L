@@ -107,11 +107,11 @@ export function Stats() {
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="group glass-card rounded-2xl p-8 text-center hover:bg-secondary/80 transition-all duration-300 hover:-translate-y-1"
+              className="group glass-card rounded-md p-8 text-center hover:bg-secondary/80 transition-all duration-300 hover:-translate-y-1"
             >
               {/* Icon */}
               <div
-                className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${stat.color} flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                className={`w-16 h-16 rounded-md bg-gradient-to-r ${stat.color} flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}
               >
                 <stat.icon className="w-8 h-8 text-primary-foreground" />
               </div>

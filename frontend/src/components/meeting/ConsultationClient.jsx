@@ -22,13 +22,13 @@ const CallUI = ({ onLeave, call, sessionId, isInstructor, isExpanded }) => {
 
   if (callingState === CallingState.LEFT) {
     return (
-      <div className="flex flex-col items-center justify-center h-full bg-background text-foreground gap-4 rounded-3xl overflow-hidden min-h-[500px]">
+      <div className="flex flex-col items-center justify-center h-full bg-background text-foreground gap-4 rounded-md overflow-hidden min-h-[500px]">
         <Icon icon="solar:phone-hang-up-bold-duotone" className="w-20 h-20 text-destructive" />
         <h2 className="text-2xl font-bold">Consultation Ended</h2>
         <p className="text-muted-foreground">The session has been concluded.</p>
         <button
           onClick={onLeave}
-          className="bg-secondary/50 hover:bg-secondary text-foreground px-8 py-3 rounded-2xl transition-all mt-4 font-bold border border-border/50"
+          className="bg-secondary/50 hover:bg-secondary text-foreground px-8 py-3 rounded-md transition-all mt-4 font-bold border border-border/50"
         >
           Close Room
         </button>
@@ -160,7 +160,7 @@ const ConsultationClient = ({ sessionId, onLeave, isInstructor, isExpanded }) =>
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-full gap-4 rounded-3xl p-8 min-h-[400px]" style={{ background: "var(--card)", color: "var(--destructive)" }}>
+      <div className="flex flex-col items-center justify-center h-full gap-4 rounded-md p-8 min-h-[400px]" style={{ background: "var(--card)", color: "var(--destructive)" }}>
         <Icon icon="solar:danger-triangle-bold-duotone" className="w-16 h-16" />
         <p className="text-center font-bold text-lg max-w-sm">{error}</p>
         <button 
@@ -176,8 +176,8 @@ const ConsultationClient = ({ sessionId, onLeave, isInstructor, isExpanded }) =>
 
   if (!videoClient || !call) {
     return (
-      <div className="flex flex-col items-center justify-center h-full gap-4 rounded-3xl min-h-[400px]" style={{ background: "var(--card)", color: "var(--muted-foreground)" }}>
-        <div className="w-10 h-10 border-4 border-border border-t-primary rounded-full animate-spin" />
+      <div className="flex flex-col items-center justify-center h-full gap-4 rounded-md min-h-[400px]" style={{ background: "var(--card)", color: "var(--muted-foreground)" }}>
+        <div className="w-10 h-10 border-4 border-border border-t-primary rounded-md animate-spin" />
         <p className="font-bold tracking-widest uppercase text-xs">{status || "Initializing Consultation..."}</p>
         {!videoClient && <p className="text-[10px] opacity-50">Waiting for Stream Client...</p>}
       </div>

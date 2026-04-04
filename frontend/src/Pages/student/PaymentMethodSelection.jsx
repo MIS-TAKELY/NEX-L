@@ -134,28 +134,28 @@ const PaymentMethodSelection = () => {
                 <div className="mb-8">
                     <button
                         onClick={() => navigate('/cart')}
-                        className="flex items-center gap-2 text-gray-600 dark:text-zinc-400 hover:text-primary mb-4 transition-colors"
+                        className="flex items-center gap-2 text-muted-foreground dark:text-zinc-400 hover:text-primary mb-4 transition-colors"
                     >
                         <Icon icon="solar:arrow-left-linear" size={20} />
                         Back to Cart
                     </button>
-                    <h1 className="text-4xl font-bold text-gray-900 dark:text-foreground mb-2">Select Payment Method</h1>
-                    <p className="text-gray-600 dark:text-zinc-400">
+                    <h1 className="text-4xl font-bold text-foreground dark:text-foreground mb-2">Select Payment Method</h1>
+                    <p className="text-muted-foreground dark:text-zinc-400">
                         Choose your preferred payment method to complete your purchase
                     </p>
                 </div>
 
                 {/* Order Summary Card */}
-                <div className="bg-background dark:bg-zinc-900 rounded-2xl border-2 border-gray-100 dark:border-zinc-800 p-6 mb-8">
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-foreground mb-4">Order Summary</h2>
+                <div className="bg-background dark:bg-zinc-900 rounded-md border-2 border-border dark:border-border p-6 mb-8">
+                    <h2 className="text-xl font-bold text-foreground dark:text-foreground mb-4">Order Summary</h2>
                     <div className="space-y-2">
-                        <div className="flex justify-between text-gray-600 dark:text-zinc-400">
+                        <div className="flex justify-between text-muted-foreground dark:text-zinc-400">
                             <span>Courses</span>
                             <span className="font-semibold">{courseCount} {courseCount === 1 ? 'course' : 'courses'}</span>
                         </div>
                         
                         {/* Coupon Section */}
-                        <div className="py-4 border-y border-gray-100 dark:border-zinc-800 my-4">
+                        <div className="py-4 border-y border-border dark:border-border my-4">
                             {!appliedCoupon ? (
                                 <div className="flex gap-2">
                                     <input
@@ -163,18 +163,18 @@ const PaymentMethodSelection = () => {
                                         placeholder="Enter Coupon Code"
                                         value={couponCode}
                                         onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                                        className="flex-1 px-4 py-2 rounded-lg border border-gray-200 dark:border-zinc-800 bg-transparent outline-none focus:border-primary transition-all text-sm font-bold"
+                                        className="flex-1 px-4 py-2 rounded-md border border-border dark:border-border bg-transparent outline-none focus:border-primary transition-all text-sm font-bold"
                                     />
                                     <button
                                         onClick={handleApplyCoupon}
                                         disabled={isVerifying || !couponCode}
-                                        className="px-6 py-2 bg-primary text-foreground rounded-lg font-bold text-sm hover:bg-primary-hover transition-all disabled:opacity-50"
+                                        className="px-6 py-2 bg-primary text-foreground rounded-md font-bold text-sm hover:bg-primary-hover transition-all disabled:opacity-50"
                                     >
                                         {isVerifying ? '...' : 'Apply'}
                                     </button>
                                 </div>
                             ) : (
-                                <div className="flex justify-between items-center bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-100 dark:border-green-800">
+                                <div className="flex justify-between items-center bg-green-50 dark:bg-green-900/20 p-3 rounded-md border border-green-100 dark:border-green-800">
                                     <div className="flex items-center gap-2">
                                         <Icon icon="solar:ticket-bold" className="text-green-600" />
                                         <span className="text-sm font-bold text-green-700 dark:text-green-400">
@@ -202,7 +202,7 @@ const PaymentMethodSelection = () => {
                             </div>
                         )}
 
-                        <div className="border-t border-gray-200 dark:border-zinc-700 pt-3 mt-3">
+                        <div className="border-t border-border dark:border-zinc-700 pt-3 mt-3">
                             <div className="flex justify-between text-2xl font-bold text-primary dark:text-accent">
                                 <span>Total Amount</span>
                                 <span>Rs. {finalAmount.toLocaleString()}</span>
@@ -213,37 +213,37 @@ const PaymentMethodSelection = () => {
 
                 {/* Payment Methods */}
                 <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-foreground mb-4">Available Payment Methods</h2>
+                    <h2 className="text-xl font-bold text-foreground dark:text-foreground mb-4">Available Payment Methods</h2>
                     {paymentMethods.map((method) => (
                         <button
                             key={method.id}
                             onClick={() => !method.disabled && handlePaymentMethod(method.id)}
                             disabled={method.disabled}
-                            className={`w-full bg-background dark:bg-zinc-900 rounded-2xl border-2 p-6 transition-all duration-300 ${method.disabled
-                                    ? 'border-gray-200 dark:border-zinc-800 opacity-50 cursor-not-allowed'
-                                    : 'border-gray-100 dark:border-zinc-800 hover:border-primary hover:shadow-lg cursor-pointer'
+                            className={`w-full bg-background dark:bg-zinc-900 rounded-md border-2 p-6 transition-all duration-300 ${method.disabled
+                                    ? 'border-border dark:border-border opacity-50 cursor-not-allowed'
+                                    : 'border-border dark:border-border hover:border-primary hover:shadow-lg cursor-pointer'
                                 }`}
                         >
                             <div className="flex items-center gap-6">
                                 <div
-                                    className="w-16 h-16 rounded-xl flex items-center justify-center"
+                                    className="w-16 h-16 rounded-md flex items-center justify-center"
                                     style={{ backgroundColor: `${method.color}15` }}
                                 >
                                     <Icon icon={method.icon} size={32} style={{ color: method.color }} />
                                 </div>
                                 <div className="flex-1 text-left">
-                                    <h3 className="text-xl font-bold text-gray-900 dark:text-foreground mb-1 flex items-center gap-2">
+                                    <h3 className="text-xl font-bold text-foreground dark:text-foreground mb-1 flex items-center gap-2">
                                         {method.name}
                                         {method.disabled && (
-                                            <span className="text-xs font-normal text-gray-500 dark:text-zinc-500 bg-gray-100 dark:bg-zinc-800 px-2 py-1 rounded">
+                                            <span className="text-xs font-normal text-muted-foreground dark:text-zinc-500 bg-secondary dark:bg-zinc-800 px-2 py-1 rounded">
                                                 Coming Soon
                                             </span>
                                         )}
                                     </h3>
-                                    <p className="text-sm text-gray-600 dark:text-zinc-400">{method.description}</p>
+                                    <p className="text-sm text-muted-foreground dark:text-zinc-400">{method.description}</p>
                                 </div>
                                 {!method.disabled && (
-                                    <Icon icon="solar:arrow-right-linear" size={24} className="text-gray-400" />
+                                    <Icon icon="solar:arrow-right-linear" size={24} className="text-muted-foreground" />
                                 )}
                             </div>
                         </button>
@@ -251,7 +251,7 @@ const PaymentMethodSelection = () => {
                 </div>
 
                 {/* Security Note */}
-                <div className="mt-8 bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-100 dark:border-blue-800 rounded-xl p-4">
+                <div className="mt-8 bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-100 dark:border-blue-800 rounded-md p-4">
                     <div className="flex gap-3">
                         <Icon icon="solar:shield-check-bold-duotone" size={24} className="text-blue-600 dark:text-blue-400 flex-shrink-0" />
                         <div>

@@ -125,8 +125,8 @@ const PaymentGateway = () => {
   const currentConfig = config[method] || config['esewa'];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4 font-sans">
-      <div className="bg-background rounded-lg shadow-xl w-full max-w-md overflow-hidden">
+    <div className="min-h-screen bg-muted flex flex-col justify-center items-center p-4 font-sans">
+      <div className="bg-background rounded-md shadow-xl w-full max-w-md overflow-hidden">
         <div className="h-1 w-full" style={{ backgroundColor: currentConfig.color }}></div>
         <div className="p-8">
           <div className="flex flex-col items-center mb-8">
@@ -134,21 +134,21 @@ const PaymentGateway = () => {
               <Icon icon={currentConfig.logoIcon} className="w-10 h-10" style={{ color: currentConfig.color }} />
               <span className="text-3xl font-bold" style={{ color: currentConfig.color }}>{currentConfig.logoText}</span>
             </div>
-            {method === 'khalti' && <span className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">by IME</span>}
+            {method === 'khalti' && <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">by IME</span>}
           </div>
 
           <div className="text-center mb-8">
-            <div className="bg-gray-100 p-4 rounded-lg mb-6">
-              <p className="text-sm text-gray-500 uppercase font-bold tracking-wider">Total Amount</p>
-              <p className="text-2xl font-black text-gray-800">Rs. {amount}</p>
+            <div className="bg-secondary p-4 rounded-md mb-6">
+              <p className="text-sm text-muted-foreground uppercase font-bold tracking-wider">Total Amount</p>
+              <p className="text-2xl font-black text-foreground">Rs. {amount}</p>
               {courseCount > 1 && (
-                <p className="text-xs text-gray-500 mt-2">{courseCount} courses</p>
+                <p className="text-xs text-muted-foreground mt-2">{courseCount} courses</p>
               )}
             </div>
-            <p className="font-bold text-gray-700 text-sm mb-4">
+            <p className="font-bold text-foreground text-sm mb-4">
               You will be redirected to your {currentConfig.name} account to complete your payment:
             </p>
-            <ol className="text-xs text-gray-500 text-left space-y-1 ml-4 list-decimal">
+            <ol className="text-xs text-muted-foreground text-left space-y-1 ml-4 list-decimal">
               {currentConfig.instructions.map((inst, idx) => (
                 <li key={idx}>{inst}</li>
               ))}
@@ -158,7 +158,7 @@ const PaymentGateway = () => {
           <button
             onClick={handlePayment}
             disabled={loading}
-            className="w-full py-4 text-foreground font-bold rounded-lg shadow-md hover:opacity-90 transition-all uppercase text-sm mt-6 flex items-center justify-center gap-2"
+            className="w-full py-4 text-foreground font-bold rounded-md shadow-md hover:opacity-90 transition-all uppercase text-sm mt-6 flex items-center justify-center gap-2"
             style={{ backgroundColor: currentConfig.color }}
           >
             {loading ? (
@@ -169,13 +169,13 @@ const PaymentGateway = () => {
           </button>
 
           <div className="mt-8 text-center">
-            <p className="text-[10px] text-gray-400 font-bold">
+            <p className="text-[10px] text-muted-foreground font-bold">
               © 2026 {currentConfig.name}. All Rights Reserved.
             </p>
           </div>
         </div>
       </div>
-      <button onClick={() => navigate(-1)} className="mt-8 text-gray-400 text-sm hover:text-gray-600 underline">
+      <button onClick={() => navigate(-1)} className="mt-8 text-muted-foreground text-sm hover:text-muted-foreground underline">
         Cancel and Return
       </button>
     </div>

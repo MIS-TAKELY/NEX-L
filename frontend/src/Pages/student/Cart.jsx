@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Icon } from '@iconify/react';
 import { useState } from 'react';
 import { useGetCartQuery, useRemoveFromCartMutation } from '../../store/slices/cartApi';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -62,8 +63,63 @@ const Cart = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-secondary/30 py-12 px-6">
+        <div className="container mx-auto">
+          <div className="mb-8 space-y-4">
+            <Skeleton className="h-10 w-64" />
+            <Skeleton className="h-4 w-48" />
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-4">
+              {[1, 2].map((i) => (
+                <div key={i} className="bg-background rounded-md border-2 border-border p-4 flex gap-6">
+                  <Skeleton className="w-5 h-5 mt-2 rounded" />
+                  <Skeleton className="w-32 h-32 rounded-md" />
+                  <div className="flex-1 space-y-4">
+                    <div className="flex justify-between">
+                      <div className="space-y-2">
+                        <Skeleton className="h-6 w-64" />
+                        <Skeleton className="h-3 w-32" />
+                      </div>
+                      <Skeleton className="w-10 h-10 rounded-md" />
+                    </div>
+                    <div className="flex gap-4">
+                      <Skeleton className="h-6 w-20 rounded-md" />
+                      <Skeleton className="h-6 w-20 rounded-md" />
+                    </div>
+                    <Skeleton className="h-4 w-full" />
+                    <div className="flex justify-between items-center">
+                      <Skeleton className="h-8 w-32" />
+                      <Skeleton className="h-4 w-24" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="lg:col-span-1">
+              <div className="bg-card rounded-md border-2 border-border p-5 space-y-6">
+                <Skeleton className="h-8 w-48" />
+                <Skeleton className="h-10 w-full" />
+                <div className="space-y-3 pt-4 border-t">
+                  <div className="flex justify-between">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-4 w-20" />
+                  </div>
+                  <div className="flex justify-between">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-4 w-20" />
+                  </div>
+                  <div className="flex justify-between pt-3 border-t">
+                    <Skeleton className="h-8 w-24" />
+                    <Skeleton className="h-8 w-20" />
+                  </div>
+                </div>
+                <Skeleton className="h-12 w-full rounded-md" />
+                <Skeleton className="h-12 w-full rounded-md" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -73,11 +129,11 @@ const Cart = () => {
       <div className="min-h-screen flex items-center justify-center bg-secondary/30">
         <div className="text-center">
           <Icon icon="solar:cart-large-2-bold-duotone" className="mx-auto text-gray-300 dark:text-zinc-700 mb-6" width={120} />
-          <h2 className="text-3xl font-bold text-gray-800 dark:text-foreground mb-4">Your Cart is Empty</h2>
-          <p className="text-gray-600 dark:text-zinc-400 mb-8">Add some courses to get started!</p>
+          <h2 className="text-3xl font-bold text-foreground dark:text-foreground mb-4">Your Cart is Empty</h2>
+          <p className="text-muted-foreground dark:text-zinc-400 mb-8">Add some courses to get started!</p>
           <button
             onClick={() => navigate('/course-list')}
-            className="px-8 py-3 bg-primary text-foreground rounded-lg font-bold hover:bg-primary-hover transition-all shadow-md"
+            className="px-8 py-3 bg-primary text-foreground rounded-md font-bold hover:bg-primary-hover transition-all shadow-md"
           >
             Browse Courses
           </button>
@@ -90,8 +146,8 @@ const Cart = () => {
     <div className="min-h-screen bg-secondary/30 py-12">
       <div className="container mx-auto px-6">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-foreground mb-2">Shopping Cart</h1>
-          <p className="text-gray-600 dark:text-zinc-400">{cart.length} {cart.length === 1 ? 'course' : 'courses'} in your cart</p>
+          <h1 className="text-4xl font-bold text-foreground dark:text-foreground mb-2">Shopping Cart</h1>
+          <p className="text-muted-foreground dark:text-zinc-400">{cart.length} {cart.length === 1 ? 'course' : 'courses'} in your cart</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -102,9 +158,9 @@ const Cart = () => {
               return (
                 <div
                   key={item.course._id}
-                  className={`bg-background dark:bg-zinc-900 rounded-xl border-2 transition-all duration-300 hover:shadow-lg ${isSelected
+                  className={`bg-background dark:bg-zinc-900 rounded-md border-2 transition-all duration-300 hover:shadow-lg ${isSelected
                     ? 'border-primary dark:border-primary'
-                    : 'border-gray-100 dark:border-zinc-800'
+                    : 'border-border dark:border-border'
                     } p-4`}
                 >
                   <div className="flex gap-6">
@@ -114,7 +170,7 @@ const Cart = () => {
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => handleToggleSelect(item.course._id)}
-                        className="w-5 h-5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary focus:ring-2 cursor-pointer"
+                        className="w-5 h-5 text-primary bg-secondary border-border rounded focus:ring-primary focus:ring-2 cursor-pointer"
                       />
                     </div>
 
@@ -123,7 +179,7 @@ const Cart = () => {
                       <img
                         src={item.course.thumbnail}
                         alt={item.course.title}
-                        className="w-32 h-32 object-cover rounded-lg"
+                        className="w-32 h-32 object-cover rounded-md"
                       />
                     </div>
 
@@ -134,7 +190,7 @@ const Cart = () => {
                           <h3 className="text-xl font-bold text-primary dark:text-foreground mb-1">
                             {item.course.title}
                           </h3>
-                          <p className="text-sm text-gray-600 dark:text-zinc-400 mb-2">
+                          <p className="text-sm text-muted-foreground dark:text-zinc-400 mb-2">
                             by {item.course.teacher?.name || 'Instructor'}
                           </p>
                         </div>
@@ -148,15 +204,15 @@ const Cart = () => {
                       </div>
 
                       <div className="flex items-center gap-4 mb-3">
-                        <span className="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">
+                        <span className="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-md">
                           {item.course.category}
                         </span>
-                        <span className="px-3 py-1 bg-accent/10 text-accent text-xs font-bold rounded-full">
+                        <span className="px-3 py-1 bg-accent/10 text-accent text-xs font-bold rounded-md">
                           {item.course.level}
                         </span>
                       </div>
 
-                      <p className="text-sm text-gray-500 dark:text-zinc-400 mb-3 line-clamp-2">
+                      <p className="text-sm text-muted-foreground dark:text-zinc-400 mb-3 line-clamp-2">
                         {item.course.description}
                       </p>
 
@@ -181,35 +237,35 @@ const Cart = () => {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-background dark:bg-zinc-900 rounded-xl border-2 border-gray-100 dark:border-zinc-800 p-5 sticky top-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-foreground mb-4">Order Summary</h2>
+            <div className="bg-background dark:bg-zinc-900 rounded-md border-2 border-border dark:border-border p-5 sticky top-6">
+              <h2 className="text-2xl font-bold text-foreground dark:text-foreground mb-4">Order Summary</h2>
 
               {/* Select All */}
-              <div className="mb-6 pb-4 border-b border-gray-200 dark:border-zinc-700">
+              <div className="mb-6 pb-4 border-b border-border dark:border-zinc-700">
                 <label className="flex items-center gap-3 cursor-pointer group">
                   <input
                     type="checkbox"
                     checked={selectedCourses.length === cart.length && cart.length > 0}
                     onChange={handleSelectAll}
-                    className="w-5 h-5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary focus:ring-2 cursor-pointer"
+                    className="w-5 h-5 text-primary bg-secondary border-border rounded focus:ring-primary focus:ring-2 cursor-pointer"
                   />
-                  <span className="text-gray-700 dark:text-zinc-300 font-semibold group-hover:text-primary transition-colors">
+                  <span className="text-foreground dark:text-zinc-300 font-semibold group-hover:text-primary transition-colors">
                     Select All ({cart.length})
                   </span>
                 </label>
               </div>
 
               <div className="space-y-3 mb-6">
-                <div className="flex justify-between text-gray-600 dark:text-zinc-400">
+                <div className="flex justify-between text-muted-foreground dark:text-zinc-400">
                   <span>Selected ({selectedCourses.length} {selectedCourses.length === 1 ? 'item' : 'items'})</span>
                   <span>Rs. {calculateTotal().toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-gray-600 dark:text-zinc-400">
+                <div className="flex justify-between text-muted-foreground dark:text-zinc-400">
                   <span>Discount</span>
                   <span className="text-green-600">- Rs. 0</span>
                 </div>
-                <div className="border-t border-gray-200 dark:border-zinc-700 pt-3 mt-3">
-                  <div className="flex justify-between text-xl font-bold text-gray-900 dark:text-foreground">
+                <div className="border-t border-border dark:border-zinc-700 pt-3 mt-3">
+                  <div className="flex justify-between text-xl font-bold text-foreground dark:text-foreground">
                     <span>Total</span>
                     <span>Rs. {calculateTotal().toLocaleString()}</span>
                   </div>
@@ -219,8 +275,8 @@ const Cart = () => {
               <button
                 onClick={handleCheckout}
                 disabled={selectedCourses.length === 0}
-                className={`w-full py-4 rounded-lg font-bold transition-all shadow-md mb-3 ${selectedCourses.length === 0
-                    ? 'bg-gray-300 dark:bg-zinc-700 text-gray-500 dark:text-zinc-500 cursor-not-allowed'
+                className={`w-full py-4 rounded-md font-bold transition-all shadow-md mb-3 ${selectedCourses.length === 0
+                    ? 'bg-gray-300 dark:bg-zinc-700 text-muted-foreground dark:text-zinc-500 cursor-not-allowed'
                     : 'bg-primary text-foreground hover:bg-primary-hover'
                   }`}
               >
@@ -232,7 +288,7 @@ const Cart = () => {
 
               <button
                 onClick={() => navigate('/course-list')}
-                className="w-full py-4 bg-background dark:bg-zinc-800 border-2 border-primary text-primary rounded-lg font-bold hover:bg-primary hover:text-foreground dark:hover:bg-primary transition-all"
+                className="w-full py-4 bg-background dark:bg-zinc-800 border-2 border-primary text-primary rounded-md font-bold hover:bg-primary hover:text-foreground dark:hover:bg-primary transition-all"
               >
                 Add More Courses
               </button>

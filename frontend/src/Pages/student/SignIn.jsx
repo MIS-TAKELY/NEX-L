@@ -102,8 +102,8 @@ const SignIn = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-accent opacity-100 dark:from-[#0f0f17] dark:to-[#0a0a0f]" />
         
         {/* Abstract lines decoration */}
-        <div className="absolute bottom-20 left-20 w-48 h-48 border border-white/10 rounded-lg transform rotate-12" />
-        <div className="absolute bottom-24 left-24 w-48 h-48 border border-white/10 rounded-lg transform rotate-12" />
+        <div className="absolute bottom-20 left-20 w-48 h-48 border border-white/10 rounded-md transform rotate-12" />
+        <div className="absolute bottom-24 left-24 w-48 h-48 border border-white/10 rounded-md transform rotate-12" />
 
         <div className="relative z-10 mb-20">
           
@@ -134,7 +134,7 @@ const SignIn = () => {
         {/* New Top Left Arrow Button */}
         <button
           onClick={() => navigate(-1)}
-          className="absolute top-6 left-6 p-2 text-foreground/60 hover:text-foreground hover:bg-muted rounded-full transition-all flex items-center justify-center"
+          className="absolute top-6 left-6 p-2 text-foreground/60 hover:text-foreground hover:bg-muted rounded-md transition-all flex items-center justify-center"
         >
           <Icon icon="solar:arrow-left-linear" className="w-6 h-6" />
         </button>
@@ -190,7 +190,7 @@ const SignIn = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="flex h-12 w-full rounded-xl border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
+                  className="flex h-12 w-full rounded-md border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
                 />
               </LabelInputContainer>
 
@@ -208,7 +208,7 @@ const SignIn = () => {
                     onChange={handleChange}
                     required
                     autoComplete="current-password"
-                    className="flex h-12 w-full rounded-xl border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground pr-10"
+                    className="flex h-12 w-full rounded-md border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground pr-10"
                   />
                   <button
                     type="button"
@@ -241,7 +241,7 @@ const SignIn = () => {
             </div>
 
             <button
-              className="relative block h-11 w-full rounded-xl bg-primary text-primary-foreground font-medium shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-50"
+              className="relative block h-11 w-full rounded-md bg-primary text-primary-foreground font-medium shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-50"
               type="submit"
               disabled={loading}
             >
@@ -260,14 +260,14 @@ const SignIn = () => {
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={() => loginWithGithub(role)}
-              className="flex h-11 items-center justify-center rounded-xl bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
+              className="flex h-11 items-center justify-center rounded-md bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
               type="button"
             >
               <Icon icon="mdi:github" className="h-6 w-6 text-foreground" />
             </button>
             <button
               onClick={() => loginWithGoogle(role)}
-              className="flex h-11 items-center justify-center rounded-xl bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
+              className="flex h-11 items-center justify-center rounded-md bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
               type="button"
             >
               <Icon icon="logos:google-icon" className="h-5 w-5" />
@@ -285,7 +285,7 @@ const SignIn = () => {
           </p>
 
           {/* Bottom Right Decoration */}
-          <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary rounded-full hidden md:block opacity-10"></div>
+          <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary rounded-md hidden md:block opacity-10"></div>
         </div>
       </div>
     </div>

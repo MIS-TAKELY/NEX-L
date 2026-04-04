@@ -168,13 +168,13 @@ const SignUp = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-accent opacity-100 dark:from-[#0f0f17] dark:to-[#0a0a0f]" />
 
         {/* Abstract lines decoration */}
-        <div className="absolute bottom-20 left-20 w-48 h-48 border border-white/10 rounded-lg transform rotate-12" />
-        <div className="absolute bottom-24 left-24 w-48 h-48 border border-white/10 rounded-lg transform rotate-12" />
+        <div className="absolute bottom-20 left-20 w-48 h-48 border border-white/10 rounded-md transform rotate-12" />
+        <div className="absolute bottom-24 left-24 w-48 h-48 border border-white/10 rounded-md transform rotate-12" />
 
         <div className="relative z-10 mb-20">
           {/* <button
             onClick={() => navigate(-1)}
-            className="absolute -top-32 left-0 flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all font-medium backdrop-blur-sm border border-white/20 shadow-sm"
+            className="absolute -top-32 left-0 flex items-center gap-2 px-4 py-2 bg-card/10 hover:bg-card/20 text-white rounded-md transition-all font-medium backdrop-blur-sm border border-white/20 shadow-sm"
           >
             <Icon icon="solar:alt-arrow-left-linear" className="w-5 h-5" /> go back
           </button> */}
@@ -205,7 +205,7 @@ const SignUp = () => {
         {/* New Top Left Arrow Button */}
         <button
           onClick={() => navigate(-1)}
-          className="absolute top-6 left-6 p-2 text-foreground/60 hover:text-foreground hover:bg-muted rounded-full transition-all flex items-center justify-center"
+          className="absolute top-6 left-6 p-2 text-foreground/60 hover:text-foreground hover:bg-muted rounded-md transition-all flex items-center justify-center"
         >
           <Icon icon="solar:arrow-left-linear" className="w-6 h-6" />
         </button>
@@ -231,7 +231,7 @@ const SignUp = () => {
               <button
                 type="button"
                 onClick={() => setRole("student")}
-                className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${role === "student"
+                className={`flex-1 px-4 py-3 rounded-md border-2 transition-all flex items-center justify-center gap-2 ${role === "student"
                   ? "border-primary bg-primary/5 text-primary font-semibold shadow-sm shadow-primary/10"
                   : "border-border text-muted-foreground hover:border-primary/50 hover:bg-muted/50"
                   }`}
@@ -241,7 +241,7 @@ const SignUp = () => {
               <button
                 type="button"
                 onClick={() => setRole("instructor")}
-                className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${role === "instructor"
+                className={`flex-1 px-4 py-3 rounded-md border-2 transition-all flex items-center justify-center gap-2 ${role === "instructor"
                   ? "border-primary bg-primary/5 text-primary font-semibold shadow-sm shadow-primary/10"
                   : "border-border text-muted-foreground hover:border-primary/50 hover:bg-muted/50"
                   }`}
@@ -266,7 +266,7 @@ const SignUp = () => {
                     value={formData.firstName}
                     onChange={handleChange}
                     required
-                    className="flex h-11 w-full rounded-xl border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
+                    className="flex h-11 w-full rounded-md border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
                   />
                 </LabelInputContainer>
                 <LabelInputContainer>
@@ -281,7 +281,7 @@ const SignUp = () => {
                     value={formData.lastName}
                     onChange={handleChange}
                     required
-                    className="flex h-11 w-full rounded-xl border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
+                    className="flex h-11 w-full rounded-md border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
                   />
                 </LabelInputContainer>
               </div>
@@ -298,7 +298,7 @@ const SignUp = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="flex h-11 w-full rounded-xl border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
+                  className="flex h-11 w-full rounded-md border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
                 />
               </LabelInputContainer>
 
@@ -314,7 +314,7 @@ const SignUp = () => {
                   autoComplete="tel"
                   value={formData.phoneNumber}
                   onChange={handleChange}
-                  className="flex h-11 w-full rounded-xl border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
+                  className="flex h-11 w-full rounded-md border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
                 />
               </LabelInputContainer>
 
@@ -332,7 +332,7 @@ const SignUp = () => {
                         value={formData.createNewPassword}
                         onChange={handleChange}
                         required
-                        className="flex h-11 w-full rounded-xl border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground pr-10"
+                        className="flex h-11 w-full rounded-md border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground pr-10"
                       />
                       <button
                         type="button"
@@ -360,7 +360,7 @@ const SignUp = () => {
                         value={formData.confirmPassword}
                         onChange={handleChange}
                         required
-                        className="flex h-11 w-full rounded-xl border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground pr-10"
+                        className="flex h-11 w-full rounded-md border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground pr-10"
                       />
                       <button
                         type="button"
@@ -390,7 +390,7 @@ const SignUp = () => {
             )}
 
             <button
-              className="relative block h-11 w-full rounded-xl bg-primary text-primary-foreground font-medium shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-[0.98] mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="relative block h-11 w-full rounded-md bg-primary text-primary-foreground font-medium shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-[0.98] mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
               type="submit"
               disabled={loading}
             >
@@ -402,7 +402,7 @@ const SignUp = () => {
             <div className="flex flex-col space-y-3">
               <button
                 onClick={() => loginWithGithub(role)}
-                className="flex h-11 w-full items-center justify-center space-x-2 rounded-xl bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
+                className="flex h-11 w-full items-center justify-center space-x-2 rounded-md bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
                 type="button"
               >
                 <Icon icon="mdi:github" className="h-6 w-6 text-foreground" />
@@ -412,7 +412,7 @@ const SignUp = () => {
               </button>
               <button
                 onClick={() => loginWithGoogle(role)}
-                className="flex h-11 w-full items-center justify-center space-x-2 rounded-xl bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
+                className="flex h-11 w-full items-center justify-center space-x-2 rounded-md bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
                 type="button"
               >
                 <Icon icon="logos:google-icon" className="h-5 w-5" />
@@ -434,7 +434,7 @@ const SignUp = () => {
           </p>
 
           {/* Bottom Right Decoration */}
-          <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary rounded-full hidden md:block opacity-10"></div>
+          <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary rounded-md hidden md:block opacity-10"></div>
         </div>
       </div>
       
@@ -445,7 +445,7 @@ const SignUp = () => {
       }}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-md bg-primary/10 mb-4">
               <Icon icon="solar:letter-opened-bold-duotone" className="h-8 w-8 text-primary" />
             </div>
             <DialogTitle className="text-center text-xl">Verify your email</DialogTitle>
@@ -460,7 +460,7 @@ const SignUp = () => {
                 setShowVerifyModal(false);
                 navigate("/login");
               }}
-              className="w-full sm:w-auto px-8 py-2.5 bg-primary text-primary-foreground font-medium rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-[0.98]"
+              className="w-full sm:w-auto px-8 py-2.5 bg-primary text-primary-foreground font-medium rounded-md shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-[0.98]"
             >
               Go to Login
             </button>

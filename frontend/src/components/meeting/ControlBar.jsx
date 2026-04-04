@@ -176,7 +176,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
           className="flex flex-col items-center gap-1.5 group"
           title={micOff ? (!canSendAudio ? 'Request Microphone' : 'Unmute microphone') : 'Mute microphone'}
         >
-          <span className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95 ${
+          <span className={`w-12 h-12 flex items-center justify-center rounded-md transition-all duration-200 active:scale-95 ${
             micOff
               ? 'bg-destructive shadow-lg shadow-destructive/30'
               : 'bg-secondary hover:bg-secondary/70'
@@ -210,7 +210,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
           className="flex flex-col items-center gap-1.5 group"
           title={camOff ? (!canSendVideo ? 'Request Camera' : 'Turn on camera') : 'Turn off camera'}
         >
-          <span className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95 ${
+          <span className={`w-12 h-12 flex items-center justify-center rounded-md transition-all duration-200 active:scale-95 ${
             camOff
               ? 'bg-destructive shadow-lg shadow-destructive/30'
               : 'bg-secondary hover:bg-secondary/70'
@@ -241,7 +241,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
             className="flex flex-col items-center gap-1.5 group"
             title="End call"
           >
-            <span className="w-12 h-12 flex items-center justify-center rounded-full bg-destructive hover:bg-destructive/80 shadow-lg shadow-destructive/30 transition-all duration-200 active:scale-95">
+            <span className="w-12 h-12 flex items-center justify-center rounded-md bg-destructive hover:bg-destructive/80 shadow-lg shadow-destructive/30 transition-all duration-200 active:scale-95">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
                 <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.01L6.6 10.8z"/>
               </svg>
@@ -260,15 +260,15 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
       {/* Mobile-only: Panel Controls Row */}
       <div className="flex md:hidden items-center justify-center gap-1 px-3 py-2 border-b border-border/30">
         {isRecording && (
-          <div className="flex items-center gap-1.5 mr-1 px-2.5 py-1 rounded-full bg-destructive/10 border border-destructive/20">
-            <span className="w-1.5 h-1.5 rounded-full bg-destructive animate-pulse" />
+          <div className="flex items-center gap-1.5 mr-1 px-2.5 py-1 rounded-md bg-destructive/10 border border-destructive/20">
+            <span className="w-1.5 h-1.5 rounded-md bg-destructive animate-pulse" />
             <span className="text-[9px] font-bold text-destructive uppercase tracking-wider">REC</span>
           </div>
         )}
 
         <button
           onClick={toggleParticipants}
-          className={`w-9 h-9 flex items-center justify-center rounded-full transition-all ${
+          className={`w-9 h-9 flex items-center justify-center rounded-md transition-all ${
             activePanel === 'participants' ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-secondary'
           }`}
           title="Show everyone"
@@ -278,7 +278,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
 
         <button
           onClick={toggleChat}
-          className={`w-9 h-9 flex items-center justify-center rounded-full transition-all ${
+          className={`w-9 h-9 flex items-center justify-center rounded-md transition-all ${
             activePanel === 'chat' ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-secondary'
           }`}
           title="Chat with everyone"
@@ -289,7 +289,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
         {onLayoutChange && (
           <button
             onClick={() => onLayoutChange(layout === 'grid' ? 'speaker' : 'grid')}
-            className="w-9 h-9 flex items-center justify-center rounded-full text-foreground hover:bg-secondary transition-all"
+            className="w-9 h-9 flex items-center justify-center rounded-md text-foreground hover:bg-secondary transition-all"
             title={layout === 'grid' ? 'Speaker view' : 'Gallery view'}
           >
             <Icon icon={layout === 'grid' ? 'material-symbols:view-sidebar-outline' : 'material-symbols:grid-view'} className="w-5 h-5" />
@@ -300,7 +300,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
           <button
             onClick={goLive}
             disabled={isJoining}
-            className="ml-1 bg-destructive text-white px-4 py-1.5 rounded-lg hover:bg-destructive/90 transition-all font-bold text-[10px] tracking-widest disabled:opacity-70"
+            className="ml-1 bg-destructive text-white px-4 py-1.5 rounded-md hover:bg-destructive/90 transition-all font-bold text-[10px] tracking-widest disabled:opacity-70"
           >
             {isJoining ? 'WAIT...' : 'GO LIVE'}
           </button>
@@ -323,7 +323,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
         <div className="group relative">
           <button
             onClick={toggleMic}
-            className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95 ${
+            className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-md transition-all duration-200 active:scale-95 ${
               micOff
                 ? 'bg-destructive text-white hover:bg-destructive/90 shadow-lg shadow-destructive/20'
                 : 'bg-secondary text-foreground hover:bg-secondary/70'
@@ -343,7 +343,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
         <div className="group relative">
           <button
             onClick={toggleCam}
-            className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95 ${
+            className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-md transition-all duration-200 active:scale-95 ${
               camOff
                 ? 'bg-destructive text-white hover:bg-destructive/90 shadow-lg shadow-destructive/20'
                 : 'bg-secondary text-foreground hover:bg-secondary/70'
@@ -363,7 +363,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
         <div className="group relative">
           <button
             onClick={() => setShowReactions(!showReactions)}
-            className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95 ${
+            className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-md transition-all duration-200 active:scale-95 ${
               showReactions ? 'bg-primary text-primary-foreground' : 'bg-secondary text-foreground hover:bg-secondary/70'
             }`}
           >
@@ -371,12 +371,12 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
           </button>
           
           {showReactions && (
-            <div className="absolute bottom-16 left-1/2 -translate-x-1/2 bg-popover border border-border rounded-2xl shadow-2xl p-2 flex items-center gap-1 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
+            <div className="absolute bottom-16 left-1/2 -translate-x-1/2 bg-popover border border-border rounded-md shadow-2xl p-2 flex items-center gap-1 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
               {EMOJIS.map((emoji) => (
                 <button
                   key={emoji.code}
                   onClick={() => handleSendReaction(emoji.code)}
-                  className="w-10 h-10 flex items-center justify-center text-xl hover:bg-secondary rounded-xl transition-colors"
+                  className="w-10 h-10 flex items-center justify-center text-xl hover:bg-secondary rounded-md transition-colors"
                   title={emoji.label}
                 >
                   {emoji.code}
@@ -394,7 +394,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
         <div className="group relative">
           <button
             onClick={toggleHandRaise}
-            className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95 ${
+            className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-md transition-all duration-200 active:scale-95 ${
               isHandRaised ? 'bg-yellow-500 text-white shadow-lg shadow-yellow-500/20' : 'bg-secondary text-foreground hover:bg-secondary/70'
             }`}
           >
@@ -409,7 +409,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
         <div className="group relative">
           <button
             onClick={toggleShare}
-            className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95 ${
+            className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-md transition-all duration-200 active:scale-95 ${
               isSharing 
                 ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20' 
                 : 'bg-secondary text-foreground hover:bg-secondary/70'
@@ -429,12 +429,12 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
         <div className="group relative">
           <button
             onClick={() => setShowMoreOptions(!showMoreOptions)}
-            className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-secondary text-foreground hover:bg-secondary/70 transition-all duration-200 active:scale-95 ${showMoreOptions ? 'ring-2 ring-primary/40' : ''}`}
+            className={`w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-md bg-secondary text-foreground hover:bg-secondary/70 transition-all duration-200 active:scale-95 ${showMoreOptions ? 'ring-2 ring-primary/40' : ''}`}
           >
             <Icon icon="material-symbols:more-vert" className="w-5 h-5 md:w-6 md:h-6" />
           </button>
           {showMoreOptions && (
-            <div className="absolute bottom-16 left-0 bg-popover border border-border rounded-xl shadow-2xl py-2 w-56 flex flex-col z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
+            <div className="absolute bottom-16 left-0 bg-popover border border-border rounded-md shadow-2xl py-2 w-56 flex flex-col z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
               <button 
                 className="flex items-center gap-3 px-4 py-2.5 hover:bg-secondary/60 text-sm transition-colors"
                 onClick={() => { toggleRecording(); setShowMoreOptions(false); }}
@@ -466,7 +466,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
           <div className="group relative ml-2 md:ml-4">
             <button
               onClick={onLeave}
-              className="w-14 h-10 md:w-20 md:h-12 flex items-center justify-center rounded-3xl bg-destructive text-white hover:bg-destructive/90 hover:shadow-xl shadow-destructive/30 transition-all duration-200 active:scale-95"
+              className="w-14 h-10 md:w-20 md:h-12 flex items-center justify-center rounded-md bg-destructive text-white hover:bg-destructive/90 hover:shadow-xl shadow-destructive/30 transition-all duration-200 active:scale-95"
             >
               <Icon icon="material-symbols:call-end" className="w-6 h-6 md:w-7 md:h-7" />
             </button>
@@ -480,15 +480,15 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
       {/* Right side: Meeting Controls (Chat, People, Layout, Activities) */}
       <div className="hidden md:flex items-center gap-1 md:gap-2 min-w-[200px] justify-end">
         {isRecording && (
-          <div className="flex items-center gap-1.5 mr-2 px-3 py-1.5 rounded-full bg-destructive/10 border border-destructive/20">
-            <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
+          <div className="flex items-center gap-1.5 mr-2 px-3 py-1.5 rounded-md bg-destructive/10 border border-destructive/20">
+            <span className="w-2 h-2 rounded-md bg-destructive animate-pulse" />
             <span className="text-[10px] font-bold text-destructive uppercase tracking-wider">REC</span>
           </div>
         )}
 
         <button
           onClick={toggleParticipants}
-          className={`w-10 h-10 flex items-center justify-center rounded-full transition-all ${
+          className={`w-10 h-10 flex items-center justify-center rounded-md transition-all ${
             activePanel === 'participants' ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-secondary'
           }`}
           title="Show everyone"
@@ -498,7 +498,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
 
         <button
           onClick={toggleChat}
-          className={`w-10 h-10 flex items-center justify-center rounded-full transition-all ${
+          className={`w-10 h-10 flex items-center justify-center rounded-md transition-all ${
             activePanel === 'chat' ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-secondary'
           }`}
           title="Chat with everyone"
@@ -509,7 +509,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
         {onLayoutChange && (
           <button
             onClick={() => onLayoutChange(layout === 'grid' ? 'speaker' : 'grid')}
-            className="w-10 h-10 flex items-center justify-center rounded-full text-foreground hover:bg-secondary transition-all"
+            className="w-10 h-10 flex items-center justify-center rounded-md text-foreground hover:bg-secondary transition-all"
             title={layout === 'grid' ? 'Switch to speaker view' : 'Switch to gallery view'}
           >
             <Icon icon={layout === 'grid' ? 'material-symbols:view-sidebar-outline' : 'material-symbols:grid-view'} className="w-5 h-5 md:w-6 md:h-6" />
@@ -520,7 +520,7 @@ const ControlBar = ({ onLeave, goLive, isInstructor, toggleChat, toggleParticipa
             <button
                 onClick={goLive}
                 disabled={isJoining}
-                className="ml-4 bg-destructive text-white px-6 py-2 rounded-xl hover:bg-destructive/90 transition-all font-bold text-xs tracking-widest disabled:opacity-70 shadow-lg shadow-destructive/20"
+                className="ml-4 bg-destructive text-white px-6 py-2 rounded-md hover:bg-destructive/90 transition-all font-bold text-xs tracking-widest disabled:opacity-70 shadow-lg shadow-destructive/20"
             >
                 {isJoining ? 'INITIALIZING...' : 'GO LIVE'}
             </button>

@@ -22,7 +22,7 @@ const Courses = () => {
         </div>
 
         <div className="mt-16 text-center">
-          <a href="#" className="inline-flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-primary transition-colors group">
+          <a href="#" className="inline-flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-primary transition-colors group">
             View all courses
             <span className="transition-transform group-hover:translate-x-1">→</span>
           </a>

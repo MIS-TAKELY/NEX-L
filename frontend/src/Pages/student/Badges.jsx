@@ -56,11 +56,11 @@ export default function Badges() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/10 p-8 md:p-12 mb-10"
+        className="relative rounded-md overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/10 p-8 md:p-12 mb-10"
       >
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-10 -right-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
-          <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-yellow-500/5 rounded-full blur-3xl" />
+          <div className="absolute -top-10 -right-10 w-64 h-64 bg-primary/5 rounded-md blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-yellow-500/5 rounded-md blur-3xl" />
         </div>
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
@@ -84,7 +84,7 @@ export default function Badges() {
               { label: "Silver", value: byLevel("silver"), icon: "🥈", emoji: true, color: "text-slate-400" },
               { label: "Bronze", value: byLevel("bronze"), icon: "🥉", emoji: true, color: "text-amber-600" },
             ].map((stat) => (
-              <div key={stat.label} className="bg-card/60 backdrop-blur border border-border rounded-2xl px-5 py-4 text-center min-w-[80px]">
+              <div key={stat.label} className="bg-card/60 backdrop-blur border border-border rounded-md px-5 py-4 text-center min-w-[80px]">
                 <div className={`text-2xl font-black ${stat.color} serif`}>
                   {stat.emoji ? stat.icon : <Icon icon={stat.icon} className={stat.color} size={24} />}
                 </div>
@@ -109,7 +109,7 @@ export default function Badges() {
             <button
               key={f.key}
               onClick={() => setTypeFilter(f.key)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all border
+              className={`flex items-center gap-2 px-4 py-2 rounded-md text-xs font-bold transition-all border
                 ${typeFilter === f.key
                   ? "bg-primary text-foreground border-primary shadow-lg shadow-primary/20"
                   : "bg-card text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
@@ -127,7 +127,7 @@ export default function Badges() {
             <button
               key={l}
               onClick={() => setLevelFilter(l)}
-              className={`px-3 py-2 rounded-xl text-xs font-bold capitalize transition-all border
+              className={`px-3 py-2 rounded-md text-xs font-bold capitalize transition-all border
                 ${levelFilter === l
                   ? "bg-primary text-foreground border-primary"
                   : "bg-card text-muted-foreground border-border hover:border-primary/40"
@@ -143,7 +143,7 @@ export default function Badges() {
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-52 rounded-2xl bg-card animate-pulse border border-border" />
+            <div key={i} className="h-52 rounded-md bg-card animate-pulse border border-border" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
@@ -152,7 +152,7 @@ export default function Badges() {
           animate={{ opacity: 1, scale: 1 }}
           className="flex flex-col items-center justify-center py-24 text-center"
         >
-          <div className="w-24 h-24 rounded-3xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 text-5xl">
+          <div className="w-24 h-24 rounded-md bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 text-5xl">
             🏅
           </div>
           <h2 className="text-2xl font-black text-foreground serif mb-3">

@@ -86,16 +86,16 @@ const CallControls = ({ onLeave }) => {
   };
 
   return (
-    <div className="flex items-center gap-4 bg-gray-900/80 backdrop-blur-xl px-6 py-3 rounded-full border border-white/10 shadow-2xl">
+    <div className="flex items-center gap-4 bg-gray-900/80 backdrop-blur-xl px-6 py-3 rounded-md border border-white/10 shadow-2xl">
       {/* Microphone Toggle */}
       <button
         onClick={toggleMicrophone}
-        className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-300 ${
+        className={`w-12 h-12 flex items-center justify-center rounded-md transition-all duration-300 ${
           isMicMuted
             ? !canSendAudio && !canRequestPermissions
-              ? "bg-white/5 text-gray-500 opacity-50 cursor-not-allowed"
+              ? "bg-card/5 text-muted-foreground opacity-50 cursor-not-allowed"
               : "bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/20"
-            : "bg-white/10 text-white hover:bg-white/20 border border-white/5"
+            : "bg-card/10 text-white hover:bg-card/20 border border-white/5"
         }`}
         title={isMicMuted ? (!canSendAudio && canRequestPermissions ? "Request Microphone" : "Turn on microphone") : "Turn off microphone"}
       >
@@ -108,12 +108,12 @@ const CallControls = ({ onLeave }) => {
       {/* Camera Toggle */}
       <button
         onClick={toggleCamera}
-        className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-300 ${
+        className={`w-12 h-12 flex items-center justify-center rounded-md transition-all duration-300 ${
           isCamMuted
             ? !canSendVideo && !canRequestPermissions
-              ? "bg-white/5 text-gray-500 opacity-50 cursor-not-allowed"
+              ? "bg-card/5 text-muted-foreground opacity-50 cursor-not-allowed"
               : "bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/20"
-            : "bg-white/10 text-white hover:bg-white/20 border border-white/5"
+            : "bg-card/10 text-white hover:bg-card/20 border border-white/5"
         }`}
         title={isCamMuted ? (!canSendVideo && canRequestPermissions ? "Request Camera" : "Turn on camera") : "Turn off camera"}
       >
@@ -126,12 +126,12 @@ const CallControls = ({ onLeave }) => {
       {/* Screen Share Toggle */}
       <button
         onClick={toggleScreenShare}
-        className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-300 ${
+        className={`w-12 h-12 flex items-center justify-center rounded-md transition-all duration-300 ${
           isSharing
             ? "bg-primary text-primary-foreground hover:bg-primary/90"
             : !canScreenShare && !canRequestPermissions
-              ? "bg-white/5 text-gray-500 opacity-50 cursor-not-allowed"
-              : "bg-white/10 text-white hover:bg-white/20 border border-white/5"
+              ? "bg-card/5 text-muted-foreground opacity-50 cursor-not-allowed"
+              : "bg-card/10 text-white hover:bg-card/20 border border-white/5"
         }`}
         title={isSharing ? "Stop sharing" : !canScreenShare && canRequestPermissions ? "Request Screen Share" : "Share screen"}
       >
@@ -142,7 +142,7 @@ const CallControls = ({ onLeave }) => {
       </button>
 
       {/* More Options - Placeholder for Google Meet style */}
-      <button className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 border border-white/5 transition-all">
+      <button className="w-12 h-12 flex items-center justify-center rounded-md bg-card/10 text-white hover:bg-card/20 border border-white/5 transition-all">
         <Icon icon="solar:menu-dots-bold" className="w-6 h-6" />
       </button>
 
@@ -150,7 +150,7 @@ const CallControls = ({ onLeave }) => {
       {onLeave && (
         <button
           onClick={onLeave}
-          className="ml-2 bg-red-500 hover:bg-red-600 text-white flex items-center justify-center rounded-2xl px-6 py-3 transition-all duration-300 shadow-lg shadow-red-500/20 active:scale-95"
+          className="ml-2 bg-red-500 hover:bg-red-600 text-white flex items-center justify-center rounded-md px-6 py-3 transition-all duration-300 shadow-lg shadow-red-500/20 active:scale-95"
           title="Leave call"
         >
           <Icon icon="material-symbols:call-end-rounded" className="w-6 h-6 text-white" />

@@ -21,7 +21,7 @@ export default function SignupFormDemo() {
   };
   return (
     <div
-      className="shadow-input mx-auto w-full max-w-md rounded-none bg-card p-4 md:rounded-2xl md:p-8 dark:bg-black">
+      className="shadow-input mx-auto w-full max-w-md rounded-none bg-card p-4 md:rounded-md md:p-8 dark:bg-black">
       <h2 className="text-xl font-bold text-foreground dark:text-neutral-200">
         Welcome to Aceternity
       </h2>

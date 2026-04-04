@@ -548,9 +548,9 @@ const AddCourse = () => {
       <div className="max-w-4xl mx-auto mb-10">
         <div className="relative flex justify-between">
           {/* Progress Line */}
-          <div className="absolute top-1/2 left-0 w-full h-1 bg-white/5 rounded-full -translate-y-1/2 z-0" />
+          <div className="absolute top-1/2 left-0 w-full h-1 bg-card/5 rounded-md -translate-y-1/2 z-0" />
           <motion.div
-            className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-violet-500 to-pink-500 rounded-full -translate-y-1/2 z-0 shadow-[0_0_10px_rgba(139,92,246,0.5)]"
+            className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-violet-500 to-pink-500 rounded-md -translate-y-1/2 z-0 shadow-[0_0_10px_rgba(139,92,246,0.5)]"
             initial={{ width: "0%" }}
             animate={{
               width: `${((currentStep - 1) / (steps.length - 1)) * 100}%`,
@@ -565,7 +565,7 @@ const AddCourse = () => {
               <motion.button
                 type="button"
                 onClick={() => step.id < currentStep && setCurrentStep(step.id)}
-                className={`w-12 h-12 rounded-full flex items-center justify-center font-bold relative transition-all duration-300 ${
+                className={`w-12 h-12 rounded-md flex items-center justify-center font-bold relative transition-all duration-300 ${
                   currentStep === step.id
                     ? "bg-card text-foreground shadow-[0_0_20px_rgba(139,92,246,0.4)] ring-4 ring-primary/30 border-2 border-primary"
                     : currentStep > step.id
@@ -579,7 +579,7 @@ const AddCourse = () => {
                 {currentStep > step.id ? <CheckCircle2 size={24} className="animate-pulse" /> : step.id}
                 
                 {/* Tooltip preview */}
-                <div className="absolute -top-12 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-popover text-popover-foreground text-[10px] font-medium py-1.5 px-3 rounded-lg whitespace-nowrap border border-border shadow-xl pointer-events-none z-50">
+                <div className="absolute -top-12 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-popover text-popover-foreground text-[10px] font-medium py-1.5 px-3 rounded-md whitespace-nowrap border border-border shadow-xl pointer-events-none z-50">
                   {step.desc}
                 </div>
               </motion.button>
@@ -607,7 +607,7 @@ const AddCourse = () => {
               exit={{ opacity: 0, x: -20 }}
               className="space-y-6"
             >
-              <div className="bg-card rounded-3xl p-6 md:p-8 border border-border shadow-[0_10px_40px_rgba(0,0,0,0.03)] space-y-8 premium-card">
+              <div className="bg-card rounded-md p-6 md:p-8 border border-border shadow-[0_10px_40px_rgba(0,0,0,0.03)] space-y-8 premium-card">
                   <div className="flex justify-between items-center mb-2">
                     <label className="block text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.05em]">
                       Course Title <span className="text-destructive">*</span>
@@ -652,7 +652,7 @@ const AddCourse = () => {
                     value={formData.title}
                     onChange={handleChange}
                     placeholder="e.g. Master Advanced React and Framer Motion"
-                    className="w-full px-5 py-4 rounded-xl bg-muted/30 border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200 text-foreground placeholder:text-muted-foreground/50"
+                    className="w-full px-5 py-4 rounded-md bg-muted/30 border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200 text-foreground placeholder:text-muted-foreground/50"
                     required
                   />
 
@@ -665,7 +665,7 @@ const AddCourse = () => {
                       name="category"
                       value={formData.category}
                       onChange={handleChange}
-                      className="w-full px-5 py-4 rounded-xl bg-muted/30 border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200 appearance-none"
+                      className="w-full px-5 py-4 rounded-md bg-muted/30 border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200 appearance-none"
                       required
                     >
                       <option value="" className="text-muted-foreground">Select Category</option>
@@ -688,7 +688,7 @@ const AddCourse = () => {
                         name="price"
                         value={formData.price}
                         onChange={handleChange}
-                        className="w-full pl-12 pr-5 py-4 rounded-xl bg-[#1A1A2E] border border-white/5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)] text-white placeholder:text-[#6B6B80] focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-500 transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]"
+                        className="w-full pl-12 pr-5 py-4 rounded-md bg-[#1A1A2E] border border-white/5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)] text-white placeholder:text-[#6B6B80] focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-500 transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]"
                         placeholder="0 for free"
                       />
                     </div>
@@ -705,7 +705,7 @@ const AddCourse = () => {
                     onChange={handleChange}
                     rows="5"
                     placeholder="Tell your students what they'll learn..."
-                    className="w-full px-5 py-4 rounded-xl bg-muted/30 border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200 resize-none placeholder:text-muted-foreground/50"
+                    className="w-full px-5 py-4 rounded-md bg-muted/30 border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200 resize-none placeholder:text-muted-foreground/50"
                     required
                   ></textarea>
                 </div>
@@ -714,13 +714,13 @@ const AddCourse = () => {
                   <label className="block text-sm font-bold text-muted-foreground mb-3 uppercase tracking-wider">
                     Course Type
                   </label>
-                  <div className="flex bg-secondary/50 p-1.5 rounded-2xl w-fit border border-border/50">
+                  <div className="flex bg-secondary/50 p-1.5 rounded-md w-fit border border-border/50">
                     <button
                       type="button"
                       onClick={() =>
                         setFormData((prev) => ({ ...prev, courseType: "full" }))
                       }
-                      className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${formData.courseType === "full"
+                      className={`px-8 py-2.5 rounded-md text-sm font-bold transition-all duration-300 ${formData.courseType === "full"
                         ? "bg-background text-foreground shadow-[0_2px_10px_rgba(0,0,0,0.1)]"
                         : "text-muted-foreground hover:text-foreground"
                         }`}
@@ -735,7 +735,7 @@ const AddCourse = () => {
                           courseType: "syllabus",
                         }))
                       }
-                      className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${formData.courseType === "syllabus"
+                      className={`px-8 py-2.5 rounded-md text-sm font-bold transition-all duration-300 ${formData.courseType === "syllabus"
                         ? "bg-background text-foreground shadow-[0_2px_10px_rgba(0,0,0,0.1)]"
                         : "text-muted-foreground hover:text-foreground"
                         }`}
@@ -762,7 +762,7 @@ const AddCourse = () => {
                       setFormData((prev) => ({ ...prev, tags: tagsArray }));
                     }}
                     placeholder="React, Frontend, JavaScript"
-                    className="w-full px-5 py-4 rounded-xl bg-muted/30 border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200 placeholder:text-muted-foreground/50"
+                    className="w-full px-5 py-4 rounded-md bg-muted/30 border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200 placeholder:text-muted-foreground/50"
                   />
                   <p className="text-[10px] text-[#A0A0B8] mt-2 font-medium">
                     Separate tags with commas
@@ -781,7 +781,7 @@ const AddCourse = () => {
               exit={{ opacity: 0, x: -20 }}
               className="space-y-6"
             >
-              <div className="bg-card/40 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-border/50 shadow-[0_10px_40px_rgba(0,0,0,0.03)] space-y-8 premium-card">
+              <div className="bg-card/40 backdrop-blur-md rounded-md p-6 md:p-8 border border-border/50 shadow-[0_10px_40px_rgba(0,0,0,0.03)] space-y-8 premium-card">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-4">
                     <label className="block text-[11px] font-semibold text-[#A0A0B8] uppercase tracking-[0.05em] mb-3">
@@ -789,7 +789,7 @@ const AddCourse = () => {
                     </label>
                     <div className="relative group">
                       <div
-                        className={`aspect-video rounded-2xl overflow-hidden border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center p-4 relative group hover:scale-[1.02] ${
+                        className={`aspect-video rounded-md overflow-hidden border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center p-4 relative group hover:scale-[1.02] ${
                           formData.thumbnail
                             ? "border-primary/30 bg-primary/10"
                             : "border-border/50 hover:border-primary/50 hover:bg-muted/10 bg-muted/5"
@@ -799,20 +799,20 @@ const AddCourse = () => {
                           <img
                             src={formData.thumbnail}
                             alt="Thumbnail"
-                            className="w-full h-full object-cover rounded-xl shadow-lg ring-1 ring-white/10"
+                            className="w-full h-full object-cover rounded-md shadow-lg ring-1 ring-white/10"
                           />
                         ) : (
                           <>
-                            <div className="w-14 h-14 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-inner">
+                            <div className="w-14 h-14 bg-gradient-to-br from-primary/20 to-accent/20 rounded-md flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-inner">
                               <ImageIcon size={28} className="text-primary group-hover:text-accent transition-colors" />
                             </div>
                             <p className="text-sm font-bold text-foreground mb-3 tracking-wide">
                               Drop files here or click to browse
                             </p>
                             <div className="flex gap-2 justify-center">
-                              <span className="text-[10px] font-bold text-muted-foreground bg-muted/10 px-2 py-1 rounded-full border border-border/50 tracking-widest">JPG</span>
-                              <span className="text-[10px] font-bold text-muted-foreground bg-muted/10 px-2 py-1 rounded-full border border-border/50 tracking-widest">PNG</span>
-                              <span className="text-[10px] font-bold text-muted-foreground bg-muted/10 px-2 py-1 rounded-full border border-border/50 tracking-widest">WEBP</span>
+                              <span className="text-[10px] font-bold text-muted-foreground bg-muted/10 px-2 py-1 rounded-md border border-border/50 tracking-widest">JPG</span>
+                              <span className="text-[10px] font-bold text-muted-foreground bg-muted/10 px-2 py-1 rounded-md border border-border/50 tracking-widest">PNG</span>
+                              <span className="text-[10px] font-bold text-muted-foreground bg-muted/10 px-2 py-1 rounded-md border border-border/50 tracking-widest">WEBP</span>
                             </div>
                           </>
                         )}
@@ -825,7 +825,7 @@ const AddCourse = () => {
                       </div>
                       {formData.thumbnail && (
                         <div className="absolute top-2 right-2 flex gap-2">
-                          <div className="bg-background/90 backdrop-blur-sm p-2 rounded-lg shadow-sm text-green-600">
+                          <div className="bg-background/90 backdrop-blur-sm p-2 rounded-md shadow-sm text-green-600">
                             <CheckCircle2 size={16} />
                           </div>
                         </div>
@@ -842,14 +842,14 @@ const AddCourse = () => {
                     </label>
                     <div className="relative group">
                       <div
-                        className={`h-[180px] rounded-2xl overflow-hidden border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center p-4 relative group hover:scale-[1.02] ${formData.syllabus
+                        className={`h-[180px] rounded-md overflow-hidden border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center p-4 relative group hover:scale-[1.02] ${formData.syllabus
                           ? "border-accent/30 bg-accent/10"
                           : "border-border/50 hover:border-accent/50 hover:bg-muted/10 bg-muted/5"
                           }`}
                       >
                         {formData.syllabus ? (
                           <div className="flex flex-col items-center text-center">
-                            <div className="w-14 h-14 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full flex items-center justify-center mb-4 shadow-inner">
+                            <div className="w-14 h-14 bg-gradient-to-br from-accent/20 to-primary/20 rounded-md flex items-center justify-center mb-4 shadow-inner">
                               <FileText size={28} className="text-accent" />
                             </div>
                             <p className="text-sm font-bold text-accent">
@@ -866,15 +866,15 @@ const AddCourse = () => {
                           </div>
                         ) : (
                           <>
-                            <div className="w-14 h-14 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 border border-accent/10 shadow-[inset_0_2px_10px_rgba(236,72,153,0.1)]">
+                            <div className="w-14 h-14 bg-gradient-to-br from-accent/20 to-primary/20 rounded-md flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 border border-accent/10 shadow-[inset_0_2px_10px_rgba(236,72,153,0.1)]">
                               <FileText size={28} className="text-accent group-hover:text-primary transition-colors" />
                             </div>
                             <p className="text-sm font-bold text-foreground mb-3 tracking-wide">
                               Drop PDF here or browse
                             </p>
                             <div className="flex gap-2 justify-center">
-                              <span className="text-[10px] font-bold text-muted-foreground bg-muted/10 px-2 py-1 rounded-full border border-border/50 tracking-widest">PDF</span>
-                              <span className="text-[10px] font-bold text-muted-foreground bg-muted/10 px-2 py-1 rounded-full border border-border/50 tracking-widest">DOCX</span>
+                              <span className="text-[10px] font-bold text-muted-foreground bg-muted/10 px-2 py-1 rounded-md border border-border/50 tracking-widest">PDF</span>
+                              <span className="text-[10px] font-bold text-muted-foreground bg-muted/10 px-2 py-1 rounded-md border border-border/50 tracking-widest">DOCX</span>
                             </div>
                           </>
                         )}
@@ -891,12 +891,12 @@ const AddCourse = () => {
               </div>
 
               {/* Demo / Preview Video */}
-              <div className="bg-card/40 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-border/50 shadow-[0_10px_40px_rgba(0,0,0,0.03)] space-y-4 premium-card">
+              <div className="bg-card/40 backdrop-blur-md rounded-md p-6 md:p-8 border border-border/50 shadow-[0_10px_40px_rgba(0,0,0,0.03)] space-y-4 premium-card">
                 <div className="flex items-center justify-between">
                   <div>
                     <label className="block text-sm font-bold text-foreground uppercase tracking-wide">
                       Demo / Preview Video
-                      <span className="ml-2 text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20 uppercase normal-case tracking-normal">Optional</span>
+                      <span className="ml-2 text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md border border-primary/20 uppercase normal-case tracking-normal">Optional</span>
                     </label>
                     <p className="text-xs text-muted-foreground mt-1 font-medium">Free preview video to attract students before they purchase</p>
                   </div>
@@ -904,7 +904,7 @@ const AddCourse = () => {
                     <button
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, demoVideo: "" }))}
-                      className="text-xs font-bold text-destructive hover:bg-destructive/10 px-3 py-1.5 rounded-lg transition-all"
+                      className="text-xs font-bold text-destructive hover:bg-destructive/10 px-3 py-1.5 rounded-md transition-all"
                     >
                       Remove
                     </button>
@@ -912,20 +912,20 @@ const AddCourse = () => {
                 </div>
 
                 {formData.demoVideo ? (
-                  <div className="relative rounded-2xl overflow-hidden border border-border/50 bg-black shadow-sm aspect-video">
+                  <div className="relative rounded-md overflow-hidden border border-border/50 bg-black shadow-sm aspect-video">
                     <video
                       src={formData.demoVideo}
                       controls
                       className="w-full h-full object-contain"
                     />
-                    <span className="absolute top-3 left-3 bg-green-500 text-foreground text-[10px] font-black px-2 py-1 rounded-lg uppercase tracking-wider shadow">
+                    <span className="absolute top-3 left-3 bg-green-500 text-foreground text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-wider shadow">
                       Preview Ready
                     </span>
                   </div>
                 ) : (
                   <div className="relative">
                     <div
-                      className={`aspect-video rounded-2xl overflow-hidden border-2 border-dashed flex flex-col items-center justify-center p-8 transition-all duration-300 hover:scale-[1.02] ${
+                      className={`aspect-video rounded-md overflow-hidden border-2 border-dashed flex flex-col items-center justify-center p-8 transition-all duration-300 hover:scale-[1.02] ${
                         uploadingDemoVideo
                           ? "border-emerald-500/50 bg-emerald-500/10 shadow-[0_0_30px_rgba(16,185,129,0.2)]"
                           : "border-border/50 hover:border-emerald-500/50 hover:bg-muted/10 bg-muted/5"
@@ -941,7 +941,7 @@ const AddCourse = () => {
                       {uploadingDemoVideo ? (
                         <>
                           <div className="relative">
-                            <div className="absolute inset-0 rounded-full bg-green-400/20 blur-xl animate-pulse"></div>
+                            <div className="absolute inset-0 rounded-md bg-green-400/20 blur-xl animate-pulse"></div>
                             <Loader2 size={36} className="text-green-400 animate-spin mb-4 relative z-10" />
                           </div>
                           <p className="text-sm font-bold text-white tracking-wide">Uploading preview video...</p>
@@ -949,14 +949,14 @@ const AddCourse = () => {
                         </>
                       ) : (
                         <>
-                          <div className="w-16 h-16 bg-gradient-to-br from-emerald-500/20 to-primary/20 rounded-full flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 border border-emerald-500/10 shadow-[inset_0_2px_10px_rgba(16,185,129,0.1)]">
+                          <div className="w-16 h-16 bg-gradient-to-br from-emerald-500/20 to-primary/20 rounded-md flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 border border-emerald-500/10 shadow-[inset_0_2px_10px_rgba(16,185,129,0.1)]">
                             <Video size={28} className="text-emerald-500 group-hover:text-primary transition-colors" />
                           </div>
                           <p className="text-sm font-bold text-foreground mb-3 tracking-wide">Drop preview video here</p>
                           <div className="flex gap-2 justify-center">
-                            <span className="text-[10px] font-bold text-muted-foreground bg-muted/10 px-2 py-1 rounded-full border border-border/50 tracking-widest">MP4</span>
-                            <span className="text-[10px] font-bold text-muted-foreground bg-muted/10 px-2 py-1 rounded-full border border-border/50 tracking-widest">WEBM</span>
-                            <span className="text-[10px] font-bold text-muted-foreground bg-muted/10 px-2 py-1 rounded-full border border-border/50 tracking-widest">MOV</span>
+                            <span className="text-[10px] font-bold text-muted-foreground bg-muted/10 px-2 py-1 rounded-md border border-border/50 tracking-widest">MP4</span>
+                            <span className="text-[10px] font-bold text-muted-foreground bg-muted/10 px-2 py-1 rounded-md border border-border/50 tracking-widest">WEBM</span>
+                            <span className="text-[10px] font-bold text-muted-foreground bg-muted/10 px-2 py-1 rounded-md border border-border/50 tracking-widest">MOV</span>
                           </div>
                         </>
                       )}
@@ -989,7 +989,7 @@ const AddCourse = () => {
                 <button
                   type="button"
                   onClick={addSection}
-                  className="flex items-center gap-2 bg-muted/50 hover:bg-muted backdrop-blur-md rounded-full px-6 py-2.5 text-foreground font-bold transition-all duration-300 border border-border hover:border-primary/50 shadow-lg hover:shadow-primary/20 active:scale-95 text-sm tracking-wide"
+                  className="flex items-center gap-2 bg-muted/50 hover:bg-muted backdrop-blur-md rounded-md px-6 py-2.5 text-foreground font-bold transition-all duration-300 border border-border hover:border-primary/50 shadow-lg hover:shadow-primary/20 active:scale-95 text-sm tracking-wide"
                 >
                   <Plus size={18} className="text-primary" /> Add Section
                 </button>
@@ -999,7 +999,7 @@ const AddCourse = () => {
                 {formData.sections.map((section, sIdx) => (
                   <div
                     key={sIdx}
-                    className="border border-border/50 rounded-2xl overflow-hidden bg-card/50 backdrop-blur-md shadow-xl border-l-4 border-l-primary transition-all duration-300 hover:shadow-2xl hover:border-border"
+                    className="border border-border/50 rounded-md overflow-hidden bg-card/50 backdrop-blur-md shadow-xl border-l-4 border-l-primary transition-all duration-300 hover:shadow-2xl hover:border-border"
                   >
                     {/* Section Header */}
                     <div className="flex justify-between items-center p-5 bg-muted/10 border-b border-border/50">
@@ -1007,7 +1007,7 @@ const AddCourse = () => {
                         <button
                           type="button"
                           onClick={() => toggleSection(sIdx)}
-                          className="w-8 h-8 flex items-center justify-center bg-secondary rounded-lg shadow-inner text-muted-foreground hover:text-foreground hover:bg-primary/20 transition-colors border border-border/50"
+                          className="w-8 h-8 flex items-center justify-center bg-secondary rounded-md shadow-inner text-muted-foreground hover:text-foreground hover:bg-primary/20 transition-colors border border-border/50"
                         >
                           {section.isOpen ? (
                             <ChevronUp size={18} />
@@ -1033,7 +1033,7 @@ const AddCourse = () => {
                       <button
                         type="button"
                         onClick={() => removeSection(sIdx)}
-                        className="text-muted-foreground/70 hover:text-destructive p-2 hover:bg-destructive/10 rounded-xl transition-all"
+                        className="text-muted-foreground/70 hover:text-destructive p-2 hover:bg-destructive/10 rounded-md transition-all"
                       >
                         <Trash2 size={20} />
                       </button>
@@ -1046,7 +1046,7 @@ const AddCourse = () => {
                           {section.contents.map((content, cIdx) => (
                             <div
                               key={cIdx}
-                              className="group bg-card rounded-2xl border border-border/50 shadow-lg overflow-hidden hover:border-primary/30 transition-all duration-300"
+                              className="group bg-card rounded-md border border-border/50 shadow-lg overflow-hidden hover:border-primary/30 transition-all duration-300"
                             >
                               {/* Content Header */}
                               <div className="flex justify-between items-center p-4 bg-muted/10 border-b border-border/50">
@@ -1069,7 +1069,7 @@ const AddCourse = () => {
                                     )}
                                   </button>
                                   <div className="flex items-center gap-3 flex-1">
-                                    <span className="text-[9px] font-bold text-accent bg-accent/10 px-2.5 py-1 rounded-full border border-accent/20 uppercase tracking-widest">
+                                    <span className="text-[9px] font-bold text-accent bg-accent/10 px-2.5 py-1 rounded-md border border-accent/20 uppercase tracking-widest">
                                       Lesson {cIdx + 1}
                                     </span>
                                     <input
@@ -1088,7 +1088,7 @@ const AddCourse = () => {
                                     />
                                   </div>
                                   {content.resources?.length > 0 && (
-                                    <span className="text-[9px] font-black text-muted-foreground bg-secondary border border-border/50 px-3 py-1 rounded-full uppercase tracking-tighter">
+                                    <span className="text-[9px] font-black text-muted-foreground bg-secondary border border-border/50 px-3 py-1 rounded-md uppercase tracking-tighter">
                                       {content.resources.length} resource
                                       {content.resources.length !== 1
                                         ? "s"
@@ -1099,7 +1099,7 @@ const AddCourse = () => {
                                 <button
                                   type="button"
                                   onClick={() => removeContent(sIdx, cIdx)}
-                                  className="text-muted-foreground/70 hover:text-destructive hover:bg-destructive/10 p-2 rounded-lg transition-colors ml-4"
+                                  className="text-muted-foreground/70 hover:text-destructive hover:bg-destructive/10 p-2 rounded-md transition-colors ml-4"
                                 >
                                   <Trash2 size={16} />
                                 </button>
@@ -1145,7 +1145,7 @@ const AddCourse = () => {
                                           }
                                           rows="3"
                                           placeholder="What will students learn in this specific lesson?"
-                                          className="w-full text-sm px-5 py-4 rounded-xl border border-border focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none resize-none bg-muted/30 text-foreground placeholder:text-muted-foreground/50 shadow-inner transition-all duration-200"
+                                          className="w-full text-sm px-5 py-4 rounded-md border border-border focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none resize-none bg-muted/30 text-foreground placeholder:text-muted-foreground/50 shadow-inner transition-all duration-200"
                                         />
                                       </div>
 
@@ -1159,14 +1159,14 @@ const AddCourse = () => {
                                       {content.resources.map((resource) => (
                                         <div
                                           key={resource.id}
-                                          className={`flex items-center gap-4 p-3 bg-secondary/50 rounded-xl border transition-all duration-300 ${resource.isUploading
+                                          className={`flex items-center gap-4 p-3 bg-secondary/50 rounded-md border transition-all duration-300 ${resource.isUploading
                                             ? "border-primary/30 bg-primary/10 shadow-[0_0_15px_rgba(139,92,246,0.1)]"
                                             : "border-border/50 group/item hover:border-primary/30 hover:bg-muted/10"
                                             }`}
                                         >
                                           <div className="relative flex-shrink-0">
                                             {resource.type === "video" ? (
-                                              <div className="w-14 h-14 bg-muted rounded-xl overflow-hidden flex items-center justify-center relative shadow-sm border border-border/50">
+                                              <div className="w-14 h-14 bg-muted rounded-md overflow-hidden flex items-center justify-center relative shadow-sm border border-border/50">
                                                 <video
                                                   src={resource.url}
                                                   className="w-full h-full object-cover"
@@ -1180,7 +1180,7 @@ const AddCourse = () => {
                                                 />
                                               </div>
                                             ) : resource.type === "image" ? (
-                                              <div className="w-14 h-14 bg-muted rounded-xl overflow-hidden border border-border/50 shadow-sm">
+                                              <div className="w-14 h-14 bg-muted rounded-md overflow-hidden border border-border/50 shadow-sm">
                                                 <img
                                                   src={resource.url}
                                                   alt=""
@@ -1188,13 +1188,13 @@ const AddCourse = () => {
                                                 />
                                               </div>
                                             ) : (
-                                              <div className="w-14 h-14 bg-muted rounded-xl shadow-sm border border-border/50 flex items-center justify-center text-muted-foreground">
+                                              <div className="w-14 h-14 bg-muted rounded-md shadow-sm border border-border/50 flex items-center justify-center text-muted-foreground">
                                                 {getResourceIcon(resource.type)}
                                               </div>
                                             )}
 
                                             {resource.isUploading && (
-                                              <div className="absolute inset-0 bg-background/50 backdrop-blur-[2px] flex items-center justify-center rounded-xl">
+                                              <div className="absolute inset-0 bg-background/50 backdrop-blur-[2px] flex items-center justify-center rounded-md">
                                                 <Loader2 className="animate-spin h-5 w-5 text-primary" />
                                               </div>
                                             )}
@@ -1253,7 +1253,7 @@ const AddCourse = () => {
                                                 href={resource.url}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="p-2 text-muted-foreground/70 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
+                                                className="p-2 text-muted-foreground/70 hover:text-primary hover:bg-primary/10 rounded-md transition-all"
                                                 title="Preview"
                                               >
                                                 <Upload
@@ -1270,7 +1270,7 @@ const AddCourse = () => {
                                                     resource.id,
                                                   )
                                                 }
-                                                className="p-2 text-[#6B6B80] hover:text-pink-500 hover:bg-pink-500/10 rounded-lg transition-all"
+                                                className="p-2 text-[#6B6B80] hover:text-pink-500 hover:bg-pink-500/10 rounded-md transition-all"
                                               >
                                                 <Trash2 size={16} />
                                               </button>
@@ -1296,9 +1296,9 @@ const AddCourse = () => {
                                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                           accept="video/*,image/*,.pdf,.doc,.docx,.txt"
                                         />
-                                        <div className="border border-dashed border-border/50 rounded-xl p-4 text-center group-hover:bg-muted/30 group-hover:border-primary/30 transition-all duration-300">
+                                        <div className="border border-dashed border-border/50 rounded-md p-4 text-center group-hover:bg-muted/30 group-hover:border-primary/30 transition-all duration-300">
                                           <div className="flex items-center justify-center gap-3">
-                                            <div className="w-8 h-8 bg-muted group-hover:bg-primary/20 rounded-full flex items-center justify-center transition-colors">
+                                            <div className="w-8 h-8 bg-muted group-hover:bg-primary/20 rounded-md flex items-center justify-center transition-colors">
                                               <Upload
                                                 size={14}
                                                 className="text-muted-foreground group-hover:text-primary transition-colors"
@@ -1328,21 +1328,21 @@ const AddCourse = () => {
                             <button
                               type="button"
                               onClick={() => addContent(sIdx, "mixed")}
-                              className="w-full py-4 border-2 border-dashed border-border/50 rounded-2xl text-muted-foreground/70 hover:text-primary hover:border-primary/30 hover:bg-primary/10 transition-all duration-300 flex items-center justify-center gap-2 font-bold text-sm tracking-tight group"
+                              className="w-full py-4 border-2 border-dashed border-border/50 rounded-md text-muted-foreground/70 hover:text-primary hover:border-primary/30 hover:bg-primary/10 transition-all duration-300 flex items-center justify-center gap-2 font-bold text-sm tracking-tight group"
                             >
                               <Plus size={18} className="group-hover:scale-110 transition-transform" /> Add Lesson
                             </button>
                             <button
                               type="button"
                               onClick={() => addContent(sIdx, "quiz")}
-                              className="w-full py-4 border-2 border-dashed border-border/50 rounded-2xl text-muted-foreground/70 hover:text-orange-400 hover:border-orange-500/30 hover:bg-orange-500/10 transition-all duration-300 flex items-center justify-center gap-2 font-bold text-sm tracking-tight group"
+                              className="w-full py-4 border-2 border-dashed border-border/50 rounded-md text-muted-foreground/70 hover:text-orange-400 hover:border-orange-500/30 hover:bg-orange-500/10 transition-all duration-300 flex items-center justify-center gap-2 font-bold text-sm tracking-tight group"
                             >
                               <Plus size={18} className="group-hover:scale-110 transition-transform" /> Add Quiz
                             </button>
                             <button
                               type="button"
                               onClick={() => addContent(sIdx, "assignment")}
-                              className="w-full py-4 border-2 border-dashed border-border/50 rounded-2xl text-muted-foreground/70 hover:text-emerald-400 hover:border-emerald-500/30 hover:bg-emerald-500/10 transition-all duration-300 flex items-center justify-center gap-2 font-bold text-sm tracking-tight group"
+                              className="w-full py-4 border-2 border-dashed border-border/50 rounded-md text-muted-foreground/70 hover:text-emerald-400 hover:border-emerald-500/30 hover:bg-emerald-500/10 transition-all duration-300 flex items-center justify-center gap-2 font-bold text-sm tracking-tight group"
                             >
                               <Plus size={18} className="group-hover:scale-110 transition-transform" /> Add Assignment
                             </button>
@@ -1354,8 +1354,8 @@ const AddCourse = () => {
                 ))}
 
                 {formData.sections.length === 0 && (
-                  <div className="text-center py-16 bg-muted/50 rounded-3xl border border-border/50 shadow-2xl backdrop-blur-sm">
-                    <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-primary/20 shadow-inner">
+                  <div className="text-center py-16 bg-muted/50 rounded-md border border-border/50 shadow-2xl backdrop-blur-sm">
+                    <div className="w-20 h-20 bg-primary/10 rounded-md flex items-center justify-center mx-auto mb-6 border border-primary/20 shadow-inner">
                       <Plus size={40} className="text-primary" />
                     </div>
                     <h3 className="text-xl font-black text-foreground mb-2 tracking-tight">
@@ -1367,7 +1367,7 @@ const AddCourse = () => {
                     <button
                       type="button"
                       onClick={addSection}
-                      className="bg-primary/10 backdrop-blur-md border border-primary/20 text-primary px-8 py-3 rounded-full hover:bg-primary hover:text-primary-foreground font-bold transition-all duration-300 shadow-lg hover:shadow-primary/20 active:scale-95 tracking-wide"
+                      className="bg-primary/10 backdrop-blur-md border border-primary/20 text-primary px-8 py-3 rounded-md hover:bg-primary hover:text-primary-foreground font-bold transition-all duration-300 shadow-lg hover:shadow-primary/20 active:scale-95 tracking-wide"
                     >
                       Initialize First Section
                     </button>
@@ -1398,7 +1398,7 @@ const AddCourse = () => {
                 <button
                   type="button"
                   onClick={addCoupon}
-                  className="flex items-center gap-2 bg-muted/50 hover:bg-muted backdrop-blur-md rounded-full px-6 py-2.5 text-foreground font-bold transition-all duration-300 border border-border hover:border-primary/50 shadow-lg hover:shadow-primary/20 active:scale-95 text-sm tracking-wide"
+                  className="flex items-center gap-2 bg-muted/50 hover:bg-muted backdrop-blur-md rounded-md px-6 py-2.5 text-foreground font-bold transition-all duration-300 border border-border hover:border-primary/50 shadow-lg hover:shadow-primary/20 active:scale-95 text-sm tracking-wide"
                 >
                   <Plus size={18} className="text-primary" /> Add Coupon
                 </button>
@@ -1410,12 +1410,12 @@ const AddCourse = () => {
                     key={idx}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-card backdrop-blur-xl p-6 md:p-8 rounded-3xl border border-border/50 shadow-2xl space-y-6 relative group premium-card"
+                    className="bg-card backdrop-blur-xl p-6 md:p-8 rounded-md border border-border/50 shadow-2xl space-y-6 relative group premium-card"
                   >
                     <button
                       type="button"
                       onClick={() => removeCoupon(idx)}
-                      className="absolute top-4 right-4 p-2 text-muted-foreground/70 hover:text-destructive hover:bg-destructive/10 rounded-xl transition-all"
+                      className="absolute top-4 right-4 p-2 text-muted-foreground/70 hover:text-destructive hover:bg-destructive/10 rounded-md transition-all"
                     >
                       <Trash2 size={18} />
                     </button>
@@ -1432,7 +1432,7 @@ const AddCourse = () => {
                             placeholder="E.g. WELCOME50"
                             value={coupon.code}
                             onChange={(e) => updateCouponField(idx, "code", e.target.value.toUpperCase())}
-                            className="w-full pl-11 pr-5 py-4 bg-muted/30 rounded-xl border border-border focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none text-foreground placeholder:text-muted-foreground/50 font-bold transition-all duration-300 shadow-inner"
+                            className="w-full pl-11 pr-5 py-4 bg-muted/30 rounded-md border border-border focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none text-foreground placeholder:text-muted-foreground/50 font-bold transition-all duration-300 shadow-inner"
                           />
                         </div>
                       </div>
@@ -1447,7 +1447,7 @@ const AddCourse = () => {
                             placeholder="Amount"
                             value={coupon.discount}
                             onChange={(e) => updateCouponField(idx, "discount", e.target.value)}
-                            className="w-full px-5 py-4 bg-muted/30 rounded-xl border border-border focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none text-foreground placeholder:text-muted-foreground/50 font-bold transition-all duration-300 shadow-inner"
+                            className="w-full px-5 py-4 bg-muted/30 rounded-md border border-border focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none text-foreground placeholder:text-muted-foreground/50 font-bold transition-all duration-300 shadow-inner"
                           />
                         </div>
                         <div>
@@ -1457,7 +1457,7 @@ const AddCourse = () => {
                           <select
                             value={coupon.type}
                             onChange={(e) => updateCouponField(idx, "type", e.target.value)}
-                            className="w-full px-5 py-4 bg-muted/30 rounded-xl border border-border focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none text-foreground placeholder-text-muted-foreground/50 font-bold transition-all duration-300 shadow-inner appearance-none cursor-pointer"
+                            className="w-full px-5 py-4 bg-muted/30 rounded-md border border-border focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none text-foreground placeholder-text-muted-foreground/50 font-bold transition-all duration-300 shadow-inner appearance-none cursor-pointer"
                           >
                             <option value="percentage" className="bg-card text-foreground">% Percentage</option>
                             <option value="fixed" className="bg-card text-foreground">Fixed Amount</option>
@@ -1475,7 +1475,7 @@ const AddCourse = () => {
                           type="date"
                           value={coupon.expiry}
                           onChange={(e) => updateCouponField(idx, "expiry", e.target.value)}
-                          className="w-full px-5 py-4 bg-muted/30 rounded-xl border border-border focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none text-foreground placeholder-text-muted-foreground/50 font-bold transition-all duration-300 shadow-inner [color-scheme:light] dark:[color-scheme:dark]"
+                          className="w-full px-5 py-4 bg-muted/30 rounded-md border border-border focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none text-foreground placeholder-text-muted-foreground/50 font-bold transition-all duration-300 shadow-inner [color-scheme:light] dark:[color-scheme:dark]"
                         />
                       </div>
                       <div>
@@ -1487,7 +1487,7 @@ const AddCourse = () => {
                           placeholder="Unlimited if empty"
                           value={coupon.maxUses}
                           onChange={(e) => updateCouponField(idx, "maxUses", e.target.value)}
-                          className="w-full px-5 py-4 bg-muted/30 rounded-xl border border-border focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none text-foreground placeholder:text-muted-foreground/50 font-bold transition-all duration-300 shadow-inner"
+                          className="w-full px-5 py-4 bg-muted/30 rounded-md border border-border focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none text-foreground placeholder:text-muted-foreground/50 font-bold transition-all duration-300 shadow-inner"
                         />
                       </div>
                     </div>
@@ -1495,7 +1495,7 @@ const AddCourse = () => {
                 ))}
 
                 {formData.coupons.length === 0 && (
-                  <div className="text-center py-12 bg-muted/20 rounded-2xl border-2 border-dashed border-border/50">
+                  <div className="text-center py-12 bg-muted/20 rounded-md border-2 border-dashed border-border/50">
                     <p className="text-sm text-muted-foreground font-medium tracking-wide">No coupons added yet. This is optional.</p>
                   </div>
                 )}
@@ -1510,7 +1510,7 @@ const AddCourse = () => {
             type="button"
             onClick={prevStep}
             disabled={currentStep === 1 || loading}
-            className={`px-6 py-3 rounded-full font-bold flex items-center gap-2 transition-all duration-300 ${currentStep === 1 || loading
+            className={`px-6 py-3 rounded-md font-bold flex items-center gap-2 transition-all duration-300 ${currentStep === 1 || loading
               ? "text-muted-foreground/30 cursor-not-allowed"
               : "text-muted-foreground hover:text-foreground hover:bg-muted"
               }`}
@@ -1523,7 +1523,7 @@ const AddCourse = () => {
               type="button"
               onClick={handleSaveDraft}
               disabled={loading || !formData.title}
-              className="px-8 py-3 rounded-full font-bold text-primary border border-primary/30 hover:bg-primary/10 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(139,92,246,0.1)] hover:shadow-[0_0_20px_rgba(139,92,246,0.2)] tracking-wide"
+              className="px-8 py-3 rounded-md font-bold text-primary border border-primary/30 hover:bg-primary/10 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(139,92,246,0.1)] hover:shadow-[0_0_20px_rgba(139,92,246,0.2)] tracking-wide"
             >
               Save as Draft
             </button>
@@ -1532,7 +1532,7 @@ const AddCourse = () => {
                 key="btn-next"
                 type="button"
                 onClick={nextStep}
-                className="bg-primary text-primary-foreground px-10 py-3 rounded-full font-bold hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center gap-2 border border-primary/50"
+                className="bg-primary text-primary-foreground px-10 py-3 rounded-md font-bold hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center gap-2 border border-primary/50"
               >
                 Forward <ArrowRight size={18} />
               </button>
@@ -1542,7 +1542,7 @@ const AddCourse = () => {
                 type="button"
                 onClick={handleSubmit}
                 disabled={loading || Object.values(uploadingFiles).some(Boolean)}
-                className="bg-gradient-to-r from-primary to-accent text-primary-foreground px-10 py-3 rounded-full font-bold hover:from-primary/90 hover:to-accent/90 transition-all duration-300 shadow-lg shadow-primary/25 active:scale-95 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed tracking-wide border border-primary/20"
+                className="bg-gradient-to-r from-primary to-accent text-primary-foreground px-10 py-3 rounded-md font-bold hover:from-primary/90 hover:to-accent/90 transition-all duration-300 shadow-lg shadow-primary/25 active:scale-95 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed tracking-wide border border-primary/20"
               >
                 {loading ? (
                   <>

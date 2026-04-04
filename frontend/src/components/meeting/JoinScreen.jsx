@@ -23,15 +23,15 @@ const JoinScreen = ({ onJoin, courseName, isInstructor, goLive, isVideoCall, isJ
         
         {/* Left Side: Camera Preview */}
         <div className={`flex-1 w-full flex flex-col ${isConsultation ? 'gap-4' : 'gap-6 max-w-2xl'}`}>
-          <div className={`relative aspect-video bg-[#3c4043] rounded-2xl overflow-hidden shadow-2xl flex items-center justify-center border border-white/5 group`}>
+          <div className={`relative aspect-video bg-[#3c4043] rounded-md overflow-hidden shadow-2xl flex items-center justify-center border border-white/5 group`}>
             {!isCamMuted ? (
                <div className="w-full h-full bg-[#202124] flex items-center justify-center border border-white/5 flex-col gap-2">
-                 <Icon icon="solar:camera-add-bold-duotone" className={`${isConsultation ? 'w-8 h-8' : 'w-12 h-12'} text-gray-600`} />
-                 <span className="text-gray-400 text-[10px] font-medium uppercase tracking-widest">Camera On</span>
+                 <Icon icon="solar:camera-add-bold-duotone" className={`${isConsultation ? 'w-8 h-8' : 'w-12 h-12'} text-muted-foreground`} />
+                 <span className="text-muted-foreground text-[10px] font-medium uppercase tracking-widest">Camera On</span>
                </div>
             ) : (
-              <div className={`${isConsultation ? 'w-16 h-16' : 'w-24 h-24'} rounded-full bg-[#3c4043] flex items-center justify-center shadow-lg border border-white/5`}>
-                 <Icon icon="solar:user-rounded-bold" className={`${isConsultation ? 'w-8 h-8' : 'w-12 h-12'} text-gray-400`} />
+              <div className={`${isConsultation ? 'w-16 h-16' : 'w-24 h-24'} rounded-md bg-[#3c4043] flex items-center justify-center shadow-lg border border-white/5`}>
+                 <Icon icon="solar:user-rounded-bold" className={`${isConsultation ? 'w-8 h-8' : 'w-12 h-12'} text-muted-foreground`} />
               </div>
             )}
 
@@ -39,7 +39,7 @@ const JoinScreen = ({ onJoin, courseName, isInstructor, goLive, isVideoCall, isJ
             <div className={`absolute ${isConsultation ? 'bottom-3' : 'bottom-6'} left-1/2 transform -translate-x-1/2 flex items-center gap-4 transition-all opacity-100`}>
               <button
                 onClick={toggleMic}
-                className={`${isConsultation ? 'w-9 h-9' : 'w-12 h-12'} flex items-center justify-center rounded-full shadow-xl transition-all border border-white/10 ${
+                className={`${isConsultation ? 'w-9 h-9' : 'w-12 h-12'} flex items-center justify-center rounded-md shadow-xl transition-all border border-white/10 ${
                   isMicMuted ? 'bg-[#ea4335] text-white hover:bg-[#d93025]' : 'bg-[#3c4043]/80 text-white backdrop-blur-md hover:bg-[#4d5154]/90'
                 }`}
               >
@@ -48,7 +48,7 @@ const JoinScreen = ({ onJoin, courseName, isInstructor, goLive, isVideoCall, isJ
               
               <button
                 onClick={toggleCam}
-                className={`${isConsultation ? 'w-9 h-9' : 'w-12 h-12'} flex items-center justify-center rounded-full shadow-xl transition-all border border-white/10 ${
+                className={`${isConsultation ? 'w-9 h-9' : 'w-12 h-12'} flex items-center justify-center rounded-md shadow-xl transition-all border border-white/10 ${
                   isCamMuted ? 'bg-[#ea4335] text-white hover:bg-[#d93025]' : 'bg-[#3c4043]/80 text-white backdrop-blur-md hover:bg-[#4d5154]/90'
                 }`}
               >
@@ -61,7 +61,7 @@ const JoinScreen = ({ onJoin, courseName, isInstructor, goLive, isVideoCall, isJ
         {/* Right Side: Join Info */}
         <div className={`w-full ${isConsultation ? 'text-center' : 'md:w-80 md:text-left'} flex flex-col items-center pt-2 md:pt-0`}>
           {!isConsultation && <h1 className="text-3xl font-normal text-white mb-2 font-sans truncate w-full">{courseName || "Meeting"}</h1>}
-          <p className={`${isConsultation ? 'text-xs' : 'text-sm'} text-gray-400 mb-6 font-light`}>
+          <p className={`${isConsultation ? 'text-xs' : 'text-sm'} text-muted-foreground mb-6 font-light`}>
             {isInstructor 
               ? "Ready to start?" 
               : "Ready to join? Make sure you're set up!"}
@@ -72,7 +72,7 @@ const JoinScreen = ({ onJoin, courseName, isInstructor, goLive, isVideoCall, isJ
               <button
                 onClick={onJoin}
                 disabled={isJoining}
-                className="w-full bg-[#8ab4f8] hover:bg-[#aecbfa] text-[#202124] px-8 py-4 rounded-2xl font-bold transition-all shadow-lg text-sm disabled:opacity-50"
+                className="w-full bg-[#8ab4f8] hover:bg-[#aecbfa] text-[#202124] px-8 py-4 rounded-md font-bold transition-all shadow-lg text-sm disabled:opacity-50"
               >
                 {isJoining ? 'Joining...' : 'JOIN CONSULTATION'}
               </button>
@@ -80,7 +80,7 @@ const JoinScreen = ({ onJoin, courseName, isInstructor, goLive, isVideoCall, isJ
               <button
                 onClick={onJoin}
                 disabled={isJoining}
-                className="w-full bg-[#8ab4f8] hover:bg-[#aecbfa] text-[#202124] px-8 py-3 rounded-full font-medium transition-all shadow-lg text-[15px] disabled:opacity-50"
+                className="w-full bg-[#8ab4f8] hover:bg-[#aecbfa] text-[#202124] px-8 py-3 rounded-md font-medium transition-all shadow-lg text-[15px] disabled:opacity-50"
               >
                 {isJoining ? 'Joining...' : 'Join now'}
               </button>
@@ -89,18 +89,18 @@ const JoinScreen = ({ onJoin, courseName, isInstructor, goLive, isVideoCall, isJ
                  <button
                   onClick={onJoin}
                   disabled={isJoining}
-                  className="w-full bg-[#3c4043] hover:bg-[#4d5154] text-white px-8 py-3 rounded-full font-medium transition-all border border-white/10 text-[15px] disabled:opacity-50"
+                  className="w-full bg-[#3c4043] hover:bg-[#4d5154] text-white px-8 py-3 rounded-md font-medium transition-all border border-white/10 text-[15px] disabled:opacity-50"
                 >
                   {isJoining ? 'Joining...' : 'Join Backstage'}
                 </button>
                 <button
                   onClick={goLive}
                   disabled={isJoining}
-                  className="w-full bg-[#1a73e8] hover:bg-[#1557b0] disabled:opacity-70 disabled:cursor-not-allowed text-white px-8 py-3 rounded-full font-medium transition-all shadow-md mt-2 text-[15px] flex items-center justify-center gap-2"
+                  className="w-full bg-[#1a73e8] hover:bg-[#1557b0] disabled:opacity-70 disabled:cursor-not-allowed text-white px-8 py-3 rounded-md font-medium transition-all shadow-md mt-2 text-[15px] flex items-center justify-center gap-2"
                 >
                   {isJoining ? (
                     <>
-                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin flex-shrink-0" />
+                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-md animate-spin flex-shrink-0" />
                       Initializing...
                     </>
                   ) : (
@@ -112,7 +112,7 @@ const JoinScreen = ({ onJoin, courseName, isInstructor, goLive, isVideoCall, isJ
                <button
                   onClick={onJoin}
                   disabled={isJoining}
-                  className="w-full bg-[#8ab4f8] hover:bg-[#aecbfa] text-[#202124] px-8 py-3 rounded-full font-medium transition-all shadow-lg text-[15px] disabled:opacity-50"
+                  className="w-full bg-[#8ab4f8] hover:bg-[#aecbfa] text-[#202124] px-8 py-3 rounded-md font-medium transition-all shadow-lg text-[15px] disabled:opacity-50"
                 >
                   {isJoining ? 'Joining...' : 'Join Session'}
                 </button>
