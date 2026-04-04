@@ -51,6 +51,7 @@ import AdminDashboard from "./Pages/admin/Dashboard";
 import AdminUsers from "./Pages/admin/Users";
 
 import { getSession } from "@/lib/auth.client";
+import { resolveActiveRole } from "@/utils/roles";
 import { logout, setCredentials, setLoading } from "@/store/slices/authSlice";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import PublicRoute from "./components/common/PublicRoute";
@@ -73,7 +74,14 @@ export default function App() {
 
         const session = await getSession();
         if (session && session.user) {
-          const role = session.user.role || 'student';
+          const path = window.location.pathname || "";
+          let inferred = null;
+          if (path.startsWith("/instructor")) inferred = "instructor";
+          else if (path.startsWith("/student")) inferred = "student";
+          else if (path.startsWith("/admin")) inferred = "admin";
+
+          const stored = localStorage.getItem("userRole");
+          const role = resolveActiveRole(session.user, stored, inferred);
           // Serialize userData to avoid non-serializable value warning in Redux
           const serializedUser = JSON.parse(JSON.stringify(session.user));
           dispatch(setCredentials({ role, userData: serializedUser }));

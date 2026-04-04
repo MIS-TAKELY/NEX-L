@@ -1,8 +1,10 @@
 import { Label } from "@/components/ui/label";
-import { getSession, loginWithGithub, loginWithGoogle, signIn } from "@/lib/auth.client";
+import { getSession, loginWithGithub, loginWithGoogle, signIn, signOut } from "@/lib/auth.client";
 import { cn } from "@/lib/utils";
 
 import { setCredentials } from "@/store/slices/authSlice";
+import { getAuthErrorMessage, isEmailNotVerifiedError } from "@/utils/auth-errors";
+import { normalizeRole, parseRolesFromUser } from "@/utils/roles";
 import { verifyEmail } from "@/utils/verify-email";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
@@ -31,33 +33,44 @@ const SignIn = () => {
     setError("");
     setLoading(true);
 
-    if (!verifyEmail(formData.email)) {
-      setError("Invalid email");
+    const email = formData.email.trim().toLowerCase();
+    if (!verifyEmail(email)) {
+      setError("Please enter a valid email address");
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.password) {
+      setError("Password is required");
       setLoading(false);
       return;
     }
 
     try {
-      // Sign in using better-auth client
-      await signIn(formData.email, formData.password);
+      await signIn(email, formData.password);
 
       // Get session data
       const session = await getSession();
 
       if (session && session.user) {
-        // Get role from backend session (secure, server-side role)
-        const userRole = session.user.role || "student";
+        const roles = parseRolesFromUser(session.user);
+        const want = normalizeRole(role);
+        if (!roles.includes(want)) {
+          await signOut();
+          const have = roles.join(" and ");
+          setError(
+            `This account does not have ${want} access. You can sign in as: ${have}. Add the other role on the sign-up page with your password.`,
+          );
+          return;
+        }
 
-        // Update Redux state with user data and role from backend
-        // Serialize userData to avoid non-serializable value warning in Redux
         const serializedUser = JSON.parse(JSON.stringify(session.user));
-        dispatch(setCredentials({ role: userRole, userData: serializedUser }));
+        dispatch(setCredentials({ role: want, userData: serializedUser }));
 
-        console.log("Login success:", session);
-
-        // Redirect based on role from backend
-        if (userRole === "instructor") {
+        if (want === "instructor") {
           navigate("/instructor/dashboard", { replace: true });
+        } else if (want === "admin") {
+          navigate("/admin/dashboard", { replace: true });
         } else {
           navigate("/student/dashboard", { replace: true });
         }
@@ -66,13 +79,15 @@ const SignIn = () => {
       }
     } catch (error) {
       console.error("Login failed:", error);
-      
-      let errorMessage = error.response?.data?.message || error.message || "Login failed";
-      
-      if (error.status === 403 || error.response?.status === 403 || errorMessage.toLowerCase().includes("verify")) {
-        errorMessage = "Please verify your email address to sign in. Check your inbox for the verification link.";
+
+      let errorMessage = getAuthErrorMessage(error);
+      if (isEmailNotVerifiedError(error)) {
+        errorMessage =
+          "Please verify your email address to sign in. Check your inbox for the verification link.";
+      } else if (errorMessage.toLowerCase().includes("invalid email or password")) {
+        errorMessage = "Invalid email or password. Check your details and try again.";
       }
-      
+
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -163,13 +178,15 @@ const SignIn = () => {
 
               <LabelInputContainer>
                 <Label htmlFor="email" className="text-base text-foreground">
-                  Email or Phone Number
+                  Email address
                 </Label>
                 <input
                   id="email"
                   name="email"
-                  placeholder="123@gmail.com"
-                  type="text"
+                  placeholder="you@example.com"
+                  type="email"
+                  autoComplete="email"
+                  inputMode="email"
                   value={formData.email}
                   onChange={handleChange}
                   required
@@ -190,6 +207,7 @@ const SignIn = () => {
                     value={formData.password}
                     onChange={handleChange}
                     required
+                    autoComplete="current-password"
                     className="flex h-12 w-full rounded-xl border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground pr-10"
                   />
                   <button

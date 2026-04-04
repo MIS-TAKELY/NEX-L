@@ -4,9 +4,11 @@ import {
     getSession,
     loginWithGithub,
     loginWithGoogle,
-    signIn,
+    mergeRole,
     signUp,
 } from "@/lib/auth.client";
+import { getAuthErrorMessage, isUserAlreadyExistsError } from "@/utils/auth-errors";
+import { verifyEmail, verifyPhoneOptional } from "@/utils/verify-email";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { setCredentials } from "@/store/slices/authSlice";
@@ -33,6 +35,7 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -43,82 +46,115 @@ const SignUp = () => {
     setError("");
     setLoading(true);
 
-    // Validate passwords match
+    const emailTrimmed = formData.email.trim().toLowerCase();
+    if (!verifyEmail(emailTrimmed)) {
+      setError("Please enter a valid email address");
+      setLoading(false);
+      return;
+    }
+
+    const first = formData.firstName.trim();
+    const last = formData.lastName.trim();
+    if (!first || !last) {
+      setError("Please enter your first and last name");
+      setLoading(false);
+      return;
+    }
+
+    if (!verifyPhoneOptional(formData.phoneNumber)) {
+      setError("Enter a valid phone number (8–15 digits), or leave the field empty");
+      setLoading(false);
+      return;
+    }
+
     if (formData.createNewPassword !== formData.confirmPassword) {
       setError("Passwords do not match");
       setLoading(false);
       return;
     }
 
-    // Validate password length
     if (formData.createNewPassword.length < 8) {
       setError("Password must be at least 8 characters long");
       setLoading(false);
       return;
     }
 
+    if (formData.createNewPassword.length > 128) {
+      setError("Password must be at most 128 characters long");
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Create full name from first and last name
-      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
-
-      // Sign up with better-auth, including role and callbackURL for email verification
+      setSuccessMessage("");
+      const fullName = `${first} ${last}`.trim();
       const callbackURL = `${window.location.origin}/login`;
-      await signUp(formData.email, formData.createNewPassword, fullName, role, callbackURL);
-
+      let signupData;
       try {
-        // Automatically sign in after successful signup
-        await signIn(formData.email, formData.createNewPassword);
-
-        // Get session data
-        const session = await getSession();
-
-        if (session && session.user) {
-          // Get role from backend session (more secure than client-side role)
-          const userRole = session.user.role || role;
-
-          // Update Redux state with user data
-          // Serialize userData to avoid non-serializable value warning in Redux
-          const serializedUser = JSON.parse(JSON.stringify(session.user));
-          dispatch(setCredentials({ role: userRole, userData: serializedUser }));
-
-          console.log("Signup and login success:", session);
-
-          // Redirect based on role
-          if (userRole === "instructor") {
-            navigate("/instructor/dashboard", { replace: true });
-          } else if (userRole === "admin") {
-            navigate("/admin/dashboard", { replace: true });
-          } else {
-            navigate("/student/dashboard", { replace: true });
+        signupData = await signUp(
+          emailTrimmed,
+          formData.createNewPassword,
+          fullName,
+          role,
+          callbackURL,
+        );
+      } catch (signErr) {
+        if (isUserAlreadyExistsError(signErr)) {
+          try {
+            const merged = await mergeRole(emailTrimmed, formData.createNewPassword, role);
+            if (merged?.alreadyHadRole) {
+              setError("You already have this role for this account. Sign in instead.");
+              return;
+            }
+            setError("");
+            setSuccessMessage(
+              "That email already had an account — we added this role. You can sign in with your password.",
+            );
+            return;
+          } catch (mergeErr) {
+            const msg = mergeErr?.message || "";
+            if (mergeErr?.status === 401) {
+              setError(
+                "This email is already registered. Enter your account password to add this role, or sign in.",
+              );
+              return;
+            }
+            if (msg.toLowerCase().includes("social")) {
+              setError(msg);
+              return;
+            }
+            setError("An account with this email already exists. Sign in instead.");
+            return;
           }
-        } else {
-          // Signup succeeded but login failed, redirect to login page
-          navigate("/login");
         }
-      } catch (signInError) {
-        // Evaluate the exact error returned by signIn
-        const errorMessage = signInError.message?.toLowerCase() || signInError.response?.data?.message?.toLowerCase() || "";
-        
-        if (signInError.status === 403 || signInError.response?.status === 403 || errorMessage.includes("verify")) {
-          // Normal successful registration path (pending verification)
-          setShowVerifyModal(true);
-        } else if (signInError.status === 401 || signInError.status === 400 || errorMessage.includes("invalid") || errorMessage.includes("password")) {
-          // If signUp returned 200, but signIn complains about invalid credentials, 
-          // it means the account already existed, and the user provided a non-matching password.
-          setError("This email address is already registered. Please go to the sign in page.");
+        throw signErr;
+      }
+
+      // With requireEmailVerification, the API returns token: null and does not create a session.
+      if (!signupData?.token) {
+        setShowVerifyModal(true);
+        return;
+      }
+
+      const session = await getSession();
+      if (session?.user) {
+        const userRole = session.user.role || role;
+        const serializedUser = JSON.parse(JSON.stringify(session.user));
+        dispatch(setCredentials({ role: userRole, userData: serializedUser }));
+
+        if (userRole === "instructor") {
+          navigate("/instructor/dashboard", { replace: true });
+        } else if (userRole === "admin") {
+          navigate("/admin/dashboard", { replace: true });
         } else {
-          // Generic fallback
-           console.error("Sign in after sign up failed:", signInError);
-           setError(signInError.message || "An unexpected error occurred during registration flow.");
+          navigate("/student/dashboard", { replace: true });
         }
+      } else {
+        setError("Account created but we could not start your session. Please sign in.");
       }
     } catch (error) {
       console.error("Signup failed:", error);
-      setError(
-        error.response?.data?.message ||
-        error.message ||
-        "Sign up failed. Email may already be in use.",
-      );
+      setError(getAuthErrorMessage(error) || "Sign up failed. Try again.");
     } finally {
       setLoading(false);
     }
@@ -268,16 +304,16 @@ const SignUp = () => {
 
               <LabelInputContainer>
                 <Label htmlFor="phoneNumber" className="text-sm text-foreground">
-                  Phone Number
+                  Phone number (optional)
                 </Label>
                 <input
                   id="phoneNumber"
                   name="phoneNumber"
                   placeholder=""
                   type="tel"
+                  autoComplete="tel"
                   value={formData.phoneNumber}
                   onChange={handleChange}
-                  required
                   className="flex h-11 w-full rounded-xl border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
                 />
               </LabelInputContainer>
@@ -340,6 +376,12 @@ const SignUp = () => {
                 </LabelInputContainer>
               </div>
             </div>
+
+            {successMessage && (
+              <div className="bg-emerald-500/10 border border-emerald-500/25 text-emerald-800 dark:text-emerald-200 px-4 py-3 rounded-md text-sm my-4">
+                {successMessage}
+              </div>
+            )}
 
             {error && (
               <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md text-sm my-4">

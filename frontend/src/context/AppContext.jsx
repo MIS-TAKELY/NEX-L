@@ -1,4 +1,5 @@
 import { signOut as authSignOut, getSession } from "@/lib/auth.client";
+import { resolveActiveRole } from "@/utils/roles";
 import { createContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme as reduxToggleTheme, setTheme as reduxSetTheme } from "@/store/slices/uiSlice";
@@ -41,8 +42,13 @@ export const AppContextProvider = ({ children }) => {
       try {
         const session = await getSession();
         if (session && session.user) {
-          // Extract role from backend session
-          const role = session.user.role || 'student';
+          const path = window.location.pathname || "";
+          let inferred = null;
+          if (path.startsWith("/instructor")) inferred = "instructor";
+          else if (path.startsWith("/student")) inferred = "student";
+          else if (path.startsWith("/admin")) inferred = "admin";
+          const stored = localStorage.getItem("userRole");
+          const role = resolveActiveRole(session.user, stored, inferred);
 
           setIsLoggedIn(true);
           setUserRole(role);

@@ -38,20 +38,20 @@ export const getSession = async () => {
   }
 };
 
-// Utility function to sign up
+// Utility function to sign up — returns `{ user, token }` (token is null when email verification is required)
 export const signUp = async (email, password, name = "", role = "student", callbackURL) => {
   try {
     const result = await authClient.signUp.email({
-      email,
+      email: typeof email === "string" ? email.trim().toLowerCase() : email,
       password,
       name,
-      role, // Include role in signup
-      callbackURL, // Included for email verification redirect
+      role,
+      callbackURL,
     });
     if (result.error) {
       throw result.error;
     }
-    return result;
+    return result.data;
   } catch (error) {
     console.error("Sign up failed:", error);
     throw error;
@@ -62,13 +62,13 @@ export const signUp = async (email, password, name = "", role = "student", callb
 export const signIn = async (email, password) => {
   try {
     const result = await authClient.signIn.email({
-      email,
+      email: typeof email === "string" ? email.trim().toLowerCase() : email,
       password,
     });
     if (result.error) {
       throw result.error;
     }
-    return result;
+    return result.data;
   } catch (error) {
     console.error("Sign in failed:", error);
     throw error;
@@ -76,6 +76,30 @@ export const signIn = async (email, password) => {
 };
 
 // Utility function to sign out
+/**
+ * Add instructor/student to an existing account (password-verified on server).
+ * Call when email sign-up fails with "already exists" and the user wants both roles.
+ */
+export const mergeRole = async (email, password, role) => {
+  const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/auth/merge-role`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({
+      email: typeof email === "string" ? email.trim().toLowerCase() : email,
+      password,
+      role,
+    }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const err = new Error(data.message || "Could not add role");
+    err.status = res.status;
+    throw err;
+  }
+  return data;
+};
+
 export const signOut = async () => {
   try {
     const { error } = await authClient.signOut();

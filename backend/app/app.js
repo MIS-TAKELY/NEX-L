@@ -19,6 +19,7 @@ import streamRouter from "../app/routes/stream.routes.js";
 import liveClassRouter from "../app/routes/live-class.routes.js";
 import tutoringSessionRouter from "../app/routes/tutoring-session.routes.js";
 import badgeRouter from "../app/routes/badge.routes.js";
+import mergeRoleRouter from "../app/routes/merge-role.routes.js";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth.js";
 
@@ -248,6 +249,9 @@ const oauthCallbackHandler = async (req, res) => {
 
 app.get("/api/v1/auth/callback/google", oauthCallbackHandler);
 app.get("/api/v1/auth/callback/github", oauthCallbackHandler);
+
+// Custom routes must run before the Better Auth catch-all handler
+app.use("/api/v1/auth", mergeRoleRouter);
 
 // General Better Auth Handler for all other /api/v1/auth/* routes
 app.use("/api/v1/auth", (req, res) => toNodeHandler(auth)(req, res));
