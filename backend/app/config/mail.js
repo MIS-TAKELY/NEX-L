@@ -1,16 +1,21 @@
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  service: "gmail", // Use built-in Gmail service configuration
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // Use STARTTLS
+  requireTLS: true,
   auth: {
     user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS, // Uses 16-character App Password
+    pass: process.env.MAIL_PASS,
   },
+  tls: {
+    rejectUnauthorized: false, // Compatibility for data center networks
+  },
+  logger: true, // Output SMTP traffic to logs
+  debug: true,  // Include debug info in logs
   connectionTimeout: 10000,
   greetingTimeout: 10000,
-  tls: {
-    rejectUnauthorized: false, // Bypass potential cert issues on data center local network
-  },
 });
 
 // Verify connection configuration - non-blocking to avoid startup timeouts on Render
