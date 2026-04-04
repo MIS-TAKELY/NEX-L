@@ -82,11 +82,11 @@ export function AboutUs() {
               key={index}
               variants={itemVariants}
               whileHover={{ y: -5 }}
-              className="group relative p-8 bg-secondary rounded-3xl border border-border hover:bg-card hover:shadow-xl hover:shadow-primary/10 transition-all duration-300"
+              className="group relative p-8 bg-secondary rounded-md border border-border hover:bg-card hover:shadow-xl hover:shadow-primary/10 transition-all duration-300"
             >
               {/* Icon */}
               <div
-                className={`w-14 h-14 rounded-2xl ${feature.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}
+                className={`w-14 h-14 rounded-md ${feature.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}
               >
                 {feature.icon}
               </div>
@@ -101,7 +101,7 @@ export function AboutUs() {
 
               {/* Hover Arrow */}
               <div className="absolute bottom-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-primary rounded-md flex items-center justify-center">
                   <ArrowRight className="w-5 h-5 text-primary-foreground" />
                 </div>
               </div>

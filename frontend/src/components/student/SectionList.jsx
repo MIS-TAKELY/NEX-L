@@ -22,25 +22,25 @@ const SectionList = ({ sections, onSelectContent, activeResourceId }) => {
     return (
         <div className="space-y-4">
             {sections?.map((section, sIndex) => (
-                <div key={section._id} className="border-b border-gray-100 dark:border-zinc-800 pb-4">
+                <div key={section._id} className="border-b border-border dark:border-border pb-4">
                     <button
                         onClick={() => toggleSection(section._id)}
-                        className="w-full flex items-center justify-between text-left p-2 hover:bg-gray-50 dark:hover:bg-zinc-800/50 rounded-xl transition-all"
+                        className="w-full flex items-center justify-between text-left p-2 hover:bg-muted dark:hover:bg-zinc-800/50 rounded-md transition-all"
                     >
                         <div className="flex items-center gap-3">
-                            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary text-sm font-bold">
+                            <span className="flex items-center justify-center w-8 h-8 rounded-md bg-primary/10 text-primary text-sm font-bold">
                                 {sIndex + 1}
                             </span>
-                            <span className="font-bold text-gray-900 dark:text-foreground line-clamp-1">{section.title}</span>
+                            <span className="font-bold text-foreground dark:text-foreground line-clamp-1">{section.title}</span>
                         </div>
                         <Icon
                             icon={expandedSections[section._id] ? 'solar:alt-arrow-up-linear' : 'solar:alt-arrow-down-linear'}
-                            className="text-gray-400"
+                            className="text-muted-foreground"
                         />
                     </button>
 
                     {expandedSections[section._id] && (
-                        <div className="mt-2 ml-4 space-y-2 border-l-2 border-gray-50 dark:border-zinc-800/50 pl-4">
+                        <div className="mt-2 ml-4 space-y-2 border-l-2 border-gray-50 dark:border-border/50 pl-4">
                             {section.contents?.map((lesson) => (
                                 <div key={lesson._id} className="space-y-1">
                                     {/* Lesson Row */}
@@ -54,9 +54,9 @@ const SectionList = ({ sections, onSelectContent, activeResourceId }) => {
                                                 onSelectContent({ url: lesson.url, type: lesson.type, name: lesson.title }, lesson);
                                             }
                                         }}
-                                        className={`w-full flex items-center justify-between gap-3 p-2 rounded-lg text-sm transition-all ${(activeResourceId === lesson._id || lesson.resources?.some(r => r._id === activeResourceId || r.url === activeResourceId))
+                                        className={`w-full flex items-center justify-between gap-3 p-2 rounded-md text-sm transition-all ${(activeResourceId === lesson._id || lesson.resources?.some(r => r._id === activeResourceId || r.url === activeResourceId))
                                                 ? 'bg-primary/5 text-primary font-bold'
-                                                : 'text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800'
+                                                : 'text-foreground dark:text-zinc-300 hover:bg-muted dark:hover:bg-zinc-800'
                                             }`}
                                     >
                                         <div className="flex items-center gap-2 truncate">
@@ -68,7 +68,7 @@ const SectionList = ({ sections, onSelectContent, activeResourceId }) => {
                                                             ? 'solar:checklist-bold'
                                                             : 'solar:document-text-bold'
                                                 }
-                                                className={(activeResourceId === lesson._id || lesson.resources?.some(r => r._id === activeResourceId || r.url === activeResourceId)) ? 'text-primary' : 'text-gray-400'}
+                                                className={(activeResourceId === lesson._id || lesson.resources?.some(r => r._id === activeResourceId || r.url === activeResourceId)) ? 'text-primary' : 'text-muted-foreground'}
                                             />
                                             <span className="truncate">{lesson.title}</span>
                                         </div>
@@ -76,7 +76,7 @@ const SectionList = ({ sections, onSelectContent, activeResourceId }) => {
                                             <Icon
                                                 icon={expandedLessons[lesson._id] ? 'solar:alt-arrow-up-linear' : 'solar:alt-arrow-down-linear'}
                                                 size={14}
-                                                className="text-gray-400"
+                                                className="text-muted-foreground"
                                             />
                                         )}
                                     </button>
@@ -88,9 +88,9 @@ const SectionList = ({ sections, onSelectContent, activeResourceId }) => {
                                                 <button
                                                     key={resource._id || `${lesson._id}-res-${rIdx}`}
                                                     onClick={() => onSelectContent(resource, lesson)}
-                                                    className={`w-full flex items-center gap-3 p-2 rounded-lg text-xs transition-all ${activeResourceId === resource._id || activeResourceId === resource.url
+                                                    className={`w-full flex items-center gap-3 p-2 rounded-md text-xs transition-all ${activeResourceId === resource._id || activeResourceId === resource.url
                                                             ? 'bg-primary/10 text-primary font-bold'
-                                                            : 'text-gray-500 hover:text-gray-700 dark:hover:text-zinc-400'
+                                                            : 'text-muted-foreground hover:text-foreground dark:hover:text-zinc-400'
                                                         }`}
                                                 >
                                                     <Icon
@@ -99,7 +99,7 @@ const SectionList = ({ sections, onSelectContent, activeResourceId }) => {
                                                                 ? 'solar:play-circle-bold'
                                                                 : 'solar:file-bold'
                                                         }
-                                                        className={activeResourceId === resource._id || activeResourceId === resource.url ? 'text-primary' : 'text-gray-400'}
+                                                        className={activeResourceId === resource._id || activeResourceId === resource.url ? 'text-primary' : 'text-muted-foreground'}
                                                     />
                                                     <span className="truncate">{resource.name || lesson.title}</span>
                                                 </button>

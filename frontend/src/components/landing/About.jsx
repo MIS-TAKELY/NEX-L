@@ -15,7 +15,7 @@ const About = () => {
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground serif">
             About Us
           </h2>
-          <p className="text-gray-500 font-light text-lg leading-relaxed max-w-xl mx-auto font-outfit">
+          <p className="text-muted-foreground font-light text-lg leading-relaxed max-w-xl mx-auto font-outfit">
             We provide the best learning experience with features designed for your success.
           </p>
         </div>
@@ -24,15 +24,15 @@ const About = () => {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="p-8 pb-10 rounded-3xl bg-gray-50 border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300 group"
+              className="p-8 pb-10 rounded-md bg-muted border border-transparent hover:border-border hover:shadow-xl transition-all duration-300 group"
             >
-              <div className="w-14 h-14 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
+              <div className="w-14 h-14 rounded-md bg-primary/10 text-primary flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
                 <feature.Icon className="w-7 h-7" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-900 serif">
+              <h3 className="text-xl font-bold mb-3 text-foreground serif">
                 {feature.title}
               </h3>
-              <p className="text-gray-600 leading-relaxed font-outfit">
+              <p className="text-muted-foreground leading-relaxed font-outfit">
                 {feature.desc}
               </p>
             </div>

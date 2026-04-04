@@ -1,8 +1,10 @@
 import { Label } from "@/components/ui/label";
-import { getSession, loginWithGithub, loginWithGoogle, signIn } from "@/lib/auth.client";
+import { getSession, loginWithGithub, loginWithGoogle, signIn, signOut } from "@/lib/auth.client";
 import { cn } from "@/lib/utils";
 
 import { setCredentials } from "@/store/slices/authSlice";
+import { getAuthErrorMessage, isEmailNotVerifiedError } from "@/utils/auth-errors";
+import { normalizeRole, parseRolesFromUser } from "@/utils/roles";
 import { verifyEmail } from "@/utils/verify-email";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
@@ -31,33 +33,44 @@ const SignIn = () => {
     setError("");
     setLoading(true);
 
-    if (!verifyEmail(formData.email)) {
-      setError("Invalid email");
+    const email = formData.email.trim().toLowerCase();
+    if (!verifyEmail(email)) {
+      setError("Please enter a valid email address");
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.password) {
+      setError("Password is required");
       setLoading(false);
       return;
     }
 
     try {
-      // Sign in using better-auth client
-      await signIn(formData.email, formData.password);
+      await signIn(email, formData.password);
 
       // Get session data
       const session = await getSession();
 
       if (session && session.user) {
-        // Get role from backend session (secure, server-side role)
-        const userRole = session.user.role || "student";
+        const roles = parseRolesFromUser(session.user);
+        const want = normalizeRole(role);
+        if (!roles.includes(want)) {
+          await signOut();
+          const have = roles.join(" and ");
+          setError(
+            `This account does not have ${want} access. You can sign in as: ${have}. Add the other role on the sign-up page with your password.`,
+          );
+          return;
+        }
 
-        // Update Redux state with user data and role from backend
-        // Serialize userData to avoid non-serializable value warning in Redux
         const serializedUser = JSON.parse(JSON.stringify(session.user));
-        dispatch(setCredentials({ role: userRole, userData: serializedUser }));
+        dispatch(setCredentials({ role: want, userData: serializedUser }));
 
-        console.log("Login success:", session);
-
-        // Redirect based on role from backend
-        if (userRole === "instructor") {
+        if (want === "instructor") {
           navigate("/instructor/dashboard", { replace: true });
+        } else if (want === "admin") {
+          navigate("/admin/dashboard", { replace: true });
         } else {
           navigate("/student/dashboard", { replace: true });
         }
@@ -66,9 +79,16 @@ const SignIn = () => {
       }
     } catch (error) {
       console.error("Login failed:", error);
-      setError(
-        error.response?.data?.message || error.message || "Login failed",
-      );
+
+      let errorMessage = getAuthErrorMessage(error);
+      if (isEmailNotVerifiedError(error)) {
+        errorMessage =
+          "Please verify your email address to sign in. Check your inbox for the verification link.";
+      } else if (errorMessage.toLowerCase().includes("invalid email or password")) {
+        errorMessage = "Invalid email or password. Check your details and try again.";
+      }
+
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -82,8 +102,8 @@ const SignIn = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-accent opacity-100 dark:from-[#0f0f17] dark:to-[#0a0a0f]" />
         
         {/* Abstract lines decoration */}
-        <div className="absolute bottom-20 left-20 w-48 h-48 border border-white/10 rounded-lg transform rotate-12" />
-        <div className="absolute bottom-24 left-24 w-48 h-48 border border-white/10 rounded-lg transform rotate-12" />
+        <div className="absolute bottom-20 left-20 w-48 h-48 border border-white/10 rounded-md transform rotate-12" />
+        <div className="absolute bottom-24 left-24 w-48 h-48 border border-white/10 rounded-md transform rotate-12" />
 
         <div className="relative z-10 mb-20">
           
@@ -114,7 +134,7 @@ const SignIn = () => {
         {/* New Top Left Arrow Button */}
         <button
           onClick={() => navigate(-1)}
-          className="absolute top-6 left-6 p-2 text-foreground/60 hover:text-foreground hover:bg-muted rounded-full transition-all flex items-center justify-center"
+          className="absolute top-6 left-6 p-2 text-foreground/60 hover:text-foreground hover:bg-muted rounded-md transition-all flex items-center justify-center"
         >
           <Icon icon="solar:arrow-left-linear" className="w-6 h-6" />
         </button>
@@ -158,17 +178,19 @@ const SignIn = () => {
 
               <LabelInputContainer>
                 <Label htmlFor="email" className="text-base text-foreground">
-                  Email or Phone Number
+                  Email address
                 </Label>
                 <input
                   id="email"
                   name="email"
-                  placeholder="123@gmail.com"
-                  type="text"
+                  placeholder="you@example.com"
+                  type="email"
+                  autoComplete="email"
+                  inputMode="email"
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="flex h-12 w-full rounded-xl border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
+                  className="flex h-12 w-full rounded-md border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
                 />
               </LabelInputContainer>
 
@@ -185,7 +207,8 @@ const SignIn = () => {
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    className="flex h-12 w-full rounded-xl border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground pr-10"
+                    autoComplete="current-password"
+                    className="flex h-12 w-full rounded-md border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground pr-10"
                   />
                   <button
                     type="button"
@@ -218,7 +241,7 @@ const SignIn = () => {
             </div>
 
             <button
-              className="relative block h-11 w-full rounded-xl bg-primary text-primary-foreground font-medium shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-50"
+              className="relative block h-11 w-full rounded-md bg-primary text-primary-foreground font-medium shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-50"
               type="submit"
               disabled={loading}
             >
@@ -237,14 +260,14 @@ const SignIn = () => {
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={() => loginWithGithub(role)}
-              className="flex h-11 items-center justify-center rounded-xl bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
+              className="flex h-11 items-center justify-center rounded-md bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
               type="button"
             >
               <Icon icon="mdi:github" className="h-6 w-6 text-foreground" />
             </button>
             <button
               onClick={() => loginWithGoogle(role)}
-              className="flex h-11 items-center justify-center rounded-xl bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
+              className="flex h-11 items-center justify-center rounded-md bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
               type="button"
             >
               <Icon icon="logos:google-icon" className="h-5 w-5" />
@@ -262,7 +285,7 @@ const SignIn = () => {
           </p>
 
           {/* Bottom Right Decoration */}
-          <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary rounded-full hidden md:block opacity-10"></div>
+          <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary rounded-md hidden md:block opacity-10"></div>
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { auth as authLib } from "../lib/auth.js";
+import { parseRolesFromUser } from "../lib/roles.js";
 
 export const requireAuth = async (req, res, next) => {
   const session = await authLib.api.getSession({ headers: req.headers });
@@ -20,13 +21,14 @@ export const requireRole = (...allowedRoles) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const userRole = session.user.role || "student";
+    const userRoles = parseRolesFromUser(session.user);
+    const allowed = userRoles.some((r) => allowedRoles.includes(r));
 
-    if (!allowedRoles.includes(userRole)) {
+    if (!allowed) {
       return res.status(403).json({
         message: "Forbidden: Insufficient permissions",
         requiredRole: allowedRoles,
-        userRole: userRole
+        userRoles,
       });
     }
 

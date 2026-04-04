@@ -6,6 +6,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import ConsultationModal from "@/components/meeting/ConsultationModal";
 
+import TableSkeleton from "@/components/skeletons/TableSkeleton";
+
 const StudentsEnrolled = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -20,34 +22,8 @@ const StudentsEnrolled = () => {
   
   const [createSession, { isLoading: isCreating }] = useCreateTutoringSessionMutation();
 
-  const allStudents = data?.students || [];
-
-  // Filter by courseId if it exists in URL
-  const students = filterCourseId 
-    ? allStudents.filter(s => String(s.courseId) === filterCourseId)
-    : allStudents;
-
-  const handleConsult = async (student) => {
-    try {
-      const res = await createSession({
-        studentId: student.studentId,
-        courseId: student.courseId,
-        startTime: new Date().toISOString(),
-      }).unwrap();
-      
-      setActiveSessionId(res.session._id);
-    } catch (err) {
-      console.error("Failed to start session:", err);
-    }
-  };
-
   if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center p-12 text-gray-500 gap-3">
-        <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
-        <p className="font-medium">Loading enrolled students...</p>
-      </div>
-    );
+    return <TableSkeleton rows={8} columns={5} />;
   }
 
   return (
@@ -59,7 +35,7 @@ const StudentsEnrolled = () => {
         </div>
       </div>
 
-      <div className="bg-background rounded-2xl shadow-sm border border-border/50 overflow-hidden">
+      <div className="bg-background rounded-md shadow-sm border border-border/50 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-secondary/30 text-muted-foreground font-semibold text-xs uppercase tracking-wider">
@@ -83,7 +59,7 @@ const StudentsEnrolled = () => {
                   <tr key={student.id} className="hover:bg-secondary/20 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden border border-primary/20">
+                        <div className="w-10 h-10 rounded-md bg-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden border border-primary/20">
                           {student.avatar ? (
                             <img src={student.avatar} alt={student.name} className="w-full h-full object-cover" />
                           ) : (
@@ -101,9 +77,9 @@ const StudentsEnrolled = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col items-center gap-1.5 min-w-[120px]">
-                        <div className="w-full bg-secondary/50 rounded-full h-1.5">
+                        <div className="w-full bg-secondary/50 rounded-md h-1.5">
                           <div 
-                            className="bg-primary h-1.5 rounded-full shadow-[0_0_8px_rgba(var(--primary),0.3)]" 
+                            className="bg-primary h-1.5 rounded-md shadow-[0_0_8px_rgba(var(--primary),0.3)]" 
                             style={{ width: `${student.progress}%` }}
                           ></div>
                         </div>
@@ -117,7 +93,7 @@ const StudentsEnrolled = () => {
                       <button 
                         onClick={() => handleConsult(student)}
                         disabled={isCreating}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl font-bold text-xs hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95 disabled:opacity-50"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md font-bold text-xs hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95 disabled:opacity-50"
                       >
                         <Icon icon="solar:videocamera-record-bold-duotone" className="w-4 h-4" />
                         Consult

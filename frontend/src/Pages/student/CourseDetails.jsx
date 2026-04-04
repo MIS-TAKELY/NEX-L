@@ -142,7 +142,7 @@ const CourseDetails = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {/* Left Column - Course Details & Syllabus */}
             <div className="lg:col-span-2 space-y-12">
-              <div className="glass premium-card rounded-2xl p-8 border border-border/50">
+              <div className="glass premium-card rounded-md p-8 border border-border/50">
                 <h1 className="text-4xl md:text-5xl font-black text-foreground leading-tight tracking-tight mb-3">
                   {course.title}
                 </h1>
@@ -153,7 +153,7 @@ const CourseDetails = () => {
 
             {/* Demo / Preview Video Section */}
             {course.demoVideo && (
-              <section className="glass premium-card rounded-2xl overflow-hidden border border-border/50">
+              <section className="glass premium-card rounded-md overflow-hidden border border-border/50">
                 <div className="relative aspect-video bg-black/50">
                   <video
                     src={course.demoVideo}
@@ -161,7 +161,7 @@ const CourseDetails = () => {
                     className="w-full h-full object-contain"
                     poster={course.thumbnail || undefined}
                   />
-                  <span className="absolute top-4 left-4 bg-background/80 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold text-primary uppercase tracking-widest shadow-lg border border-white/10 flex items-center gap-1.5">
+                  <span className="absolute top-4 left-4 bg-background/80 backdrop-blur-md px-3 py-1.5 rounded-md text-[10px] font-bold text-primary uppercase tracking-widest shadow-lg border border-white/10 flex items-center gap-1.5">
                     <PlayCircle size={14} />
                     Free Preview
                   </span>
@@ -176,12 +176,12 @@ const CourseDetails = () => {
 
             {/* Syllabus Document Section (if available) */}
             {course.syllabus && (
-              <section className="glass premium-card rounded-2xl p-8 border border-primary/20 relative overflow-hidden group">
+              <section className="glass premium-card rounded-md p-8 border border-primary/20 relative overflow-hidden group">
                 <div className="absolute inset-0 bg-primary/5 group-hover:bg-primary/10 transition-colors" />
                 <div className="relative z-10">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-md bg-primary/10 flex items-center justify-center">
                         <FileText className="text-primary w-6 h-6" />
                       </div>
                       <h2 className="text-2xl font-bold text-foreground">
@@ -192,7 +192,7 @@ const CourseDetails = () => {
                       href={course.syllabus}
                       target="_blank"
                       rel="noreferrer"
-                      className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 group/btn whitespace-nowrap"
+                      className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-3 rounded-md font-bold transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 group/btn whitespace-nowrap"
                     >
                       Download PDF{" "}
                       <Icon icon="solar:download-minimalistic-bold" className="group-hover/btn:translate-y-0.5 transition-transform" />
@@ -208,23 +208,23 @@ const CourseDetails = () => {
 
             {/* Live Class Schedule Section */}
             {liveClasses.length > 0 && (
-              <section className="glass premium-card rounded-2xl p-8 border border-red-500/20 relative overflow-hidden">
+              <section className="glass premium-card rounded-md p-8 border border-red-500/20 relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-4">
-                  <div className="flex items-center gap-1.5 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full animate-pulse">
-                    <div className="w-1.5 h-1.5 bg-white rounded-full" /> LIVE SESSIONS
+                  <div className="flex items-center gap-1.5 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-md animate-pulse">
+                    <div className="w-1.5 h-1.5 bg-card rounded-md" /> LIVE SESSIONS
                   </div>
                 </div>
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-md bg-red-500/10 flex items-center justify-center">
                     <Icon icon="solar:videocamera-record-bold-duotone" className="text-red-500 w-6 h-6" />
                   </div>
                   <h2 className="text-2xl font-bold text-foreground">Live Class Schedule</h2>
                 </div>
                 <div className="space-y-4">
                   {liveClasses.map((liveClass) => (
-                    <div key={liveClass._id} className="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-2xl bg-card/50 border border-border/50 hover:border-red-500/30 transition-all group gap-4">
+                    <div key={liveClass._id} className="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-md bg-card/50 border border-border/50 hover:border-red-500/30 transition-all group gap-4">
                       <div className="flex items-start gap-4">
-                        <div className="hidden md:flex flex-col items-center justify-center w-16 h-16 rounded-xl bg-background border border-border/50">
+                        <div className="hidden md:flex flex-col items-center justify-center w-16 h-16 rounded-md bg-background border border-border/50">
                           <span className="text-[10px] font-bold text-red-500 uppercase">{dayjs(liveClass.startTime).format('MMM')}</span>
                           <span className="text-2xl font-black text-foreground">{dayjs(liveClass.startTime).format('D')}</span>
                         </div>
@@ -249,7 +249,7 @@ const CourseDetails = () => {
                       {liveClass.status === 'live' && (
                         <button
                           onClick={() => navigate(`/student/live/${id}`)}
-                          className="px-6 py-2.5 bg-red-500 text-white text-sm font-bold rounded-xl hover:bg-red-600 transition-all shadow-lg shadow-red-500/20 flex items-center justify-center gap-2"
+                          className="px-6 py-2.5 bg-red-500 text-white text-sm font-bold rounded-md hover:bg-red-600 transition-all shadow-lg shadow-red-500/20 flex items-center justify-center gap-2"
                         >
                           <Icon icon="solar:play-bold" />
                           Join Now
@@ -263,7 +263,7 @@ const CourseDetails = () => {
 
             {/* Course Curriculum Section */}
             {course.sections && course.sections.length > 0 && (
-              <section className="glass premium-card rounded-2xl p-8 border border-border/50">
+              <section className="glass premium-card rounded-md p-8 border border-border/50">
                 <div className="flex items-center gap-4 mb-8">
                   <h2 className="text-3xl md:text-4xl font-black text-foreground">
                     Course <span className="text-gradient italic">Curriculum</span>
@@ -288,7 +288,7 @@ const CourseDetails = () => {
                                 {content.resources && content.resources.map((resource, rIdx) => (
                                   <div
                                     key={rIdx}
-                                    className="flex items-center justify-between p-3 bg-muted/30 rounded-xl hover:bg-muted/50 transition-all border border-transparent hover:border-primary/20 group"
+                                    className="flex items-center justify-between p-3 bg-muted/30 rounded-md hover:bg-muted/50 transition-all border border-transparent hover:border-primary/20 group"
                                   >
                                     <div className="flex items-center gap-3">
                                       {resource.type === 'video' ? (
@@ -328,7 +328,7 @@ const CourseDetails = () => {
             )}
 
             {/* Description Section */}
-            <section className="glass premium-card rounded-2xl p-8 border border-border/50">
+            <section className="glass premium-card rounded-md p-8 border border-border/50">
               <h2 className="text-3xl font-black text-foreground mb-4">
                 Description
               </h2>
@@ -338,7 +338,7 @@ const CourseDetails = () => {
             </section>
 
             {/* FAQ Section */}
-            <section className="glass premium-card rounded-2xl p-8 border border-border/50">
+            <section className="glass premium-card rounded-md p-8 border border-border/50">
               <div className="flex items-center gap-4 mb-8">
                 <h2 className="text-3xl md:text-4xl font-black text-foreground">
                   Frequently <span className="text-gradient italic">Asked Questions</span>
@@ -360,7 +360,7 @@ const CourseDetails = () => {
 
           {/* Right Column - Enrollment / Payment Sidebar */}
           <div className="lg:col-span-1">
-            <div className="sticky top-32 glass premium-card rounded-2xl p-8 border border-border/50">
+            <div className="sticky top-32 glass premium-card rounded-md p-8 border border-border/50">
               <div className="mb-8">
                 <h3 className="text-2xl font-black text-foreground mb-2">
                   Enroll Now
@@ -380,7 +380,7 @@ const CourseDetails = () => {
                     <button
                       key={method.id}
                       onClick={() => setSelectedPayment(method.id)}
-                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${selectedPayment === method.id
+                      className={`flex items-center justify-center gap-2 p-3 rounded-md border-2 transition-all ${selectedPayment === method.id
                         ? "border-primary bg-primary/10 shadow-[0_0_15px_rgba(99,102,241,0.2)]"
                         : "border-border/50 hover:border-border bg-card/50"
                         }`}
@@ -416,18 +416,18 @@ const CourseDetails = () => {
                         placeholder="Coupon Code"
                         value={couponCode}
                         onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                        className="flex-1 px-4 py-3 rounded-xl border border-border bg-background/50 text-sm outline-none focus:border-primary font-bold uppercase transition-colors"
+                        className="flex-1 px-4 py-3 rounded-md border border-border bg-background/50 text-sm outline-none focus:border-primary font-bold uppercase transition-colors"
                       />
                       <button
                         onClick={handleApplyCoupon}
                         disabled={isVerifying || !couponCode}
-                        className="bg-primary/10 text-primary px-5 py-3 rounded-xl font-bold text-sm hover:bg-primary hover:text-white transition-all disabled:opacity-50"
+                        className="bg-primary/10 text-primary px-5 py-3 rounded-md font-bold text-sm hover:bg-primary hover:text-white transition-all disabled:opacity-50"
                       >
                         {isVerifying ? "..." : "Apply"}
                       </button>
                     </div>
                   ) : (
-                    <div className="flex justify-between items-center bg-green-500/10 p-3 rounded-xl border border-green-500/20">
+                    <div className="flex justify-between items-center bg-green-500/10 p-3 rounded-md border border-green-500/20">
                       <span className="text-xs font-bold text-green-500 inline-flex items-center gap-2">
                         <Icon icon="solar:check-circle-bold" />
                         {appliedCoupon.code} Applied
@@ -468,7 +468,7 @@ const CourseDetails = () => {
 
                 <button
                   onClick={() => navigate(`/payment-gateway?method=${selectedPayment}&amount=${finalPrice}&courseId=${id}${appliedCoupon ? `&couponCode=${appliedCoupon.code}` : ""}`)}
-                  className="w-full bg-primary text-primary-foreground py-4 rounded-2xl font-bold text-lg hover:bg-primary-hover transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3 group"
+                  className="w-full bg-primary text-primary-foreground py-4 rounded-md font-bold text-lg hover:bg-primary-hover transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3 group"
                 >
                   Pay with {selectedPayment.toUpperCase()}
                   <Icon icon="solar:arrow-right-bold" className="group-hover:translate-x-1 transition-transform" />
@@ -477,7 +477,7 @@ const CourseDetails = () => {
                 {userRole === "student" && (
                   <button
                     onClick={isInCart ? handleRemoveFromCart : handleAddToCart}
-                    className={`w-full py-4 rounded-2xl font-bold text-lg transition-all border-2 flex items-center justify-center gap-3 mt-3 group
+                    className={`w-full py-4 rounded-md font-bold text-lg transition-all border-2 flex items-center justify-center gap-3 mt-3 group
                       ${isInCart
                         ? "bg-destructive/10 border-transparent text-destructive hover:bg-destructive hover:text-destructive-foreground shadow-sm"
                         : "bg-transparent border-primary/20 text-foreground hover:bg-primary/5 hover:border-primary/50"
@@ -512,7 +512,7 @@ const CourseDetails = () => {
                     key={idx}
                     className="flex items-center gap-4 text-muted-foreground text-sm font-medium"
                   >
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center">
                       <Icon
                         icon={feature.icon}
                         className="text-primary text-sm"
@@ -538,13 +538,13 @@ const AccordionItem = ({ title, content, colorClass }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="bg-card/50 rounded-2xl border border-border/50 overflow-hidden transition-colors hover:border-primary/30">
+    <div className="bg-card/50 rounded-md border border-border/50 overflow-hidden transition-colors hover:border-primary/30">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full px-6 py-4 flex items-center justify-between transition-colors hover:bg-muted/30"
       >
         <span className={`font-bold text-lg ${colorClass || "text-foreground"}`}>{title}</span>
-        <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isOpen ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+        <div className={`w-8 h-8 rounded-md flex items-center justify-center transition-colors ${isOpen ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
           <Icon
             icon="solar:alt-arrow-down-bold"
             className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}

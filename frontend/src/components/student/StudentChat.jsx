@@ -51,7 +51,7 @@ const StudentChat = ({ courseId, onClose }) => {
 
   if (loading || (!channel && !error)) {
     return (
-      <div className="flex items-center justify-center h-full text-gray-500">
+      <div className="flex items-center justify-center h-full text-muted-foreground">
         <LoadingIndicator />
         <span className="ml-2 text-sm">Connecting…</span>
       </div>
@@ -72,7 +72,7 @@ const StudentChat = ({ courseId, onClose }) => {
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-card transition-colors duration-500">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+          <div className="w-10 h-10 rounded-md bg-primary/10 flex items-center justify-center border border-primary/20">
             <Icon icon="solar:chat-round-dots-bold-duotone" className="w-6 h-6 text-primary" />
           </div>
           <div>
@@ -81,7 +81,7 @@ const StudentChat = ({ courseId, onClose }) => {
           </div>
         </div>
         {onClose && (
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all">
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-md transition-all">
             <Icon icon="solar:close-circle-bold" size={20} />
           </button>
         )}

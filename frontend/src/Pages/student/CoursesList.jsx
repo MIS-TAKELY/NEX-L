@@ -7,6 +7,7 @@ import Footer from "../../components/common/Footer";
 import Navbar from "../../components/common/Navbar";
 import CourseCard from "../../components/landing/CourseCard";
 import CourseSkeleton from "../../components/skeletons/CourseSkeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const CoursesList = () => {
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ const CoursesList = () => {
         <div className="flex flex-col mb-10">
           <h2 className="text-3xl font-bold text-foreground flex items-center gap-3">
             {title}
-            <span className="h-2 w-2 rounded-full bg-primary mt-1 shadow-[0_0_10px_rgba(99,102,241,0.5)]"></span>
+            <span className="h-2 w-2 rounded-md bg-primary mt-1 shadow-[0_0_10px_rgba(99,102,241,0.5)]"></span>
           </h2>
           {subtitle && <p className="text-muted-foreground mt-2 text-lg">{subtitle}</p>}
         </div>
@@ -59,11 +60,11 @@ const CoursesList = () => {
 
   const renderSkeletons = (title) => (
     <div className="mb-16">
-      <div className="flex flex-col mb-8">
-        <div className="h-10 bg-muted rounded-lg w-64 mb-2 animate-pulse"></div>
-        <div className="h-4 bg-muted/50 rounded-lg w-48 animate-pulse"></div>
+      <div className="flex flex-col mb-8 space-y-2">
+        <Skeleton className="h-10 w-64" />
+        <Skeleton className="h-4 w-48" />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {[1, 2, 3, 4].map((i) => (
           <CourseSkeleton key={`skeleton-${title}-${i}`} />
         ))}
@@ -93,8 +94,8 @@ const CoursesList = () => {
             </h1>
 
             <div className="relative w-full md:max-w-md group">
-              <div className="absolute inset-0 bg-primary/5 blur-xl group-focus-within:bg-primary/10 transition-all duration-500 rounded-2xl" />
-              <div className="relative flex items-center glass-card border border-border/50 rounded-xl overflow-hidden group-focus-within:border-primary/40 transition-all duration-300">
+              <div className="absolute inset-0 bg-primary/5 blur-xl group-focus-within:bg-primary/10 transition-all duration-500 rounded-md" />
+              <div className="relative flex items-center glass-card border border-border/50 rounded-md overflow-hidden group-focus-within:border-primary/40 transition-all duration-300">
                 <Icon
                   icon="solar:magnifer-linear"
                   className="ml-4 text-muted-foreground group-focus-within:text-primary transition-colors"
@@ -121,7 +122,7 @@ const CoursesList = () => {
                   <>
                     {renderSection(`Results for "${debouncedQuery}"`, searchResults, `Found ${searchResults?.length || 0} best matches.`)}
                     {!searchResults?.length && !searchLoading && (
-                      <div className="text-center py-32 glass rounded-3xl border border-dashed border-border">
+                      <div className="text-center py-32 glass rounded-md border border-dashed border-border">
                         <Icon icon="solar:document-broken-linear" className="mx-auto text-muted-foreground/20 mb-6" size={80} />
                         <h3 className="text-2xl font-bold text-muted-foreground">No courses matching your search.</h3>
                         <p className="text-muted-foreground/60 mt-2">Try adjusting your keywords or browse categories.</p>
@@ -137,8 +138,8 @@ const CoursesList = () => {
                     {["Trending", "Recommendations", "Recently Viewed"].map((title) => (
                       <div key={title} className="mb-16">
                         <div className="flex flex-col mb-8">
-                          <div className="h-10 bg-muted rounded-lg w-64 mb-2 animate-pulse"></div>
-                          <div className="h-4 bg-muted/50 rounded-lg w-48 animate-pulse"></div>
+                          <div className="h-10 bg-muted rounded-md w-64 mb-2 animate-pulse"></div>
+                          <div className="h-4 bg-muted/50 rounded-md w-48 animate-pulse"></div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                           {[1, 2, 3, 4].map((i) => (
@@ -166,7 +167,7 @@ const CoursesList = () => {
                       !sections.categorySections?.length &&
                       !sections.trending?.length &&
                       !sections.topdeals?.length) && (
-                        <div className="text-center py-32 glass rounded-3xl border border-dashed border-border">
+                        <div className="text-center py-32 glass rounded-md border border-dashed border-border">
                           <Icon icon="solar:cloud-snow-linear" className="mx-auto text-muted-foreground/20 mb-6" size={80} />
                           <h3 className="text-2xl font-bold text-muted-foreground">No courses currently available.</h3>
                           <p className="text-muted-foreground/60 mt-2">Check back later or explore other sections.</p>

@@ -66,13 +66,13 @@ const Footer = () => {
                             </ul>
                             
                             <div className="flex gap-4 mt-6">
-                                <a href="https://facebook.com" target="_blank" rel="noreferrer" className="bg-background/10 hover:bg-accent transition-colors p-2 rounded-full">
+                                <a href="https://facebook.com" target="_blank" rel="noreferrer" className="bg-background/10 hover:bg-accent transition-colors p-2 rounded-md">
                                     <Icon icon="mdi:facebook" size={20} />
                                 </a>
-                                <a href="https://instagram.com" target="_blank" rel="noreferrer" className="bg-background/10 hover:bg-accent transition-colors p-2 rounded-full">
+                                <a href="https://instagram.com" target="_blank" rel="noreferrer" className="bg-background/10 hover:bg-accent transition-colors p-2 rounded-md">
                                     <Icon icon="mdi:instagram" size={20} />
                                 </a>
-                                <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="bg-background/10 hover:bg-accent transition-colors p-2 rounded-full">
+                                <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="bg-background/10 hover:bg-accent transition-colors p-2 rounded-md">
                                     <Icon icon="mdi:linkedin" size={20} />
                                 </a>
                             </div>
@@ -81,7 +81,7 @@ const Footer = () => {
                     </div>
                 </div>
 
-                <div className="border-t border-white/10 pt-8 flex flex-col items-center gap-4 text-sm text-gray-400">
+                <div className="border-t border-white/10 pt-8 flex flex-col items-center gap-4 text-sm text-muted-foreground">
                     <div className="flex flex-col md:flex-row w-full justify-between items-center gap-4">
                         <p>&copy; {new Date().getFullYear()} NEXL. All rights reserved.</p>
                         

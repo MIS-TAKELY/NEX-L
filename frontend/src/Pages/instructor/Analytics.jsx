@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import { useGetInstructorAnalyticsQuery } from '@/store/slices/courseApi';
 import { Loader2 } from "lucide-react";
 
+import AnalyticsSkeleton from '@/components/skeletons/AnalyticsSkeleton';
+
 const Analytics = () => {
   const { userData } = useSelector((state) => state.auth);
   const teacherId = userData?.id;
@@ -12,11 +14,7 @@ const Analytics = () => {
   });
 
   if (isLoading) {
-    return (
-      <div className="p-8 flex justify-center items-center h-[50vh]">
-        <Loader2 className="animate-spin text-primary w-12 h-12" />
-      </div>
-    );
+    return <AnalyticsSkeleton />;
   }
 
   if (isError) {
@@ -55,9 +53,9 @@ const Analytics = () => {
           { label: 'Avg. Rating', value: overview.avgRating, icon: 'solar:star-bold', color: 'bg-orange-500/10 text-orange-400 ring-orange-500/20' },
         ].map((stat, idx) => {
           return (
-            <div key={idx} className="bg-card rounded-2xl p-6 border border-border shadow-sm relative overflow-hidden group premium-card">
+            <div key={idx} className="bg-card rounded-md p-6 border border-border shadow-sm relative overflow-hidden group premium-card">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className={`${stat.color} p-3 rounded-xl w-fit mb-4 ring-1 ring-inset backdrop-blur-md`}>
+              <div className={`${stat.color} p-3 rounded-md w-fit mb-4 ring-1 ring-inset backdrop-blur-md`}>
                 <Icon icon={stat.icon} className="w-6 h-6" />
               </div>
               <p className="text-muted-foreground text-xs font-bold uppercase tracking-wider mb-2">{stat.label}</p>
@@ -68,11 +66,11 @@ const Analytics = () => {
       </div>
 
       {/* Course Performance Table */}
-      <div className="max-w-7xl mx-auto bg-card rounded-2xl p-6 border border-border shadow-sm premium-card">
+      <div className="max-w-7xl mx-auto bg-card rounded-md p-6 border border-border shadow-sm premium-card">
         <h2 className="text-xl font-bold text-foreground mb-6">Course Performance</h2>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
-            <thead className="bg-muted/50 text-muted-foreground font-bold text-[11px] uppercase tracking-wider rounded-xl overflow-hidden shadow-inner">
+            <thead className="bg-muted/50 text-muted-foreground font-bold text-[11px] uppercase tracking-wider rounded-md overflow-hidden shadow-inner">
               <tr>
                 <th className="text-left px-6 py-4 rounded-tl-lg">Course Name</th>
                 <th className="text-center px-6 py-4">Views</th>
@@ -100,15 +98,15 @@ const Analytics = () => {
                       <td className="px-6 py-5 text-center text-muted-foreground font-medium">{viewCount}</td>
                       <td className="px-6 py-5 text-center text-muted-foreground font-medium">{completions}</td>
                       <td className="px-6 py-5 text-center">
-                        <span className="px-3 py-1.5 bg-amber-500/10 text-amber-500 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 w-fit mx-auto border border-amber-500/20">
+                        <span className="px-3 py-1.5 bg-amber-500/10 text-amber-500 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 w-fit mx-auto border border-amber-500/20">
                           <Icon icon="solar:star-bold" className="text-amber-500" /> {course.rating.toFixed(1)}
                         </span>
                       </td>
                       <td className="px-6 py-5 text-center">
                         <div className="flex items-center justify-center gap-4">
-                          <div className="w-24 h-2 bg-muted rounded-full overflow-hidden border border-border">
+                          <div className="w-24 h-2 bg-muted rounded-md overflow-hidden border border-border">
                             <div 
-                              className="h-full bg-gradient-to-r from-primary to-accent rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(139,92,246,0.3)]"
+                              className="h-full bg-gradient-to-r from-primary to-accent rounded-md transition-all duration-1000 shadow-[0_0_10px_rgba(139,92,246,0.3)]"
                               style={{ width: `${completionRate}%` }}
                             />
                           </div>

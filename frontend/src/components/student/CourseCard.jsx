@@ -15,13 +15,13 @@ const CourseCard = ({ enrollment }) => {
       transition={{ duration: 0.5 }}
       whileHover={{ y: -5 }}
       onClick={() => navigate(`/student/player/${course._id}`)}
-      className="group cursor-pointer glass-card premium-card rounded-3xl border border-white/10 p-4 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20 flex flex-col h-full relative overflow-hidden w-full max-w-[320px] mx-auto bg-card"
+      className="group cursor-pointer glass-card premium-card rounded-md border border-white/10 p-4 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20 flex flex-col h-full relative overflow-hidden w-full max-w-[320px] mx-auto bg-card"
     >
       {/* Background glow effect on hover */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
       {/* Thumbnail */}
-      <div className="relative aspect-[16/9] mb-4 overflow-hidden rounded-2xl border border-white/5 shadow-inner">
+      <div className="relative aspect-[16/9] mb-4 overflow-hidden rounded-md border border-white/5 shadow-inner">
         <img
           src={course.thumbnail || "https://via.placeholder.com/400x225?text=No+Thumbnail"}
           alt={course.title}
@@ -29,8 +29,8 @@ const CourseCard = ({ enrollment }) => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
         
-        <div className="absolute top-3 left-3 px-3 py-1 bg-black/40 backdrop-blur-md text-white text-[10px] font-black rounded-full border border-white/20 uppercase tracking-widest shadow-xl flex items-center gap-1.5">
-          <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(var(--primary),0.8)]" />
+        <div className="absolute top-3 left-3 px-3 py-1 bg-black/40 backdrop-blur-md text-white text-[10px] font-black rounded-md border border-white/20 uppercase tracking-widest shadow-xl flex items-center gap-1.5">
+          <div className="w-1.5 h-1.5 rounded-md bg-primary animate-pulse shadow-[0_0_8px_rgba(var(--primary),0.8)]" />
           {course.category}
         </div>
       </div>
@@ -45,7 +45,7 @@ const CourseCard = ({ enrollment }) => {
           {course.description}
         </p>
 
-        <div className="mt-auto space-y-2.5 bg-secondary/50 dark:bg-white/5 p-3 rounded-xl border border-border/50">
+        <div className="mt-auto space-y-2.5 bg-secondary/50 dark:bg-card/5 p-3 rounded-md border border-border/50">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
               <Icon icon="solar:chart-line-bold" className="text-primary w-3.5 h-3.5" />
@@ -55,7 +55,7 @@ const CourseCard = ({ enrollment }) => {
           </div>
 
           {/* Progress Bar */}
-          <div className="w-full h-1.5 bg-muted/60 rounded-full overflow-hidden border border-border/50">
+          <div className="w-full h-1.5 bg-muted/60 rounded-md overflow-hidden border border-border/50">
             <motion.div
               initial={{ width: 0 }}
               whileInView={{ width: `${progress}%` }}
@@ -73,7 +73,7 @@ const CourseCard = ({ enrollment }) => {
       {/* Footer / Instructor */}
       <div className="mt-4 pt-4 border-t border-border/50 flex items-center justify-between px-0.5 relative z-10">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20 shadow-inner">
+          <div className="w-9 h-9 rounded-md bg-primary/10 flex items-center justify-center border border-primary/20 shadow-inner">
             <Icon icon="solar:user-bold" className="text-primary w-4 h-4" />
           </div>
           <div className="flex flex-col">
@@ -85,7 +85,7 @@ const CourseCard = ({ enrollment }) => {
         </div>
 
         <button
-          className="w-10 h-10 rounded-lg bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-all duration-300 group/btn shadow-lg shadow-primary/30 active:scale-95"
+          className="w-10 h-10 rounded-md bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-all duration-300 group/btn shadow-lg shadow-primary/30 active:scale-95"
           title="Continue Learning"
         >
           <Icon icon="solar:play-bold" className="w-5 h-5 group-hover/btn:scale-110 transition-transform ml-0.5" />

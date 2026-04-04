@@ -62,7 +62,7 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
         <div className="group relative">
           <button 
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors hidden md:block cursor-pointer ml-2"
+            className="p-1.5 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors hidden md:block cursor-pointer ml-2"
           >
             <Icon icon="solar:sidebar-minimalistic-outline" className='' size={20} />
           </button>
@@ -86,7 +86,7 @@ const Sidebar = ({ menuItems, role = 'student', extraContent }) => {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group relative
+                `flex items-center gap-3 px-3 py-3 rounded-md transition-all duration-200 group relative
                 ${isActive
                   ? 'bg-muted text-foreground font-bold border-l-4 border-primary'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground'

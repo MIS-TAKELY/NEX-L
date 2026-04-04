@@ -14,7 +14,7 @@ const CourseCard = ({ course, index }) => {
       transition={{ duration: 0.5, delay: index * 0.1 }}
       whileHover={{ y: -5 }}
       onClick={() => navigate(`/course/${course._id || course.id}`)}
-      className="group cursor-pointer bg-card rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300 flex flex-col premium-card glass-card h-full"
+      className="group cursor-pointer bg-card rounded-md overflow-hidden border border-border shadow-sm hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300 flex flex-col premium-card glass-card h-full"
     >
       {/* Image Container with Overlay */}
       <div className="aspect-[4/3] overflow-hidden relative">
@@ -25,12 +25,12 @@ const CourseCard = ({ course, index }) => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
-        <div className="absolute top-4 left-4 bg-background/80 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold text-primary uppercase tracking-widest shadow-lg border border-white/10">
+        <div className="absolute top-4 left-4 bg-background/80 backdrop-blur-md px-3 py-1.5 rounded-md text-[10px] font-bold text-primary uppercase tracking-widest shadow-lg border border-white/10">
           {course.category}
         </div>
 
         {course.featured && (
-          <div className="absolute top-4 right-4 bg-primary px-3 py-1.5 rounded-full text-[10px] font-bold text-primary-foreground uppercase tracking-widest shadow-lg">
+          <div className="absolute top-4 right-4 bg-primary px-3 py-1.5 rounded-md text-[10px] font-bold text-primary-foreground uppercase tracking-widest shadow-lg">
             Featured
           </div>
         )}
@@ -42,7 +42,7 @@ const CourseCard = ({ course, index }) => {
         </h3>
         
         <div className="flex items-center gap-2 mb-3">
-          <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
+          <div className="w-5 h-5 rounded-md bg-primary/10 flex items-center justify-center">
             <Users className="w-2.5 h-2.5 text-primary" />
           </div>
           <p className="text-[11px] text-muted-foreground font-medium">{course.instructor || "Expert Instructor"}</p>
@@ -74,7 +74,7 @@ const CourseCard = ({ course, index }) => {
               {course.price || "Free"}
             </span>
           </div>
-          <button className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300 group/btn">
+          <button className="h-9 w-9 rounded-md bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300 group/btn">
             <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-0.5 transition-transform" />
           </button>
         </div>

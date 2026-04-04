@@ -7,16 +7,16 @@ const SidePanel = ({ activePanel, onClose, courseId, isInstructor, callType }) =
   if (!activePanel) return null;
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-[#202124] transition-all duration-300">
+    <div className="flex flex-col h-full bg-card dark:bg-[#202124] transition-all duration-300">
       
       {/* Panel Header */}
       <div className="flex items-center justify-between p-4 lg:p-6 pb-2 lg:pb-2">
-        <h2 className="text-lg font-normal text-gray-900 dark:text-gray-200 capitalize">
+        <h2 className="text-lg font-normal text-foreground dark:text-gray-200 capitalize">
           {activePanel === 'participants' ? 'People' : activePanel}
         </h2>
         <button
           onClick={onClose}
-          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-gray-500 dark:text-gray-400"
+          className="w-10 h-10 flex items-center justify-center rounded-md hover:bg-secondary dark:hover:bg-card/10 transition-colors text-muted-foreground dark:text-muted-foreground"
           title="Close"
         >
           <Icon icon="material-symbols:close" className="w-6 h-6" />

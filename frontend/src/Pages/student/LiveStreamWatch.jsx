@@ -134,7 +134,7 @@ const LiveStreamWatch = () => {
         <div className="flex flex-col sm:flex-row gap-4 items-center">
           <button
             onClick={() => window.location.reload()}
-            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-primary/20 active:scale-95"
+            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-4 rounded-md font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-primary/20 active:scale-95"
           >
             <Icon icon="solar:refresh-bold" className="w-4 h-4" />
             RETRY NOW

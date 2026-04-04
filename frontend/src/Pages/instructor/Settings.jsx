@@ -40,7 +40,7 @@ const InstructorSettings = () => {
   return (
     <div className="p-8 max-w-4xl mx-auto font-outfit w-full">
       <div className="mb-8 flex items-center gap-4">
-        <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+        <div className="w-12 h-12 bg-primary/10 rounded-md flex items-center justify-center text-primary">
           <Icon icon="solar:settings-bold-duotone" size={28} />
         </div>
         <div>
@@ -49,7 +49,7 @@ const InstructorSettings = () => {
         </div>
       </div>
 
-      <div className="bg-card rounded-3xl border border-border shadow-sm p-8 transition-all hover:shadow-md">
+      <div className="bg-card rounded-md border border-border shadow-sm p-8 transition-all hover:shadow-md">
         <form onSubmit={handleSave} className="space-y-8">
 
           {/* Profile Photo Section */}
@@ -58,16 +58,16 @@ const InstructorSettings = () => {
               <Icon icon="solar:camera-outline" className="text-primary" size={24} />
               Profile Photo
             </h3>
-            <div className="flex items-center gap-6 bg-muted/50 p-6 rounded-2xl border border-border">
+            <div className="flex items-center gap-6 bg-muted/50 p-6 rounded-md border border-border">
               <div className="relative group cursor-pointer" onClick={() => fileInputRef.current.click()}>
-                <div className="w-24 h-24 rounded-full bg-card border-4 border-background shadow-md overflow-hidden flex items-center justify-center group-hover:border-primary/20 transition-all">
+                <div className="w-24 h-24 rounded-md bg-card border-4 border-background shadow-md overflow-hidden flex items-center justify-center group-hover:border-primary/20 transition-all">
                   {imagePreview ? (
                     <img src={imagePreview} alt="Profile preview" className="w-full h-full object-cover" />
                   ) : (
                     <Icon icon="solar:user-circle-bold-duotone" size={48} className="text-muted-foreground" />
                   )}
                 </div>
-                <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute inset-0 bg-black/40 rounded-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                   <Icon icon="solar:camera-add-bold" size={24} className="text-foreground" />
                 </div>
                 <input
@@ -86,7 +86,7 @@ const InstructorSettings = () => {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current.click()}
-                  className="px-5 py-2 text-sm font-bold text-primary bg-primary/10 rounded-xl hover:bg-primary hover:text-foreground transition-colors"
+                  className="px-5 py-2 text-sm font-bold text-primary bg-primary/10 rounded-md hover:bg-primary hover:text-foreground transition-colors"
                 >
                   Choose File
                 </button>
@@ -102,7 +102,7 @@ const InstructorSettings = () => {
               <Icon icon="solar:user-id-outline" className="text-primary" size={24} />
               Personal Information
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-muted/50 p-6 rounded-2xl border border-border">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-muted/50 p-6 rounded-md border border-border">
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-bold text-foreground/80">Full Name</label>
                 <div className="relative">
@@ -113,7 +113,7 @@ const InstructorSettings = () => {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 bg-card rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm text-foreground"
+                    className="w-full pl-11 pr-4 py-3 bg-card rounded-md border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm text-foreground"
                     placeholder="Enter your full name"
                     required
                   />
@@ -130,7 +130,7 @@ const InstructorSettings = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 bg-card rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm text-foreground"
+                    className="w-full pl-11 pr-4 py-3 bg-card rounded-md border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm text-foreground"
                     placeholder="Enter your email address"
                     required
                   />
@@ -142,7 +142,7 @@ const InstructorSettings = () => {
           <div className="flex justify-end pt-6 border-t border-border">
             <button
               type="submit"
-              className="flex items-center gap-2 px-8 py-3.5 bg-primary text-foreground font-bold rounded-xl shadow-lg shadow-primary/25 hover:bg-primary/90 hover:-translate-y-0.5 active:translate-y-0 transition-all"
+              className="flex items-center gap-2 px-8 py-3.5 bg-primary text-foreground font-bold rounded-md shadow-lg shadow-primary/25 hover:bg-primary/90 hover:-translate-y-0.5 active:translate-y-0 transition-all"
             >
               <Icon icon="solar:diskette-bold-duotone" size={20} />
               Save Changes

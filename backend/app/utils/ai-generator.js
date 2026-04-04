@@ -87,4 +87,36 @@ function generateFallbackContent(title) {
     return { description, category, tags };
 }
 
+/**
+ * Summarize long text (lesson notes or transcripts)
+ * @param {string} text - The input text to summarize
+ * @returns {Promise<string>} - The summarized text
+ */
+export async function summarizeText(text) {
+    if (!text || text.length < 100) return text;
+
+    try {
+        console.log("Attempting AI summarization for text length:", text.length);
+        
+        // Using BART for summarization
+        const response = await client.summarization({
+            model: "facebook/bart-large-cnn",
+            inputs: text,
+            parameters: {
+                max_length: 150,
+                min_length: 40,
+                do_sample: false
+            }
+        });
+
+        console.log("Summarization completed.");
+        return response.summary_text || text;
+    } catch (err) {
+        console.error("Summarization failed:", err.message);
+        // Fallback: Just return the first few sentences
+        return text.split(/[.!?]/).slice(0, 3).join(". ") + "...";
+    }
+}
+
 export default generateCourseContent;
+

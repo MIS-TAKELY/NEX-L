@@ -1,6 +1,8 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client } from "../config/dbConnect.js";
+import { sendEmail } from "../config/mail.js";
+import { isAppRole, mergeRolesJson, normalizeRole, parseRolesFromUser } from "./roles.js";
 
 const rawBaseURL = (process.env.BETTER_AUTH_URL || "http://localhost:3000").replace(/\/+$/, "");
 const baseURL = rawBaseURL.endsWith("/api/v1/auth") ? rawBaseURL : `${rawBaseURL}/api/v1/auth`;
@@ -19,6 +21,26 @@ export const auth = betterAuth({
   database: mongodbAdapter(client.db()),
   emailAndPassword: {
     enabled: true, // Enable email/password auth
+    requireEmailVerification: true,
+  },
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url, token }, request) => {
+      await sendEmail({
+        to: user.email,
+        subject: "Verify your email address - NEX-L",
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eaeaec; border-radius: 8px; padding: 20px;">
+            <h2 style="color: #333;">Welcome to NEX-L!</h2>
+            <p style="color: #555; line-height: 1.5;">Hi ${user.name || "there"},</p>
+            <p style="color: #555; line-height: 1.5;">Please verify your email address to complete your registration and log in.</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #007bff; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">Verify Email</a>
+            </div>
+            <p style="color: #888; font-size: 0.9em;">If you didn't request this, you can safely ignore this email.</p>
+          </div>
+        `,
+      });
+    },
   },
   socialProviders: {
     google: {
@@ -42,13 +64,19 @@ export const auth = betterAuth({
     "http://127.0.0.1:5173",
   ].filter(Boolean),
 
-  // Add custom user fields for role management
+  // Add custom user fields for role management (roles = JSON array string for dual-role users)
   user: {
     additionalFields: {
       role: {
         type: "string",
         required: false,
         defaultValue: "student",
+        input: true,
+      },
+      roles: {
+        type: "string",
+        required: false,
+        defaultValue: '["student"]',
         input: true,
       },
     },
@@ -73,56 +101,67 @@ export const auth = betterAuth({
     user: {
       create: {
         before: async (user, context) => {
-          console.log("--- databaseHooks: user.create.before ---");
-
-          // Read the pending_role cookie
-          const cookieHeader = context.request.headers.get("cookie");
+          const cookieHeader = context?.request?.headers?.get?.("cookie");
           const cookies = cookieHeader ? cookieHeader.split(";").reduce((acc, cookie) => {
-            const [name, value] = cookie.trim().split("=");
-            acc[name] = value;
+            const [name, ...rest] = cookie.trim().split("=");
+            acc[name] = rest.join("=");
             return acc;
           }, {}) : {};
 
           const pendingRole = cookies["pending_role"];
-          console.log("Cookie pending_role found:", pendingRole);
-
-          // Priority: 1) pending_role cookie (social login), 2) role from signup form, 3) default "student"
-          if (pendingRole && (pendingRole === "student" || pendingRole === "instructor")) {
-            console.log(`Setting user role to ${pendingRole} from pending_role cookie (social login)`);
-            user.role = pendingRole;
-          } else if (user.role && (user.role === "student" || user.role === "instructor")) {
-            console.log(`Keeping user role as ${user.role} from signup form`);
-            // user.role is already set correctly — no override needed
-          } else {
-            console.log("No valid role found from cookie or form, defaulting to student");
-            user.role = "student";
+          let resolved = "student";
+          if (pendingRole && isAppRole(pendingRole)) {
+            resolved = normalizeRole(pendingRole);
+          } else if (user.role && isAppRole(user.role)) {
+            resolved = normalizeRole(user.role);
           }
 
+          const rolesJson = JSON.stringify([resolved]);
           return {
-            data: user,
+            data: {
+              ...user,
+              role: resolved,
+              roles: rolesJson,
+            },
           };
         },
       },
-      update: {
-        before: async (data, context) => {
-          console.log("--- databaseHooks: user.update.before ---");
+    },
+    session: {
+      create: {
+        after: async (session, ctx) => {
+          try {
+            const reqUrl = ctx?.request?.url || "";
+            if (!reqUrl.includes("/callback/")) return;
 
-          const cookieHeader = context.request.headers.get("cookie");
-          const cookies = cookieHeader ? cookieHeader.split(";").reduce((acc, cookie) => {
-            const [name, value] = cookie.trim().split("=");
-            acc[name] = value;
-            return acc;
-          }, {}) : {};
+            const cookieHeader = ctx?.request?.headers?.get?.("cookie");
+            const cookies = cookieHeader ? cookieHeader.split(";").reduce((acc, cookie) => {
+              const [name, ...rest] = cookie.trim().split("=");
+              acc[name] = rest.join("=");
+              return acc;
+            }, {}) : {};
 
-          const pendingRole = cookies["pending_role"];
-          if (pendingRole && (pendingRole === "student" || pendingRole === "instructor")) {
-            console.log(`Updating existing user role to ${pendingRole} from database hook`);
-            data.role = pendingRole;
+            const pendingRole = cookies["pending_role"];
+            if (!pendingRole || !isAppRole(pendingRole) || !session?.userId) return;
+
+            const normalized = normalizeRole(pendingRole);
+            const internal = ctx?.context?.internalAdapter;
+            if (!internal) return;
+
+            const user = await internal.findUserById(session.userId);
+            if (!user) return;
+
+            const merged = mergeRolesJson(user.roles ?? null, normalized);
+            const list = parseRolesFromUser({ roles: merged, role: user.role });
+            if (list.length === 0) return;
+
+            await internal.updateUser(session.userId, {
+              roles: merged,
+              role: normalized,
+            });
+          } catch (e) {
+            console.error("[session.create.after] role merge failed:", e);
           }
-
-          return {
-            data: data,
-          };
         },
       },
     },

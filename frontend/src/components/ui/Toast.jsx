@@ -38,13 +38,13 @@ const Toast = ({ message, type, duration, onClose }) => {
             initial={{ opacity: 0, scale: 0.9, x: 50 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             exit={{ opacity: 0, scale: 0.9, x: 50 }}
-            className={`pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border shadow-lg ${style.bgColor} ${style.borderColor} min-w-[300px] max-w-md`}
+            className={`pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-md border shadow-lg ${style.bgColor} ${style.borderColor} min-w-[300px] max-w-md`}
         >
             <div className="flex-shrink-0">{style.icon}</div>
             <p className={`flex-1 text-sm font-semibold ${style.textColor}`}>{message}</p>
             <button
                 onClick={onClose}
-                className="flex-shrink-0 p-1 rounded-lg hover:bg-black/5 transition-colors text-gray-400"
+                className="flex-shrink-0 p-1 rounded-md hover:bg-black/5 transition-colors text-muted-foreground"
             >
                 <X size={16} />
             </button>

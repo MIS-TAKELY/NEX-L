@@ -53,7 +53,7 @@ const LiveClassManagementModal = ({ isOpen, onClose, courseId, courseTitle }) =>
     return (
         <>
             <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
-                <div className="bg-background w-full max-w-3xl rounded-3xl shadow-2xl border border-border/50 overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[90vh]">
+                <div className="bg-background w-full max-w-3xl rounded-md shadow-2xl border border-border/50 overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[90vh]">
                     {/* Header */}
                     <div className="flex items-center justify-between p-6 border-b border-border/50 shrink-0">
                         <div>
@@ -62,7 +62,7 @@ const LiveClassManagementModal = ({ isOpen, onClose, courseId, courseTitle }) =>
                         </div>
                         <button 
                             onClick={onClose}
-                            className="p-2 hover:bg-secondary rounded-full transition-colors group"
+                            className="p-2 hover:bg-secondary rounded-md transition-colors group"
                         >
                             <Icon icon="solar:close-circle-bold" className="w-8 h-8 text-muted-foreground group-hover:text-foreground transition-colors" />
                         </button>
@@ -74,7 +74,7 @@ const LiveClassManagementModal = ({ isOpen, onClose, courseId, courseTitle }) =>
                             <h3 className="font-bold text-lg text-foreground">Scheduled Sessions</h3>
                             <button
                                 onClick={handleAddNew}
-                                className="px-4 py-2 bg-primary text-primary-foreground rounded-xl hover:opacity-90 transition-all font-bold text-sm flex items-center gap-2 shadow-lg shadow-primary/20"
+                                className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-all font-bold text-sm flex items-center gap-2 shadow-lg shadow-primary/20"
                             >
                                 <Icon icon="solar:calendar-add-bold" className="w-5 h-5" />
                                 Schedule New
@@ -90,7 +90,7 @@ const LiveClassManagementModal = ({ isOpen, onClose, courseId, courseTitle }) =>
                                 Failed to load schedules. Please try again.
                             </div>
                         ) : liveClasses.length === 0 ? (
-                            <div className="py-20 text-center bg-secondary/20 rounded-3xl border border-dashed border-border/50">
+                            <div className="py-20 text-center bg-secondary/20 rounded-md border border-dashed border-border/50">
                                 <Icon icon="solar:calendar-linear" className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
                                 <p className="text-muted-foreground font-medium">No live sessions scheduled for this course.</p>
                                 <button 
@@ -105,10 +105,10 @@ const LiveClassManagementModal = ({ isOpen, onClose, courseId, courseTitle }) =>
                                 {liveClasses.map((liveClass) => (
                                     <div 
                                         key={liveClass._id}
-                                        className="p-5 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-all group flex flex-col md:flex-row md:items-center justify-between gap-4"
+                                        className="p-5 rounded-md bg-card border border-border/50 hover:border-primary/30 transition-all group flex flex-col md:flex-row md:items-center justify-between gap-4"
                                     >
                                         <div className="flex items-start gap-4">
-                                            <div className="hidden md:flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-background border border-border/50 shrink-0">
+                                            <div className="hidden md:flex flex-col items-center justify-center w-14 h-14 rounded-md bg-background border border-border/50 shrink-0">
                                                 <span className="text-[10px] font-bold text-primary uppercase leading-none mb-1">{dayjs(liveClass.startTime).format('MMM')}</span>
                                                 <span className="text-xl font-black text-foreground leading-none">{dayjs(liveClass.startTime).format('D')}</span>
                                             </div>
@@ -123,7 +123,7 @@ const LiveClassManagementModal = ({ isOpen, onClose, courseId, courseTitle }) =>
                                                         <Icon icon="solar:stopwatch-bold" className="text-primary/70" />
                                                         {liveClass.duration} min
                                                     </span>
-                                                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
+                                                    <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider ${
                                                         liveClass.status === 'live' ? 'bg-red-500/10 text-red-500 border border-red-500/20' :
                                                         liveClass.status === 'completed' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' :
                                                         'bg-blue-500/10 text-blue-500 border border-blue-500/20'
@@ -137,14 +137,14 @@ const LiveClassManagementModal = ({ isOpen, onClose, courseId, courseTitle }) =>
                                         <div className="flex items-center gap-2 shrink-0 md:opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button
                                                 onClick={() => handleEdit(liveClass)}
-                                                className="p-2.5 rounded-xl bg-secondary text-secondary-foreground hover:bg-primary/10 hover:text-primary transition-all border border-transparent hover:border-primary/20"
+                                                className="p-2.5 rounded-md bg-secondary text-secondary-foreground hover:bg-primary/10 hover:text-primary transition-all border border-transparent hover:border-primary/20"
                                                 title="Edit Schedule"
                                             >
                                                 <Icon icon="solar:pen-new-square-bold-duotone" className="w-5 h-5" />
                                             </button>
                                             <button
                                                 onClick={() => handleDeleteClick(liveClass)}
-                                                className="p-2.5 rounded-xl bg-secondary text-secondary-foreground hover:bg-destructive/10 hover:text-destructive transition-all border border-transparent hover:border-destructive/20"
+                                                className="p-2.5 rounded-md bg-secondary text-secondary-foreground hover:bg-destructive/10 hover:text-destructive transition-all border border-transparent hover:border-destructive/20"
                                                 title="Cancel Schedule"
                                             >
                                                 <Icon icon="solar:trash-bin-trash-bold-duotone" className="w-5 h-5" />

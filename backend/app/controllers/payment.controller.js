@@ -62,7 +62,7 @@ export const initiateEsewaPayment = async (req, res) => {
         const payment = new Payment({
             user: userId,
             courses: coursesArray,
-            course: courseId, // Legacy support
+            course: courseId, 
             amount: numAmount,
             discountAmount,
             couponUsed: couponId,

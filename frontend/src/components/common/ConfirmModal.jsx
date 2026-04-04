@@ -36,23 +36,23 @@ const ConfirmModal = ({
                     initial={{ opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                    className="bg-background rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative"
+                    className="bg-background rounded-md shadow-2xl w-full max-w-md overflow-hidden relative"
                 >
                     <button
                         onClick={onClose}
-                        className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100 transition-colors text-gray-400"
+                        className="absolute top-4 right-4 p-1 rounded-md hover:bg-secondary transition-colors text-muted-foreground"
                     >
                         <X size={20} />
                     </button>
 
                     <div className="p-6">
                         <div className="flex items-start gap-4 mb-4">
-                            <div className={`p-3 rounded-xl ${style.bg}`}>
+                            <div className={`p-3 rounded-md ${style.bg}`}>
                                 {style.icon}
                             </div>
                             <div>
-                                <h3 className="text-xl font-bold text-gray-900">{title}</h3>
-                                <p className="text-gray-500 mt-1 leading-relaxed">
+                                <h3 className="text-xl font-bold text-foreground">{title}</h3>
+                                <p className="text-muted-foreground mt-1 leading-relaxed">
                                     {message}
                                 </p>
                             </div>
@@ -61,7 +61,7 @@ const ConfirmModal = ({
                         <div className="flex gap-3 mt-8">
                             <button
                                 onClick={onClose}
-                                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition-colors"
+                                className="flex-1 px-4 py-2.5 rounded-md border border-border text-foreground font-semibold hover:bg-muted transition-colors"
                             >
                                 {cancelText}
                             </button>
@@ -70,7 +70,7 @@ const ConfirmModal = ({
                                     onConfirm();
                                     onClose();
                                 }}
-                                className={`flex-1 px-4 py-2.5 rounded-xl text-foreground font-semibold transition-colors shadow-lg shadow-black/5 ${style.button}`}
+                                className={`flex-1 px-4 py-2.5 rounded-md text-foreground font-semibold transition-colors shadow-lg shadow-black/5 ${style.button}`}
                             >
                                 {confirmText}
                             </button>

@@ -45,7 +45,7 @@ const BadgeNotification = ({ badges = [], onClose }) => {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 80, scale: 0.9 }}
         transition={{ type: "spring", stiffness: 300, damping: 25 }}
-        className={`fixed bottom-6 right-6 z-[9999] max-w-xs w-full rounded-2xl border p-5
+        className={`fixed bottom-6 right-6 z-[9999] max-w-xs w-full rounded-md border p-5
           bg-gradient-to-br ${colors.bg} ${colors.border}
           backdrop-blur-xl shadow-2xl shadow-black/30`}
       >
@@ -72,7 +72,7 @@ const BadgeNotification = ({ badges = [], onClose }) => {
 
         {/* Badge content */}
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-xl bg-background/30 flex items-center justify-center text-4xl border border-border/40 shadow-inner flex-shrink-0">
+          <div className="w-16 h-16 rounded-md bg-background/30 flex items-center justify-center text-4xl border border-border/40 shadow-inner flex-shrink-0">
             {badge?.icon || "🏅"}
           </div>
           <div>
@@ -86,7 +86,7 @@ const BadgeNotification = ({ badges = [], onClose }) => {
         </div>
 
         {/* Progress bar */}
-        <div className="mt-4 h-1 bg-black/20 rounded-full overflow-hidden">
+        <div className="mt-4 h-1 bg-black/20 rounded-md overflow-hidden">
           <motion.div
             className={`h-full ${colors.text.replace("text-", "bg-")}`}
             initial={{ width: "100%" }}

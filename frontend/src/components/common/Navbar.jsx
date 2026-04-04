@@ -104,7 +104,7 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Links (Center) */}
-          <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-1 xl:gap-4 glass px-2 py-1.5 rounded-2xl border border-white/10 shadow-sm">
+          <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-1 xl:gap-4 glass px-2 py-1.5 rounded-md border border-white/10 shadow-sm">
             {desktopButtons.map((btn) => (
               <button
                 key={btn.path}
@@ -112,7 +112,7 @@ const Navbar = () => {
                   navigate(btn.path);
                   setActive(btn.path);
                 }}
-                className={`px-4 py-2 font-bold text-[11px] tracking-widest uppercase relative transition-all duration-300 hover:cursor-pointer group whitespace-nowrap rounded-xl ${
+                className={`px-4 py-2 font-bold text-[11px] tracking-widest uppercase relative transition-all duration-300 hover:cursor-pointer group whitespace-nowrap rounded-md ${
                   active === btn.path 
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:text-primary hover:bg-primary/5"
@@ -134,11 +134,11 @@ const Navbar = () => {
                 {userRole === 'student' && (
                   <button
                     onClick={() => navigate('/cart')}
-                    className={`w-11 h-11 rounded-full hover:cursor-pointer flex items-center justify-center transition-all relative bg-secondary hover:bg-muted text-primary`}
+                    className={`w-11 h-11 rounded-md hover:cursor-pointer flex items-center justify-center transition-all relative bg-secondary hover:bg-muted text-primary`}
                   >
                     <Icon icon="solar:cart-large-2-bold" size={24} />
                     {cartCount > 0 && (
-                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center text-[10px] font-black text-primary-foreground">
+                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-md flex items-center justify-center text-[10px] font-black text-primary-foreground">
                         {cartCount}
                       </span>
                     )}
@@ -165,7 +165,7 @@ const Navbar = () => {
                     navigate("/signup");
                     setActive("/signup");
                   }}
-                  className={`px-8 py-3 rounded-2xl font-black text-xs tracking-widest uppercase transition-all shadow-xl active:scale-95 bg-primary text-primary-foreground hover:bg-primary-hover shadow-primary/20`}
+                  className={`px-8 py-3 rounded-md font-black text-xs tracking-widest uppercase transition-all shadow-xl active:scale-95 bg-primary text-primary-foreground hover:bg-primary-hover shadow-primary/20`}
                 >
                   Get Started
                 </button>
@@ -182,11 +182,11 @@ const Navbar = () => {
                   navigate('/cart');
                   setIsMobileMenuOpen(false);
                 }}
-                className="w-10 h-10 rounded-full flex items-center justify-center transition-all relative bg-secondary text-primary"
+                className="w-10 h-10 rounded-md flex items-center justify-center transition-all relative bg-secondary text-primary"
               >
                 <Icon icon="solar:cart-large-2-bold" size={20} />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full flex items-center justify-center text-[9px] font-black text-primary-foreground">
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-md flex items-center justify-center text-[9px] font-black text-primary-foreground">
                     {cartCount}
                   </span>
                 )}
@@ -239,7 +239,7 @@ const Navbar = () => {
                 setIsMobileMenuOpen(false);
               }}
               style={{ transitionDelay: `${idx * 50}ms` }}
-              className={`w-full text-left px-5 py-4 rounded-2xl font-bold text-[13px] tracking-widest uppercase transition-all duration-300 transform ${
+              className={`w-full text-left px-5 py-4 rounded-md font-bold text-[13px] tracking-widest uppercase transition-all duration-300 transform ${
                 isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"
               } ${
                 active === btn.path 
@@ -260,7 +260,7 @@ const Navbar = () => {
                 setIsMobileMenuOpen(false);
               }}
               style={{ transitionDelay: `${desktopButtons.length * 50}ms` }}
-              className={`w-full text-left px-5 py-4 rounded-2xl font-bold text-[13px] tracking-widest uppercase transition-all duration-300 transform ${
+              className={`w-full text-left px-5 py-4 rounded-md font-bold text-[13px] tracking-widest uppercase transition-all duration-300 transform ${
                 isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"
               } ${
                 active === getDashboardPath()
@@ -294,7 +294,7 @@ const Navbar = () => {
                   setActive("/signup");
                   setIsMobileMenuOpen(false);
                 }}
-                className="w-full py-4 rounded-2xl bg-primary text-primary-foreground font-black text-[13px] tracking-widest uppercase shadow-lg shadow-primary/20"
+                className="w-full py-4 rounded-md bg-primary text-primary-foreground font-black text-[13px] tracking-widest uppercase shadow-lg shadow-primary/20"
               >
                 Get Started
               </button>
@@ -302,7 +302,7 @@ const Navbar = () => {
           ) : (
             <button
               onClick={handleLogout}
-              className="w-full py-4 flex items-center justify-center gap-3 rounded-2xl bg-muted/50 text-destructive font-bold text-[13px] tracking-widest uppercase hover:bg-destructive/10 transition-colors"
+              className="w-full py-4 flex items-center justify-center gap-3 rounded-md bg-muted/50 text-destructive font-bold text-[13px] tracking-widest uppercase hover:bg-destructive/10 transition-colors"
             >
               <Icon icon="solar:logout-2-bold" size={20} />
               Logout

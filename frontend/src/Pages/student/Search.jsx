@@ -35,7 +35,7 @@ const Search = () => {
     const levels = ["Beginner", "Intermediate", "Advanced"];
 
     return (
-        <div className="flex flex-col min-h-screen bg-gray-50 font-outfit">
+        <div className="flex flex-col min-h-screen bg-muted font-outfit">
             <Navbar />
 
             <main className="flex-1 pt-32 pb-20">
@@ -43,7 +43,7 @@ const Search = () => {
                     <div className="flex flex-col lg:flex-row gap-8">
                         {/* Sidebar Filters */}
                         <aside className="w-full lg:w-80 space-y-8">
-                            <div className="bg-background p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <div className="bg-background p-6 rounded-md shadow-sm border border-border">
                                 <h3 className="text-xl font-bold text-primary mb-6 flex items-center gap-2">
                                     <Icon icon="solar:filter-bold-duotone" className="text-accent" />
                                     Filters
@@ -52,11 +52,11 @@ const Search = () => {
                                 <div className="space-y-6">
                                     {/* Category Filter */}
                                     <div>
-                                        <label className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 block">Category</label>
+                                        <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3 block">Category</label>
                                         <select
                                             value={category}
                                             onChange={(e) => setCategory(e.target.value)}
-                                            className="w-full p-3 bg-gray-50 border-2 border-transparent focus:border-primary rounded-xl outline-none transition-all"
+                                            className="w-full p-3 bg-muted border-2 border-transparent focus:border-primary rounded-md outline-none transition-all"
                                         >
                                             <option value="">All Categories</option>
                                             {categories.map((cat) => (
@@ -67,13 +67,13 @@ const Search = () => {
 
                                     {/* Level Filter */}
                                     <div>
-                                        <label className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 block">Level</label>
+                                        <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3 block">Level</label>
                                         <div className="space-y-2">
                                             {["", ...levels].map((lvl) => (
                                                 <button
                                                     key={lvl}
                                                     onClick={() => setLevel(lvl)}
-                                                    className={`w-full text-left px-4 py-2.5 rounded-xl transition-all font-medium ${level === lvl ? "bg-primary text-foreground" : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                                                    className={`w-full text-left px-4 py-2.5 rounded-md transition-all font-medium ${level === lvl ? "bg-primary text-foreground" : "bg-muted text-muted-foreground hover:bg-secondary"
                                                         }`}
                                                 >
                                                     {lvl || "All Levels"}
@@ -84,7 +84,7 @@ const Search = () => {
 
                                     {/* Price Filter */}
                                     <div>
-                                        <label className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 block">Price</label>
+                                        <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3 block">Price</label>
                                         <div className="flex flex-wrap gap-2">
                                             {[
                                                 { label: "All", value: "all" },
@@ -94,9 +94,9 @@ const Search = () => {
                                                 <button
                                                     key={p.value}
                                                     onClick={() => setPriceRange(p.value)}
-                                                    className={`px-4 py-2 rounded-full border-2 transition-all font-bold text-sm ${priceRange === p.value
+                                                    className={`px-4 py-2 rounded-md border-2 transition-all font-bold text-sm ${priceRange === p.value
                                                             ? "bg-accent border-accent text-foreground"
-                                                            : "border-gray-100 text-gray-500 hover:border-accent/30"
+                                                            : "border-border text-muted-foreground hover:border-accent/30"
                                                         }`}
                                                 >
                                                     {p.label}
@@ -107,7 +107,7 @@ const Search = () => {
 
                                     <button
                                         onClick={() => { setCategory(""); setLevel(""); setPriceRange("all"); setQ(""); }}
-                                        className="w-full py-3 text-red-500 font-bold hover:bg-red-50 rounded-xl transition-all"
+                                        className="w-full py-3 text-red-500 font-bold hover:bg-red-50 rounded-md transition-all"
                                     >
                                         Clear All
                                     </button>
@@ -120,13 +120,13 @@ const Search = () => {
                             <div className="relative mb-8 group">
                                 <Icon
                                     icon="solar:magnifer-linear"
-                                    className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors"
+                                    className="absolute left-6 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors"
                                     size={24}
                                 />
                                 <input
                                     type="text"
                                     placeholder="Search for anything..."
-                                    className="w-full pl-16 pr-6 py-5 bg-background border-2 border-transparent focus:border-primary rounded-2xl shadow-sm outline-none transition-all text-xl"
+                                    className="w-full pl-16 pr-6 py-5 bg-background border-2 border-transparent focus:border-primary rounded-md shadow-sm outline-none transition-all text-xl"
                                     value={q}
                                     onChange={(e) => setQ(e.target.value)}
                                 />
@@ -147,10 +147,10 @@ const Search = () => {
                                             ))}
                                         </div>
                                     ) : (
-                                        <div className="text-center py-32 bg-background rounded-3xl border-2 border-dashed border-gray-100">
+                                        <div className="text-center py-32 bg-background rounded-md border-2 border-dashed border-border">
                                             <Icon icon="solar:document-grey-bold" className="mx-auto text-gray-100 mb-6" width={80} />
-                                            <h3 className="text-3xl font-bold text-gray-400">No courses found</h3>
-                                            <p className="text-gray-400 mt-2 text-lg">Try adjusting your filters or search query.</p>
+                                            <h3 className="text-3xl font-bold text-muted-foreground">No courses found</h3>
+                                            <p className="text-muted-foreground mt-2 text-lg">Try adjusting your filters or search query.</p>
                                         </div>
                                     )}
                                 </>

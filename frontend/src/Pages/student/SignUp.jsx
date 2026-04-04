@@ -4,10 +4,13 @@ import {
     getSession,
     loginWithGithub,
     loginWithGoogle,
-    signIn,
+    mergeRole,
     signUp,
 } from "@/lib/auth.client";
+import { getAuthErrorMessage, isUserAlreadyExistsError } from "@/utils/auth-errors";
+import { verifyEmail, verifyPhoneOptional } from "@/utils/verify-email";
 import { cn } from "@/lib/utils";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { setCredentials } from "@/store/slices/authSlice";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
@@ -31,6 +34,8 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -41,45 +46,102 @@ const SignUp = () => {
     setError("");
     setLoading(true);
 
-    // Validate passwords match
+    const emailTrimmed = formData.email.trim().toLowerCase();
+    if (!verifyEmail(emailTrimmed)) {
+      setError("Please enter a valid email address");
+      setLoading(false);
+      return;
+    }
+
+    const first = formData.firstName.trim();
+    const last = formData.lastName.trim();
+    if (!first || !last) {
+      setError("Please enter your first and last name");
+      setLoading(false);
+      return;
+    }
+
+    if (!verifyPhoneOptional(formData.phoneNumber)) {
+      setError("Enter a valid phone number (8–15 digits), or leave the field empty");
+      setLoading(false);
+      return;
+    }
+
     if (formData.createNewPassword !== formData.confirmPassword) {
       setError("Passwords do not match");
       setLoading(false);
       return;
     }
 
-    // Validate password length
     if (formData.createNewPassword.length < 8) {
       setError("Password must be at least 8 characters long");
       setLoading(false);
       return;
     }
 
+    if (formData.createNewPassword.length > 128) {
+      setError("Password must be at most 128 characters long");
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Create full name from first and last name
-      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+      setSuccessMessage("");
+      const fullName = `${first} ${last}`.trim();
+      const callbackURL = `${window.location.origin}/login`;
+      let signupData;
+      try {
+        signupData = await signUp(
+          emailTrimmed,
+          formData.createNewPassword,
+          fullName,
+          role,
+          callbackURL,
+        );
+      } catch (signErr) {
+        if (isUserAlreadyExistsError(signErr)) {
+          try {
+            const merged = await mergeRole(emailTrimmed, formData.createNewPassword, role);
+            if (merged?.alreadyHadRole) {
+              setError("You already have this role for this account. Sign in instead.");
+              return;
+            }
+            setError("");
+            setSuccessMessage(
+              "That email already had an account — we added this role. You can sign in with your password.",
+            );
+            return;
+          } catch (mergeErr) {
+            const msg = mergeErr?.message || "";
+            if (mergeErr?.status === 401) {
+              setError(
+                "This email is already registered. Enter your account password to add this role, or sign in.",
+              );
+              return;
+            }
+            if (msg.toLowerCase().includes("social")) {
+              setError(msg);
+              return;
+            }
+            setError("An account with this email already exists. Sign in instead.");
+            return;
+          }
+        }
+        throw signErr;
+      }
 
-      // Sign up with better-auth, including role
-      await signUp(formData.email, formData.createNewPassword, fullName, role);
+      // With requireEmailVerification, the API returns token: null and does not create a session.
+      if (!signupData?.token) {
+        setShowVerifyModal(true);
+        return;
+      }
 
-      // Automatically sign in after successful signup
-      await signIn(formData.email, formData.createNewPassword);
-
-      // Get session data
       const session = await getSession();
-
-      if (session && session.user) {
-        // Get role from backend session (more secure than client-side role)
+      if (session?.user) {
         const userRole = session.user.role || role;
-
-        // Update Redux state with user data
-        // Serialize userData to avoid non-serializable value warning in Redux
         const serializedUser = JSON.parse(JSON.stringify(session.user));
         dispatch(setCredentials({ role: userRole, userData: serializedUser }));
 
-        console.log("Signup and login success:", session);
-
-        // Redirect based on role
         if (userRole === "instructor") {
           navigate("/instructor/dashboard", { replace: true });
         } else if (userRole === "admin") {
@@ -88,16 +150,11 @@ const SignUp = () => {
           navigate("/student/dashboard", { replace: true });
         }
       } else {
-        // Signup succeeded but login failed, redirect to login page
-        navigate("/login");
+        setError("Account created but we could not start your session. Please sign in.");
       }
     } catch (error) {
       console.error("Signup failed:", error);
-      setError(
-        error.response?.data?.message ||
-        error.message ||
-        "Sign up failed. Email may already be in use.",
-      );
+      setError(getAuthErrorMessage(error) || "Sign up failed. Try again.");
     } finally {
       setLoading(false);
     }
@@ -111,13 +168,13 @@ const SignUp = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-accent opacity-100 dark:from-[#0f0f17] dark:to-[#0a0a0f]" />
 
         {/* Abstract lines decoration */}
-        <div className="absolute bottom-20 left-20 w-48 h-48 border border-white/10 rounded-lg transform rotate-12" />
-        <div className="absolute bottom-24 left-24 w-48 h-48 border border-white/10 rounded-lg transform rotate-12" />
+        <div className="absolute bottom-20 left-20 w-48 h-48 border border-white/10 rounded-md transform rotate-12" />
+        <div className="absolute bottom-24 left-24 w-48 h-48 border border-white/10 rounded-md transform rotate-12" />
 
         <div className="relative z-10 mb-20">
           {/* <button
             onClick={() => navigate(-1)}
-            className="absolute -top-32 left-0 flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all font-medium backdrop-blur-sm border border-white/20 shadow-sm"
+            className="absolute -top-32 left-0 flex items-center gap-2 px-4 py-2 bg-card/10 hover:bg-card/20 text-white rounded-md transition-all font-medium backdrop-blur-sm border border-white/20 shadow-sm"
           >
             <Icon icon="solar:alt-arrow-left-linear" className="w-5 h-5" /> go back
           </button> */}
@@ -148,7 +205,7 @@ const SignUp = () => {
         {/* New Top Left Arrow Button */}
         <button
           onClick={() => navigate(-1)}
-          className="absolute top-6 left-6 p-2 text-foreground/60 hover:text-foreground hover:bg-muted rounded-full transition-all flex items-center justify-center"
+          className="absolute top-6 left-6 p-2 text-foreground/60 hover:text-foreground hover:bg-muted rounded-md transition-all flex items-center justify-center"
         >
           <Icon icon="solar:arrow-left-linear" className="w-6 h-6" />
         </button>
@@ -174,7 +231,7 @@ const SignUp = () => {
               <button
                 type="button"
                 onClick={() => setRole("student")}
-                className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${role === "student"
+                className={`flex-1 px-4 py-3 rounded-md border-2 transition-all flex items-center justify-center gap-2 ${role === "student"
                   ? "border-primary bg-primary/5 text-primary font-semibold shadow-sm shadow-primary/10"
                   : "border-border text-muted-foreground hover:border-primary/50 hover:bg-muted/50"
                   }`}
@@ -184,7 +241,7 @@ const SignUp = () => {
               <button
                 type="button"
                 onClick={() => setRole("instructor")}
-                className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${role === "instructor"
+                className={`flex-1 px-4 py-3 rounded-md border-2 transition-all flex items-center justify-center gap-2 ${role === "instructor"
                   ? "border-primary bg-primary/5 text-primary font-semibold shadow-sm shadow-primary/10"
                   : "border-border text-muted-foreground hover:border-primary/50 hover:bg-muted/50"
                   }`}
@@ -209,7 +266,7 @@ const SignUp = () => {
                     value={formData.firstName}
                     onChange={handleChange}
                     required
-                    className="flex h-11 w-full rounded-xl border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
+                    className="flex h-11 w-full rounded-md border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
                   />
                 </LabelInputContainer>
                 <LabelInputContainer>
@@ -224,7 +281,7 @@ const SignUp = () => {
                     value={formData.lastName}
                     onChange={handleChange}
                     required
-                    className="flex h-11 w-full rounded-xl border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
+                    className="flex h-11 w-full rounded-md border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
                   />
                 </LabelInputContainer>
               </div>
@@ -241,23 +298,23 @@ const SignUp = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="flex h-11 w-full rounded-xl border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
+                  className="flex h-11 w-full rounded-md border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
                 />
               </LabelInputContainer>
 
               <LabelInputContainer>
                 <Label htmlFor="phoneNumber" className="text-sm text-foreground">
-                  Phone Number
+                  Phone number (optional)
                 </Label>
                 <input
                   id="phoneNumber"
                   name="phoneNumber"
                   placeholder=""
                   type="tel"
+                  autoComplete="tel"
                   value={formData.phoneNumber}
                   onChange={handleChange}
-                  required
-                  className="flex h-11 w-full rounded-xl border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
+                  className="flex h-11 w-full rounded-md border border-border bg-muted/30 px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground"
                 />
               </LabelInputContainer>
 
@@ -275,7 +332,7 @@ const SignUp = () => {
                         value={formData.createNewPassword}
                         onChange={handleChange}
                         required
-                        className="flex h-11 w-full rounded-xl border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground pr-10"
+                        className="flex h-11 w-full rounded-md border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground pr-10"
                       />
                       <button
                         type="button"
@@ -303,7 +360,7 @@ const SignUp = () => {
                         value={formData.confirmPassword}
                         onChange={handleChange}
                         required
-                        className="flex h-11 w-full rounded-xl border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground pr-10"
+                        className="flex h-11 w-full rounded-md border border-border bg-muted/30 px-4 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-foreground pr-10"
                       />
                       <button
                         type="button"
@@ -320,6 +377,12 @@ const SignUp = () => {
               </div>
             </div>
 
+            {successMessage && (
+              <div className="bg-emerald-500/10 border border-emerald-500/25 text-emerald-800 dark:text-emerald-200 px-4 py-3 rounded-md text-sm my-4">
+                {successMessage}
+              </div>
+            )}
+
             {error && (
               <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md text-sm my-4">
                 {error}
@@ -327,7 +390,7 @@ const SignUp = () => {
             )}
 
             <button
-              className="relative block h-11 w-full rounded-xl bg-primary text-primary-foreground font-medium shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-[0.98] mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="relative block h-11 w-full rounded-md bg-primary text-primary-foreground font-medium shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-[0.98] mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
               type="submit"
               disabled={loading}
             >
@@ -339,7 +402,7 @@ const SignUp = () => {
             <div className="flex flex-col space-y-3">
               <button
                 onClick={() => loginWithGithub(role)}
-                className="flex h-11 w-full items-center justify-center space-x-2 rounded-xl bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
+                className="flex h-11 w-full items-center justify-center space-x-2 rounded-md bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
                 type="button"
               >
                 <Icon icon="mdi:github" className="h-6 w-6 text-foreground" />
@@ -349,7 +412,7 @@ const SignUp = () => {
               </button>
               <button
                 onClick={() => loginWithGoogle(role)}
-                className="flex h-11 w-full items-center justify-center space-x-2 rounded-xl bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
+                className="flex h-11 w-full items-center justify-center space-x-2 rounded-md bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
                 type="button"
               >
                 <Icon icon="logos:google-icon" className="h-5 w-5" />
@@ -371,9 +434,39 @@ const SignUp = () => {
           </p>
 
           {/* Bottom Right Decoration */}
-          <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary rounded-full hidden md:block opacity-10"></div>
+          <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary rounded-md hidden md:block opacity-10"></div>
         </div>
       </div>
+      
+      {/* Verify Email Modal */}
+      <Dialog open={showVerifyModal} onOpenChange={(open) => {
+        setShowVerifyModal(open);
+        if (!open) navigate("/login");
+      }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-md bg-primary/10 mb-4">
+              <Icon icon="solar:letter-opened-bold-duotone" className="h-8 w-8 text-primary" />
+            </div>
+            <DialogTitle className="text-center text-xl">Verify your email</DialogTitle>
+            <DialogDescription className="text-center pt-2 text-base">
+              Registration successful! We've sent a verification link to <span className="font-semibold text-foreground">{formData.email}</span>.
+              Please check your inbox and verify your email before signing in.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-center mt-6">
+            <button
+              onClick={() => {
+                setShowVerifyModal(false);
+                navigate("/login");
+              }}
+              className="w-full sm:w-auto px-8 py-2.5 bg-primary text-primary-foreground font-medium rounded-md shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-[0.98]"
+            >
+              Go to Login
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

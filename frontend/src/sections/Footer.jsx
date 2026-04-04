@@ -7,17 +7,18 @@ import {
   Instagram,
   Linkedin,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import logo from "../assets/logoo.png";
 
 const footerLinks = {
   product: [
-    { name: "Features", href: "#features" },
+    { name: "Features", href: "/#features" },
     { name: "Pricing", href: "#" },
     { name: "For Teachers", href: "#" },
     { name: "For Students", href: "#" },
   ],
   company: [
-    { name: "About Us", href: "#" },
+    { name: "About Us", href: "/about" },
     { name: "Careers", href: "#" },
     { name: "Blog", href: "#" },
     { name: "Press", href: "#" },
@@ -26,11 +27,11 @@ const footerLinks = {
     { name: "Documentation", href: "#" },
     { name: "Help Center", href: "#" },
     { name: "Community", href: "#" },
-    { name: "Contact", href: "#" },
+    { name: "Contact", href: "/contact" },
   ],
   legal: [
-    { name: "Privacy Policy", href: "#" },
-    { name: "Terms of Service", href: "#" },
+    { name: "Privacy Policy", href: "/privacy-policy" },
+    { name: "Terms of Service", href: "/privacy-policy" },
     { name: "Cookie Policy", href: "#" },
   ],
 };
@@ -51,14 +52,14 @@ export function Footer() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 lg:gap-12">
             {/* Brand Column */}
             <div className="col-span-2">
-              <a href="#" className="flex items-center gap-2 mb-6 group">
+              <Link to="/" className="flex items-center gap-2 mb-6 group">
                 <img
                   src={logo}
                   alt="N"
                   className="h-8 w-auto group-hover:scale-105 transition-transform"
                 />
                 <span className="text-xl font-bold text-foreground">EXL</span>
-              </a>
+              </Link>
               <p className="text-muted-foreground mb-6 max-w-sm">
                 Elevating education in Nepal through technology. Learn, teach,
                 and grow with our AI-powered learning platform.
@@ -87,12 +88,21 @@ export function Footer() {
               <ul className="space-y-3">
                 {footerLinks.product.map((link) => (
                   <li key={link.name}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {link.name}
-                    </a>
+                    {link.href.startsWith("/") ? (
+                      <Link
+                        to={link.href}
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {link.name}
+                      </Link>
+                    ) : (
+                      <a
+                        href={link.href}
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {link.name}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -104,12 +114,21 @@ export function Footer() {
               <ul className="space-y-3">
                 {footerLinks.company.map((link) => (
                   <li key={link.name}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {link.name}
-                    </a>
+                    {link.href.startsWith("/") ? (
+                      <Link
+                        to={link.href}
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {link.name}
+                      </Link>
+                    ) : (
+                      <a
+                        href={link.href}
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {link.name}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -121,12 +140,21 @@ export function Footer() {
               <ul className="space-y-3">
                 {footerLinks.resources.map((link) => (
                   <li key={link.name}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {link.name}
-                    </a>
+                    {link.href.startsWith("/") ? (
+                      <Link
+                        to={link.href}
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {link.name}
+                      </Link>
+                    ) : (
+                      <a
+                        href={link.href}
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {link.name}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -138,12 +166,21 @@ export function Footer() {
               <ul className="space-y-3">
                 {footerLinks.legal.map((link) => (
                   <li key={link.name}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {link.name}
-                    </a>
+                    {link.href.startsWith("/") ? (
+                      <Link
+                        to={link.href}
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {link.name}
+                      </Link>
+                    ) : (
+                      <a
+                        href={link.href}
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {link.name}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>

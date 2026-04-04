@@ -11,7 +11,7 @@ const DeviceSelect = ({ label, icon, devices, selectedDevice, onSelect }) => (
     <select
       value={selectedDevice || ''}
       onChange={(e) => onSelect(e.target.value)}
-      className="w-full px-4 py-3 rounded-xl bg-secondary border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all appearance-none cursor-pointer"
+      className="w-full px-4 py-3 rounded-md bg-secondary border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all appearance-none cursor-pointer"
     >
       {devices.length === 0 && (
         <option value="">No devices found</option>
@@ -42,12 +42,12 @@ const DeviceSettingsModal = ({ onClose }) => {
     <div className="fixed inset-0 z-[200] flex items-center justify-center">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative w-full max-w-md mx-4 bg-popover border border-border rounded-2xl shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md mx-4 bg-popover border border-border rounded-md shadow-2xl animate-in fade-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between p-6 pb-2">
           <h2 className="text-lg font-bold">Device Settings</h2>
           <button
             onClick={onClose}
-            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-secondary transition-colors text-muted-foreground"
+            className="w-9 h-9 flex items-center justify-center rounded-md hover:bg-secondary transition-colors text-muted-foreground"
           >
             <Icon icon="material-symbols:close" className="w-5 h-5" />
           </button>
@@ -84,7 +84,7 @@ const DeviceSettingsModal = ({ onClose }) => {
         <div className="p-6 pt-2">
           <button
             onClick={onClose}
-            className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 transition-all active:scale-[0.98]"
+            className="w-full py-3 rounded-md bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 transition-all active:scale-[0.98]"
           >
             Done
           </button>

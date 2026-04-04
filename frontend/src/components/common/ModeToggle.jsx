@@ -9,7 +9,7 @@ const ModeToggle = () => {
   return (
     <button
       onClick={() => dispatch(toggleTheme())}
-      className="relative w-10 h-10 flex items-center justify-center rounded-full bg-secondary text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-300 ring-1 ring-border shadow-sm group"
+      className="relative w-10 h-10 flex items-center justify-center rounded-md bg-secondary text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-300 ring-1 ring-border shadow-sm group"
       aria-label="Toggle theme"
     >
       <Icon

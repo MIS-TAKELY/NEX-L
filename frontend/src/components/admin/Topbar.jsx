@@ -16,7 +16,7 @@ const AdminTopbar = () => {
         {/* Theme Toggle */}
         <button
           onClick={() => dispatch(toggleTheme())}
-          className="w-10 h-10 bg-card rounded-full flex items-center justify-center text-muted-foreground hover:text-primary hover:shadow-md transition-all shadow-sm border border-border relative overflow-hidden group"
+          className="w-10 h-10 bg-card rounded-md flex items-center justify-center text-muted-foreground hover:text-primary hover:shadow-md transition-all shadow-sm border border-border relative overflow-hidden group"
         >
           <Icon
             icon="solar:sun-bold-duotone"
@@ -37,7 +37,7 @@ const AdminTopbar = () => {
             <p className="text-sm font-bold text-foreground">Admin User</p>
             <p className="text-xs text-muted-foreground">Super Admin</p>
           </div>
-          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary overflow-hidden border border-primary/20">
+          <div className="w-10 h-10 rounded-md bg-primary/20 flex items-center justify-center text-primary overflow-hidden border border-primary/20">
             <Icon icon="solar:user-circle-bold-duotone" size={24} />
           </div>
         </div>

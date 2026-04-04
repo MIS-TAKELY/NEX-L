@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema(
     image: { type: String },
     password: { type: String }, // Optional for better-auth
     role: { type: String, enum: ["student", "teacher", "instructor", "admin"], default: "student" },
+    /** JSON string array of roles for better-auth dual-role users, e.g. '["student","instructor"]' */
+    roles: { type: String },
   },
   {
     timestamps: true,

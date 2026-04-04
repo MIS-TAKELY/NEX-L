@@ -49,13 +49,13 @@ const ParticipantRow = ({ participant, isLocal, canMute, canKick, call }) => {
 
   return (
     <div
-      className="group relative flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-secondary/50 transition-colors cursor-pointer"
+      className="group relative flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-secondary/50 transition-colors cursor-pointer"
       onClick={handleRowClick}
       onMouseEnter={() => { if (canMute || canKick) setShowActions(true); }}
       onMouseLeave={() => { setShowActions(false); setConfirmKick(false); }}
     >
       {/* Avatar */}
-      <div className={`relative flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold overflow-hidden ${
+      <div className={`relative flex-shrink-0 w-9 h-9 rounded-md flex items-center justify-center text-sm font-bold overflow-hidden ${
         isSpeaking ? 'ring-2 ring-primary' : ''
       }`}
         style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))' }}
@@ -66,7 +66,7 @@ const ParticipantRow = ({ participant, isLocal, canMute, canKick, call }) => {
           <span className="text-white">{participant.name?.charAt(0)?.toUpperCase() || '?'}</span>
         )}
         {isHandRaised && (
-          <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center border border-white">
+          <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-md flex items-center justify-center border border-white">
             <span className="text-[8px]">✋</span>
           </div>
         )}
@@ -105,7 +105,7 @@ const ParticipantRow = ({ participant, isLocal, canMute, canKick, call }) => {
           {canMute && hasAudio && (
             <button
               onClick={handleMuteAudio}
-              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
               title="Mute audio"
             >
               <Icon icon="material-symbols:mic-off" className="w-4 h-4" />
@@ -114,7 +114,7 @@ const ParticipantRow = ({ participant, isLocal, canMute, canKick, call }) => {
           {canMute && hasVideo && (
             <button
               onClick={handleMuteVideo}
-              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
               title="Turn off camera"
             >
               <Icon icon="material-symbols:videocam-off" className="w-4 h-4" />
@@ -123,7 +123,7 @@ const ParticipantRow = ({ participant, isLocal, canMute, canKick, call }) => {
           {canKick && (
             <button
               onClick={() => setConfirmKick(true)}
-              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
               title="Remove from call"
             >
               <Icon icon="material-symbols:person-remove-outline" className="w-4 h-4" />
@@ -138,13 +138,13 @@ const ParticipantRow = ({ participant, isLocal, canMute, canKick, call }) => {
           <span className="text-[10px] text-destructive font-bold">Remove?</span>
           <button
             onClick={handleKick}
-            className="px-2.5 py-1 rounded-lg bg-destructive text-white text-[10px] font-bold hover:bg-destructive/90 transition-colors"
+            className="px-2.5 py-1 rounded-md bg-destructive text-white text-[10px] font-bold hover:bg-destructive/90 transition-colors"
           >
             Yes
           </button>
           <button
             onClick={() => setConfirmKick(false)}
-            className="px-2.5 py-1 rounded-lg bg-secondary text-foreground text-[10px] font-bold hover:bg-secondary/70 transition-colors"
+            className="px-2.5 py-1 rounded-md bg-secondary text-foreground text-[10px] font-bold hover:bg-secondary/70 transition-colors"
           >
             No
           </button>

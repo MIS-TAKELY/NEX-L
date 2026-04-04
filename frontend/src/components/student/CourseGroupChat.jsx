@@ -91,8 +91,8 @@ const CourseGroupChat = ({ courseId, onClose }) => {
 
   if (loading && !activeChannel) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-gray-500 gap-3">
-        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-3">
+        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-md animate-spin" />
         <span className="text-sm font-medium">Loading channels…</span>
       </div>
     );
@@ -116,7 +116,7 @@ const CourseGroupChat = ({ courseId, onClose }) => {
           {isTeacher && (
             <button 
               onClick={() => setIsModalOpen(true)}
-              className="w-8 h-8 flex items-center justify-center bg-primary/10 hover:bg-primary text-primary hover:text-primary-foreground rounded-lg transition-all shadow-sm shadow-primary/10"
+              className="w-8 h-8 flex items-center justify-center bg-primary/10 hover:bg-primary text-primary hover:text-primary-foreground rounded-md transition-all shadow-sm shadow-primary/10"
               title="Add Channel"
             >
               <Icon icon="solar:add-circle-bold" className="w-5 h-5" />
@@ -128,7 +128,7 @@ const CourseGroupChat = ({ courseId, onClose }) => {
             <button
               key={ch.channelId}
               onClick={() => handleChannelSelect(ch.channelId)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all group border ${
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-md text-xs font-black uppercase tracking-widest transition-all group border ${
                 activeChannel?.id === ch.channelId
                   ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 border-primary'
                   : 'text-muted-foreground hover:bg-background/80 border-transparent hover:border-border'
@@ -145,7 +145,7 @@ const CourseGroupChat = ({ courseId, onClose }) => {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-card shadow-sm z-10 transition-colors duration-500">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
+            <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center border border-primary/20">
               <Icon icon="solar:hashtag-bold" className="w-4 h-4 text-primary shrink-0" />
             </div>
             <span className="font-black text-foreground text-sm truncate uppercase tracking-tight">
@@ -153,7 +153,7 @@ const CourseGroupChat = ({ courseId, onClose }) => {
             </span>
           </div>
           {onClose && (
-            <button onClick={onClose} className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all ml-2">
+            <button onClick={onClose} className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-md transition-all ml-2">
               <Icon icon="solar:close-circle-bold" size={20} />
             </button>
           )}
