@@ -1,16 +1,16 @@
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  pool: true, // Use connection pooling for reused SMTP connections
-  host: "smtp.gmail.com",
-  port: 465, // Use port 465 for SSL/TLS as it's more reliable on Render
-  secure: true, // Use SSL/TLS
+  service: "gmail", // Use built-in Gmail service configuration
   auth: {
     user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
+    pass: process.env.MAIL_PASS, // Uses 16-character App Password
   },
-  connectionTimeout: 10000, // 10 seconds timeout for initial connection
-  greetingTimeout: 10000, // 10 seconds timeout for server greeting
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  tls: {
+    rejectUnauthorized: false, // Bypass potential cert issues on data center local network
+  },
 });
 
 // Verify connection configuration - non-blocking to avoid startup timeouts on Render
