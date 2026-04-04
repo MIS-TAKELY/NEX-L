@@ -66,9 +66,14 @@ const SignIn = () => {
       }
     } catch (error) {
       console.error("Login failed:", error);
-      setError(
-        error.response?.data?.message || error.message || "Login failed",
-      );
+      
+      let errorMessage = error.response?.data?.message || error.message || "Login failed";
+      
+      if (error.status === 403 || error.response?.status === 403 || errorMessage.toLowerCase().includes("verify")) {
+        errorMessage = "Please verify your email address to sign in. Check your inbox for the verification link.";
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

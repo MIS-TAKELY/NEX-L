@@ -39,14 +39,18 @@ export const getSession = async () => {
 };
 
 // Utility function to sign up
-export const signUp = async (email, password, name = "", role = "student") => {
+export const signUp = async (email, password, name = "", role = "student", callbackURL) => {
   try {
     const result = await authClient.signUp.email({
       email,
       password,
       name,
       role, // Include role in signup
+      callbackURL, // Included for email verification redirect
     });
+    if (result.error) {
+      throw result.error;
+    }
     return result;
   } catch (error) {
     console.error("Sign up failed:", error);
@@ -61,6 +65,9 @@ export const signIn = async (email, password) => {
       email,
       password,
     });
+    if (result.error) {
+      throw result.error;
+    }
     return result;
   } catch (error) {
     console.error("Sign in failed:", error);

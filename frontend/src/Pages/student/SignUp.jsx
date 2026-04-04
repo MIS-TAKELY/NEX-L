@@ -8,6 +8,7 @@ import {
     signUp,
 } from "@/lib/auth.client";
 import { cn } from "@/lib/utils";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { setCredentials } from "@/store/slices/authSlice";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
@@ -31,6 +32,7 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -59,37 +61,56 @@ const SignUp = () => {
       // Create full name from first and last name
       const fullName = `${formData.firstName} ${formData.lastName}`.trim();
 
-      // Sign up with better-auth, including role
-      await signUp(formData.email, formData.createNewPassword, fullName, role);
+      // Sign up with better-auth, including role and callbackURL for email verification
+      const callbackURL = `${window.location.origin}/login`;
+      await signUp(formData.email, formData.createNewPassword, fullName, role, callbackURL);
 
-      // Automatically sign in after successful signup
-      await signIn(formData.email, formData.createNewPassword);
+      try {
+        // Automatically sign in after successful signup
+        await signIn(formData.email, formData.createNewPassword);
 
-      // Get session data
-      const session = await getSession();
+        // Get session data
+        const session = await getSession();
 
-      if (session && session.user) {
-        // Get role from backend session (more secure than client-side role)
-        const userRole = session.user.role || role;
+        if (session && session.user) {
+          // Get role from backend session (more secure than client-side role)
+          const userRole = session.user.role || role;
 
-        // Update Redux state with user data
-        // Serialize userData to avoid non-serializable value warning in Redux
-        const serializedUser = JSON.parse(JSON.stringify(session.user));
-        dispatch(setCredentials({ role: userRole, userData: serializedUser }));
+          // Update Redux state with user data
+          // Serialize userData to avoid non-serializable value warning in Redux
+          const serializedUser = JSON.parse(JSON.stringify(session.user));
+          dispatch(setCredentials({ role: userRole, userData: serializedUser }));
 
-        console.log("Signup and login success:", session);
+          console.log("Signup and login success:", session);
 
-        // Redirect based on role
-        if (userRole === "instructor") {
-          navigate("/instructor/dashboard", { replace: true });
-        } else if (userRole === "admin") {
-          navigate("/admin/dashboard", { replace: true });
+          // Redirect based on role
+          if (userRole === "instructor") {
+            navigate("/instructor/dashboard", { replace: true });
+          } else if (userRole === "admin") {
+            navigate("/admin/dashboard", { replace: true });
+          } else {
+            navigate("/student/dashboard", { replace: true });
+          }
         } else {
-          navigate("/student/dashboard", { replace: true });
+          // Signup succeeded but login failed, redirect to login page
+          navigate("/login");
         }
-      } else {
-        // Signup succeeded but login failed, redirect to login page
-        navigate("/login");
+      } catch (signInError) {
+        // Evaluate the exact error returned by signIn
+        const errorMessage = signInError.message?.toLowerCase() || signInError.response?.data?.message?.toLowerCase() || "";
+        
+        if (signInError.status === 403 || signInError.response?.status === 403 || errorMessage.includes("verify")) {
+          // Normal successful registration path (pending verification)
+          setShowVerifyModal(true);
+        } else if (signInError.status === 401 || signInError.status === 400 || errorMessage.includes("invalid") || errorMessage.includes("password")) {
+          // If signUp returned 200, but signIn complains about invalid credentials, 
+          // it means the account already existed, and the user provided a non-matching password.
+          setError("This email address is already registered. Please go to the sign in page.");
+        } else {
+          // Generic fallback
+           console.error("Sign in after sign up failed:", signInError);
+           setError(signInError.message || "An unexpected error occurred during registration flow.");
+        }
       }
     } catch (error) {
       console.error("Signup failed:", error);
@@ -374,6 +395,36 @@ const SignUp = () => {
           <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary rounded-full hidden md:block opacity-10"></div>
         </div>
       </div>
+      
+      {/* Verify Email Modal */}
+      <Dialog open={showVerifyModal} onOpenChange={(open) => {
+        setShowVerifyModal(open);
+        if (!open) navigate("/login");
+      }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
+              <Icon icon="solar:letter-opened-bold-duotone" className="h-8 w-8 text-primary" />
+            </div>
+            <DialogTitle className="text-center text-xl">Verify your email</DialogTitle>
+            <DialogDescription className="text-center pt-2 text-base">
+              Registration successful! We've sent a verification link to <span className="font-semibold text-foreground">{formData.email}</span>.
+              Please check your inbox and verify your email before signing in.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-center mt-6">
+            <button
+              onClick={() => {
+                setShowVerifyModal(false);
+                navigate("/login");
+              }}
+              className="w-full sm:w-auto px-8 py-2.5 bg-primary text-primary-foreground font-medium rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-[0.98]"
+            >
+              Go to Login
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

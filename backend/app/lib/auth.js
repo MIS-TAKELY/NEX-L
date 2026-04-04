@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client } from "../config/dbConnect.js";
+import { sendEmail } from "../config/mail.js";
 
 const rawBaseURL = (process.env.BETTER_AUTH_URL || "http://localhost:3000").replace(/\/+$/, "");
 const baseURL = rawBaseURL.endsWith("/api/v1/auth") ? rawBaseURL : `${rawBaseURL}/api/v1/auth`;
@@ -19,6 +20,26 @@ export const auth = betterAuth({
   database: mongodbAdapter(client.db()),
   emailAndPassword: {
     enabled: true, // Enable email/password auth
+    requireEmailVerification: true,
+  },
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url, token }, request) => {
+      await sendEmail({
+        to: user.email,
+        subject: "Verify your email address - NEX-L",
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eaeaec; border-radius: 8px; padding: 20px;">
+            <h2 style="color: #333;">Welcome to NEX-L!</h2>
+            <p style="color: #555; line-height: 1.5;">Hi ${user.name || "there"},</p>
+            <p style="color: #555; line-height: 1.5;">Please verify your email address to complete your registration and log in.</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #007bff; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">Verify Email</a>
+            </div>
+            <p style="color: #888; font-size: 0.9em;">If you didn't request this, you can safely ignore this email.</p>
+          </div>
+        `,
+      });
+    },
   },
   socialProviders: {
     google: {
