@@ -1,31 +1,42 @@
-import nodemailer from "nodemailer";
+import axios from "axios";
+import dotenv from "dotenv";
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.resend.com",
-  port: 465,
-  secure: true, // Use SSL/TLS
-  auth: {
-    user: process.env.MAIL_USER, // 'resend'
-    pass: process.env.MAIL_PASS, // Your Resend API Key
-  },
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-});
+dotenv.config();
 
-// Verify connection configuration - non-blocking to avoid startup timeouts on Render
-transporter.verify()
-  .then(() => console.log("Resend SMTP is ready to take our messages"))
-  .catch((error) => console.warn("Resend connection warning:", error.message));
+const RESEND_API_URL = "https://api.resend.com/emails";
+const RESEND_API_KEY = process.env.MAIL_PASS; // Using the API key from your env
 
+/**
+ * Sends an email using the Resend REST API (HTTPS).
+ * This bypasses SMTP port blocks on hosting providers like Render.
+ */
 export async function sendEmail({ to, subject, html }) {
   const startTime = Date.now();
-  await transporter.sendMail({
-    from: "NEXL Support <onboarding@resend.dev>", // Using onboarding address for free tier
-    to,
-    subject,
-    html,
-  });
+  
+  try {
+    const response = await axios.post(
+      RESEND_API_URL,
+      {
+        from: "NEXL Support <onboarding@resend.dev>",
+        to: Array.isArray(to) ? to : [to],
+        subject: subject,
+        html: html,
+      },
+      {
+        headers: {
+          "Authorization": `Bearer ${RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-  const duration = Date.now() - startTime;
-  console.log(`Email sent to ${to} via Resend in ${duration}ms`);
+    const duration = Date.now() - startTime;
+    console.log(`Email sent to ${to} via Resend API in ${duration}ms. ID: ${response.data.id}`);
+    return response.data;
+  } catch (error) {
+    const duration = Date.now() - startTime;
+    const errorMessage = error.response?.data?.message || error.message;
+    console.error(`Failed to send email to ${to} via Resend API after ${duration}ms:`, errorMessage);
+    throw new Error(`Email sending failed: ${errorMessage}`);
+  }
 }
