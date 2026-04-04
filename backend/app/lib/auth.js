@@ -25,7 +25,8 @@ export const auth = betterAuth({
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }, request) => {
-      await sendEmail({
+      // Non-blocking: send the email in the background so the user doesn't wait for SMTP transmission
+      sendEmail({
         to: user.email,
         subject: "Verify your email address - NEX-L",
         html: `
@@ -39,6 +40,8 @@ export const auth = betterAuth({
             <p style="color: #888; font-size: 0.9em;">If you didn't request this, you can safely ignore this email.</p>
           </div>
         `,
+      }).catch(err => {
+        console.error(`[Verification Email Error] Failed to send to ${user.email}:`, err);
       });
     },
   },
