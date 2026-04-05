@@ -1,42 +1,56 @@
-import axios from "axios";
+import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const RESEND_API_URL = "https://api.resend.com/emails";
-const RESEND_API_KEY = process.env.MAIL_PASS; // Using the API key from your env
+/**
+ * Creates a nodemailer transporter using Gmail SMTP over port 465 (SSL).
+ *
+ * WHY port 465 instead of 587?
+ * - Render.com blocks outbound TCP on port 25 and 587 (common SMTP ports).
+ * - Port 465 (SMTPS / implicit SSL) is NOT blocked by Render.
+ * - Gmail supports port 465 with `secure: true`.
+ *
+ * SETUP REQUIRED (one-time):
+ * 1. Go to your Google Account → Security → 2-Step Verification → App passwords
+ * 2. Create an App Password for "Mail" + "Other" (name it NEX-L)
+ * 3. Copy the 16-character password (no spaces) into MAIL_PASS in your .env
+ * 4. Set MAIL_USER to your Gmail address in .env
+ */
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true, // true for port 465 (SSL), false for 587 (STARTTLS)
+  auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS, // Gmail App Password (16-char, no spaces)
+  },
+});
 
 /**
- * Sends an email using the Resend REST API (HTTPS).
- * This bypasses SMTP port blocks on hosting providers like Render.
+ * Sends an email using nodemailer + Gmail SMTP.
+ * @param {Object} options
+ * @param {string|string[]} options.to - Recipient email address(es)
+ * @param {string} options.subject - Email subject
+ * @param {string} options.html - HTML body
  */
 export async function sendEmail({ to, subject, html }) {
   const startTime = Date.now();
-  
+
   try {
-    const response = await axios.post(
-      RESEND_API_URL,
-      {
-        from: "NEXL Support <onboarding@resend.dev>",
-        to: Array.isArray(to) ? to : [to],
-        subject: subject,
-        html: html,
-      },
-      {
-        headers: {
-          "Authorization": `Bearer ${RESEND_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const info = await transporter.sendMail({
+      from: `"NEX-L Support" <${process.env.MAIL_USER}>`,
+      to: Array.isArray(to) ? to.join(", ") : to,
+      subject,
+      html,
+    });
 
     const duration = Date.now() - startTime;
-    console.log(`Email sent to ${to} via Resend API in ${duration}ms. ID: ${response.data.id}`);
-    return response.data;
+    console.log(`[Mail] Email sent to ${to} in ${duration}ms. MessageId: ${info.messageId}`);
+    return info;
   } catch (error) {
     const duration = Date.now() - startTime;
-    const errorMessage = error.response?.data?.message || error.message;
-    console.error(`Failed to send email to ${to} via Resend API after ${duration}ms:`, errorMessage);
-    throw new Error(`Email sending failed: ${errorMessage}`);
+    console.error(`[Mail] Failed to send email to ${to} after ${duration}ms:`, error.message);
+    throw new Error(`Email sending failed: ${error.message}`);
   }
 }
