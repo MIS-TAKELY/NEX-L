@@ -27,6 +27,7 @@ export const createAssignment = async (req, res) => {
       gradingCriteria,
       maxScore
     });
+    
 
     res.status(201).json(assignment);
   } catch (err) {
