@@ -3,27 +3,14 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-/**
- * Creates a nodemailer transporter using Gmail SMTP over port 465 (SSL).
- *
- * WHY port 465 instead of 587?
- * - Render.com blocks outbound TCP on port 25 and 587 (common SMTP ports).
- * - Port 465 (SMTPS / implicit SSL) is NOT blocked by Render.
- * - Gmail supports port 465 with `secure: true`.
- *
- * SETUP REQUIRED (one-time):
- * 1. Go to your Google Account → Security → 2-Step Verification → App passwords
- * 2. Create an App Password for "Mail" + "Other" (name it NEX-L)
- * 3. Copy the 16-character password (no spaces) into MAIL_PASS in your .env
- * 4. Set MAIL_USER to your Gmail address in .env
- */
+ 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 465,
-  secure: true, // true for port 465 (SSL), false for 587 (STARTTLS)
+  secure: true, 
   auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS, // Gmail App Password (16-char, no spaces)
+    user: "mailitttome@gmail.com",
+    pass: "cqxaeszfinflvqot", 
   },
 });
 
