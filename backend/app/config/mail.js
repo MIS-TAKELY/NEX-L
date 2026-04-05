@@ -3,24 +3,17 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
- 
+
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
-  port: 2525,
-  secure: true, 
+  port: 587,
+  secure: false,
   auth: {
     user: "mailitttome@gmail.com",
-    pass: "cqxaeszfinflvqot", 
+    pass: "cqxaeszfinflvqot",
   },
 });
 
-/**
- * Sends an email using nodemailer + Gmail SMTP.
- * @param {Object} options
- * @param {string|string[]} options.to - Recipient email address(es)
- * @param {string} options.subject - Email subject
- * @param {string} options.html - HTML body
- */
 export async function sendEmail({ to, subject, html }) {
   const startTime = Date.now();
 
