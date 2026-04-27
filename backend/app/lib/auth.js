@@ -6,6 +6,23 @@ import { isAppRole, mergeRolesJson, normalizeRole, parseRolesFromUser } from "./
 
 const rawBaseURL = (process.env.BETTER_AUTH_URL || "http://localhost:3000").replace(/\/+$/, "");
 const baseURL = rawBaseURL.endsWith("/api/v1/auth") ? rawBaseURL : `${rawBaseURL}/api/v1/auth`;
+const frontendURL = (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/+$/, "");
+
+function resolveFrontendOrigin(request) {
+  try {
+    if (request) {
+      const origin = request.headers.get("origin");
+      if (origin && !origin.includes("localhost") && !origin.includes("127.0.0.1")) {
+        return origin.replace(/\/+$/, "");
+      }
+    }
+  } catch {
+    // fall through to env-based fallback
+  }
+
+  if (frontendURL) return frontendURL;
+  return "http://localhost:5173";
+}
 
 console.log("Better Auth initializing with baseURL:", baseURL);
 console.log("Environment FRONTEND_URL:", process.env.FRONTEND_URL);
@@ -23,23 +40,9 @@ export const auth = betterAuth({
     enabled: true, // Enable email/password auth
     requireEmailVerification: true,
     revokeSessionsOnPasswordReset: true,
-    sendResetPassword: async ({ user, url }, request) => {
-      let finalUrl = url;
-      try {
-        if (request) {
-          const reqHost = request.headers.get("x-forwarded-host") || request.headers.get("host");
-          const reqProto = request.headers.get("x-forwarded-proto") || (reqHost?.includes("localhost") || reqHost?.includes("127.0.0.1") ? "http" : "https");
-          if (reqHost) {
-            const parsed = new URL(url);
-            // Replace the hardcoded baseURL host with the actual request host
-            parsed.host = reqHost;
-            parsed.protocol = reqProto + ":";
-            finalUrl = parsed.toString();
-          }
-        }
-      } catch (err) {
-        console.error("Failed to parse reset password url", err);
-      }
+    sendResetPassword: async ({ user, token }, request) => {
+      const origin = resolveFrontendOrigin(request);
+      const finalUrl = `${origin}/reset-password?token=${encodeURIComponent(token)}`;
 
       // Non-blocking: send the email in the background so the user doesn't wait for SMTP transmission
       sendEmail({
