@@ -12,12 +12,18 @@ function resolveFrontendOrigin(request) {
   try {
     if (request) {
       const origin = request.headers.get("origin");
-      if (origin && !origin.includes("localhost") && !origin.includes("127.0.0.1")) {
+      if (origin) {
         return origin.replace(/\/+$/, "");
       }
+      
+      const referer = request.headers.get("referer");
+      if (referer) {
+        const url = new URL(referer);
+        return url.origin;
+      }
     }
-  } catch {
-    // fall through to env-based fallback
+  } catch (err) {
+    console.error("Failed to resolve frontend origin:", err);
   }
 
   if (frontendURL) return frontendURL;
