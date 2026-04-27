@@ -1,20 +1,51 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { authClient } from '../../lib/auth.client';
-import { verifyEmail } from '@/utils/verify-email';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { authClient, signOut } from '../../lib/auth.client';
 
-const ForgotPassword = () => {
+const ResetPassword = () => {
   const navigate = useNavigate();
-  const [identifier, setIdentifier] = useState('');
+  const [searchParams] = useSearchParams();
+  
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [token, setToken] = useState('');
+
+  useEffect(() => {
+    const urlToken = searchParams.get('token');
+    const urlError = searchParams.get('error');
+
+    if (urlToken) {
+      setToken(urlToken);
+      return;
+    }
+
+    if (urlError === 'INVALID_TOKEN') {
+      setError('That reset link is invalid or has expired. Please request a new one.');
+      return;
+    }
+
+    if (urlError) {
+      setError('The reset link could not be used. Please request a new one.');
+      return;
+    }
+
+    if (!urlToken) {
+      setError('Invalid or missing reset token. Please request a new link.');
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const email = identifier.trim().toLowerCase();
-    if (!verifyEmail(email)) {
-      setError('Please enter a valid email address.');
+    if (newPassword !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+    
+    if (newPassword.length < 8) {
+      setError('Password must be at least 8 characters long.');
       return;
     }
 
@@ -23,19 +54,27 @@ const ForgotPassword = () => {
     setMessage('');
     
     try {
-      const { error: authError } = await authClient.requestPasswordReset({
-        email,
-        redirectTo: `${window.location.origin}/reset-password`,
+      const { error: authError } = await authClient.resetPassword({
+        newPassword: newPassword,
+        token: token,
       });
       
       if (authError) {
-        setError(authError.message || 'Failed to send reset email. Please try again.');
+        setError(authError.message || 'Failed to reset password. The link might have expired.');
       } else {
-        setMessage('If an account exists with that email, a password reset link has been sent.');
+        try {
+          await signOut();
+        } catch (signOutError) {
+          console.warn('Password reset succeeded, but session cleanup failed:', signOutError);
+        }
+        setMessage('Password reset successfully! Redirecting to login...');
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
       }
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');
-      console.error('Forget password error:', err);
+      console.error('Reset password error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -50,19 +89,12 @@ const ForgotPassword = () => {
         <div className="absolute bottom-24 left-24 w-48 h-48 border border-white/10 rounded-md transform rotate-12" />
         
         <div className="relative z-10 mb-20">
-          {/* <button 
-            onClick={() => navigate(-1)}
-            className="absolute -top-32 left-0 flex items-center gap-2 px-4 py-2 bg-background/10 hover:bg-background/20 text-foreground rounded-md transition-all font-medium backdrop-blur-sm border border-white/20 shadow-sm"
-          >
-            <Icon icon="solar:alt-arrow-left-linear" className="w-5 h-5" /> go back
-          </button> */}
-          
           <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-4">
-            Reset <br />
+            Set New <br />
             Password
           </h1>
           <p className="text-xl text-muted-foreground tracking-wide font-light">
-            don't worry, we got you
+            almost there, secure your account
           </p>
         </div>
 
@@ -81,32 +113,35 @@ const ForgotPassword = () => {
       {/* Right Side - Form */}
       <div className="w-full lg:w-1/2 bg-background flex items-center justify-center p-6 md:p-8 relative">
         <div className="w-full max-w-md space-y-8">
-          {/* Mobile Back Button & Header */}
+          {/* Mobile Header */}
            <div className="lg:hidden mb-8">
-            {/* <button 
-              onClick={() => navigate(-1)}
-              className="flex items-center gap-2 px-4 py-2 bg-primary/5 hover:bg-primary/10 text-primary rounded-md transition-all font-medium mb-6 border border-primary/10"
-            >
-              <Icon icon="solar:alt-arrow-left-linear" className="w-5 h-5" /> go back
-            </button> */}
             <h1 className="text-3xl font-bold text-primary">NEXL</h1>
           </div>
 
           <div className="text-left">
-            <h2 className="text-3xl font-bold text-foreground mb-2">Forgot Password?</h2>
-            <p className="text-muted-foreground">Enter the email address on your account and we'll send you a reset link.</p>
+            <h2 className="text-3xl font-bold text-foreground mb-2">Create New Password</h2>
+            <p className="text-muted-foreground">Please enter your new password below.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-4">
               <input
-                type="email"
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-                placeholder="Email address"
-                autoComplete="email"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="New Password"
                 className="w-full px-4 py-3 rounded-md bg-muted border border-border focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-all placeholder-gray-400 text-foreground"
                 required
+                disabled={!token || !!message}
+              />
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm Password"
+                className="w-full px-4 py-3 rounded-md bg-muted border border-border focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-all placeholder-gray-400 text-foreground"
+                required
+                disabled={!token || !!message}
               />
             </div>
 
@@ -115,10 +150,10 @@ const ForgotPassword = () => {
 
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || !token || !!message}
               className="w-full bg-accent text-foreground py-3.5 rounded-md font-bold hover:bg-accent/90 transition-transform active:scale-[0.99] shadow-lg shadow-accent/20 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Sending...' : 'Send Reset Link'}
+              {isLoading ? 'Resetting...' : 'Reset Password'}
             </button>
           </form>
 
@@ -140,4 +175,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default ResetPassword;
