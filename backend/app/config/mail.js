@@ -1,28 +1,33 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: "mailitttome@gmail.com",
+    pass: "cqxaeszfinflvqot",
+  },
+});
 
 export async function sendEmail({ to, subject, html }) {
   const startTime = Date.now();
 
   try {
-    const { data, error } = await resend.emails.send({
-      from: process.env.MAIL_FROM || "NEX-L Support <onboarding@resend.dev>",
-      to: Array.isArray(to) ? to : [to],
+    const info = await transporter.sendMail({
+      from: `"NEX-L Support" <${process.env.MAIL_USER}>`,
+      to: Array.isArray(to) ? to.join(", ") : to,
       subject,
       html,
     });
 
-    if (error) {
-      throw new Error(error.message);
-    }
-
     const duration = Date.now() - startTime;
-    console.log(`[Mail] Email sent to ${to} in ${duration}ms. Id: ${data.id}`);
-    return data;
+    console.log(`[Mail] Email sent to ${to} in ${duration}ms. MessageId: ${info.messageId}`);
+    return info;
   } catch (error) {
     const duration = Date.now() - startTime;
     console.error(`[Mail] Failed to send email to ${to} after ${duration}ms:`, error.message);

@@ -22,6 +22,29 @@ const StudentsEnrolled = () => {
   
   const [createSession, { isLoading: isCreating }] = useCreateTutoringSessionMutation();
 
+  const allStudents = data?.students || [];
+  const students = filterCourseId 
+    ? allStudents.filter(s => s.courseId === filterCourseId)
+    : allStudents;
+
+  const handleConsult = async (student) => {
+    try {
+      const response = await createSession({
+        studentId: student.studentId,
+        courseId: student.courseId,
+        startTime: new Date().toISOString(),
+        endTime: new Date(Date.now() + 3600000).toISOString(), // 1 hour session
+        notes: `Consultation with ${student.name}`
+      }).unwrap();
+      
+      if (response.success) {
+        setActiveSessionId(response.session._id);
+      }
+    } catch (err) {
+      console.error("Failed to create tutoring session:", err);
+    }
+  };
+
   if (isLoading) {
     return <TableSkeleton rows={8} columns={5} />;
   }

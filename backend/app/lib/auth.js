@@ -25,6 +25,23 @@ export const auth = betterAuth({
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }, request) => {
+      let finalUrl = url;
+      try {
+        if (request) {
+          const reqHost = request.headers.get("x-forwarded-host") || request.headers.get("host");
+          const reqProto = request.headers.get("x-forwarded-proto") || (reqHost?.includes("localhost") || reqHost?.includes("127.0.0.1") ? "http" : "https");
+          if (reqHost) {
+            const parsed = new URL(url);
+            // Replace the hardcoded baseURL host with the actual request host
+            parsed.host = reqHost;
+            parsed.protocol = reqProto + ":";
+            finalUrl = parsed.toString();
+          }
+        }
+      } catch (err) {
+        console.error("Failed to parse verification url", err);
+      }
+
       // Non-blocking: send the email in the background so the user doesn't wait for SMTP transmission
       sendEmail({
         to: user.email,
@@ -35,7 +52,7 @@ export const auth = betterAuth({
             <p style="color: #555; line-height: 1.5;">Hi ${user.name || "there"},</p>
             <p style="color: #555; line-height: 1.5;">Please verify your email address to complete your registration and log in.</p>
             <div style="text-align: center; margin: 30px 0;">
-              <a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #007bff; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">Verify Email</a>
+              <a href="${finalUrl}" style="display: inline-block; padding: 12px 24px; background-color: #007bff; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">Verify Email</a>
             </div>
             <p style="color: #888; font-size: 0.9em;">If you didn't request this, you can safely ignore this email.</p>
           </div>

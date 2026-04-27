@@ -12,6 +12,7 @@ import {
   generateContent,
   getInstructorAnalytics,
   summarizeContent,
+  askAIContent,
 } from "../controllers/course.controller.js";
 
 const router = express.Router();
@@ -28,6 +29,7 @@ router.put("/:id", updateCourse);
 router.delete("/:id", deleteCourse);
 router.post("/generate-content", generateContent);
 router.post("/summarize-content", summarizeContent);
+router.post("/ask-ai", askAIContent);
 
 
 export default router;
