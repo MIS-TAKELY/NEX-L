@@ -10,8 +10,12 @@ import StudentChat from '../../components/student/StudentChat';
 import CourseGroupChat from '../../components/student/CourseGroupChat';
 import { useStream } from '../../context/StreamContext';
 import { useGetCourseLiveClassesQuery } from '../../store/slices/liveClassApi';
-import { useGetCourseByIdQuery, useGetEnrollmentByCourseQuery, useMarkContentCompletedMutation } from '../../store/slices/courseApi';
+import { useGetCourseByIdQuery, useGetEnrollmentByCourseQuery, useMarkContentCompletedMutation, useSummarizeContentMutation, useAskAIMutation } from '../../store/slices/courseApi';
 import { useSelector } from 'react-redux';
+import { useToast } from '../../context/ToastContext';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { motion, AnimatePresence } from 'motion/react';
 
 const Player = () => {
   const formatDisplayName = (name, backupTitle) => {
@@ -39,13 +43,42 @@ const Player = () => {
   });
   const isAnyClassLive = liveClasses.some(lc => lc.status === 'live');
   const { userData } = useSelector((state) => state.auth);
-
+  const { showToast } = useToast();
   const { data: courseRes, isLoading: courseLoading, error: courseError } = useGetCourseByIdQuery(courseId, { skip: !courseId });
   const { data: enrollmentRes } = useGetEnrollmentByCourseQuery({ studentId: userData?.id, courseId }, { skip: !userData?.id || !courseId });
   const [markCompleted, { isLoading: markingCompleted }] = useMarkContentCompletedMutation();
+  const [summarizeContent, { isLoading: summarizing }] = useSummarizeContentMutation();
+  const [askAI, { isLoading: isAskingAI }] = useAskAIMutation();
+
+  const [aiSummary, setAiSummary] = useState(null);
+  const [userQuestion, setUserQuestion] = useState("");
+  const [aiChatAnswer, setAiChatAnswer] = useState(null);
+  const [copied, setCopied] = useState(false);
+  const [isAiPanelOpen, setIsAiPanelOpen] = useState(false);
 
   const course = courseRes?.data;
   const enrollment = enrollmentRes?.enrollment;
+
+  const isLikelyImageUrl = (value = '') =>
+    /\.(png|jpe?g|gif|webp|bmp|svg|avif|heic|heif)(\?|#|$)/i.test(value);
+
+  const toAbsoluteResourceUrl = (value = '') => {
+    if (!value) return '';
+    if (/^https?:\/\//i.test(value) || value.startsWith('data:') || value.startsWith('blob:')) {
+      return value;
+    }
+    if (value.startsWith('//')) {
+      return `${window.location.protocol}${value}`;
+    }
+    
+    // Ensure we handle relative paths regardless of starting slash
+    const baseUrl = import.meta.env.VITE_BACKEND_URL || '';
+    const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+    const cleanPath = value.startsWith('/') ? value : `/${value}`;
+    
+    return `${cleanBase}${cleanPath}`;
+  };
+
 
   useEffect(() => {
     if (course && !activeLesson) {
@@ -61,6 +94,133 @@ const Player = () => {
       }
     }
   }, [course, activeLesson]);
+
+  const handleSummarize = async (mode = 'short') => {
+    const textToSummarize = activeLesson?.description || activeLesson?.summary;
+    const title = activeLesson?.title || activeResource?.name;
+    const resourceType = (activeResource?.type || '').toLowerCase();
+    const lessonType = (activeLesson?.type || '').toLowerCase();
+    const rawResourceUrl = activeResource?.url || '';
+    const rawLessonUrl = activeLesson?.url || '';
+    const imageCandidateUrl = rawResourceUrl || rawLessonUrl;
+    const hasImageInput =
+      resourceType === 'image' ||
+      resourceType.startsWith('image/') ||
+      lessonType === 'image' ||
+      lessonType.startsWith('image/') ||
+      isLikelyImageUrl(imageCandidateUrl);
+    const imageUrl = hasImageInput ? toAbsoluteResourceUrl(imageCandidateUrl) : '';
+    
+    if (!textToSummarize && !title && !imageUrl) {
+        showToast("No content or image found to generate notes.", "error");
+        return;
+    }
+
+    try {
+      showToast(imageUrl ? "AI is reading the image..." : (textToSummarize ? "Summarizing with AI..." : "Generating AI Notes..."), "loading");
+      const result = await summarizeContent({ 
+        text: textToSummarize || '', 
+        mode,
+        title: title || '',
+        imageUrl: imageUrl || '',
+        courseTitle: course?.title || ''
+      }).unwrap();
+      
+      if (result.success) {
+        setAiSummary({
+          text: result.data,
+          mode: mode
+        });
+        showToast("AI task completed!", "success");
+      }
+    } catch (err) {
+      console.error("AI Task failed", err);
+      showToast("AI task failed. Please try again.", "error");
+    }
+  };
+
+  const handleCopy = () => {
+    if (!aiSummary?.text) return;
+    navigator.clipboard.writeText(aiSummary.text);
+    setCopied(true);
+    showToast("Copied to clipboard!", "success");
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handlePrint = () => {
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>AI Learning Notes - ${course?.title}</title>
+          <style>
+            body { font-family: sans-serif; padding: 40px; line-height: 1.6; color: #333; }
+            h1 { color: #4f46e5; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+            h2, h3 { color: #1f2937; margin-top: 30px; }
+            .meta { font-size: 0.8em; color: #666; margin-bottom: 40px; }
+            pre { background: #f4f4f4; padding: 15px; border-radius: 5px; }
+          </style>
+        </head>
+        <body>
+          <h1>${activeLesson?.title || 'Learning Notes'}</h1>
+          <div class="meta">Course: ${course?.title} | Generated by AI</div>
+          <div>${aiSummary.text.replace(/\n/g, '<br/>')}</div>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
+  const handleAskAI = async (e) => {
+    if (e) e.preventDefault();
+    if (!userQuestion.trim()) return;
+    
+    const title = activeLesson?.title || activeResource?.name;
+    const resourceType = (activeResource?.type || '').toLowerCase();
+    const lessonType = (activeLesson?.type || '').toLowerCase();
+    const rawResourceUrl = activeResource?.url || '';
+    const rawLessonUrl = activeLesson?.url || '';
+    const imageCandidateUrl = rawResourceUrl || rawLessonUrl;
+    
+    const hasImageInput =
+      resourceType === 'image' ||
+      resourceType.startsWith('image/') ||
+      lessonType === 'image' ||
+      lessonType.startsWith('image/') ||
+      isLikelyImageUrl(imageCandidateUrl);
+    
+    const imageUrl = hasImageInput ? toAbsoluteResourceUrl(imageCandidateUrl) : '';
+
+    const rawDescription = activeLesson?.description || activeLesson?.summary || "";
+    const generatedNotes = aiSummary?.text ? `\n\n[Additional Context from Generated AI Notes]:\n${aiSummary.text}` : "";
+    const lessonMeta = `[Lesson Title: ${title || 'Unknown'}]\n[Lesson Context]: ${rawDescription}`;
+    const context = `${lessonMeta}${generatedNotes}`.trim();
+
+    console.log("[AI Q&A Request] Sending payload:", { question: userQuestion, contextLength: context.length, hasImage: !!imageUrl });
+    if (imageUrl) console.log("[AI Q&A Request] Image URL:", imageUrl);
+
+    try {
+      showToast(imageUrl ? "AI is reviewing visual content..." : "AI is thinking...", "loading");
+      const result = await askAI({
+        question: userQuestion,
+        context,
+        courseTitle: course?.title,
+        imageUrl: imageUrl || ''
+      }).unwrap();
+
+
+      
+      if (result.success) {
+        setAiChatAnswer(result.data);
+        showToast("Answer generated!", "success");
+      }
+    } catch (err) {
+      console.error("AI Q&A failed", err);
+      showToast("AI couldn't answer that. Please try again.", "error");
+    }
+  };
+
 
   const handleMarkAsCompleted = async () => {
     if (!enrollment?._id || !activeLesson?._id) return;
@@ -94,6 +254,8 @@ const Player = () => {
   const handleSelectContent = (resource, lesson) => {
     setActiveLesson(lesson);
     setActiveResource(resource);
+    setAiSummary(null); // Reset AI summary when switching lessons
+    setAiChatAnswer(null); // Reset chat
     if (window.innerWidth < 1024) setIsSidebarOpen(false);
   };
 
@@ -126,45 +288,94 @@ const Player = () => {
 
         <div className="transition-all duration-500 min-h-[500px]">
           {activeTab === 'lesson' && (
-            <div className="animate-in fade-in slide-in-from-left-4">
-              {/* For videos, we already showed the player above, so we just show description here */}
-              {/* For other types, they might have their own layout but we can provide a default card if needed */}
-            {activeLesson?.description || activeLesson?.summary ? (
-                <div className="bg-card p-10 rounded-md border border-border/80 shadow-sm transition-all duration-500 premium-card hover:shadow-md">
-                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
-                    <h2 className="text-3xl font-black text-foreground tracking-tight">
-                      {formatDisplayName(activeResource?.name, activeLesson?.title)}
-                    </h2>
+            <div className="animate-in fade-in slide-in-from-left-4 space-y-8">
+              {/* Note Content Header & AI Tools */}
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-2">
+                <div className="flex flex-col">
+                  <span className="text-[10px] text-primary font-black uppercase tracking-[0.25em] leading-none mb-2 opacity-80">Lesson Resources</span>
+                  <h2 className="text-3xl font-black text-foreground tracking-tight">
+                    {formatDisplayName(activeResource?.name, activeLesson?.title)}
+                  </h2>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  {/* AI Summarizer / Generator Button */}
+                  <div className="relative group">
+                    <button
+                      disabled={summarizing}
+                      onClick={() => handleSummarize('short')}
+                      className={`flex items-center gap-2.5 px-6 py-3 rounded-md text-[10px] font-black uppercase tracking-widest transition-all duration-300 shadow-lg active:scale-95 disabled:opacity-70 ${
+                        !activeLesson?.description && !activeLesson?.summary
+                          ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-orange-500/20 hover:shadow-orange-500/40'
+                          : 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-indigo-500/20 hover:shadow-indigo-500/40'
+                      }`}
+                    >
+                      {summarizing ? (
+                        <Icon icon="solar:restart-bold-duotone" className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Icon icon="solar:magic-stick-3-bold-duotone" className="w-4 h-4" />
+                      )}
+                      {activeLesson?.description || activeLesson?.summary ? 'AI Summarize' : 'Generate AI Notes'}
+                    </button>
                     
-                    {enrollment && (
-                      <button
-                        onClick={handleMarkAsCompleted}
-                        disabled={markingCompleted || isCompleted}
-                        className={`flex items-center gap-2.5 px-6 py-3 rounded-md text-xs font-black uppercase tracking-widest transition-all duration-300 ${
-                          isCompleted 
-                            ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 cursor-default'
-                            : 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-xl active:scale-95'
-                        }`}
-                      >
-                        {markingCompleted ? (
-                           <Icon icon="solar:restart-bold-duotone" className="w-4 h-4 animate-spin" />
-                        ) : isCompleted ? (
-                          <Icon icon="solar:check-circle-bold-duotone" className="w-4 h-4" />
-                        ) : (
-                          <Icon icon="solar:verified-check-bold-duotone" className="w-4 h-4" />
-                        )}
-                        {isCompleted ? 'Completed' : 'Mark as Done'}
-                      </button>
+                    {/* Dropdown Options - Only show if we have text to summarize */}
+                    {(activeLesson?.description || activeLesson?.summary) && (
+                      <div className="absolute top-full right-0 mt-2 w-48 bg-card border border-border/80 rounded-md shadow-2xl py-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 scale-95 group-hover:scale-100 origin-top-right">
+                        <button
+                          onClick={() => handleSummarize('short')}
+                          className="w-full h-full p-4 flex items-center gap-3 hover:bg-secondary transition-colors text-xs font-bold text-foreground text-left"
+                        >
+                          <Icon icon="solar:text-align-left-bold-duotone" className="text-primary shrink-0" />
+                          Short Summary
+                        </button>
+                        <button
+                          onClick={() => handleSummarize('elaborated')}
+                          className="w-full h-full p-4 flex items-center gap-3 hover:bg-secondary transition-colors text-xs font-bold text-foreground text-left"
+                        >
+                          <Icon icon="solar:document-text-bold-duotone" className="text-accent shrink-0" />
+                          Elaborated Summary
+                        </button>
+                      </div>
                     )}
-                   </div>
-                  <p className="text-muted-foreground leading-relaxed font-medium text-lg max-w-4xl">
+                  </div>
+
+                  {enrollment && (
+                    <button
+                      onClick={handleMarkAsCompleted}
+                      disabled={markingCompleted || isCompleted}
+                      className={`flex items-center gap-2.5 px-6 py-3 rounded-md text-xs font-black uppercase tracking-widest transition-all duration-300 ${
+                        isCompleted 
+                          ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 cursor-default'
+                          : 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-xl active:scale-95'
+                      }`}
+                    >
+                      {markingCompleted ? (
+                         <Icon icon="solar:restart-bold-duotone" className="w-4 h-4 animate-spin" />
+                      ) : isCompleted ? (
+                        <Icon icon="solar:check-circle-bold-duotone" className="w-4 h-4" />
+                      ) : (
+                        <Icon icon="solar:verified-check-bold-duotone" className="w-4 h-4" />
+                      )}
+                      {isCompleted ? 'Completed' : 'Mark as Done'}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Note Content Body */}
+              {activeLesson?.description || activeLesson?.summary ? (
+                <div className="bg-card p-10 rounded-md border border-border/80 shadow-sm transition-all duration-500 premium-card hover:shadow-md">
+                  <div className="text-muted-foreground leading-relaxed font-medium text-lg max-w-4xl whitespace-pre-wrap">
                     {activeLesson?.description || activeLesson?.summary}
-                  </p>
+                  </div>
                 </div>
               ) : (
                 <div className="bg-card/50 p-10 rounded-md border border-dashed border-border flex flex-col items-center justify-center text-center">
-                   <Icon icon="solar:document-text-bold" size={48} className="text-muted-foreground opacity-20 mb-4" />
-                   <p className="text-muted-foreground font-medium">No additional notes provided for this lesson.</p>
+                   <div className="w-16 h-16 bg-primary/5 rounded-md flex items-center justify-center mb-4 border border-primary/10">
+                    <Icon icon="solar:document-text-bold" size={32} className="text-primary/40" />
+                   </div>
+                   <p className="text-foreground font-black uppercase tracking-widest text-[10px] mb-2">No Instructor Notes</p>
+                   <p className="text-muted-foreground font-medium text-sm max-w-xs">Use the <span className="text-orange-500 font-bold">Generate AI Notes</span> tool above to create study materials for this lesson!</p>
                 </div>
               )}
             </div>
@@ -211,6 +422,17 @@ const Player = () => {
             >
               Your browser does not support the video tag.
             </video>
+          </div>
+        );
+      case 'image':
+        return renderTabbedLayout(
+          <div className="w-full bg-card/50 rounded-md overflow-hidden shadow-2xl border border-border group relative transition-all duration-500 hover:shadow-primary/5 flex items-center justify-center p-4">
+            <img
+              key={url}
+              src={url}
+              alt={activeResource.name}
+              className="max-w-full max-h-[70vh] rounded shadow-lg transition-transform duration-500 hover:scale-[1.02]"
+            />
           </div>
         );
       case 'pdf':
@@ -389,17 +611,159 @@ const Player = () => {
               <Icon icon="solar:chat-round-dots-bold-duotone" className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
               <span className="hidden xl:inline">Mentor</span>
             </button>
+
+            <button
+              onClick={() => setIsAiPanelOpen(!isAiPanelOpen)}
+              title="AI Tutor"
+              className={`p-3 rounded-md transition-all duration-300 relative ${
+                isAiPanelOpen
+                  ? 'bg-primary text-primary-foreground shadow-xl shadow-primary/20 border-primary'
+                  : 'bg-primary/10 text-primary hover:bg-primary/20 border-primary/20'
+              } border`}
+            >
+              <Icon icon="solar:magic-stick-3-bold-duotone" className="w-5 h-5 flex-shrink-0" />
+              {aiChatAnswer && !isAiPanelOpen && (
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 border-2 border-background rounded-full animate-bounce" />
+              )}
+            </button>
           </div>
         </header>
 
         {/* Content Viewer */}
-        <div className="flex-1 overflow-y-auto p-6 md:p-10 custom-scrollbar relative z-10">
-          <div className="max-w-5xl mx-auto h-full">
+        <div className="flex-1 overflow-y-auto p-4 md:p-10 custom-scrollbar relative z-10">
+          <div className="max-w-6xl mx-auto h-full">
             {renderContent()}
           </div>
         </div>
       </main>
 
+      {/* AI Tutor Sidebar */}
+        {isAiPanelOpen && (
+          <aside
+            className="fixed top-0 right-0 w-full sm:w-[500px] h-screen bg-card border-l border-border z-[9999] flex flex-col shadow-2xl"
+          >
+            <div className="p-8 border-b border-border/50 flex items-center justify-between bg-primary/5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-md bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+                  <Icon icon="solar:magic-stick-3-bold-duotone" className="text-white w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black tracking-tight text-foreground leading-none mb-1">AI Personal Tutor</h3>
+                  <span className="text-[10px] text-primary font-bold uppercase tracking-widest opacity-80 decoration-primary decoration-2">Always Available</span>
+                </div>
+              </div>
+              <button 
+                onClick={() => setIsAiPanelOpen(false)}
+                className="w-10 h-10 rounded-md hover:bg-secondary/80 flex items-center justify-center transition-colors text-muted-foreground hover:text-foreground"
+              >
+                <Icon icon="solar:close-circle-bold" size={24} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-8 custom-scrollbar space-y-10">
+              {/* Context Action */}
+              {!aiSummary && (
+                <div className="p-8 rounded-md bg-secondary/30 border border-border/50 text-center space-y-4">
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest italic">No notes generated yet</p>
+                  <button 
+                    onClick={() => handleSummarize('short')}
+                    disabled={summarizing}
+                    className="w-full py-4 bg-primary text-primary-foreground rounded-md font-black text-[10px] uppercase tracking-widest hover:shadow-xl hover:shadow-primary/20 transition-all flex items-center justify-center gap-2"
+                  >
+                    {summarizing ? <Icon icon="solar:restart-bold" className="animate-spin" /> : <Icon icon="solar:document-text-bold" />}
+                    Generate Lesson Notes
+                  </button>
+                </div>
+              )}
+
+              {/* AI Summary in Sidebar */}
+              {aiSummary && (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Lesson Summary</h4>
+                    <div className="flex gap-2">
+                       <button onClick={handleCopy} className="p-2 hover:bg-primary/10 rounded-md text-primary transition-colors transition-all active:scale-90"><Icon icon="solar:copy-bold" size={16} /></button>
+                       <button onClick={handlePrint} className="p-2 hover:bg-primary/10 rounded-md text-primary transition-colors transition-all active:scale-90"><Icon icon="solar:printer-minimalistic-bold" size={16} /></button>
+                    </div>
+                  </div>
+                  <div className="prose prose-sm dark:prose-invert max-w-none text-foreground/90 bg-card/40 p-6 rounded-md border border-border/50 shadow-sm leading-relaxed">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {aiSummary.text}
+                    </ReactMarkdown>
+                  </div>
+                </div>
+              )}
+
+              {/* Q&A Chat Style */}
+              {aiChatAnswer && (
+                <div className="space-y-4 pt-4 animate-in slide-in-from-bottom-2">
+                  <div className="flex items-center gap-2">
+                    <div className="h-[1px] flex-1 bg-border/50" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">Recent Q&A</span>
+                    <div className="h-[1px] flex-1 bg-border/50" />
+                  </div>
+                  
+                  <div className="space-y-6">
+                    <div className="flex flex-col items-end">
+                      <div className="bg-primary text-primary-foreground p-4 rounded-md rounded-tr-none text-sm font-semibold max-w-[85%] shadow-md">
+                         {userQuestion || "Last Question"}
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-col items-start">
+                      <div className="bg-card border border-primary/20 p-6 rounded-md rounded-tl-none shadow-xl max-w-[95%]">
+                        <div className="flex items-center gap-2 mb-4 opacity-50">
+                          <Icon icon="solar:magic-stick-3-bold" className="text-primary w-4 h-4" />
+                          <span className="text-[9px] font-black uppercase tracking-widest text-primary">Tutor Response</span>
+                        </div>
+                        <div className="prose prose-sm dark:prose-invert text-foreground/90 leading-relaxed font-semibold">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {aiChatAnswer}
+                          </ReactMarkdown>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Sticky Input Area */}
+            <div className="p-8 pt-4 bg-card/80 backdrop-blur-md border-t border-border/50">
+              <div className="relative group">
+                <textarea 
+                  value={userQuestion}
+                  onChange={(e) => setUserQuestion(e.target.value)}
+                  placeholder="Ask your tutor anything..."
+                  className="w-full min-h-[100px] p-5 pb-16 bg-secondary/30 border border-border/40 rounded-md text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all resize-none placeholder:text-muted-foreground/50"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleAskAI();
+                    }
+                  }}
+                />
+                <div className="absolute bottom-4 left-4 flex items-center gap-2 text-[8px] font-black uppercase tracking-widest text-muted-foreground/40">
+                  <kbd className="px-1.5 py-0.5 bg-background border border-border rounded">ENTER</kbd> TO SEND
+                </div>
+                <button 
+                  onClick={handleAskAI}
+                  disabled={isAskingAI || !userQuestion.trim()}
+                  className="absolute bottom-4 right-4 w-10 h-10 bg-primary text-primary-foreground rounded-md flex items-center justify-center hover:shadow-lg hover:shadow-primary/30 transition-all active:scale-90 disabled:opacity-30 shadow-md shadow-primary/10"
+                >
+                  {isAskingAI ? (
+                    <Icon icon="solar:restart-bold" className="animate-spin" />
+                  ) : (
+                    <Icon icon="solar:round-alt-arrow-right-bold" />
+                  )}
+                </button>
+              </div>
+              <p className="mt-4 text-[9px] text-center text-muted-foreground/60 font-black uppercase tracking-widest">
+                AI can make mistakes. Verify important facts.
+              </p>
+            </div>
+          </aside>
+        )}
 
     </div>
   );

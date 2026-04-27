@@ -15,6 +15,8 @@ const contentSchema = new mongoose.Schema(
       type: String,
     },
     summary: String,
+    description: String,
+
     duration: Number,
     section: {
       type: mongoose.Schema.Types.ObjectId,

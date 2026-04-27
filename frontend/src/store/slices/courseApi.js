@@ -91,6 +91,20 @@ export const courseApi = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['Course'],
         }),
+        summarizeContent: builder.mutation({
+            query: (payload) => ({
+                url: '/courses/summarize-content',
+                method: 'POST',
+                body: payload,
+            }),
+        }),
+        askAI: builder.mutation({
+            query: (payload) => ({
+                url: '/courses/ask-ai',
+                method: 'POST',
+                body: payload,
+            }),
+        }),
     }),
 });
 
@@ -107,4 +121,6 @@ export const {
     useGenerateContentMutation,
     useGetEnrollmentByCourseQuery,
     useMarkContentCompletedMutation,
+    useSummarizeContentMutation,
+    useAskAIMutation,
 } = courseApi;

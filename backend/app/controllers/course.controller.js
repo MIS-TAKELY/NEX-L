@@ -9,7 +9,7 @@ import Quiz from "../models/quiz.model.js";
 import Assignment from "../models/assignment.model.js";
 import getEmbedding from "../utils/embedding.js";
 import { cosineSimilarity, getAggregateVector } from "../utils/vector-utils.js";
-import { generateCourseContent as generateAIContent, summarizeText } from "../utils/ai-generator.js";
+import { generateCourseContent as generateAIContent, summarizeText, askQuestionToAI } from "../utils/ai-generator.js";
 
 // Create a new course
 export const createCourse = async (req, res) => {
@@ -381,7 +381,7 @@ export const searchCoursesVector = async (req, res) => {
           ...filter,
           _id: { $nin: courses.map(c => c._id) },
           embedding: { $exists: true, $not: { $size: 0 } }
-        }).populate("teacher").limit(20);
+        }).populate("teacher").limit(100);
         courses = [...courses, ...semanticFiltered];
       }
     } else {
@@ -434,8 +434,9 @@ export const searchCoursesVector = async (req, res) => {
           return { course, similarity: vectorSimilarity, finalScore };
         });
 
-      // 5. Sort by the calculated final score
+      // 5. Sort by the calculated final score and filter low relevance results
       results = scoredCourses
+        .filter(item => item.finalScore > 0.28 || (item.course._doc && item.course._doc.score > 0))
         .sort((a, b) => b.finalScore - a.finalScore)
         .slice(0, 30)
         .map((item) => {
@@ -828,12 +829,15 @@ export const getInstructorAnalytics = async (req, res) => {
 // Summarize lesson content using AI
 export const summarizeContent = async (req, res) => {
   try {
-    const { text } = req.body;
-    if (!text) {
-      return res.status(400).json({ message: "Text is required", success: false });
+    const { text, mode, title, imageUrl, courseTitle } = req.body;
+    console.log("AI Summary Request - Course:", courseTitle, "Title:", title, "Mode:", mode, "Has Image:", !!imageUrl);
+    if (imageUrl) console.log("Incoming Image URL:", imageUrl);
+
+    if (!text && !title && !imageUrl) {
+      return res.status(400).json({ message: "Text, Title or Image is required", success: false });
     }
 
-    const summary = await summarizeText(text);
+    const summary = await summarizeText(text, mode || 'short', title || '', imageUrl || '', courseTitle || '');
     res.status(200).json({
       success: true,
       data: summary,
@@ -841,6 +845,29 @@ export const summarizeContent = async (req, res) => {
   } catch (err) {
     res.status(500).json({
       message: `Failed to summarize content: ${err.message}`,
+      success: false,
+    });
+  }
+};
+// Ask AI about lesson content
+export const askAIContent = async (req, res) => {
+  try {
+    const { question, context, courseTitle, imageUrl } = req.body;
+    console.log(`[AI Q&A] New Question: "${question}" for Course: "${courseTitle}" ${imageUrl ? `with Image: ${imageUrl}` : ""}`);
+
+    if (!question) {
+      return res.status(400).json({ message: "Question is required", success: false });
+    }
+
+    const answer = await askQuestionToAI(question, context || '', courseTitle || '', imageUrl || '');
+    
+    res.status(200).json({
+      success: true,
+      data: answer,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: `Failed to get AI answer: ${err.message}`,
       success: false,
     });
   }
