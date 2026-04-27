@@ -22,6 +22,43 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true, // Enable email/password auth
     requireEmailVerification: true,
+    sendResetPassword: async ({ user, url }, request) => {
+      let finalUrl = url;
+      try {
+        if (request) {
+          const reqHost = request.headers.get("x-forwarded-host") || request.headers.get("host");
+          const reqProto = request.headers.get("x-forwarded-proto") || (reqHost?.includes("localhost") || reqHost?.includes("127.0.0.1") ? "http" : "https");
+          if (reqHost) {
+            const parsed = new URL(url);
+            // Replace the hardcoded baseURL host with the actual request host
+            parsed.host = reqHost;
+            parsed.protocol = reqProto + ":";
+            finalUrl = parsed.toString();
+          }
+        }
+      } catch (err) {
+        console.error("Failed to parse reset password url", err);
+      }
+
+      // Non-blocking: send the email in the background so the user doesn't wait for SMTP transmission
+      sendEmail({
+        to: user.email,
+        subject: "Reset your password - NEX-L",
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eaeaec; border-radius: 8px; padding: 20px;">
+            <h2 style="color: #333;">Password Reset Request</h2>
+            <p style="color: #555; line-height: 1.5;">Hi ${user.name || "there"},</p>
+            <p style="color: #555; line-height: 1.5;">We received a request to reset your password for your NEX-L account. Click the button below to reset it.</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${finalUrl}" style="display: inline-block; padding: 12px 24px; background-color: #dc3545; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">Reset Password</a>
+            </div>
+            <p style="color: #555; line-height: 1.5;">If you didn't request a password reset, you can safely ignore this email. Your password will not be changed.</p>
+          </div>
+        `,
+      }).catch(err => {
+        console.error(`[Reset Password Email Error] Failed to send to ${user.email}:`, err);
+      });
+    },
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }, request) => {
