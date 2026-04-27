@@ -11,6 +11,7 @@ import LegalPolicy from "./Pages/LegalPolicy";
 import Cart from "./Pages/student/Cart";
 import CourseDetails from "./Pages/student/CourseDetails";
 import ForgotPassword from "./Pages/student/ForgotPassword";
+import ResetPassword from "./Pages/student/ResetPassword";
 import Home from "./Pages/student/Home";
 import MyEnrollments from "./Pages/student/MyEnrollments";
 import PaymentFailure from "./Pages/student/PaymentFailure";
@@ -129,6 +130,7 @@ export default function App() {
           }
         />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-failure" element={<PaymentFailure />} />
         <Route path="/payment-method-selection" element={<PaymentMethodSelection />} />
