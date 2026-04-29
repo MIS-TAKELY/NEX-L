@@ -127,10 +127,13 @@ export const auth = betterAuth({
     process.env.FRONTEND_URL,
     "https://nex-l.vercel.app", // Fallback for safety
     "https://nex-l.onrender.com",
+    "https://nexl-admin.vercel.app", // Admin panel
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
     "http://localhost:3002",
     "http://127.0.0.1:3002",
   ].filter(Boolean),
