@@ -55,6 +55,7 @@ const AddCourse = () => {
     description: "",
     price: "",
     category: "",
+    level: "Beginner",
     thumbnail: "",
     syllabus: "",
     demoVideo: "",
@@ -512,7 +513,7 @@ const AddCourse = () => {
   const nextStep = () => {
     // Basic validation before moving to next step
     if (currentStep === 1) {
-      if (!formData.title || !formData.category || !formData.description) {
+      if (!formData.title || !formData.category || !formData.level || !formData.description) {
         showToast("Please fill in all required basic info fields.", "error");
         return;
       }
@@ -669,10 +670,26 @@ const AddCourse = () => {
                       required
                     >
                       <option value="" className="text-muted-foreground">Select Category</option>
-                      <option value="Development" className="bg-card">Development</option>
+                      <option value="Development" className="bg-card">Web Development</option>
                       <option value="Business" className="bg-card">Business</option>
                       <option value="Design" className="bg-card">Design</option>
                       <option value="Marketing" className="bg-card">Marketing</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.05em] mb-2">
+                      Level <span className="text-destructive">*</span>
+                    </label>
+                    <select
+                      name="level"
+                      value={formData.level}
+                      onChange={handleChange}
+                      className="w-full px-5 py-4 rounded-md bg-muted/30 border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200 appearance-none"
+                      required
+                    >
+                      <option value="Beginner" className="bg-card">Beginner</option>
+                      <option value="Intermediate" className="bg-card">Intermediate</option>
+                      <option value="Advanced" className="bg-card">Advanced</option>
                     </select>
                   </div>
                   <div>

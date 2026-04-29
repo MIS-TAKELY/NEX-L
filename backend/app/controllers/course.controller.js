@@ -11,6 +11,70 @@ import getEmbedding from "../utils/embedding.js";
 import { cosineSimilarity, getAggregateVector } from "../utils/vector-utils.js";
 import { generateCourseContent as generateAIContent, summarizeText, askQuestionToAI } from "../utils/ai-generator.js";
 
+const CATEGORY_ALIASES = new Map([
+  ["web development", "Development"],
+  ["mobile development", "Development"],
+  ["data science", "Development"],
+  ["programming", "Development"],
+  ["coding", "Development"],
+  ["software development", "Development"],
+  ["frontend", "Development"],
+  ["backend", "Development"],
+  ["development", "Development"],
+  ["business", "Business"],
+  ["marketing", "Marketing"],
+  ["design", "Design"],
+]);
+
+const LEVEL_ALIASES = new Map([
+  ["beginner", "Beginner"],
+  ["intermediate", "Intermediate"],
+  ["advanced", "Advanced"],
+]);
+
+const normalizeCategory = (value) => {
+  if (!value) return "";
+  const raw = String(value).trim();
+  return CATEGORY_ALIASES.get(raw.toLowerCase()) || raw;
+};
+
+const normalizeLevel = (value) => {
+  if (!value) return "";
+  const raw = String(value).trim();
+  return LEVEL_ALIASES.get(raw.toLowerCase()) || raw;
+};
+
+const buildCategoryCondition = (category) => {
+  if (!category) return null;
+
+  const normalized = normalizeCategory(category);
+  if (normalized === "Development") {
+    return {
+      $or: [
+        { category: "Development" },
+        { category: "Web Development" },
+        { category: "Mobile Development" },
+        { category: "Data Science" },
+        { category: "Programming" },
+        { category: "Coding" },
+        { category: "Software Development" },
+        { category: "Frontend" },
+        { category: "Backend" },
+      ],
+    };
+  }
+
+  return {
+    $or: [
+      { category: normalized },
+      { category: category },
+    ],
+  };
+};
+
+const buildEmbeddingText = ({ title, description, category, tags, level }) =>
+  `${title || ""} ${description || ""} ${category || ""} ${level || ""} ${Array.isArray(tags) ? tags.join(" ") : ""}`.trim();
+
 // Create a new course
 export const createCourse = async (req, res) => {
   try {
@@ -20,6 +84,7 @@ export const createCourse = async (req, res) => {
       teacherId,
       tags,
       category,
+      level,
       price,
       isFree,
       courseType,
@@ -34,10 +99,19 @@ export const createCourse = async (req, res) => {
     const teacher = await User.findById(teacherId);
     if (!teacher) return res.status(400).json({ message: "Teacher not found" });
 
+    const normalizedCategory = normalizeCategory(category);
+    const normalizedLevel = normalizeLevel(level) || "Beginner";
+
     // Generate embedding
     let embedding = [];
     try {
-      const textToEmbed = `${title || ""} ${description || ""} ${category || ""} ${Array.isArray(tags) ? tags.join(" ") : ""}`.trim();
+      const textToEmbed = buildEmbeddingText({
+        title,
+        description,
+        category: normalizedCategory,
+        level: normalizedLevel,
+        tags,
+      });
       if (textToEmbed) {
         embedding = await getEmbedding(textToEmbed);
         // Ensure it's a flat array
@@ -49,12 +123,22 @@ export const createCourse = async (req, res) => {
       console.error("[Course] Failed to generate embedding:", embedErr.message);
     }
 
+    // Approval Flow: If status is 'published' and user is not admin, set to 'pending'
+    let finalStatus = status || 'draft';
+    if (finalStatus === 'published') {
+      // In a real app, check req.user.role here. 
+      // For now, since requireAuth might not be consistently applied, 
+      // let's assume all instructor submissions need approval.
+      finalStatus = 'pending';
+    }
+
     const course = await Course.create({
       title,
       description,
       teacher: teacher._id,
       tags,
-      category,
+      category: normalizedCategory,
+      level: normalizedLevel,
       price,
       isFree,
       courseType,
@@ -62,7 +146,7 @@ export const createCourse = async (req, res) => {
       demoVideo,
       embedding,
       thumbnail,
-      status,
+      status: finalStatus,
     });
 
     // Handle nested sections if provided
@@ -349,17 +433,38 @@ export const searchCoursesVector = async (req, res) => {
       `[Search] Query: "${q}", Category: ${category}, Level: ${level}, Price: ${minPrice}-${maxPrice}`,
     );
 
+    const normalizedCategory = normalizeCategory(category);
+    const normalizedLevel = normalizeLevel(level);
+    const categoryCondition = buildCategoryCondition(normalizedCategory);
     let queryVector = null;
     if (q) {
       // 1. Generate embedding for the query
-      queryVector = await getEmbedding(q);
-      console.log(`[Search] Generated query vector for: "${q}"`);
+      try {
+        queryVector = await getEmbedding(q);
+        if (Array.isArray(queryVector?.[0])) {
+          queryVector = queryVector[0];
+        }
+        console.log(`[Search] Generated query vector for: "${q}"`);
+      } catch (embedErr) {
+        console.error("[Search] Failed to generate query embedding:", embedErr.message);
+        queryVector = null;
+      }
     }
+
+    const levelCondition = normalizedLevel
+      ? {
+          $or: [
+            { level: normalizedLevel },
+            { level: { $exists: false } },
+            { level: null },
+            { level: "" },
+          ],
+      }
+      : null;
+    const combinedConditions = [categoryCondition, levelCondition].filter(Boolean);
 
     // 2. Build filter object
     const filter = { status: "published" };
-    if (category) filter.category = category;
-    if (level) filter.level = level;
     if (minPrice || maxPrice) {
       filter.price = {};
       if (minPrice && minPrice !== "all") filter.price.$gte = Number(minPrice);
@@ -370,22 +475,70 @@ export const searchCoursesVector = async (req, res) => {
     let courses = [];
     if (q) {
       // Try text search + filtering
-      courses = await Course.find(
-        { ...filter, $text: { $search: q } },
-        { score: { $meta: "textScore" } }
+      const textQuery = {
+        ...filter,
+        $text: { $search: q },
+        ...(combinedConditions.length === 1 ? combinedConditions[0] : combinedConditions.length > 1 ? { $and: combinedConditions } : {}),
+      };
+      const textMatches = await Course.find(
+        textQuery,
+        { score: { $meta: "textScore" } },
       ).populate("teacher");
+
+      // Fallback: if text search fails (e.g., partial word), try regex
+      const regexMatches = textMatches.length === 0 && q.length >= 3
+        ? await Course.find(
+          {
+            ...filter,
+            ...(combinedConditions.length > 0
+              ? {
+                  $and: [
+                    ...combinedConditions,
+                    {
+                      $or: [
+                        { title: { $regex: q, $options: "i" } },
+                        { description: { $regex: q, $options: "i" } },
+                        { category: { $regex: q, $options: "i" } },
+                        { tags: { $regex: q, $options: "i" } },
+                      ],
+                    },
+                  ],
+                }
+              : {
+                  $or: [
+                    { title: { $regex: q, $options: "i" } },
+                    { description: { $regex: q, $options: "i" } },
+                    { category: { $regex: q, $options: "i" } },
+                    { tags: { $regex: q, $options: "i" } },
+                  ],
+                }),
+          },
+        ).populate("teacher")
+        : [];
+
+      // Attach synthetic scores to regex matches
+      regexMatches.forEach((c) => {
+        if (!c._doc) c._doc = {};
+        c._doc.score = 1.0;
+      });
+
+      courses = [...textMatches, ...regexMatches];
 
       // Complement with semantic search if text matches are low
       if (courses.length < 5) {
         const semanticFiltered = await Course.find({
           ...filter,
+          ...(combinedConditions.length === 1 ? combinedConditions[0] : combinedConditions.length > 1 ? { $and: combinedConditions } : {}),
           _id: { $nin: courses.map(c => c._id) },
-          embedding: { $exists: true, $not: { $size: 0 } }
+          embedding: { $exists: true, $type: "array" },
         }).populate("teacher").limit(100);
         courses = [...courses, ...semanticFiltered];
       }
     } else {
-      courses = await Course.find(filter).populate("teacher");
+      courses = await Course.find({
+        ...filter,
+        ...(combinedConditions.length === 1 ? combinedConditions[0] : combinedConditions.length > 1 ? { $and: combinedConditions } : {}),
+      }).populate("teacher");
     }
 
     console.log(
@@ -397,10 +550,7 @@ export const searchCoursesVector = async (req, res) => {
     if (queryVector) {
       // 4. Calculate similarity and apply ranking boosts
       const scoredCourses = courses
-        .filter((c) => {
-          const hasEmbedding = c.embedding && c.embedding.length > 0;
-          return hasEmbedding;
-        })
+        .filter((c) => Array.isArray(c.embedding) && c.embedding.length > 0)
         .map((course) => {
           const vectorSimilarity = cosineSimilarity(queryVector, course.embedding);
           
@@ -434,10 +584,12 @@ export const searchCoursesVector = async (req, res) => {
           return { course, similarity: vectorSimilarity, finalScore };
         });
 
+      const rankedCourses = scoredCourses
+        .sort((a, b) => b.finalScore - a.finalScore);
+
       // 5. Sort by the calculated final score and filter low relevance results
-      results = scoredCourses
+      results = rankedCourses
         .filter(item => item.finalScore > 0.28 || (item.course._doc && item.course._doc.score > 0))
-        .sort((a, b) => b.finalScore - a.finalScore)
         .slice(0, 30)
         .map((item) => {
           const c = item.course.toObject();
@@ -447,10 +599,46 @@ export const searchCoursesVector = async (req, res) => {
           return c;
         });
 
+      if (results.length === 0 && rankedCourses.length > 0) {
+        results = rankedCourses.slice(0, 8).map((item) => {
+          const c = item.course.toObject();
+          delete c.embedding;
+          c.similarityScore = item.similarity;
+          c.searchRank = item.finalScore;
+          return c;
+        });
+      }
+
       if (results.length > 0) {
         console.log(
           `[Search] Top rank score: ${results[0].searchRank.toFixed(4)} for "${results[0].title}"`,
         );
+      } else if (q) {
+        // 6. Keyword-based Category Fallback if nothing is found
+        const qLower = q.toLowerCase();
+        let fallbackCategory = null;
+        
+        if (/(python|java|c\+\+|programming|coding|web|dev|html|css|react|node|angular|vue|sql|javascript|js)/i.test(qLower)) {
+            fallbackCategory = "Development";
+        } else if (/(business|marketing|sales|seo|finance|management|startup)/i.test(qLower)) {
+            fallbackCategory = "Business";
+        } else if (/(design|ui|ux|figma|photoshop|illustrator|art|graphics|drawing)/i.test(qLower)) {
+            fallbackCategory = "Design";
+        }
+
+        if (fallbackCategory) {
+            console.log(`[Search] No direct matches for "${q}". Falling back to category: ${fallbackCategory}`);
+            const fallbackCourses = await Course.find({
+                status: "published",
+                category: fallbackCategory
+            }).populate("teacher").limit(8);
+            
+            results = fallbackCourses.map(course => {
+                const c = course.toObject();
+                delete c.embedding;
+                return c;
+            });
+        }
       }
     } else {
       // Sort by recency if no query
@@ -559,6 +747,7 @@ export const updateCourse = async (req, res) => {
       description,
       tags,
       category,
+      level,
       price,
       isFree,
       courseType,
@@ -576,11 +765,24 @@ export const updateCourse = async (req, res) => {
     let embedding = course.embedding || [];
     const updatedTitle = title !== undefined ? title : course.title;
     const updatedDescription = description !== undefined ? description : course.description;
-    const updatedCategory = category !== undefined ? category : course.category;
+    const updatedCategory = category !== undefined ? normalizeCategory(category) : course.category;
+    const updatedLevel = level !== undefined ? normalizeLevel(level) : course.level;
     const updatedTags = tags !== undefined ? tags : course.tags;
 
-    const oldText = `${course.title || ""} ${course.description || ""} ${course.category || ""} ${Array.isArray(course.tags) ? course.tags.join(" ") : ""}`.trim();
-    const newText = `${updatedTitle || ""} ${updatedDescription || ""} ${updatedCategory || ""} ${Array.isArray(updatedTags) ? updatedTags.join(" ") : ""}`.trim();
+    const oldText = buildEmbeddingText({
+      title: course.title,
+      description: course.description,
+      category: course.category,
+      level: course.level,
+      tags: course.tags,
+    });
+    const newText = buildEmbeddingText({
+      title: updatedTitle,
+      description: updatedDescription,
+      category: updatedCategory,
+      level: updatedLevel,
+      tags: updatedTags,
+    });
 
     if (oldText !== newText || !embedding || embedding.length === 0 || embedding.length !== 384) {
       try {
@@ -599,7 +801,8 @@ export const updateCourse = async (req, res) => {
     course.title = title || course.title;
     course.description = description || course.description;
     course.tags = tags || course.tags;
-    course.category = category || course.category;
+    course.category = category !== undefined ? normalizeCategory(category) : course.category;
+    course.level = level !== undefined ? normalizeLevel(level) : course.level;
     course.price = price !== undefined ? price : course.price;
     course.isFree = isFree !== undefined ? isFree : course.isFree;
     course.courseType = courseType || course.courseType;
@@ -607,7 +810,13 @@ export const updateCourse = async (req, res) => {
     course.demoVideo = demoVideo !== undefined ? demoVideo : course.demoVideo;
     course.embedding = embedding;
     course.thumbnail = thumbnail !== undefined ? thumbnail : course.thumbnail;
-    course.status = status || course.status;
+    
+    let updatedStatus = status || course.status;
+    if (updatedStatus === 'published' && course.status !== 'published') {
+      // If trying to publish and not already published, set to pending
+      updatedStatus = 'pending';
+    }
+    course.status = updatedStatus;
 
     // Handle sections update
     if (sections && Array.isArray(sections)) {
@@ -872,4 +1081,3 @@ export const askAIContent = async (req, res) => {
     });
   }
 };
-

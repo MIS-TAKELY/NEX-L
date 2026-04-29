@@ -1,8 +1,16 @@
+import { useState } from "react";
+import { useGetStudentSessionsQuery } from "@/store/slices/tutoringSessionApi";
+import { Icon } from "@iconify/react";
+import ConsultationModal from "@/components/meeting/ConsultationModal";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const StudentConsultations = () => {
   const { data, isLoading } = useGetStudentSessionsQuery();
   const [activeSessionId, setActiveSessionId] = useState(null);
+
+  const handleJoin = (sessionId) => {
+    setActiveSessionId(sessionId);
+  };
 
   const sessions = data?.sessions || [];
 

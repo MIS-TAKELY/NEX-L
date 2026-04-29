@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Icon } from '@iconify/react';
-import { getAllCourses } from '../../apis/course.api';
+import { getUserEnrollments } from '../../apis/enrollment.api';
 import { getMyBadges } from '../../apis/badge.api';
 
 import StudentDashboardSkeleton from '../../components/skeletons/StudentDashboardSkeleton';
@@ -16,12 +16,20 @@ const Home = () => {
 
     useEffect(() => {
         const fetchDashboardData = async () => {
+            if (!userData?._id && !userData?.id) return;
             try {
-                const [coursesData, badgesData] = await Promise.all([
-                    getAllCourses(),
+                const [enrollmentsData, badgesData] = await Promise.all([
+                    getUserEnrollments(userData._id || userData.id),
                     getMyBadges()
                 ]);
-                setCourses(coursesData);
+                
+                // Extract courses from enrollments
+                const enrolledCourses = enrollmentsData.map(enrollment => ({
+                    ...enrollment.course,
+                    progress: enrollment.progress
+                }));
+                
+                setCourses(enrolledCourses);
                 setEarnedBadges(badgesData.data || []);
             } catch (error) {
                 console.error("Error fetching dashboard data:", error);
@@ -30,7 +38,7 @@ const Home = () => {
             }
         };
         fetchDashboardData();
-    }, []);
+    }, [userData]);
 
     if (loading) {
         return <StudentDashboardSkeleton />;
@@ -79,14 +87,10 @@ const Home = () => {
                 </div>
 
                 {/* Course Progress Highlights */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {loading ? (
-                        [1, 2, 3].map((_, i) => (
-                            <div key={i} className="bg-card backdrop-blur-xl p-6 rounded-md animate-pulse h-32 border border-border"></div>
-                        ))
-                    ) : courses.length > 0 ? (
-                        courses.slice(0, 3).map((course) => (
-                            <div key={course._id} className="bg-card backdrop-blur-xl p-6 rounded-md flex items-center justify-between border border-border hover:shadow-xl transition-all cursor-pointer group premium-card">
+                {courses.length > 0 && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {courses.slice(0, 3).map((course) => (
+                            <div key={course._id} className="bg-card backdrop-blur-xl p-6 rounded-md flex items-center justify-between border border-border hover:shadow-xl transition-all cursor-pointer group premium-card" onClick={() => navigate(`/student/player/${course._id}`)}>
                                 <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-md bg-primary/10 text-primary flex items-center justify-center text-2xl">
                                         <Icon icon={getIcon(course.category)} />
@@ -98,35 +102,31 @@ const Home = () => {
                                 </div>
                                 <Icon icon="solar:alt-arrow-right-linear" className="text-muted-foreground group-hover:text-primary transition-colors" />
                             </div>
-                        ))
-                    ) : null}
-                </div>
+                        ))}
+                    </div>
+                )}
 
 
                 {/* Featured / Continue Section */}
-                <div>
-                    <div className="flex justify-between items-end mb-10">
-                        <div>
-                            <h2 className="text-3xl font-black text-foreground serif">Continue <span className="text-primary italic">Learning</span></h2>
-                            <div className="w-12 h-1 bg-primary/20 mt-2"></div>
+                {courses.length > 0 ? (
+                    <div>
+                        <div className="flex justify-between items-end mb-10">
+                            <div>
+                                <h2 className="text-3xl font-black text-foreground serif">Continue <span className="text-primary italic">Learning</span></h2>
+                                <div className="w-12 h-1 bg-primary/20 mt-2"></div>
+                            </div>
+                            <div className="flex gap-4">
+                                <button className="w-10 h-10 rounded-md border border-border flex items-center justify-center text-muted-foreground hover:bg-secondary transition-all">
+                                    <Icon icon="solar:alt-arrow-left-linear" size={18} />
+                                </button>
+                                <button className="w-10 h-10 rounded-md bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-105 transition-all">
+                                    <Icon icon="solar:alt-arrow-right-linear" size={18} />
+                                </button>
+                            </div>
                         </div>
-                        <div className="flex gap-4">
-                            <button className="w-10 h-10 rounded-md border border-border flex items-center justify-center text-muted-foreground hover:bg-secondary transition-all">
-                                <Icon icon="solar:alt-arrow-left-linear" size={18} />
-                            </button>
-                            <button className="w-10 h-10 rounded-md bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-105 transition-all">
-                                <Icon icon="solar:alt-arrow-right-linear" size={18} />
-                            </button>
-                        </div>
-                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                        {loading ? (
-                            [1, 2].map((_, i) => (
-                                <div key={i} className="bg-card p-6 rounded-md border border-border animate-pulse h-80"></div>
-                            ))
-                        ) : courses.length > 0 ? (
-                            courses.slice(0, 2).map((course) => (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                            {courses.slice(0, 2).map((course) => (
                                 <div key={course._id} className="bg-card backdrop-blur-xl p-6 rounded-md border border-border hover:shadow-2xl transition-all group cursor-pointer premium-card" onClick={() => navigate(`/student/player/${course._id}`)}>
                                     <div className="h-48 bg-secondary rounded-md mb-6 relative overflow-hidden">
                                         <img src={course.thumbnail || "https://images.unsplash.com/photo-1593720213428-28a5b9e94613?q=80&w=500&auto=format&fit=crop"} alt={course.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
@@ -152,10 +152,26 @@ const Home = () => {
                                         </div>
                                     </div>
                                 </div>
-                            ))
-                        ) : null}
+                            ))}
+                        </div>
                     </div>
-                </div>
+                ) : (
+                    <div className="bg-card/50 backdrop-blur-xl p-12 rounded-md border border-dashed border-border text-center">
+                        <div className="w-20 h-20 bg-primary/10 rounded-md flex items-center justify-center mx-auto mb-6 text-primary">
+                            <Icon icon="solar:rocket-bold-duotone" size={40} />
+                        </div>
+                        <h3 className="text-2xl font-bold mb-3 serif">Ready to start your journey?</h3>
+                        <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+                            You haven't enrolled in any courses yet. Explore our catalog to find the perfect course for you.
+                        </p>
+                        <button 
+                            onClick={() => navigate("/course-list")}
+                            className="bg-primary text-primary-foreground hover:bg-primary/90 px-10 py-4 rounded-md font-bold transition-all shadow-xl shadow-primary/20"
+                        >
+                            Browse All Courses
+                        </button>
+                    </div>
+                )}
             </div>
 
             {/* Right Sidebar - Refined statistics */}
@@ -169,10 +185,10 @@ const Home = () => {
                                     {userData?.avatar ? <img src={userData.avatar} className="w-full h-full object-cover" /> : <Icon icon="solar:user-circle-bold-duotone" size={60} />}
                                 </div>
                             </div>
-                            <div className="absolute -bottom-2 right-2 bg-primary text-primary-foreground text-[10px] font-black px-3 py-1 rounded-md shadow-lg border-2 border-card">
-                                32%
-                            </div>
+                        <div className="absolute -bottom-2 right-2 bg-primary text-primary-foreground text-[10px] font-black px-3 py-1 rounded-md shadow-lg border-2 border-card">
+                            {courses.length > 0 ? `${Math.round(courses.reduce((acc, c) => acc + (c.progress || 0), 0) / courses.length)}%` : '0%'}
                         </div>
+                    </div>
 
                         <h3 className="text-2xl font-black text-foreground mb-4 serif">
                             {userData?.name || 'Student'} <Icon icon="solar:fire-bold" className="text-orange-500 inline-block align-text-bottom" />

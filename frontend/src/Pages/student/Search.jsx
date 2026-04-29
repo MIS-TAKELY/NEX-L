@@ -7,32 +7,67 @@ import Footer from "../../components/common/Footer";
 import CourseCard from "../../components/landing/CourseCard";
 import CourseSkeleton from "../../components/skeletons/CourseSkeleton";
 
+const CATEGORY_OPTIONS = [
+    { label: "Development", value: "Development" },
+    { label: "Business", value: "Business" },
+    { label: "Design", value: "Design" },
+    { label: "Marketing", value: "Marketing" },
+];
+
+const LEVEL_OPTIONS = ["Beginner", "Intermediate", "Advanced"];
+
+const normalizeCategory = (value) => {
+    if (!value) return "";
+    const raw = String(value).trim().toLowerCase();
+    if (raw === "web development" || raw === "mobile development" || raw === "data science") {
+        return "Development";
+    }
+    if (raw === "business" || raw === "design" || raw === "marketing") {
+        return raw.charAt(0).toUpperCase() + raw.slice(1);
+    }
+    return value;
+};
+
+const normalizeLevel = (value) => {
+    if (!value) return "";
+    const raw = String(value).trim().toLowerCase();
+    if (raw === "beginner") return "Beginner";
+    if (raw === "intermediate") return "Intermediate";
+    if (raw === "advanced") return "Advanced";
+    return value;
+};
+
 const Search = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [q, setQ] = useState(searchParams.get("q") || "");
-    const [category, setCategory] = useState(searchParams.get("category") || "");
-    const [level, setLevel] = useState(searchParams.get("level") || "");
+    const [debouncedQ, setDebouncedQ] = useState(q);
+    const [category, setCategory] = useState(normalizeCategory(searchParams.get("category") || ""));
+    const [level, setLevel] = useState(normalizeLevel(searchParams.get("level") || ""));
     const [priceRange, setPriceRange] = useState(searchParams.get("priceRange") || "all");
 
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedQ(q);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [q]);
+
     const { data: results, isFetching } = useSearchCoursesVectorQuery({
-        q: searchParams.get("q") || "",
-        category: searchParams.get("category") || "",
-        level: searchParams.get("level") || "",
+        q: debouncedQ,
+        category,
+        level,
         minPrice: priceRange === "free" ? "0" : priceRange === "paid" ? "1" : "",
         maxPrice: priceRange === "free" ? "0" : ""
     });
 
     useEffect(() => {
         const params = {};
-        if (q) params.q = q;
+        if (debouncedQ) params.q = debouncedQ;
         if (category) params.category = category;
         if (level) params.level = level;
         if (priceRange !== "all") params.priceRange = priceRange;
         setSearchParams(params, { replace: true });
-    }, [q, category, level, priceRange, setSearchParams]);
-
-    const categories = ["Web Development", "Data Science", "Mobile Development", "Design", "Business"];
-    const levels = ["Beginner", "Intermediate", "Advanced"];
+    }, [debouncedQ, category, level, priceRange, setSearchParams]);
 
     return (
         <div className="flex flex-col min-h-screen bg-muted font-outfit">
@@ -59,8 +94,8 @@ const Search = () => {
                                             className="w-full p-3 bg-muted border-2 border-transparent focus:border-primary rounded-md outline-none transition-all"
                                         >
                                             <option value="">All Categories</option>
-                                            {categories.map((cat) => (
-                                                <option key={cat} value={cat}>{cat}</option>
+                                            {CATEGORY_OPTIONS.map((cat) => (
+                                                <option key={cat.value} value={cat.value}>{cat.label}</option>
                                             ))}
                                         </select>
                                     </div>
@@ -69,7 +104,7 @@ const Search = () => {
                                     <div>
                                         <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3 block">Level</label>
                                         <div className="space-y-2">
-                                            {["", ...levels].map((lvl) => (
+                                            {["", ...LEVEL_OPTIONS].map((lvl) => (
                                                 <button
                                                     key={lvl}
                                                     onClick={() => setLevel(lvl)}

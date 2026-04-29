@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema(
     role: { type: String, enum: ["student", "teacher", "instructor", "admin"], default: "student" },
     /** JSON string array of roles for better-auth dual-role users, e.g. '["student","instructor"]' */
     roles: { type: String },
+    bio: { type: String, default: "" },
   },
   {
     timestamps: true,
@@ -19,11 +20,10 @@ const userSchema = new mongoose.Schema(
 );
 
 // Hash password before saving (only if password exists and is modified)
-userSchema.pre("save", async function (next) {
-  if (!this.password || !this.isModified("password")) return next();
+userSchema.pre("save", async function () {
+  if (!this.password || !this.isModified("password")) return;
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-  next();
 });
 
 const User = mongoose.model("User", userSchema);
