@@ -1,5 +1,16 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1";
 
+function toQueryString(params: Record<string, string | number | boolean | undefined>) {
+  const entries = Object.entries(params).filter(([, value]) => value !== undefined && value !== "");
+  const queryParams = new URLSearchParams();
+
+  for (const [key, value] of entries) {
+    queryParams.set(key, String(value));
+  }
+
+  return queryParams.toString();
+}
+
 export async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
   
@@ -31,7 +42,7 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {})
 export const adminApi = {
   getStats: () => fetchWithAuth("/admin/stats"),
   getUsers: (params: { page?: number; limit?: number; search?: string } = {}) => {
-    const query = new URLSearchParams(params as any).toString();
+    const query = toQueryString(params);
     return fetchWithAuth(`/admin/users?${query}`);
   },
   updateUserRole: (userId: string, role: string) => 
@@ -40,16 +51,16 @@ export const adminApi = {
       body: JSON.stringify({ role }),
     }),
   getCourses: (params: { page?: number; limit?: number; status?: string; search?: string } = {}) => {
-    const query = new URLSearchParams(params as any).toString();
+    const query = toQueryString(params);
     return fetchWithAuth(`/admin/courses?${query}`);
   },
   updateCourseStatus: (courseId: string, status: string) =>
     fetchWithAuth(`/admin/courses/${courseId}/status`, {
       method: "PUT",
       body: JSON.stringify({ status }),
-    }),
+  }),
   getSettings: () => fetchWithAuth("/admin/settings"),
-  updateSetting: (key: string, value: any) =>
+  updateSetting: (key: string, value: string | number | boolean | null | Record<string, unknown>) =>
     fetchWithAuth("/admin/settings", {
       method: "PUT",
       body: JSON.stringify({ key, value }),

@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { adminApi } from "../lib/api";
+import type { UserSummary } from "../lib/auth-types";
 
 export default function UsersPage() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<UserSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [pagination, setPagination] = useState({ current: 1, total: 1 });
@@ -13,7 +14,7 @@ export default function UsersPage() {
     setLoading(true);
     try {
       const data = await adminApi.getUsers({ page, search: query });
-      setUsers(data.users);
+      setUsers(data.users as UserSummary[]);
       setPagination({ current: data.currentPage, total: data.totalPages });
     } catch (err) {
       console.error("Failed to load users:", err);
@@ -28,8 +29,8 @@ export default function UsersPage() {
 
   const handleRoleChange = async (userId: string, newRole: string) => {
     try {
-      const updatedUser = await adminApi.updateUserRole(userId, newRole);
-      setUsers(users.map((u: any) => u._id === userId ? updatedUser : u));
+      const updatedUser = await adminApi.updateUserRole(userId, newRole) as UserSummary;
+      setUsers((currentUsers) => currentUsers.map((user) => (user._id === userId ? updatedUser : user)));
     } catch (err) {
       alert("Failed to update role");
     }
@@ -40,8 +41,9 @@ export default function UsersPage() {
     loadUsers(1, search);
   };
 
-  const parseRoles = (rolesData: any) => {
+  const parseRoles = (rolesData: UserSummary["roles"]) => {
     if (Array.isArray(rolesData)) return rolesData;
+    if (typeof rolesData !== "string") return [];
     try {
       return JSON.parse(rolesData || "[]");
     } catch (e) {
@@ -116,7 +118,7 @@ export default function UsersPage() {
               <UserSkeleton />
             ) : users.length === 0 ? (
               <tr><td colSpan={4} style={{ textAlign: "center", padding: "40px" }}>No users found</td></tr>
-            ) : users.map((user: any) => {
+            ) : users.map((user) => {
               const roles = parseRoles(user.roles);
               return (
                 <tr key={user._id}>

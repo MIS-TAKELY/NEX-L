@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { adminApi } from "./lib/api";
+import type { CourseSummary } from "./lib/auth-types";
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -10,7 +11,7 @@ export default function Dashboard() {
     pendingCourses: 0,
     totalEnrollments: 0,
   });
-  const [recentCourses, setRecentCourses] = useState([]);
+  const [recentCourses, setRecentCourses] = useState<CourseSummary[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,7 +21,7 @@ export default function Dashboard() {
         setStats(statsData);
         
         const coursesData = await adminApi.getCourses({ limit: 5 });
-        setRecentCourses(coursesData.courses);
+        setRecentCourses(coursesData.courses as CourseSummary[]);
       } catch (err) {
         console.error("Failed to load dashboard data:", err);
       } finally {
@@ -82,7 +83,7 @@ export default function Dashboard() {
                 ))
               ) : recentCourses.length === 0 ? (
                 <tr><td colSpan={5} style={{ textAlign: "center", padding: "40px", color: "var(--muted)" }}>No recent submissions</td></tr>
-              ) : recentCourses.map((course: any, i) => (
+              ) : recentCourses.map((course, i) => (
                 <tr key={i}>
                   <td style={{ fontWeight: "500" }}>{course.title}</td>
                   <td>{course.teacher?.name || "Unknown"}</td>
@@ -108,7 +109,7 @@ export default function Dashboard() {
               { name: "David Miller", courses: 15, rating: 4.7 },
             ].map((ins, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "var(--card-border)", display: "flex", alignItems: "center", justifyCenter: "center", fontWeight: "600" }}>
+                <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "var(--card-border)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "600" }}>
                   {ins.name.charAt(0)}
                 </div>
                 <div style={{ flex: 1 }}>
