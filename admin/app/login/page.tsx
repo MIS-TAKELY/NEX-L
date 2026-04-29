@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { authClient } from "../lib/auth-client";
 import { useRouter } from "next/navigation";
+import type { AdminSessionUser } from "../lib/auth-types";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -28,7 +29,7 @@ export default function LoginPage() {
       } else {
         // Check if user is admin
         const session = await authClient.getSession();
-        const user = session.data?.user;
+        const user = session.data?.user as AdminSessionUser | undefined;
         
         if (user?.role === "admin") {
           router.push("/");

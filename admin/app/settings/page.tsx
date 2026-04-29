@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { authClient } from "../lib/auth-client";
 import { adminApi } from "../lib/api";
+import type { AdminSessionUser } from "../lib/auth-types";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("profile");
@@ -35,9 +36,9 @@ export default function SettingsPage() {
       try {
         const { data: session } = await authClient.getSession();
         if (session) {
-          setUser(session.user);
+          setUser(session.user as typeof session.user & AdminSessionUser);
           setName(session.user.name || "");
-          setBio(session.user.bio || "");
+          setBio((session.user as typeof session.user & AdminSessionUser).bio || "");
         }
         
         const settings = await adminApi.getSettings();
@@ -60,11 +61,10 @@ export default function SettingsPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      const { data, error } = await authClient.updateUser({
+      const { error } = await authClient.updateUser({
         name,
-        // @ts-ignore - bio is an additional field
         bio,
-      });
+      } as any);
 
       if (error) throw new Error(error.message);
       showMessage("success", "Profile updated successfully!");

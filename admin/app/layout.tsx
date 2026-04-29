@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { authClient } from "./lib/auth-client";
 import "./globals.css";
+import type { AdminSessionUser } from "./lib/auth-types";
 
 function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -20,7 +21,7 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
 
       try {
         const { data: session } = await authClient.getSession();
-        if (!session || session.user.role !== "admin") {
+        if (!session || (session.user as AdminSessionUser).role !== "admin") {
           router.push("/login");
         } else {
           setIsAdmin(true);
@@ -39,13 +40,7 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
     router.push("/login");
   };
 
-  if (loading && pathname !== "/login") {
-    return (
-      <div style={{ background: "#0a0a0c", display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", color: "white" }}>
-        <div className="loader">Loading NEX-L Admin...</div>
-      </div>
-    );
-  }
+
 
   if (pathname === "/login") {
     return <>{children}</>;

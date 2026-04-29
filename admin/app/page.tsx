@@ -108,7 +108,7 @@ export default function Dashboard() {
               { name: "David Miller", courses: 15, rating: 4.7 },
             ].map((ins, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "var(--card-border)", display: "flex", alignItems: "center", justifyCenter: "center", fontWeight: "600" }}>
+                <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "var(--card-border)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "600" }}>
                   {ins.name.charAt(0)}
                 </div>
                 <div style={{ flex: 1 }}>

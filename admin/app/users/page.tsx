@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { adminApi } from "../lib/api";
 
 export default function UsersPage() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [pagination, setPagination] = useState({ current: 1, total: 1 });

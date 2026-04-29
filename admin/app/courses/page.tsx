@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { adminApi } from "../lib/api";
 
 export default function CoursesPage() {
-  const [courses, setCourses] = useState([]);
+  const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("");
   const [pagination, setPagination] = useState({ current: 1, total: 1 });
