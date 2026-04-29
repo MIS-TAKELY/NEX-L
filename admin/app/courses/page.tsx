@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { adminApi } from "../lib/api";
+import type { CourseSummary } from "../lib/auth-types";
 
 export default function CoursesPage() {
-  const [courses, setCourses] = useState<any[]>([]);
+  const [courses, setCourses] = useState<CourseSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("");
   const [pagination, setPagination] = useState({ current: 1, total: 1 });
@@ -13,7 +14,7 @@ export default function CoursesPage() {
     setLoading(true);
     try {
       const data = await adminApi.getCourses({ page, status });
-      setCourses(data.courses);
+      setCourses(data.courses as CourseSummary[]);
       setPagination({ current: data.currentPage, total: data.totalPages });
     } catch (err) {
       console.error("Failed to load courses:", err);
@@ -29,7 +30,11 @@ export default function CoursesPage() {
   const handleStatusUpdate = async (courseId: string, status: string) => {
     try {
       await adminApi.updateCourseStatus(courseId, status);
-      setCourses(courses.map((c: any) => c._id === courseId ? { ...c, status } : c));
+      setCourses((currentCourses) =>
+        currentCourses.map((course) =>
+          course._id === courseId ? { ...course, status } : course
+        )
+      );
     } catch (err) {
       alert("Failed to update course status");
     }
@@ -95,7 +100,7 @@ export default function CoursesPage() {
               <CourseSkeleton />
             ) : courses.length === 0 ? (
               <tr><td colSpan={6} style={{ textAlign: "center", padding: "40px" }}>No courses found</td></tr>
-            ) : courses.map((course: any) => (
+            ) : courses.map((course) => (
               <tr key={course._id}>
                 <td style={{ fontWeight: "600" }}>{course.title}</td>
                 <td>{course.teacher?.name || "Unknown"}</td>

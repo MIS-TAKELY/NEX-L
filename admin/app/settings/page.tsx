@@ -3,15 +3,17 @@
 import { useState, useEffect } from "react";
 import { authClient } from "../lib/auth-client";
 import { adminApi } from "../lib/api";
-import type { AdminSessionUser } from "../lib/auth-types";
+import type { AdminSessionUser, SettingValue, SystemSetting } from "../lib/auth-types";
+
+type MessageType = "" | "success" | "error";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("profile");
-  const [user, setUser] = useState<any>(null);
-  const [systemSettings, setSystemSettings] = useState<any[]>([]);
+  const [user, setUser] = useState<AdminSessionUser | null>(null);
+  const [systemSettings, setSystemSettings] = useState<SystemSetting[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState({ type: "", text: "" });
+  const [message, setMessage] = useState<{ type: MessageType; text: string }>({ type: "", text: "" });
 
   // Form states
   const [name, setName] = useState("");
@@ -36,13 +38,13 @@ export default function SettingsPage() {
       try {
         const { data: session } = await authClient.getSession();
         if (session) {
-          setUser(session.user as typeof session.user & AdminSessionUser);
+          setUser(session.user as AdminSessionUser);
           setName(session.user.name || "");
-          setBio((session.user as typeof session.user & AdminSessionUser).bio || "");
+          setBio((session.user as AdminSessionUser).bio || "");
         }
         
         const settings = await adminApi.getSettings();
-        setSystemSettings(settings);
+        setSystemSettings(settings as SystemSetting[]);
       } catch (err) {
         console.error("Failed to load settings:", err);
       } finally {
@@ -52,7 +54,7 @@ export default function SettingsPage() {
     loadData();
   }, []);
 
-  const showMessage = (type: string, text: string) => {
+  const showMessage = (type: Exclude<MessageType, "">, text: string) => {
     setMessage({ type, text });
     setTimeout(() => setMessage({ type: "", text: "" }), 5000);
   };
@@ -61,15 +63,16 @@ export default function SettingsPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      const { error } = await authClient.updateUser({
+      const updateUserInput = {
         name,
         bio,
-      } as any);
+      } as Parameters<typeof authClient.updateUser>[0];
+      const { error } = await authClient.updateUser(updateUserInput);
 
       if (error) throw new Error(error.message);
       showMessage("success", "Profile updated successfully!");
-    } catch (err: any) {
-      showMessage("error", err.message || "Failed to update profile.");
+    } catch (err) {
+      showMessage("error", err instanceof Error ? err.message : "Failed to update profile.");
     } finally {
       setSaving(false);
     }
@@ -95,27 +98,29 @@ export default function SettingsPage() {
       setNewPassword("");
       setConfirmPassword("");
       showMessage("success", "Password updated successfully!");
-    } catch (err: any) {
-      showMessage("error", err.message || "Failed to update password.");
+    } catch (err) {
+      showMessage("error", err instanceof Error ? err.message : "Failed to update password.");
     } finally {
       setSaving(false);
     }
   };
 
-  const handleUpdateSystemSetting = async (key: string, value: any) => {
+  const handleUpdateSystemSetting = async (key: string, value: SettingValue) => {
     try {
       await adminApi.updateSetting(key, value);
       const updatedSettings = await adminApi.getSettings();
-      setSystemSettings(updatedSettings);
+      setSystemSettings(updatedSettings as SystemSetting[]);
       showMessage("success", `${key.replace(/([A-Z])/g, ' $1').toLowerCase()} updated!`);
     } catch (err) {
       showMessage("error", "Failed to update system setting.");
     }
   };
 
-  const getSettingValue = (key: string, defaultValue: any) => {
+  const getSettingValue = <T,>(key: string, defaultValue: T): T => {
     const setting = systemSettings.find(s => s.key === key);
-    return setting ? setting.value : defaultValue;
+    return setting && setting.value !== undefined && setting.value !== null
+      ? (setting.value as T)
+      : defaultValue;
   };
 
   if (loading) {

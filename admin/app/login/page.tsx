@@ -5,6 +5,10 @@ import { authClient } from "../lib/auth-client";
 import { useRouter } from "next/navigation";
 import type { AdminSessionUser } from "../lib/auth-types";
 
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : "An unexpected error occurred";
+}
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,7 +23,7 @@ export default function LoginPage() {
     setError("");
     
     try {
-      const { data, error } = await authClient.signIn.email({
+      const { error } = await authClient.signIn.email({
         email,
         password,
       });
@@ -38,8 +42,8 @@ export default function LoginPage() {
           await authClient.signOut();
         }
       }
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred");
+    } catch (err) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
