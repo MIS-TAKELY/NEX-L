@@ -9,7 +9,7 @@ const backendOrigin =
   (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000").replace(/\/api\/v1\/?$/, "");
 
 export const authClient = createAuthClient({
-  baseURL: `${backendOrigin}/auth`,
+  baseURL: `${backendOrigin}/api/v1/auth`,
   fetchOptions: {
     credentials: "include",
   },
