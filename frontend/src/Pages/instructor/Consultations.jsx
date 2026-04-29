@@ -9,8 +9,19 @@ const Consultations = () => {
   const { data, isLoading } = useGetTeacherSessionsQuery();
   const [updateStatus] = useUpdateTutoringSessionStatusMutation();
   const [activeSessionId, setActiveSessionId] = useState(null);
-
   const sessions = data?.sessions || [];
+
+  const handleJoin = (id) => {
+    setActiveSessionId(id);
+  };
+
+  const handleComplete = async (id) => {
+    try {
+      await updateStatus({ id, status: "completed" }).unwrap();
+    } catch (error) {
+      console.error("Failed to update status:", error);
+    }
+  };
 
   if (isLoading) {
     return (

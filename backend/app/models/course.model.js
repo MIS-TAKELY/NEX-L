@@ -55,13 +55,18 @@ const courseSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['draft', 'published', 'archived'],
+    enum: ['draft', 'pending', 'published', 'archived'],
     default: 'draft',
   },
   courseType: {
     type: String,
     enum: ['full', 'syllabus'],
     default: 'full',
+  },
+  level: {
+    type: String,
+    enum: ['Beginner', 'Intermediate', 'Advanced'],
+    default: 'Beginner',
   },
 }, {
   timestamps: true,

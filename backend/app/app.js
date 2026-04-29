@@ -20,6 +20,7 @@ import liveClassRouter from "../app/routes/live-class.routes.js";
 import tutoringSessionRouter from "../app/routes/tutoring-session.routes.js";
 import badgeRouter from "../app/routes/badge.routes.js";
 import mergeRoleRouter from "../app/routes/merge-role.routes.js";
+import adminRouter from "../app/routes/admin.routes.js";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth.js";
 
@@ -33,6 +34,9 @@ app.use(
       "https://nex-l.vercel.app",
       "https://nex-l.onrender.com",
       "http://localhost:5173", 
+      "http://localhost:3000", 
+      "http://localhost:3002", 
+      "http://localhost:3001", 
       "http://127.0.0.1:5173",
       // "http://localhost:5174",
       // "http://127.0.0.1:5174"
@@ -274,6 +278,7 @@ app.use("/api/v1/stream", streamRouter);
 app.use("/api/v1/live-classes", liveClassRouter);
 app.use("/api/v1/tutoring-sessions", tutoringSessionRouter);
 app.use("/api/v1/badges", badgeRouter);
+app.use("/api/v1/admin", adminRouter);
 
 // Error logger - MUST BE LAST
 app.use((err, req, res, next) => {
