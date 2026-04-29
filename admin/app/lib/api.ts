@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://nex-l.onrender.com/api/v1";
 
 function toQueryString(params: Record<string, string | number | boolean | undefined>) {
   const entries = Object.entries(params).filter(([, value]) => value !== undefined && value !== "");
