@@ -126,7 +126,7 @@ export default function CoursesPage() {
                     value={course.status}
                     onChange={(e) => handleStatusUpdate(course._id, e.target.value)}
                     className={`status-badge status-${course.status} status-select`}
-                    style={{ border: 'none', fontInherit: 'inherit' }}
+                    style={{ border: 'none', fontFamily: 'inherit' }}
                   >
                     <option value="pending">Pending</option>
                     <option value="published">Published</option>
@@ -272,7 +272,7 @@ export default function CoursesPage() {
                           setSelectedCourse({ ...selectedCourse, status: e.target.value });
                         }}
                         className={`status-badge status-${selectedCourse.status} status-select`}
-                        style={{ border: 'none', fontInherit: 'inherit' }}
+                        style={{ border: 'none', fontFamily: 'inherit' }}
                       >
                         <option value="pending">Pending</option>
                         <option value="published">Published</option>
