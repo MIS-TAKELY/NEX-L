@@ -975,6 +975,7 @@ export const getInstructorAnalytics = async (req, res) => {
     let activeStudents = 0;
     let totalRating = 0;
     let ratedCoursesCount = 0;
+    let totalIncome = 0;
 
     const courseStats = courses.map(course => {
       const courseEnrollments = enrollments.filter(e => e.course.toString() === course._id.toString());
@@ -983,6 +984,7 @@ export const getInstructorAnalytics = async (req, res) => {
       let completions = 0;
       let active = 0;
       let totalCourseProgress = 0;
+      let courseIncome = 0;
 
       courseEnrollments.forEach(enrollment => {
         totalCourseProgress += (enrollment.progress || 0);
@@ -990,6 +992,14 @@ export const getInstructorAnalytics = async (req, res) => {
           completions += 1;
         } else {
           active += 1;
+        }
+
+        // Calculate income: if it's not a free course, add the price
+        // In a real system, we'd check the actual payment amount, 
+        // but since we don't have a reliable per-course breakdown in bulk payments yet,
+        // we'll use the course price at enrollment or current price.
+        if (!course.isFree) {
+          courseIncome += (course.discountPrice || course.price || 0);
         }
       });
 
@@ -999,6 +1009,8 @@ export const getInstructorAnalytics = async (req, res) => {
       totalViews += views;
       totalCompletions += completions;
       activeStudents += active;
+      totalIncome += courseIncome;
+
       if (rating > 0) {
         totalRating += rating;
         ratedCoursesCount += 1;
@@ -1011,6 +1023,7 @@ export const getInstructorAnalytics = async (req, res) => {
         completions,
         averageProgress,
         rating,
+        income: courseIncome,
       };
     });
 
@@ -1024,6 +1037,7 @@ export const getInstructorAnalytics = async (req, res) => {
           totalCompletions,
           activeStudents,
           avgRating,
+          totalIncome,
         },
         courseStats,
       }

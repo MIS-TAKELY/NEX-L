@@ -29,7 +29,8 @@ const Analytics = () => {
     totalViews: 0,
     totalCompletions: 0,
     activeStudents: 0,
-    avgRating: 0
+    avgRating: 0,
+    totalIncome: 0
   };
 
   const courseStats = analyticsResponse?.data?.courseStats || [];
@@ -45,12 +46,13 @@ const Analytics = () => {
       </div>
 
       {/* Overview Stats */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-6 mb-10">
         {[
           { label: 'Total Views', value: overview.totalViews.toLocaleString(), icon: 'solar:eye-bold', color: 'bg-blue-500/10 text-blue-400 ring-blue-500/20' },
           { label: 'Completions', value: overview.totalCompletions.toLocaleString(), icon: 'solar:graph-up-bold', color: 'bg-emerald-500/10 text-emerald-400 ring-emerald-500/20' },
           { label: 'Active Students', value: overview.activeStudents.toLocaleString(), icon: 'solar:users-group-rounded-bold', color: 'bg-violet-500/10 text-violet-400 ring-violet-500/20' },
           { label: 'Avg. Rating', value: overview.avgRating, icon: 'solar:star-bold', color: 'bg-orange-500/10 text-orange-400 ring-orange-500/20' },
+          { label: 'Total Income', value: `Rs ${overview.totalIncome.toLocaleString()}`, icon: 'solar:dollar-minimalistic-bold', color: 'bg-rose-500/10 text-rose-400 ring-rose-500/20' },
         ].map((stat, idx) => {
           return (
             <div key={idx} className="bg-card rounded-md p-6 border border-border shadow-sm relative overflow-hidden group premium-card">
@@ -75,6 +77,7 @@ const Analytics = () => {
                 <th className="text-left px-6 py-4 rounded-tl-lg">Course Name</th>
                 <th className="text-center px-6 py-4">Views</th>
                 <th className="text-center px-6 py-4">Completions</th>
+                <th className="text-center px-6 py-4">Income</th>
                 <th className="text-center px-6 py-4">Rating</th>
                 <th className="text-center px-6 py-4 rounded-tr-lg">Completion Rate</th>
               </tr>
@@ -82,7 +85,7 @@ const Analytics = () => {
             <tbody className="divide-y divide-border">
               {courseStats.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="px-6 py-12 text-center text-muted-foreground font-medium bg-muted/5">
+                  <td colSpan="6" className="px-6 py-12 text-center text-muted-foreground font-medium bg-muted/5">
                     No course data available yet.
                   </td>
                 </tr>
@@ -91,12 +94,14 @@ const Analytics = () => {
                   const viewCount = course.views || 0;
                   const completions = course.completions || 0;
                   const completionRate = course.averageProgress || 0;
+                  const income = course.income || 0;
                   
                   return (
                     <tr key={idx} className="hover:bg-muted/10 transition-all duration-200 group">
                       <td className="px-6 py-5 font-bold text-foreground group-hover:text-primary transition-colors">{course.name}</td>
                       <td className="px-6 py-5 text-center text-muted-foreground font-medium">{viewCount}</td>
                       <td className="px-6 py-5 text-center text-muted-foreground font-medium">{completions}</td>
+                      <td className="px-6 py-5 text-center font-bold text-rose-500">Rs {income.toLocaleString()}</td>
                       <td className="px-6 py-5 text-center">
                         <span className="px-3 py-1.5 bg-amber-500/10 text-amber-500 rounded-md text-xs font-bold flex items-center justify-center gap-1.5 w-fit mx-auto border border-amber-500/20">
                           <Icon icon="solar:star-bold" className="text-amber-500" /> {course.rating.toFixed(1)}
