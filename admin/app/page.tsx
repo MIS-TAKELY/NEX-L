@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { adminApi } from "./lib/api";
-import type { CourseSummary } from "./lib/auth-types";
+import type { CourseSummary, InstructorSummary } from "./lib/auth-types";
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -10,6 +10,7 @@ export default function Dashboard() {
     totalCourses: 0,
     pendingCourses: 0,
     totalEnrollments: 0,
+    activeInstructors: [] as InstructorSummary[],
   });
   const [recentCourses, setRecentCourses] = useState<CourseSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,7 +19,7 @@ export default function Dashboard() {
     async function loadData() {
       try {
         const statsData = await adminApi.getStats();
-        setStats(statsData);
+        setStats(prev => ({ ...prev, ...statsData }));
         
         const coursesData = await adminApi.getCourses({ limit: 5 });
         setRecentCourses(coursesData.courses as CourseSummary[]);
@@ -103,21 +104,35 @@ export default function Dashboard() {
         <div className="glass-card" style={{ padding: "24px" }}>
           <h4 style={{ fontSize: "20px", marginBottom: "20px" }}>Active Instructors</h4>
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            {[
-              { name: "Sarah Wilson", courses: 12, rating: 4.9 },
-              { name: "Michael Chen", courses: 8, rating: 4.8 },
-              { name: "David Miller", courses: 15, rating: 4.7 },
-            ].map((ins, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "var(--card-border)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "600" }}>
-                  {ins.name.charAt(0)}
+            {loading ? (
+              [1, 2, 3].map((i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <div className="skeleton" style={{ width: "40px", height: "40px", borderRadius: "50%" }}></div>
+                  <div style={{ flex: 1 }}>
+                    <div className="skeleton" style={{ height: "14px", width: "100px", marginBottom: "4px" }}></div>
+                    <div className="skeleton" style={{ height: "12px", width: "80px" }}></div>
+                  </div>
                 </div>
-                <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: "14px", fontWeight: "600" }}>{ins.name}</p>
-                  <p style={{ fontSize: "12px", color: "var(--muted)" }}>{ins.courses} Courses • ⭐ {ins.rating}</p>
+              ))
+            ) : !stats.activeInstructors || stats.activeInstructors.length === 0 ? (
+              <p style={{ color: "var(--muted)", fontSize: "14px", textAlign: "center", padding: "20px" }}>No active instructors yet</p>
+            ) : (
+              stats.activeInstructors?.map((ins, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "var(--card-border)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "600", overflow: "hidden" }}>
+                    {ins.image ? (
+                      <img src={ins.image} alt={ins.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    ) : (
+                      ins.name.charAt(0)
+                    )}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontSize: "14px", fontWeight: "600" }}>{ins.name}</p>
+                    <p style={{ fontSize: "12px", color: "var(--muted)" }}>{ins.courseCount} Courses • ⭐ {ins.avgRating.toFixed(1)}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
           <button className="btn-primary" style={{ width: "100%", marginTop: "24px", justifyContent: "center" }}>
             View All Instructors

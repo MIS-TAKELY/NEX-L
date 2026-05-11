@@ -34,3 +34,10 @@ export type SystemSetting = {
 };
 
 export type SettingValue = string | number | boolean | null | Record<string, unknown>;
+
+export type InstructorSummary = {
+  name: string;
+  image?: string;
+  courseCount: number;
+  avgRating: number;
+};
