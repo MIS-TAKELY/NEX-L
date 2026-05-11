@@ -11,13 +11,44 @@ export const getAdminStats = async (req, res) => {
     const pendingCourses = await Course.countDocuments({ status: "pending" });
     const totalEnrollments = await Enrollment.countDocuments();
 
-    // Simple revenue calculation if payment model exists
-    // For now, let's just return these basic stats
+    // Get active instructors (top 5 by course count)
+    const activeInstructors = await Course.aggregate([
+      { $match: { status: "published" } },
+      {
+        $group: {
+          _id: "$teacher",
+          courseCount: { $sum: 1 },
+          avgRating: { $avg: "$ratings.average" },
+        },
+      },
+      { $sort: { courseCount: -1 } },
+      { $limit: 5 },
+      {
+        $lookup: {
+          from: "user",
+          localField: "_id",
+          foreignField: "_id",
+          as: "instructor",
+        },
+      },
+      { $unwind: "$instructor" },
+      {
+        $project: {
+          _id: 0,
+          name: "$instructor.name",
+          image: "$instructor.image",
+          courseCount: 1,
+          avgRating: { $ifNull: ["$avgRating", 0] },
+        },
+      },
+    ]);
+
     res.json({
       totalUsers,
       totalCourses,
       pendingCourses,
       totalEnrollments,
+      activeInstructors,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
