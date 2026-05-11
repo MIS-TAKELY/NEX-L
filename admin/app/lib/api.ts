@@ -1,7 +1,17 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://nex-l.onrender.com/api/v1";
+const getApiBaseUrl = () => {
+  const url =
+    process.env.NEXT_PUBLIC_API_URL || "https://nex-l.onrender.com/api/v1";
+  return url.endsWith("/api/v1") ? url : `${url.replace(/\/+$/, "")}/api/v1`;
+};
 
-function toQueryString(params: Record<string, string | number | boolean | undefined>) {
-  const entries = Object.entries(params).filter(([, value]) => value !== undefined && value !== "");
+const API_BASE_URL = getApiBaseUrl();
+
+function toQueryString(
+  params: Record<string, string | number | boolean | undefined>,
+) {
+  const entries = Object.entries(params).filter(
+    ([, value]) => value !== undefined && value !== "",
+  );
   const queryParams = new URLSearchParams();
 
   for (const [key, value] of entries) {
@@ -11,9 +21,12 @@ function toQueryString(params: Record<string, string | number | boolean | undefi
   return queryParams.toString();
 }
 
-export async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
+export async function fetchWithAuth(
+  endpoint: string,
+  options: RequestInit = {},
+) {
   const url = `${API_BASE_URL}${endpoint}`;
-  
+
   const defaultOptions: RequestInit = {
     ...options,
     headers: {
@@ -25,14 +38,16 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {})
   };
 
   const response = await fetch(url, defaultOptions);
-  
+
   if (response.status === 401) {
     // Handle unauthorized - maybe redirect to login?
     // window.location.href = "/login";
   }
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: "An error occurred" }));
+    const error = await response
+      .json()
+      .catch(() => ({ message: "An error occurred" }));
     throw new Error(error.message || "Request failed");
   }
 
@@ -41,16 +56,25 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {})
 
 export const adminApi = {
   getStats: () => fetchWithAuth("/admin/stats"),
-  getUsers: (params: { page?: number; limit?: number; search?: string } = {}) => {
+  getUsers: (
+    params: { page?: number; limit?: number; search?: string } = {},
+  ) => {
     const query = toQueryString(params);
     return fetchWithAuth(`/admin/users?${query}`);
   },
-  updateUserRole: (userId: string, role: string) => 
+  updateUserRole: (userId: string, role: string) =>
     fetchWithAuth(`/admin/users/${userId}/role`, {
       method: "PUT",
       body: JSON.stringify({ role }),
     }),
-  getCourses: (params: { page?: number; limit?: number; status?: string; search?: string } = {}) => {
+  getCourses: (
+    params: {
+      page?: number;
+      limit?: number;
+      status?: string;
+      search?: string;
+    } = {},
+  ) => {
     const query = toQueryString(params);
     return fetchWithAuth(`/admin/courses?${query}`);
   },
@@ -58,9 +82,13 @@ export const adminApi = {
     fetchWithAuth(`/admin/courses/${courseId}/status`, {
       method: "PUT",
       body: JSON.stringify({ status }),
-  }),
+    }),
+  getCourseDetail: (courseId: string) => fetchWithAuth(`/courses/${courseId}`),
   getSettings: () => fetchWithAuth("/admin/settings"),
-  updateSetting: (key: string, value: string | number | boolean | null | Record<string, unknown>) =>
+  updateSetting: (
+    key: string,
+    value: string | number | boolean | null | Record<string, unknown>,
+  ) =>
     fetchWithAuth("/admin/settings", {
       method: "PUT",
       body: JSON.stringify({ key, value }),
