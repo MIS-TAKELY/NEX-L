@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { adminApi } from "./lib/api";
 import type { CourseSummary, InstructorSummary } from "./lib/auth-types";
-
 export default function Dashboard() {
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -17,14 +16,15 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function loadData() {
+      setLoading(true);
       try {
         const statsData = await adminApi.getStats();
         setStats(prev => ({ ...prev, ...statsData }));
         
         const coursesData = await adminApi.getCourses({ limit: 5 });
         setRecentCourses(coursesData.courses as CourseSummary[]);
-      } catch (err) {
-        console.error("Failed to load dashboard data:", err);
+      } catch (err: any) {
+        console.error("Dashboard error:", err.message);
       } finally {
         setLoading(false);
       }
