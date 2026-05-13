@@ -49,13 +49,7 @@ export function Hero() {
                 Get Started
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-border/60 hover:bg-secondary/80 px-10 py-7 text-lg rounded-md backdrop-blur-sm group"
-              >
-                <Play className="w-5 h-5 mr-2 text-primary" />
-              </Button>
+              
             </div>
 
             {/* Stats Row */}

@@ -23,6 +23,11 @@ const Instructor = () => {
       path: "/instructor/courses",
     },
     {
+      name: "Batches",
+      icon: "solar:layers-minimalistic-linear",
+      path: "/instructor/batches",
+    },
+    {
       name: "Add Course",
       icon: "solar:add-circle-linear",
       path: "/instructor/add-course",

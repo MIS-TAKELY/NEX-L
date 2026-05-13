@@ -1,18 +1,17 @@
 import { Icon } from "@iconify/react";
 import { FileText, PlayCircle } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGetCourseByIdQuery, useRecordCourseViewMutation } from "@/store/slices/courseApi";
 import { useGetCourseLiveClassesQuery } from "@/store/slices/liveClassApi";
 import { useAddToCartMutation, useGetCartQuery, useRemoveFromCartMutation } from "@/store/slices/cartApi";
 import dayjs from "dayjs";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
 import { validateCoupon } from "../../apis/coupon.api";
 import { useToast } from "../../context/ToastContext";
 import Footer from "../../components/common/Footer";
 import Navbar from "../../components/common/Navbar";
+import { getBatchesForCourse } from "@/lib/batches";
 
 const CourseDetails = () => {
   const { id } = useParams();
@@ -43,6 +42,7 @@ const CourseDetails = () => {
   }, [id, isLoggedIn, userRole, userData?._id, recordCourseView]);
 
   const course = courseResp?.data;
+  const courseBatches = getBatchesForCourse(id);
 
   useEffect(() => {
     if (course) {
@@ -245,6 +245,82 @@ const CourseDetails = () => {
                           Join Now
                         </button>
                       )}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Manual Batches Section */}
+            {courseBatches.length > 0 && (
+              <section className="glass premium-card rounded-md p-8 border border-border/50">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 rounded-md bg-primary/10 flex items-center justify-center">
+                    <Icon
+                      icon="solar:layers-minimalistic-bold-duotone"
+                      className="text-primary w-6 h-6"
+                    />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-foreground">Available Batches</h2>
+                    <p className="text-sm text-muted-foreground">
+                      Manual batches created by the instructor for this course.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid gap-4">
+                  {courseBatches.map((batch) => (
+                    <div
+                      key={batch.id}
+                      className="rounded-md border border-border/50 bg-card/50 p-5 hover:border-primary/30 transition-colors"
+                    >
+                      <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                        <div className="space-y-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h3 className="text-lg font-bold text-foreground">{batch.batchName}</h3>
+                            <span
+                              className={`rounded-md px-2 py-1 text-[10px] font-black uppercase tracking-wider ${
+                                batch.status === "active"
+                                  ? "bg-emerald-500/10 text-emerald-600"
+                                  : "bg-amber-500/10 text-amber-600"
+                              }`}
+                            >
+                              {batch.status}
+                            </span>
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            Code:{" "}
+                            <span className="font-semibold text-foreground">{batch.batchCode}</span>
+                          </p>
+                          {batch.description ? (
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                              {batch.description}
+                            </p>
+                          ) : null}
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-4 text-sm text-muted-foreground w-full md:w-auto">
+                          <div>
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">
+                              Start
+                            </p>
+                            <p>{batch.startDate || "TBA"}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">
+                              Capacity
+                            </p>
+                            <p>{batch.capacity || "Unlimited"}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">
+                              Schedule
+                            </p>
+                            <p>{batch.schedule || "TBA"}</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -538,22 +614,17 @@ const AccordionItem = ({ title, content, colorClass }) => {
         </div>
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="px-6 pb-6 pt-2">
-              <div className="text-muted-foreground leading-relaxed font-medium">
-                {content}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div
+        className={`overflow-hidden transition-all duration-300 ${
+          isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="px-6 pb-6 pt-2">
+          <div className="text-muted-foreground leading-relaxed font-medium">
+            {content}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

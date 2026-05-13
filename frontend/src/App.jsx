@@ -36,6 +36,7 @@ import Analytics from "./Pages/instructor/Analytics";
 import Dashboard from "./Pages/instructor/Dashboard";
 import EditCourse from "./Pages/instructor/EditCourse";
 import Instructor from "./Pages/instructor/Instructor";
+import Batches from "./Pages/instructor/Batches";
 import Messages from "./Pages/instructor/Messages";
 import MyCourses from "./Pages/instructor/MyCourses";
 import InstructorSettings from "./Pages/instructor/Settings";
@@ -211,6 +212,7 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="courses" element={<MyCourses />} />
+          <Route path="batches" element={<Batches />} />
           <Route path="add-course" element={<AddCourse />} />
           <Route path="edit-course/:id" element={<EditCourse />} />
           <Route path="analytics" element={<Analytics />} />
