@@ -62,6 +62,19 @@ const Player = () => {
   const isLikelyImageUrl = (value = '') =>
     /\.(png|jpe?g|gif|webp|bmp|svg|avif|heic|heif)(\?|#|$)/i.test(value);
 
+  const isImageResource = (resource = {}) => {
+    const type = (resource.type || '').toLowerCase();
+    const url = resource.url || '';
+    const name = resource.name || '';
+
+    return (
+      type === 'image' ||
+      type.startsWith('image/') ||
+      isLikelyImageUrl(url) ||
+      isLikelyImageUrl(name)
+    );
+  };
+
   const toAbsoluteResourceUrl = (value = '') => {
     if (!value) return '';
     if (/^https?:\/\//i.test(value) || value.startsWith('data:') || value.startsWith('blob:')) {
@@ -75,8 +88,44 @@ const Player = () => {
     const baseUrl = import.meta.env.VITE_BACKEND_URL || '';
     const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
     const cleanPath = value.startsWith('/') ? value : `/${value}`;
-    
+
     return `${cleanBase}${cleanPath}`;
+  };
+
+  const getBestImageResource = () => {
+    if (isImageResource(activeResource)) return activeResource;
+    return activeLesson?.resources?.find((resource) => isImageResource(resource)) || null;
+  };
+
+  const toDataUrl = async (url) => {
+    if (!url || url.startsWith('data:') || url.startsWith('blob:')) {
+      return url;
+    }
+
+    try {
+      const response = await fetch(url, { credentials: 'include' });
+      if (!response.ok) return url;
+
+      const blob = await response.blob();
+      return await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.warn('Unable to convert image to data URL, falling back to image URL.', error);
+      return url;
+    }
+  };
+
+  const resolveImagePayload = async () => {
+    const imageResource = getBestImageResource();
+    if (!imageResource) return '';
+
+    const rawUrl = imageResource.url || activeLesson?.url || '';
+    const absoluteUrl = toAbsoluteResourceUrl(rawUrl);
+    return toDataUrl(absoluteUrl);
   };
 
 
@@ -98,18 +147,7 @@ const Player = () => {
   const handleSummarize = async (mode = 'short') => {
     const textToSummarize = activeLesson?.description || activeLesson?.summary;
     const title = activeLesson?.title || activeResource?.name;
-    const resourceType = (activeResource?.type || '').toLowerCase();
-    const lessonType = (activeLesson?.type || '').toLowerCase();
-    const rawResourceUrl = activeResource?.url || '';
-    const rawLessonUrl = activeLesson?.url || '';
-    const imageCandidateUrl = rawResourceUrl || rawLessonUrl;
-    const hasImageInput =
-      resourceType === 'image' ||
-      resourceType.startsWith('image/') ||
-      lessonType === 'image' ||
-      lessonType.startsWith('image/') ||
-      isLikelyImageUrl(imageCandidateUrl);
-    const imageUrl = hasImageInput ? toAbsoluteResourceUrl(imageCandidateUrl) : '';
+    const imageUrl = await resolveImagePayload();
     
     if (!textToSummarize && !title && !imageUrl) {
         showToast("No content or image found to generate notes.", "error");
@@ -123,6 +161,7 @@ const Player = () => {
         mode,
         title: title || '',
         imageUrl: imageUrl || '',
+        imageDataUrl: imageUrl || '',
         courseTitle: course?.title || ''
       }).unwrap();
       
@@ -177,20 +216,7 @@ const Player = () => {
     if (!userQuestion.trim()) return;
     
     const title = activeLesson?.title || activeResource?.name;
-    const resourceType = (activeResource?.type || '').toLowerCase();
-    const lessonType = (activeLesson?.type || '').toLowerCase();
-    const rawResourceUrl = activeResource?.url || '';
-    const rawLessonUrl = activeLesson?.url || '';
-    const imageCandidateUrl = rawResourceUrl || rawLessonUrl;
-    
-    const hasImageInput =
-      resourceType === 'image' ||
-      resourceType.startsWith('image/') ||
-      lessonType === 'image' ||
-      lessonType.startsWith('image/') ||
-      isLikelyImageUrl(imageCandidateUrl);
-    
-    const imageUrl = hasImageInput ? toAbsoluteResourceUrl(imageCandidateUrl) : '';
+    const imageUrl = await resolveImagePayload();
 
     const rawDescription = activeLesson?.description || activeLesson?.summary || "";
     const generatedNotes = aiSummary?.text ? `\n\n[Additional Context from Generated AI Notes]:\n${aiSummary.text}` : "";
@@ -206,7 +232,8 @@ const Player = () => {
         question: userQuestion,
         context,
         courseTitle: course?.title,
-        imageUrl: imageUrl || ''
+        imageUrl: imageUrl || '',
+        imageDataUrl: imageUrl || ''
       }).unwrap();
 
 

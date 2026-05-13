@@ -95,14 +95,7 @@ const CourseDetails = () => {
   };
 
   const faqs = [
-    {
-      question: "Will I get a certificate after completion?",
-      answer: "Absolutely! You will receive a verified certificate from NEXL.",
-    },
-    {
-      question: "Can I access the course material anytime?",
-      answer: "Yes, you get lifetime access to all course resources.",
-    },
+    
     {
       question: "Is there any support if I get stuck?",
       answer:
@@ -112,9 +105,6 @@ const CourseDetails = () => {
 
   const paymentMethods = [
     { id: "esewa", name: "eSewa", icon: "logos:esewa" },
-    { id: "khalti", name: "Khalti", icon: "logos:khalti" },
-    { id: "fonepay", name: "Fonepay", icon: "logos:fonepay" },
-    { id: "imepay", name: "IME Pay", icon: "logos:imepay" },
   ];
 
   if (loading)
@@ -501,12 +491,8 @@ const CourseDetails = () => {
               {/* Features List */}
               <div className="space-y-4 pt-6 border-t border-border/50">
                 {[
-                  { icon: "solar:play-bold", text: "Lifetime Access" },
                   { icon: "solar:document-bold", text: "Course Resources" },
-                  {
-                    icon: "solar:medal-bold",
-                    text: "Certificate on Completion",
-                  },
+                  
                 ].map((feature, idx) => (
                   <div
                     key={idx}
