@@ -3,14 +3,14 @@
 import { useState, useEffect } from "react";
 import { authClient } from "../lib/auth-client";
 import { adminApi } from "../lib/api";
-import type { AdminSessionUser, SettingValue, SystemSetting } from "../lib/auth-types";
+import type { AdminSessionUser } from "../lib/auth-types";
 
 type MessageType = "" | "success" | "error";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("profile");
   const [user, setUser] = useState<AdminSessionUser | null>(null);
-  const [systemSettings, setSystemSettings] = useState<SystemSetting[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: MessageType; text: string }>({ type: "", text: "" });
@@ -42,9 +42,6 @@ export default function SettingsPage() {
           setName(session.user.name || "");
           setBio((session.user as AdminSessionUser).bio || "");
         }
-        
-        const settings = await adminApi.getSettings();
-        setSystemSettings(settings as SystemSetting[]);
       } catch (err) {
         console.error("Failed to load settings:", err);
       } finally {
@@ -105,23 +102,7 @@ export default function SettingsPage() {
     }
   };
 
-  const handleUpdateSystemSetting = async (key: string, value: SettingValue) => {
-    try {
-      await adminApi.updateSetting(key, value);
-      const updatedSettings = await adminApi.getSettings();
-      setSystemSettings(updatedSettings as SystemSetting[]);
-      showMessage("success", `${key.replace(/([A-Z])/g, ' $1').toLowerCase()} updated!`);
-    } catch (err) {
-      showMessage("error", "Failed to update system setting.");
-    }
-  };
 
-  const getSettingValue = <T,>(key: string, defaultValue: T): T => {
-    const setting = systemSettings.find(s => s.key === key);
-    return setting && setting.value !== undefined && setting.value !== null
-      ? (setting.value as T)
-      : defaultValue;
-  };
 
   if (loading) {
     return (
@@ -140,7 +121,7 @@ export default function SettingsPage() {
     <div className="animate-fade-in">
       <header style={{ marginBottom: "40px" }}>
         <h2 style={{ fontSize: "32px", fontWeight: "700" }}>Settings</h2>
-        <p style={{ color: "var(--muted)", marginTop: "8px" }}>Manage your account settings and preferences.</p>
+        <p style={{ color: "var(--muted)", marginTop: "8px" }}>Manage your account settings and security.</p>
       </header>
 
       <div style={{ display: "grid", gridTemplateColumns: "250px 1fr", gap: "32px" }}>
@@ -150,7 +131,6 @@ export default function SettingsPage() {
             {[
               { id: "profile", label: "Profile", icon: "👤" },
               { id: "security", label: "Security", icon: "🔒" },
-              { id: "preferences", label: "Preferences", icon: "⚙️" },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -372,50 +352,6 @@ export default function SettingsPage() {
                 {saving ? "Updating..." : "Update Password"}
               </button>
             </form>
-          )}
-
-          {activeTab === "preferences" && (
-            <div>
-              <h3 style={{ fontSize: "20px", marginBottom: "24px" }}>System Preferences</h3>
-              
-              <div style={{ display: "flex", flexDirection: "column", gap: "24px", marginBottom: "32px" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px", background: "rgba(255, 255, 255, 0.02)", borderRadius: "12px", border: "1px solid var(--card-border)" }}>
-                  <div>
-                    <p style={{ fontWeight: "600" }}>Default Currency</p>
-                    <p style={{ fontSize: "12px", color: "var(--muted)" }}>Set the global currency for course pricing.</p>
-                  </div>
-                  <select 
-                    value={getSettingValue("defaultCurrency", "NPR")}
-                    onChange={(e) => handleUpdateSystemSetting("defaultCurrency", e.target.value)}
-                    style={{ background: "#1a1b1e", color: "white", border: "1px solid var(--card-border)", padding: "8px 12px", borderRadius: "8px" }}
-                  >
-                    <option value="NPR">Nepalese Rupee (Rs.)</option>
-                    <option value="USD">US Dollar ($)</option>
-                    <option value="EUR">Euro (€)</option>
-                  </select>
-                </div>
-
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px", background: "rgba(255, 255, 255, 0.02)", borderRadius: "12px", border: "1px solid var(--card-border)" }}>
-                  <div>
-                    <p style={{ fontWeight: "600" }}>Site Name</p>
-                    <p style={{ fontSize: "12px", color: "var(--muted)" }}>Global name displayed across the platform.</p>
-                  </div>
-                  <input 
-                    type="text"
-                    defaultValue={getSettingValue("siteName", "NEX-L")}
-                    onBlur={(e) => handleUpdateSystemSetting("siteName", e.target.value)}
-                    style={{ 
-                      background: "rgba(255, 255, 255, 0.05)", 
-                      border: "1px solid var(--card-border)", 
-                      borderRadius: "8px", 
-                      padding: "8px 12px", 
-                      color: "white",
-                      width: "150px"
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
           )}
         </div>
       </div>

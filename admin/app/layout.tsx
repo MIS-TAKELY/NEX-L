@@ -42,6 +42,43 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
 
 
 
+  if (loading) {
+    return (
+      <div style={{ 
+        height: "100vh", 
+        width: "100vw", 
+        display: "flex", 
+        alignItems: "center", 
+        justifyContent: "center", 
+        background: "#0a0a0c",
+        color: "white",
+        flexDirection: "column",
+        gap: "20px"
+      }}>
+        <div className="spinner"></div>
+        <p style={{ color: "var(--muted)", fontSize: "14px", letterSpacing: "0.1em" }}>VERIFYING ADIMIN ACCESS...</p>
+        <style jsx>{`
+          .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(59, 130, 246, 0.1);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+          }
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  if (!isAdmin && pathname !== "/login") {
+    return null; // Will redirect via useEffect
+  }
+
   if (pathname === "/login") {
     return <>{children}</>;
   }
