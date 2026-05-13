@@ -30,7 +30,7 @@ const steps = [
     icon: BookOpen,
     title: "Start Learning",
     description:
-      "Access course materials, join live sessions, take quizzes, and earn certificates.",
+      "Access course materials, join live sessions and take quizzes.",
     color: "from-orange-500 to-amber-500",
   },
 ];

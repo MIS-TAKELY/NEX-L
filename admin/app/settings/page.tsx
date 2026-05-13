@@ -214,12 +214,7 @@ export default function SettingsPage() {
                 }}>
                   {user?.name?.charAt(0) || "A"}
                 </div>
-                <div>
-                  <button type="button" className="btn-primary" style={{ fontSize: "14px", padding: "8px 16px" }}>
-                    Change Avatar
-                  </button>
-                  <p style={{ fontSize: "12px", color: "var(--muted)", marginTop: "8px" }}>JPG, GIF or PNG. Max size of 2MB.</p>
-                </div>
+               
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginBottom: "24px" }}>
@@ -398,36 +393,6 @@ export default function SettingsPage() {
                     <option value="USD">US Dollar ($)</option>
                     <option value="EUR">Euro (€)</option>
                   </select>
-                </div>
-
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px", background: "rgba(255, 255, 255, 0.02)", borderRadius: "12px", border: "1px solid var(--card-border)" }}>
-                  <div>
-                    <p style={{ fontWeight: "600" }}>Maintenance Mode</p>
-                    <p style={{ fontSize: "12px", color: "var(--muted)" }}>Put the site in maintenance mode for everyone except admins.</p>
-                  </div>
-                  <div 
-                    onClick={() => handleUpdateSystemSetting("maintenanceMode", !getSettingValue("maintenanceMode", false))}
-                    style={{ 
-                      width: "40px", 
-                      height: "20px", 
-                      background: getSettingValue("maintenanceMode", false) ? "var(--warning)" : "rgba(255, 255, 255, 0.1)", 
-                      borderRadius: "20px", 
-                      position: "relative", 
-                      cursor: "pointer",
-                      transition: "background 0.3s"
-                    }}
-                  >
-                    <div style={{ 
-                      width: "16px", 
-                      height: "16px", 
-                      background: "white", 
-                      borderRadius: "50%", 
-                      position: "absolute", 
-                      left: getSettingValue("maintenanceMode", false) ? "22px" : "2px", 
-                      top: "2px",
-                      transition: "left 0.3s"
-                    }}></div>
-                  </div>
                 </div>
 
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px", background: "rgba(255, 255, 255, 0.02)", borderRadius: "12px", border: "1px solid var(--card-border)" }}>

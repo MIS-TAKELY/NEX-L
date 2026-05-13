@@ -31,12 +31,12 @@ export function Hero() {
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-foreground leading-[1.1] mb-8 animate-slide-up tracking-tight">
               Master Your Future with{" "}
               <span className="text-gradient">NEXL</span>
-            </h1>
+            </h1> 
 
             {/* Description */}
             <p className="text-xl text-muted-foreground/80 mb-10 max-w-xl mx-auto lg:mx-0 animate-slide-up stagger-1 leading-relaxed">
               The premium learning platform tailored for Nepal. Elevate your
-              skills with AI-driven personalization and world-class content.
+              skills with personalization and quality content.
             </p>
 
             {/* CTA Buttons */}
@@ -55,7 +55,6 @@ export function Hero() {
                 className="border-border/60 hover:bg-secondary/80 px-10 py-7 text-lg rounded-md backdrop-blur-sm group"
               >
                 <Play className="w-5 h-5 mr-2 text-primary" />
-                Watch Demo
               </Button>
             </div>
 

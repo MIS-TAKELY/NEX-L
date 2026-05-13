@@ -71,7 +71,7 @@ export default function UsersPage() {
             </div>
           </td>
           <td><div className="skeleton" style={{ height: "20px", width: "80px" }}></div></td>
-          <td><div className="skeleton" style={{ height: "20px", width: "60px" }}></div></td>
+
         </tr>
       ))}
     </>
@@ -110,14 +110,14 @@ export default function UsersPage() {
               <th>User</th>
               <th>Roles</th>
               <th>Joined Date</th>
-              <th>Actions</th>
+
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <UserSkeleton />
             ) : users.length === 0 ? (
-              <tr><td colSpan={4} style={{ textAlign: "center", padding: "40px" }}>No users found</td></tr>
+              <tr><td colSpan={3} style={{ textAlign: "center", padding: "40px" }}>No users found</td></tr>
             ) : users.map((user) => {
               const roles = parseRoles(user.roles);
               return (
@@ -174,11 +174,7 @@ export default function UsersPage() {
                     </div>
                   </td>
                   <td style={{ color: "var(--muted)" }}>{new Date(user.createdAt).toLocaleDateString()}</td>
-                  <td>
-                    <div style={{ display: "flex", gap: "12px" }}>
-                      <button style={{ background: "transparent", border: "none", color: "var(--danger)", cursor: "pointer", fontWeight: "600" }}>Suspend</button>
-                    </div>
-                  </td>
+
                 </tr>
               );
             })}
