@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logoo.png";
+import { siteConfig } from "@/lib/siteConfig";
 
 const footerLinks = {
   product: [
@@ -48,24 +49,24 @@ export function Footer() {
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <Mail className="w-4 h-4 text-primary" />
                   <a
-                    href="mailto:contact@nexl.edu.np"
+                    href={`mailto:${siteConfig.brandEmail}`}
                     className="hover:text-foreground transition-colors"
                   >
-                    contact@nexl.edu.np
+                    {siteConfig.brandEmail}
                   </a>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <Phone className="w-4 h-4 text-primary" />
                   <a
-                    href="tel:+9771XXXXXXX"
+                    href={`tel:${siteConfig.brandPhone}`}
                     className="hover:text-foreground transition-colors"
                   >
-                    +977 1-XXXXXXX
+                    {siteConfig.brandPhone}
                   </a>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <MapPin className="w-4 h-4 text-primary" />
-                  <span>Itahari, Sunsari, Nepal</span>
+                  <span>{siteConfig.brandAddress}</span>
                 </div>
               </div>
             </div>

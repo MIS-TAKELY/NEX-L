@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { useGetCartQuery } from '@/store/slices/cartApi';
 import ProfileDropdown from '../common/ProfileDropdown';
+import NotificationBell from '../common/NotificationBell';
 
 const StudentTopbar = () => {
     const navigate = useNavigate();
@@ -12,8 +13,6 @@ const StudentTopbar = () => {
     const { isLoggedIn, userRole, userData } = useSelector((state) => state.auth);
     const { data: cartResp } = useGetCartQuery(undefined, { skip: !isLoggedIn || userRole !== 'student' });
     const cartCount = cartResp?.data?.items?.length || 0;
-
-    const displayName = userData?.name || 'Student';
 
     return (
         <div className="flex justify-between items-center py-4 mb-8">
@@ -34,9 +33,6 @@ const StudentTopbar = () => {
 
             {/* Right Actions */}
             <div className="flex items-center gap-4">
-                <button className="w-10 h-10 bg-card rounded-md flex items-center justify-center text-muted-foreground hover:text-primary hover:shadow-md transition-all shadow-sm border border-border/60 hover:border-primary/20">
-                    <Icon icon="solar:letter-linear" size={20} />
-                </button>
                 <button
                     onClick={() => dispatch(toggleTheme())}
                     className="w-10 h-10 bg-card rounded-md flex items-center justify-center text-muted-foreground hover:text-primary hover:shadow-md transition-all shadow-sm border border-border/60 hover:border-primary/20 relative overflow-hidden group"
@@ -62,10 +58,7 @@ const StudentTopbar = () => {
                         </span>
                     )}
                 </button>
-                <button className="w-10 h-10 bg-card rounded-md flex items-center justify-center text-muted-foreground hover:text-primary hover:shadow-md transition-all shadow-sm relative border border-border/60 hover:border-primary/20">
-                    <Icon icon="solar:bell-linear" size={20} />
-                    <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-md border border-background"></span>
-                </button>
+                <NotificationBell key={`student-${userData?.id || "anonymous"}`} role="student" />
 
                 <div className="flex items-center gap-3 pl-6 border-l border-border">
                     <ProfileDropdown />

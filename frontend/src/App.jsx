@@ -48,6 +48,7 @@ import StudentConsultations from "./Pages/student/StudentConsultations";
 
 // ADMIN PAGES
 import AdminLayout from "./Pages/admin/Admin";
+import AdminBatches from "./Pages/admin/Batches";
 import AdminCourses from "./Pages/admin/Courses";
 import AdminDashboard from "./Pages/admin/Dashboard";
 import AdminUsers from "./Pages/admin/Users";
@@ -236,6 +237,7 @@ export default function App() {
           <Route index element={<AdminDashboard />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="users" element={<AdminUsers />} />
+          <Route path="batches" element={<AdminBatches />} />
           <Route path="courses" element={<AdminCourses />} />
         </Route>
 

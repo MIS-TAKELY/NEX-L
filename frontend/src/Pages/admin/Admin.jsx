@@ -6,6 +6,7 @@ const AdminLayout = () => {
   const menuItems = [
     { name: 'Dashboard', icon: "solar:widget-2-linear", path: '/admin/dashboard' },
     { name: 'Users', icon: "solar:users-group-rounded-linear", path: '/admin/users' },
+    { name: 'Batches', icon: "solar:layers-minimalistic-linear", path: '/admin/batches' },
     { name: 'Courses', icon: "solar:notebook-linear", path: '/admin/courses' },
   ];
 

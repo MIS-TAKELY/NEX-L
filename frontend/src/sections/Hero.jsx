@@ -1,9 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Play, Sparkles, BookOpen, Users, Zap } from "lucide-react";
+import { ArrowRight, Sparkles, BookOpen, Users, Zap } from "lucide-react";
+import { buildCourseInsights, compactNumber, formatRating } from "@/lib/siteInsights";
+import { useGetPublicCoursesQuery } from "@/store/slices/siteApi";
 
 export function Hero() {
   const navigate = useNavigate();
+  const { data: courses = [] } = useGetPublicCoursesQuery();
+  const insights = buildCourseInsights(courses);
+  const topCourses = insights.topCourses;
+  const platformCompletion = Math.min(100, Math.round(Number(formatRating(insights.averageRating)) * 20));
   return (
     <section className="relative pt-24 lg:pt-32 pb-12 lg:pb-16 overflow-hidden">
       {/* Background Effects */}
@@ -59,8 +65,10 @@ export function Hero() {
                   <BookOpen className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xl font-bold text-foreground">500+</p>
-                  <p className="text-sm text-muted-foreground">Courses</p>
+                  <p className="text-xl font-bold text-foreground">
+                    {compactNumber(insights.totalCourses)}
+                  </p>
+                  <p className="text-sm text-muted-foreground">Published Courses</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -68,8 +76,10 @@ export function Hero() {
                   <Users className="w-5 h-5 text-accent" />
                 </div>
                 <div>
-                  <p className="text-xl font-bold text-foreground">10K+</p>
-                  <p className="text-sm text-muted-foreground">Students</p>
+                  <p className="text-xl font-bold text-foreground">
+                    {compactNumber(insights.totalInstructors)}
+                  </p>
+                  <p className="text-sm text-muted-foreground">Expert Instructors</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -77,8 +87,10 @@ export function Hero() {
                   <Zap className="w-5 h-5 text-emerald-500" />
                 </div>
                 <div>
-                  <p className="text-xl font-bold text-foreground">95%</p>
-                  <p className="text-sm text-muted-foreground">Success Rate</p>
+                  <p className="text-xl font-bold text-foreground">
+                    {formatRating(insights.averageRating)}/5
+                  </p>
+                  <p className="text-sm text-muted-foreground">Average Rating</p>
                 </div>
               </div>
             </div>
@@ -88,66 +100,57 @@ export function Hero() {
           <div className="relative hidden lg:block animate-fade-in stagger-2">
             <div className="relative">
               {/* Main Dashboard Card */}
-              <div className="glass-card rounded-md p-6 transform hover:scale-[1.02] transition-transform duration-500">
+                  <div className="glass-card rounded-md p-6 transform hover:scale-[1.02] transition-transform duration-500">
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h3 className="text-lg font-semibold text-foreground">
-                      Your Progress
+                      Live Platform Snapshot
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      Keep up the great work!
+                      Updated from the current catalog
                     </p>
                   </div>
                   <div className="w-12 h-12 rounded-md gradient-primary flex items-center justify-center">
                     <span className="text-primary-foreground font-bold">
-                      75%
+                      {platformCompletion}%
                     </span>
                   </div>
                 </div>
 
                 {/* Course Cards */}
                 <div className="space-y-3">
-                  <div className="bg-secondary/50 rounded-md p-4 flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-md bg-blue-500/20 flex items-center justify-center">
-                      <BookOpen className="w-6 h-6 text-blue-400" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-foreground font-medium">
-                        Web Development
-                      </p>
-                      <div className="w-full h-2 bg-secondary rounded-md mt-2">
-                        <div className="w-3/4 h-full bg-blue-500 rounded-md" />
-                      </div>
-                    </div>
-                  </div>
+                  {(topCourses.length > 0 ? topCourses : [
+                    { title: "No course data", category: "Live API", rating: "0.0", reviews: 0 },
+                  ]).map((course, index) => {
+                    const progress = Math.max(20, Math.min(100, Math.round(Number(course.rating || 0) * 20)));
+                    const icons = [BookOpen, Zap, Sparkles];
+                    const IconComponent = icons[index % icons.length];
+                    const accentClasses = [
+                      "bg-blue-500/20 text-blue-400 bg-blue-500",
+                      "bg-purple-500/20 text-purple-400 bg-purple-500",
+                      "bg-pink-500/20 text-pink-400 bg-pink-500",
+                    ];
+                    const accent = accentClasses[index % accentClasses.length];
 
-                  <div className="bg-secondary/50 rounded-md p-4 flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-md bg-purple-500/20 flex items-center justify-center">
-                      <Zap className="w-6 h-6 text-purple-400" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-foreground font-medium">
-                        Data Science
-                      </p>
-                      <div className="w-full h-2 bg-secondary rounded-md mt-2">
-                        <div className="w-1/2 h-full bg-purple-500 rounded-md" />
+                    return (
+                      <div key={course.id || course.title} className="bg-secondary/50 rounded-md p-4 flex items-center gap-4">
+                        <div className={`w-12 h-12 rounded-md flex items-center justify-center ${accent.split(" ")[0]}`}>
+                          <IconComponent className={`w-6 h-6 ${accent.split(" ")[1]}`} />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-foreground font-medium">
+                            {course.title}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {course.category} · {course.instructor}
+                          </p>
+                          <div className="w-full h-2 bg-secondary rounded-md mt-2">
+                            <div className={`h-full rounded-md ${accent.split(" ")[2]}`} style={{ width: `${progress}%` }} />
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-secondary/50 rounded-md p-4 flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-md bg-pink-500/20 flex items-center justify-center">
-                      <Sparkles className="w-6 h-6 text-pink-400" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-foreground font-medium">
-                        AI & Machine Learning
-                      </p>
-                      <div className="w-full h-2 bg-secondary rounded-md mt-2">
-                        <div className="w-1/4 h-full bg-pink-500 rounded-md" />
-                      </div>
-                    </div>
-                  </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -176,9 +179,11 @@ export function Hero() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">
-                      New Students
+                      Live Courses
                     </p>
-                    <p className="text-foreground font-semibold">+128 today</p>
+                    <p className="text-foreground font-semibold">
+                      {compactNumber(insights.totalCourses)} available now
+                    </p>
                   </div>
                 </div>
               </div>

@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { Icon } from '@iconify/react';
 import { getUserEnrollments } from '../../apis/enrollment.api';
 import { getMyBadges } from '../../apis/badge.api';
+import { getStudentBatchBadges } from '@/lib/batches';
 
 import StudentDashboardSkeleton from '../../components/skeletons/StudentDashboardSkeleton';
 
@@ -11,6 +12,7 @@ const Home = () => {
     const { userData } = useSelector((state) => state.auth);
     const [courses, setCourses] = useState([]);
     const [earnedBadges, setEarnedBadges] = useState([]);
+    const [, setBatchBadgeTick] = useState(0);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
@@ -40,6 +42,16 @@ const Home = () => {
         fetchDashboardData();
     }, [userData]);
 
+    useEffect(() => {
+        const syncBatchBadges = () => setBatchBadgeTick((value) => value + 1);
+        window.addEventListener("storage", syncBatchBadges);
+        window.addEventListener("focus", syncBatchBadges);
+        return () => {
+            window.removeEventListener("storage", syncBatchBadges);
+            window.removeEventListener("focus", syncBatchBadges);
+        };
+    }, []);
+
     if (loading) {
         return <StudentDashboardSkeleton />;
     }
@@ -59,6 +71,8 @@ const Home = () => {
         }
         return acc;
     }, []);
+    const batchBadges = getStudentBatchBadges(userData);
+    const primaryBatchBadge = batchBadges[0];
 
     return (
         <div className="flex flex-col lg:flex-row gap-12 pt-8">
@@ -85,6 +99,70 @@ const Home = () => {
                         <Icon icon="solar:magic-stick-3-bold" className="text-[300px] text-primary" />
                     </div>
                 </div>
+
+                {batchBadges.length > 0 && (
+                    <div className="bg-gradient-to-br from-emerald-500/15 via-emerald-500/10 to-card rounded-md p-6 md:p-8 border border-emerald-500/20 shadow-xl shadow-emerald-500/10 relative overflow-hidden">
+                        <div className="absolute inset-0 pointer-events-none">
+                            <div className="absolute -top-12 -right-12 w-44 h-44 bg-emerald-500/10 rounded-md blur-3xl" />
+                            <div className="absolute -bottom-14 -left-10 w-36 h-36 bg-primary/5 rounded-md blur-3xl" />
+                        </div>
+
+                        <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                            <div className="flex items-start gap-4">
+                                <div className="w-14 h-14 rounded-md bg-background/80 backdrop-blur flex items-center justify-center text-emerald-500 border border-emerald-500/20 shadow-lg">
+                                    <Icon icon="solar:layers-minimalistic-bold-duotone" size={28} />
+                                </div>
+                                <div className="max-w-2xl">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.24em] text-emerald-600 mb-2">
+                                        Instant batch assignment
+                                    </p>
+                                    <h2 className="text-2xl md:text-3xl font-black text-foreground serif leading-tight">
+                                        You have {batchBadges.length} batch badge{batchBadges.length === 1 ? "" : "s"} ready now.
+                                    </h2>
+                                    <p className="text-sm md:text-base text-muted-foreground mt-2">
+                                        Your instructor has already placed you into a cohort, so your badge collection updates instantly.
+                                    </p>
+
+                                    <div className="flex flex-wrap gap-2 mt-4">
+                                        {batchBadges.slice(0, 3).map((badge) => (
+                                            <span
+                                                key={badge.id}
+                                                className="inline-flex items-center gap-2 rounded-md border border-emerald-500/20 bg-background/80 px-3 py-1.5 text-xs font-semibold text-foreground shadow-sm"
+                                            >
+                                                <span className="text-base">{badge.icon}</span>
+                                                {badge.batchName}
+                                            </span>
+                                        ))}
+                                        {batchBadges.length > 3 && (
+                                            <span className="inline-flex items-center rounded-md border border-border bg-muted px-3 py-1.5 text-xs font-bold text-muted-foreground">
+                                                +{batchBadges.length - 3} more
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
+                                {primaryBatchBadge?.courseId ? (
+                                    <button
+                                        onClick={() => navigate(`/course/${primaryBatchBadge.courseId}`)}
+                                        className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald-500 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-500/25 hover:opacity-95 transition-opacity"
+                                    >
+                                        <Icon icon="solar:play-bold" size={18} />
+                                        Open cohort course
+                                    </button>
+                                ) : null}
+                                <button
+                                    onClick={() => navigate('/student/badges')}
+                                    className="inline-flex items-center justify-center gap-2 rounded-md border border-emerald-500/20 bg-background/80 px-5 py-3 text-sm font-bold text-foreground hover:bg-background transition-colors"
+                                >
+                                    <Icon icon="solar:medal-ribbons-star-bold" size={18} />
+                                    View badge details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Course Progress Highlights */}
                 {courses.length > 0 && (
@@ -204,7 +282,12 @@ const Home = () => {
                 {/* Badges Widget */}
                 <div className="px-2">
                     <div className="flex justify-between items-center mb-8 px-4">
-                        <h3 className="text-xl font-black text-foreground serif">My <span className="text-primary italic">Badges</span></h3>
+                        <div>
+                            <h3 className="text-xl font-black text-foreground serif">My <span className="text-primary italic">Badges</span></h3>
+                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mt-1">
+                                Earned + batch membership
+                            </p>
+                        </div>
                         <button 
                             onClick={() => navigate('/student/badges')}
                             className="text-xs font-bold text-primary hover:underline uppercase tracking-widest"
@@ -220,35 +303,72 @@ const Home = () => {
                                     <div key={i} className="w-12 h-12 rounded-md bg-muted"></div>
                                 ))}
                             </div>
-                        ) : earnedBadges.length > 0 ? (
-                            <div className="flex flex-wrap gap-4">
-                                {earnedBadges.slice(0, 4).map((ub) => (
-                                    <div 
-                                        key={ub._id} 
-                                        className="w-14 h-14 rounded-md bg-primary/5 flex items-center justify-center text-2xl border border-primary/10 hover:scale-110 transition-transform cursor-help group relative"
-                                        title={ub.badge?.name}
-                                    >
-                                        {ub.badge?.icon || '🏅'}
-                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-popover text-popover-foreground text-[10px] rounded-md border border-border opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
-                                            {ub.badge?.name}
+                        ) : (
+                            <div className="space-y-6">
+                                {batchBadges.length > 0 && (
+                                    <div className="rounded-md border border-emerald-500/20 bg-emerald-500/5 p-4">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <div className="w-11 h-11 rounded-md bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20">
+                                                <Icon icon="solar:layers-minimalistic-bold-duotone" size={22} />
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-bold uppercase tracking-widest text-emerald-600">Instant batch badge</p>
+                                                <p className="text-sm font-bold text-foreground">{batchBadges.length} active</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-wrap gap-3">
+                                            {batchBadges.slice(0, 3).map((badge) => (
+                                                <div
+                                                    key={badge.id}
+                                                    className="group relative w-14 h-14 rounded-md bg-background flex items-center justify-center text-2xl border border-emerald-500/20 hover:scale-110 transition-transform cursor-help"
+                                                    title={badge.name}
+                                                >
+                                                    {badge.icon}
+                                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-popover text-popover-foreground text-[10px] rounded-md border border-border opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                                        {badge.name}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            {batchBadges.length > 3 && (
+                                                <div className="w-14 h-14 rounded-md bg-secondary flex items-center justify-center text-xs font-bold text-muted-foreground border border-border">
+                                                    +{batchBadges.length - 3}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
-                                ))}
-                                {earnedBadges.length > 4 && (
-                                    <div className="w-14 h-14 rounded-md bg-secondary flex items-center justify-center text-xs font-bold text-muted-foreground border border-border">
-                                        +{earnedBadges.length - 4}
+                                )}
+
+                                {earnedBadges.length > 0 ? (
+                                    <div className="flex flex-wrap gap-4">
+                                        {earnedBadges.slice(0, 4).map((ub) => (
+                                            <div
+                                                key={ub._id}
+                                                className="w-14 h-14 rounded-md bg-primary/5 flex items-center justify-center text-2xl border border-primary/10 hover:scale-110 transition-transform cursor-help group relative"
+                                                title={ub.badge?.name}
+                                            >
+                                                {ub.badge?.icon || "🏅"}
+                                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-popover text-popover-foreground text-[10px] rounded-md border border-border opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                                    {ub.badge?.name}
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {earnedBadges.length > 4 && (
+                                            <div className="w-14 h-14 rounded-md bg-secondary flex items-center justify-center text-xs font-bold text-muted-foreground border border-border">
+                                                +{earnedBadges.length - 4}
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-4">
+                                        <p className="text-xs text-muted-foreground mb-4">No earned badges yet. Keep learning!</p>
+                                        <button
+                                            onClick={() => navigate('/course-list')}
+                                            className="text-[10px] font-bold text-primary uppercase tracking-widest hover:underline"
+                                        >
+                                            Explore Courses
+                                        </button>
                                     </div>
                                 )}
-                            </div>
-                        ) : (
-                            <div className="text-center py-4">
-                                <p className="text-xs text-muted-foreground mb-4">No badges earned yet. Keep learning!</p>
-                                <button 
-                                    onClick={() => navigate('/course-list')}
-                                    className="text-[10px] font-bold text-primary uppercase tracking-widest hover:underline"
-                                >
-                                    Explore Courses
-                                </button>
                             </div>
                         )}
                     </div>

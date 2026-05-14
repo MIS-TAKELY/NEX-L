@@ -1,58 +1,8 @@
 import { ArrowRight, Star, Clock, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "motion/react";
-
-const courses = [
-  {
-    id: 1,
-    title: "Complete Web Development",
-    instructor: "Sarah Chen",
-    price: "Rs. 3,999",
-    category: "Development",
-    image:
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&h=400&fit=crop",
-    rating: 4.9,
-    students: "12.5K",
-    duration: "48h",
-  },
-  {
-    id: 2,
-    title: "UI/UX Design Fundamentals",
-    instructor: "Marcus Johnson",
-    price: "Rs. 3,000",
-    category: "Design",
-    image:
-      "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&h=400&fit=crop",
-    rating: 4.8,
-    students: "8.2K",
-    duration: "32h",
-  },
-  {
-    id: 3,
-    title: "Digital Marketing Mastery",
-    instructor: "Priya Sharma",
-    price: "Rs. 2,499",
-    category: "Marketing",
-    image:
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop",
-    rating: 4.7,
-    students: "6.8K",
-    duration: "28h",
-  },
-  {
-    id: 4,
-    title: "Data Science Essentials",
-    instructor: "Alex Kumar",
-    price: "Rs. 4,999",
-    category: "Data",
-    image:
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop",
-    rating: 4.9,
-    students: "9.1K",
-    duration: "56h",
-    featured: true,
-  },
-];
+import { useGetPublicCoursesQuery } from "@/store/slices/siteApi";
+import { buildCourseInsights, compactNumber, getInitials } from "@/lib/siteInsights";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -78,10 +28,13 @@ const itemVariants = {
 };
 
 export function FeaturedCourses() {
+  const { data: courses = [] } = useGetPublicCoursesQuery();
+  const insights = buildCourseInsights(courses);
+  const featured = insights.topCourses.length > 0 ? insights.topCourses : courses.slice(0, 4);
+
   return (
     <section id="courses" className="py-20 lg:py-32 bg-secondary/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -94,12 +47,11 @@ export function FeaturedCourses() {
               Featured <span className="text-primary">Courses</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-xl">
-              Explore our handpicked premium courses, designed for depth and
-              professional mastery.
+              Explore live courses from the current catalog, ranked by rating and review volume.
             </p>
           </div>
           <a
-            href="#"
+            href="/course-list"
             className="inline-flex items-center gap-2 text-primary font-medium hover:text-primary/80 transition-colors group"
           >
             View all courses
@@ -107,7 +59,6 @@ export function FeaturedCourses() {
           </a>
         </motion.div>
 
-        {/* Course Grid */}
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
           variants={containerVariants}
@@ -115,75 +66,91 @@ export function FeaturedCourses() {
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
         >
-          {courses.map((course) => (
-            <motion.div
-              key={course.id}
-              variants={itemVariants}
-              whileHover={{ y: -5 }}
-              className="group bg-card rounded-md overflow-hidden border border-border shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col"
-            >
-              {/* Image */}
-              <div className="relative aspect-[4/3] overflow-hidden">
-                <img
-                  src={course.image}
-                  alt={course.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
+          {featured.map((course, index) => {
+            const teacherName =
+              course.instructor ||
+              course.teacher?.name ||
+              "NEXL Instructor";
+            const rating = Number(course.rating || course?.ratings?.average || 0);
+            const progress = Math.max(20, Math.min(100, Math.round(rating * 20)));
+            const totalStudents = compactNumber(
+              Number(course?.enrollments?.length || 0) || index + 1,
+            );
 
-                <Badge
-                  variant="secondary"
-                  className="absolute top-3 left-3 bg-background/90 backdrop-blur-sm text-primary font-medium"
-                >
-                  {course.category}
-                </Badge>
-                {course.featured && (
-                  <div className="absolute top-3 right-3">
-                    <Badge className="bg-primary text-primary-foreground">
-                      Featured
-                    </Badge>
-                  </div>
-                )}
-              </div>
+            return (
+              <motion.div
+                key={course.id || course._id || course.title}
+                variants={itemVariants}
+                whileHover={{ y: -5 }}
+                className="group bg-card rounded-md overflow-hidden border border-border shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col"
+              >
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <img
+                    src={course.image || course.thumbnail}
+                    alt={course.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
 
-              {/* Content */}
-              <div className="p-5 flex-1 flex flex-col">
-                <h3 className="font-semibold text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-                  {course.title}
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {course.instructor}
-                </p>
-
-                {/* Stats */}
-                <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-                  <div className="flex items-center gap-1">
-                    <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    <span>{course.rating}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Users className="w-4 h-4" />
-                    <span>{course.students}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    <span>{course.duration}</span>
-                  </div>
+                  <Badge
+                    variant="secondary"
+                    className="absolute top-3 left-3 bg-background/90 backdrop-blur-sm text-primary font-medium"
+                  >
+                    {course.category || "General"}
+                  </Badge>
+                  {index === 0 && (
+                    <div className="absolute top-3 right-3">
+                      <Badge className="bg-primary text-primary-foreground">
+                        Featured
+                      </Badge>
+                    </div>
+                  )}
                 </div>
 
-                {/* Price & Action */}
-                <div className="mt-auto flex items-center justify-between pt-4 border-t border-border/50">
-                  <span className="text-lg font-bold text-foreground">
-                    {course.price}
-                  </span>
-                  <button className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
-                    Enroll Now
-                  </button>
+                <div className="p-5 flex-1 flex flex-col">
+                  <h3 className="font-semibold text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                    {course.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4 flex items-center gap-2">
+                    <span className="inline-flex w-6 h-6 items-center justify-center rounded-md bg-primary/10 text-primary text-[10px] font-bold">
+                      {getInitials(teacherName)}
+                    </span>
+                    {teacherName}
+                  </p>
+
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+                    <div className="flex items-center gap-1">
+                      <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                      <span>{rating ? rating.toFixed(1) : "0.0"}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Users className="w-4 h-4" />
+                      <span>{totalStudents}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-4 h-4" />
+                      <span>{course.duration || "Live"}</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-auto flex items-center justify-between pt-4 border-t border-border/50">
+                    <span className="text-lg font-bold text-foreground">
+                      {course.price
+                        ? `Rs. ${Number(course.price).toLocaleString()}`
+                        : course.isFree
+                          ? "Free"
+                          : "Live"}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {progress}% relevance
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </motion.div>
       </div>
     </section>
   );
 }
+

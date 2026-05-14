@@ -1,38 +1,7 @@
-import { Quote } from "lucide-react";
+import { Quote, Star } from "lucide-react";
 import { motion } from "motion/react";
-
-const testimonials = [
-  {
-    id: 1,
-    quote:
-      "The web development course completely transformed my career. Practical projects made complex concepts easy to grasp.",
-    name: "Nabina Shrestha",
-    role: "Web Development Student",
-    date: "Jan 2025",
-    avatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
-  },
-  {
-    id: 2,
-    quote:
-      "As someone new to digital marketing, NEXL gave me the perfect starting point. Highly recommended.",
-    name: "Grishma Sitaula",
-    role: "Digital Marketing Student",
-    date: "March 2025",
-    avatar:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
-  },
-  {
-    id: 3,
-    quote:
-      "Learning UI/UX design has never been this engaging. Real-world case studies helped me build a strong portfolio.",
-    name: "Karuna Shrestha",
-    role: "UI/UX Design Student",
-    date: "Nov 2024",
-    avatar:
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop",
-  },
-];
+import { useGetPublicCoursesQuery } from "@/store/slices/siteApi";
+import { buildCourseInsights, getInitials } from "@/lib/siteInsights";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -59,10 +28,13 @@ const itemVariants = {
 };
 
 export function StudentStories() {
+  const { data: courses = [] } = useGetPublicCoursesQuery();
+  const insights = buildCourseInsights(courses);
+  const stories = insights.topCourses;
+
   return (
     <section className="py-20 lg:py-32 bg-secondary/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -71,15 +43,13 @@ export function StudentStories() {
           className="text-center max-w-2xl mx-auto mb-16"
         >
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            Student Stories
+            Learner Highlights
           </h2>
           <p className="text-lg text-muted-foreground">
-            Hear from our students who have transformed their careers through
-            NEXL.
+            Live course highlights from the current catalog, ranked by learner feedback signals.
           </p>
         </motion.div>
 
-        {/* Testimonials Grid */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -87,47 +57,56 @@ export function StudentStories() {
           viewport={{ once: true, margin: "-50px" }}
           className="grid grid-cols-1 md:grid-cols-3 gap-8"
         >
-          {testimonials.map((testimonial) => (
-            <motion.div
-              key={testimonial.id}
-              variants={itemVariants}
-              whileHover={{ y: -5 }}
-              className="group relative bg-card rounded-md p-8 border border-border shadow-sm hover:shadow-xl transition-all duration-300"
-            >
-              {/* Quote Icon */}
-              <div className="mb-6">
-                <Quote className="w-10 h-10 text-primary/20" />
-              </div>
-
-              {/* Quote Text */}
-              <p className="text-foreground/90 text-lg leading-relaxed mb-8">
-                "{testimonial.quote}"
-              </p>
-
-              {/* Author */}
-              <div className="flex items-center gap-4">
-                <img
-                  src={testimonial.avatar}
-                  alt={testimonial.name}
-                  className="w-12 h-12 rounded-md object-cover"
-                />
-
-                <div>
-                  <h4 className="font-semibold text-foreground">
-                    {testimonial.name}
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    {testimonial.role} · {testimonial.date}
-                  </p>
+          {stories.length > 0 ? (
+            stories.map((story, index) => (
+              <motion.div
+                key={story.id || story._id || story.title}
+                variants={itemVariants}
+                whileHover={{ y: -5 }}
+                className="group relative bg-card rounded-md p-8 border border-border shadow-sm hover:shadow-xl transition-all duration-300"
+              >
+                <div className="mb-6 flex items-center justify-between">
+                  <Quote className="w-10 h-10 text-primary/20" />
+                  <div className="flex gap-1">
+                    {Array.from({ length: Math.max(1, Math.round(Number(story.rating || 0))) }).map((_, starIndex) => (
+                      <Star
+                        key={starIndex}
+                        className="w-4 h-4 fill-amber-400 text-amber-400"
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              {/* Decorative Gradient */}
-              <div className="absolute -bottom-1 -right-1 w-24 h-24 bg-gradient-to-br from-primary/10 to-accent/10 rounded-md blur-2xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
-            </motion.div>
-          ))}
+                <p className="text-foreground/90 text-lg leading-relaxed mb-8">
+                  {story.description}
+                </p>
+
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-md bg-gradient-to-r from-primary to-accent flex items-center justify-center text-primary-foreground font-bold">
+                    {getInitials(story.title)}
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold text-foreground">
+                      {story.title}
+                    </h4>
+                    <p className="text-sm text-muted-foreground">
+                      {story.instructor} · {story.category}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="absolute -bottom-1 -right-1 w-24 h-24 bg-gradient-to-br from-primary/10 to-accent/10 rounded-md blur-2xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
+              </motion.div>
+            ))
+          ) : (
+            <div className="md:col-span-3 rounded-md border border-dashed border-border bg-card p-8 text-center text-muted-foreground">
+              No live course highlights available yet.
+            </div>
+          )}
         </motion.div>
       </div>
     </section>
   );
 }
+

@@ -32,6 +32,7 @@ const typeLabels = {
   assignment: { label: "Assignment", icon: "solar:document-add-bold-duotone" },
   participation: { label: "Participation", icon: "solar:users-group-rounded-bold-duotone" },
   course_completion: { label: "Completion", icon: "solar:cup-star-bold-duotone" },
+  batch_membership: { label: "Batch Member", icon: "solar:layers-minimalistic-bold-duotone" },
 };
 
 const BadgeCard = ({ badge, earned = false, awardedAt = null, awardedFor = "" }) => {
