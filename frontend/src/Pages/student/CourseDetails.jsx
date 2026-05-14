@@ -22,7 +22,6 @@ const CourseDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isLoggedIn, userRole, userData } = useSelector((state) => state.auth);
-  const [selectedPayment, setSelectedPayment] = useState("esewa");
   const { data: courseResp, isLoading: loading } = useGetCourseByIdQuery(id);
   const { data: cartResp } = useGetCartQuery(undefined, { skip: !isLoggedIn || userRole !== 'student' });
   const [addToCartApi] = useAddToCartMutation();
@@ -110,10 +109,6 @@ const CourseDetails = () => {
       answer:
         "We have a dedicated community and mentor support to help you out.",
     },
-  ];
-
-  const paymentMethods = [
-    { id: "esewa", name: "eSewa", icon: "logos:esewa" },
   ];
 
   if (loading)
@@ -588,25 +583,22 @@ const CourseDetails = () => {
                 </p>
               </div>
 
-              {/* Payment Method Selection */}
+              {/* Payment Method */}
               <div className="space-y-4 mb-8">
                 <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block mb-3">
-                  Select Payment Method
+                  Payment Method
                 </label>
-                <div className="grid grid-cols-2 gap-3">
-                  {paymentMethods.map((method) => (
-                    <button
-                      key={method.id}
-                      onClick={() => setSelectedPayment(method.id)}
-                      className={`flex items-center justify-center gap-2 p-3 rounded-md border-2 transition-all ${selectedPayment === method.id
-                        ? "border-primary bg-primary/10 shadow-[0_0_15px_rgba(99,102,241,0.2)]"
-                        : "border-border/50 hover:border-border bg-card/50"
-                        }`}
-                    >
-                      <Icon icon={method.icon} className="text-2xl" />
-                      <span className="text-xs font-bold text-foreground">{method.name}</span>
-                    </button>
-                  ))}
+                <div className="flex items-center justify-between gap-3 p-4 rounded-md border-2 border-primary bg-primary/10">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-md flex items-center justify-center bg-white/80 dark:bg-zinc-900/80">
+                      <Icon icon="logos:esewa" className="text-2xl" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-foreground">eSewa</p>
+                      <p className="text-xs text-muted-foreground">The only available payment method</p>
+                    </div>
+                  </div>
+                  <Icon icon="solar:check-circle-bold-duotone" className="text-primary text-2xl" />
                 </div>
               </div>
 
@@ -685,10 +677,10 @@ const CourseDetails = () => {
                 </div>
 
                 <button
-                  onClick={() => navigate(`/payment-gateway?method=${selectedPayment}&amount=${finalPrice}&courseId=${id}${appliedCoupon ? `&couponCode=${appliedCoupon.code}` : ""}`)}
+                  onClick={() => navigate(`/payment-gateway?method=esewa&amount=${finalPrice}&courseId=${id}${appliedCoupon ? `&couponCode=${appliedCoupon.code}` : ""}`)}
                   className="w-full bg-primary text-primary-foreground py-4 rounded-md font-bold text-lg hover:bg-primary-hover transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3 group"
                 >
-                  Pay with {selectedPayment.toUpperCase()}
+                  Pay with eSewa
                   <Icon icon="solar:arrow-right-bold" className="group-hover:translate-x-1 transition-transform" />
                 </button>
 

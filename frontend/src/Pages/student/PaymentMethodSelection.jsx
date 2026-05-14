@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { validateCoupon } from '../../apis/coupon.api';
@@ -10,7 +10,7 @@ const PaymentMethodSelection = () => {
     const navigate = useNavigate();
     const { userData } = useSelector((state) => state.auth);
 
-    const courseIds = searchParams.get('courseIds')?.split(',') || [];
+    const courseIds = useMemo(() => searchParams.get('courseIds')?.split(',') || [], [searchParams]);
     const amount = Number(searchParams.get('amount') || 0);
     const courseCount = courseIds.length;
     const { showToast } = useToast();
@@ -30,9 +30,9 @@ const PaymentMethodSelection = () => {
         }
     }, [userData, courseIds, navigate]);
 
-    const handlePaymentMethod = (method) => {
+    const handlePaymentMethod = () => {
         const courseIdsParam = courseIds.join(',');
-        navigate(`/payment-gateway?method=${method}&courseIds=${courseIdsParam}&amount=${finalAmount}${appliedCoupon ? `&couponCode=${appliedCoupon.code}` : ''}`);
+        navigate(`/payment-gateway?method=esewa&courseIds=${courseIdsParam}&amount=${finalAmount}${appliedCoupon ? `&couponCode=${appliedCoupon.code}` : ''}`);
     };
 
     const handleApplyCoupon = async () => {
@@ -95,37 +95,12 @@ const PaymentMethodSelection = () => {
             } else {
                 showToast(errorMsg, "error");
             }
-        } catch (error) {
+        } catch {
             showToast("Failed to validate coupon", "error");
         } finally {
             setIsVerifying(false);
         }
     };
-
-    const paymentMethods = [
-        {
-            id: 'esewa',
-            name: 'eSewa',
-            icon: 'solar:wallet-money-bold-duotone',
-            color: '#60bb46',
-            description: 'Pay securely with your eSewa wallet'
-        },
-        {
-            id: 'khalti',
-            name: 'Khalti',
-            icon: 'solar:wallet-2-bold-duotone',
-            color: '#5c2d91',
-            description: 'Pay with Khalti digital wallet'
-        },
-        {
-            id: 'connectips',
-            name: 'ConnectIPS',
-            icon: 'solar:card-transfer-bold-duotone',
-            color: '#dc1212ff',
-            description: 'Pay via your bank account',
-            disabled: true
-        }
-    ];
 
     return (
         <div className="min-h-screen bg-secondary/30 py-12">
@@ -139,9 +114,9 @@ const PaymentMethodSelection = () => {
                         <Icon icon="solar:arrow-left-linear" size={20} />
                         Back to Cart
                     </button>
-                    <h1 className="text-4xl font-bold text-foreground dark:text-foreground mb-2">Select Payment Method</h1>
+                    <h1 className="text-4xl font-bold text-foreground dark:text-foreground mb-2">eSewa Checkout</h1>
                     <p className="text-muted-foreground dark:text-zinc-400">
-                        Choose your preferred payment method to complete your purchase
+                        Complete your purchase securely with eSewa
                     </p>
                 </div>
 
@@ -211,43 +186,32 @@ const PaymentMethodSelection = () => {
                     </div>
                 </div>
 
-                {/* Payment Methods */}
+                {/* Payment Method */}
                 <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-foreground dark:text-foreground mb-4">Available Payment Methods</h2>
-                    {paymentMethods.map((method) => (
-                        <button
-                            key={method.id}
-                            onClick={() => !method.disabled && handlePaymentMethod(method.id)}
-                            disabled={method.disabled}
-                            className={`w-full bg-background dark:bg-zinc-900 rounded-md border-2 p-6 transition-all duration-300 ${method.disabled
-                                    ? 'border-border dark:border-border opacity-50 cursor-not-allowed'
-                                    : 'border-border dark:border-border hover:border-primary hover:shadow-lg cursor-pointer'
-                                }`}
-                        >
-                            <div className="flex items-center gap-6">
-                                <div
-                                    className="w-16 h-16 rounded-md flex items-center justify-center"
-                                    style={{ backgroundColor: `${method.color}15` }}
-                                >
-                                    <Icon icon={method.icon} size={32} style={{ color: method.color }} />
-                                </div>
-                                <div className="flex-1 text-left">
-                                    <h3 className="text-xl font-bold text-foreground dark:text-foreground mb-1 flex items-center gap-2">
-                                        {method.name}
-                                        {method.disabled && (
-                                            <span className="text-xs font-normal text-muted-foreground dark:text-zinc-500 bg-secondary dark:bg-zinc-800 px-2 py-1 rounded">
-                                                Coming Soon
-                                            </span>
-                                        )}
-                                    </h3>
-                                    <p className="text-sm text-muted-foreground dark:text-zinc-400">{method.description}</p>
-                                </div>
-                                {!method.disabled && (
-                                    <Icon icon="solar:arrow-right-linear" size={24} className="text-muted-foreground" />
-                                )}
+                    <h2 className="text-xl font-bold text-foreground dark:text-foreground mb-4">Payment Method</h2>
+                    <div className="w-full bg-background dark:bg-zinc-900 rounded-md border-2 border-primary p-6">
+                        <div className="flex items-center gap-6">
+                            <div className="w-16 h-16 rounded-md flex items-center justify-center bg-[#60bb4615]">
+                                <Icon icon="solar:wallet-money-bold-duotone" size={32} style={{ color: '#60bb46' }} />
                             </div>
-                        </button>
-                    ))}
+                            <div className="flex-1 text-left">
+                                <h3 className="text-xl font-bold text-foreground dark:text-foreground mb-1 flex items-center gap-2">
+                                    eSewa
+                                </h3>
+                                <p className="text-sm text-muted-foreground dark:text-zinc-400">
+                                    Pay securely with your eSewa wallet
+                                </p>
+                            </div>
+                            <Icon icon="solar:check-circle-bold-duotone" size={24} className="text-primary" />
+                        </div>
+                    </div>
+                    <button
+                        onClick={handlePaymentMethod}
+                        className="w-full bg-primary text-primary-foreground rounded-md py-4 font-bold text-lg hover:bg-primary-hover transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-3"
+                    >
+                        Continue with eSewa
+                        <Icon icon="solar:arrow-right-bold" size={20} />
+                    </button>
                 </div>
 
                 {/* Security Note */}
