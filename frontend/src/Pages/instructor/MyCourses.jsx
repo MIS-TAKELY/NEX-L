@@ -175,6 +175,13 @@ const MyCourses = () => {
                                     <Icon icon="solar:calendar-bold-duotone" className="w-4 h-4" />
                                     Sessions
                                 </button>
+                                <button
+                                    onClick={() => navigate(`/instructor/batches?courseId=${course._id}`)}
+                                    className="px-4 py-2 rounded-md bg-secondary text-secondary-foreground hover:bg-primary/10 hover:text-primary transition-all text-sm font-medium flex items-center gap-2 border border-transparent hover:border-primary/20"
+                                >
+                                    <Icon icon="solar:layers-minimalistic-bold-duotone" className="w-4 h-4" />
+                                    Batches
+                                </button>
                                 {activeClasses.some(ac => ac.course?._id === course._id) ? (
                                     <button
                                         onClick={() => handleEndSession(course._id)}

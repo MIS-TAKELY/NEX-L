@@ -1,4 +1,13 @@
+import { useGetAdminCoursesQuery } from "@/store/slices/siteApi";
+
 const AdminCourses = () => {
+  const { data, isLoading } = useGetAdminCoursesQuery({ limit: 50 });
+  const courses = data?.courses || [];
+
+  if (isLoading) {
+    return <div className="text-muted-foreground">Loading courses...</div>;
+  }
+
   return (
     <div className="space-y-8">
       <div>
@@ -7,27 +16,27 @@ const AdminCourses = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-4">
-        {[
-          { title: 'Full-Stack MERN Stack', instructor: 'Mr. Ram', students: 482, status: 'Published' },
-          { title: 'Python for AI', instructor: 'Mr. Shyam', students: 125, status: 'Draft' },
-          { title: 'Advanced DSA', instructor: 'Ms. Sita', students: 89, status: 'Published' },
-        ].map((course) => (
-          <div key={course.title} className="bg-background p-6 rounded-md border border-border shadow-sm flex items-center justify-between hover:border-primary/20 transition-all">
+        {courses.length > 0 ? courses.map((course) => (
+          <div key={course._id || course.title} className="bg-background p-6 rounded-md border border-border shadow-sm flex items-center justify-between hover:border-primary/20 transition-all">
             <div className="flex items-center gap-4">
               <div className="w-16 h-12 bg-secondary rounded-md" />
               <div>
                 <h3 className="font-bold text-foreground">{course.title}</h3>
-                <p className="text-xs text-muted-foreground">Instructor: {course.instructor}</p>
+                <p className="text-xs text-muted-foreground">
+                  Instructor: {course.teacher?.name || "Unknown"}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-12 text-right">
               <div>
-                <p className="text-xs font-bold text-muted-foreground uppercase">Students</p>
-                <p className="text-sm font-bold text-foreground">{course.students}</p>
+                <p className="text-xs font-bold text-muted-foreground uppercase">Price</p>
+                <p className="text-sm font-bold text-foreground">
+                  {course.isFree || Number(course.price) === 0 ? "Free" : `Rs. ${Number(course.price || 0).toLocaleString()}`}
+                </p>
               </div>
               <div>
                 <p className="text-xs font-bold text-muted-foreground uppercase">Status</p>
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${course.status === 'Published' ? 'bg-primary/10 text-primary' : 'bg-secondary text-muted-foreground'}`}>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${course.status === 'published' ? 'bg-primary/10 text-primary' : 'bg-secondary text-muted-foreground'}`}>
                   {course.status}
                 </span>
               </div>
@@ -36,7 +45,11 @@ const AdminCourses = () => {
               </button>
             </div>
           </div>
-        ))}
+        )) : (
+          <div className="rounded-md border border-dashed border-border bg-card p-8 text-center text-sm text-muted-foreground">
+            No courses found.
+          </div>
+        )}
       </div>
     </div>
   );

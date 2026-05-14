@@ -4,6 +4,7 @@ import { Icon } from "@iconify/react";
 import { motion } from "motion/react";
 import { getMyBadges } from "../../apis/badge.api";
 import BadgeCard from "../../components/student/BadgeCard";
+import { getStudentBatchBadges } from "@/lib/batches";
 
 const TYPE_FILTERS = [
   { key: "all", label: "All", icon: "solar:medal-ribbons-star-bold-duotone" },
@@ -23,6 +24,8 @@ export default function Badges() {
   const [loading, setLoading] = useState(true);
   const [typeFilter, setTypeFilter] = useState("all");
   const [levelFilter, setLevelFilter] = useState("all");
+  const batchBadges = getStudentBatchBadges(userData);
+  const hasBatchBadges = batchBadges.length > 0;
 
   useEffect(() => {
     const fetchBadges = async () => {
@@ -38,6 +41,17 @@ export default function Badges() {
     fetchBadges();
   }, []);
 
+  useEffect(() => {
+    const syncBatchBadges = () => {
+      // Force a re-render when batch membership changes in another tab/session.
+      // The data is derived from localStorage, so a state bump is not required.
+      setEarnedBadges((current) => [...current]);
+    };
+
+    window.addEventListener("storage", syncBatchBadges);
+    return () => window.removeEventListener("storage", syncBatchBadges);
+  }, []);
+
   // Filter earned badges
   const filtered = earnedBadges.filter((ub) => {
     const badgeType = ub.badge?.type;
@@ -48,6 +62,7 @@ export default function Badges() {
   });
 
   const byLevel = (level) => earnedBadges.filter((ub) => ub.badge?.level === level).length;
+  const totalVisibleBadges = earnedBadges.length + batchBadges.length;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -72,7 +87,7 @@ export default function Badges() {
               My <span className="text-primary italic">Badges</span>
             </h1>
             <p className="text-muted-foreground text-base max-w-lg">
-              Earn badges by excelling in quizzes, assignments, and class participation. Every achievement counts!
+              Earn badges by excelling in quizzes, assignments, and class participation. Batch membership appears instantly when you are assigned to a cohort.
             </p>
           </div>
 
@@ -80,6 +95,8 @@ export default function Badges() {
           <div className="flex gap-4 flex-wrap">
             {[
               { label: "Earned", value: earnedBadges.length, icon: "solar:medal-star-bold", color: "text-primary" },
+              { label: "Batches", value: batchBadges.length, icon: "solar:layers-minimalistic-bold-duotone", color: "text-emerald-500" },
+              { label: "Visible", value: totalVisibleBadges, icon: "solar:bell-bing-bold", color: "text-cyan-500" },
               { label: "Gold", value: byLevel("gold"), icon: "🥇", emoji: true, color: "text-yellow-400" },
               { label: "Silver", value: byLevel("silver"), icon: "🥈", emoji: true, color: "text-slate-400" },
               { label: "Bronze", value: byLevel("bronze"), icon: "🥉", emoji: true, color: "text-amber-600" },
@@ -95,6 +112,64 @@ export default function Badges() {
           </div>
         </div>
       </motion.div>
+
+      {hasBatchBadges ? (
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35 }}
+          className="mb-10 rounded-md border border-emerald-500/20 bg-emerald-500/5 p-6"
+        >
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-md bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20">
+                <Icon icon="solar:layers-minimalistic-bold-duotone" size={24} />
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-emerald-600">
+                  Instant Assignment
+                </p>
+                <h2 className="text-2xl font-black text-foreground">Your batch badges</h2>
+                <p className="text-sm text-muted-foreground max-w-2xl">
+                  These badges are created from your assigned batches, so they appear as soon as an instructor adds you to a cohort.
+                </p>
+              </div>
+            </div>
+            <div className="rounded-md border border-emerald-500/20 bg-background px-4 py-3 text-sm font-semibold text-foreground">
+              {batchBadges.length} batch badge{batchBadges.length === 1 ? "" : "s"}
+            </div>
+          </div>
+
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {batchBadges.map((badge) => (
+              <div key={badge.id} className="rounded-md border border-emerald-500/20 bg-background p-4 shadow-sm">
+                <BadgeCard badge={badge} earned={true} awardedAt={badge.awardedAt} awardedFor={badge.awardedFor} />
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35 }}
+          className="mb-10 rounded-md border border-border bg-card p-6"
+        >
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-md bg-muted flex items-center justify-center text-muted-foreground border border-border">
+                <Icon icon="solar:layers-minimalistic-bold-duotone" size={24} />
+              </div>
+              <div>
+                <h2 className="text-xl font-black text-foreground">No batch badges yet</h2>
+                <p className="text-sm text-muted-foreground">
+                  Once your instructor assigns you to a batch, it will appear here immediately.
+                </p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Filters */}
       <motion.div

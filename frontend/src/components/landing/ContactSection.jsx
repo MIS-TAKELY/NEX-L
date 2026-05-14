@@ -2,6 +2,7 @@ import { CheckCircle, Mail, MapPin, Phone, Send } from "lucide-react";
 import { useState } from "react";
 import { useSendContactFormMutation } from "../../store/slices/contactApi";
 import { useToast } from "../../context/ToastContext";
+import { siteConfig } from "@/lib/siteConfig";
 
 const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -36,17 +37,17 @@ const ContactSection = () => {
     {
       icon: <Mail className="w-5 h-5" />,
       label: "Email Us",
-      value: "nexl6911@gmail.com",
+      value: siteConfig.supportEmail,
     },
     {
       icon: <Phone className="w-5 h-5" />,
       label: "Call Us",
-      value: "+977 00000000",
+      value: siteConfig.supportPhone,
     },
     {
       icon: <MapPin className="w-5 h-5" />,
       label: "Visit Us",
-      value: "Itahari, Nepal",
+      value: siteConfig.supportAddress,
     },
   ];
 

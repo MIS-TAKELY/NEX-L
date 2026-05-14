@@ -1,36 +1,17 @@
-import { Star, Quote } from "lucide-react";
-
-const testimonials = [
-  {
-    name: "Priya Sharma",
-    role: "Computer Science Student",
-    avatar: "PS",
-    content:
-      "NEXL has completely transformed how I learn. The AI-powered recommendations helped me discover courses I never knew I needed. The local payment integration makes it so convenient!",
-    rating: 5,
-    color: "from-blue-500 to-cyan-500",
-  },
-  {
-    name: "Dr. Rajesh Kumar",
-    role: "Mathematics Professor",
-    avatar: "RK",
-    content:
-      "As an educator, NEXL gives me all the tools I need to create engaging courses. The quiz system and progress tracking features are exceptional. My students love it!",
-    rating: 5,
-    color: "from-purple-500 to-pink-500",
-  },
-  {
-    name: "Anjita Gurung",
-    role: "Data Science Enthusiast",
-    avatar: "AG",
-    content:
-      "The AI summarization feature is a game-changer! I can quickly review lecture summaries before exams. The platform is intuitive and the community is very supportive.",
-    rating: 5,
-    color: "from-emerald-500 to-teal-500",
-  },
-];
+import { Star, Quote, BookOpen } from "lucide-react";
+import { buildCourseInsights, getInitials } from "@/lib/siteInsights";
+import { useGetPublicCoursesQuery } from "@/store/slices/siteApi";
 
 export function Testimonials() {
+  const { data: courses = [] } = useGetPublicCoursesQuery();
+  const insights = buildCourseInsights(courses);
+  const highlights = insights.topCourses;
+  const colors = [
+    "from-blue-500 to-cyan-500",
+    "from-purple-500 to-pink-500",
+    "from-emerald-500 to-teal-500",
+  ];
+
   return (
     <section id="testimonials" className="relative py-16 lg:py-32">
       {/* Background Effect */}
@@ -43,22 +24,22 @@ export function Testimonials() {
         <div className="text-center max-w-3xl mx-auto mb-16 lg:mb-20">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-md glass-card mb-6">
             <Quote className="w-4 h-4 text-primary" />
-            <span className="text-sm text-muted-foreground">Testimonials</span>
+            <span className="text-sm text-muted-foreground">Top Rated Courses</span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-            What Our <span className="text-gradient">Users Say</span>
+            What Learners Are <span className="text-gradient">Choosing</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            Hear from students and educators who have transformed their learning
-            experience with NEXL.
+            These live course highlights are pulled from the current catalog and
+            ranked by rating and review count.
           </p>
         </div>
 
         {/* Testimonials Grid */}
         <div className="grid md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial) => (
+          {highlights.length > 0 ? highlights.map((testimonial, index) => (
             <div
-              key={testimonial.name}
+              key={testimonial.id}
               className="group glass-card rounded-md p-8 hover:bg-secondary/80 transition-all duration-300 hover:-translate-y-2 relative"
             >
               {/* Quote Icon */}
@@ -68,7 +49,7 @@ export function Testimonials() {
 
               {/* Rating */}
               <div className="flex gap-1 mb-6">
-                {Array.from({ length: testimonial.rating }).map((_, i) => (
+                {Array.from({ length: Math.max(1, Math.round(Number(testimonial.rating) || 0)) }).map((_, i) => (
                   <Star
                     key={i}
                     className="w-5 h-5 fill-amber-400 text-amber-400"
@@ -78,27 +59,32 @@ export function Testimonials() {
 
               {/* Content */}
               <p className="text-muted-foreground mb-8 leading-relaxed">
-                "{testimonial.content}"
+                {testimonial.description}
               </p>
 
               {/* Author */}
               <div className="flex items-center gap-4">
                 <div
-                  className={`w-12 h-12 rounded-md bg-gradient-to-r ${testimonial.color} flex items-center justify-center text-primary-foreground font-semibold`}
+                  className={`w-12 h-12 rounded-md bg-gradient-to-r ${colors[index % colors.length]} flex items-center justify-center text-primary-foreground font-semibold`}
                 >
-                  {testimonial.avatar}
+                  {getInitials(testimonial.title)}
                 </div>
                 <div>
                   <h4 className="text-foreground font-semibold">
-                    {testimonial.name}
+                    {testimonial.title}
                   </h4>
                   <p className="text-sm text-muted-foreground">
-                    {testimonial.role}
+                    {testimonial.instructor} · {testimonial.category}
                   </p>
                 </div>
               </div>
             </div>
-          ))}
+          )) : (
+            <div className="md:col-span-3 glass-card rounded-md p-8 text-center text-muted-foreground">
+              <BookOpen className="w-10 h-10 mx-auto mb-3 text-primary" />
+              No published courses are available yet.
+            </div>
+          )}
         </div>
       </div>
     </section>

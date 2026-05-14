@@ -2,46 +2,25 @@ import {
   Mail,
   MapPin,
   Phone,
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logoo.png";
+import { siteConfig } from "@/lib/siteConfig";
 
 const footerLinks = {
   product: [
     { name: "Features", href: "/#features" },
-    { name: "Pricing", href: "#" },
-    { name: "For Teachers", href: "#" },
-    { name: "For Students", href: "#" },
   ],
   company: [
     { name: "About Us", href: "/about" },
-    { name: "Careers", href: "#" },
-    { name: "Blog", href: "#" },
-    { name: "Press", href: "#" },
   ],
   resources: [
-    { name: "Documentation", href: "#" },
-    { name: "Help Center", href: "#" },
-    { name: "Community", href: "#" },
     { name: "Contact", href: "/contact" },
   ],
   legal: [
     { name: "Privacy Policy", href: "/privacy-policy" },
-    { name: "Terms of Service", href: "/privacy-policy" },
-    { name: "Cookie Policy", href: "#" },
   ],
 };
-
-const socialLinks = [
-  { icon: Facebook, href: "#", label: "Facebook" },
-  { icon: Twitter, href: "#", label: "Twitter" },
-  { icon: Instagram, href: "#", label: "Instagram" },
-  { icon: Linkedin, href: "#", label: "LinkedIn" },
-];
 
 export function Footer() {
   return (
@@ -69,15 +48,25 @@ export function Footer() {
               <div className="space-y-3">
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <Mail className="w-4 h-4 text-primary" />
-                  <span>contact@nexl.edu.np</span>
+                  <a
+                    href={`mailto:${siteConfig.brandEmail}`}
+                    className="hover:text-foreground transition-colors"
+                  >
+                    {siteConfig.brandEmail}
+                  </a>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <Phone className="w-4 h-4 text-primary" />
-                  <span>+977 1-XXXXXXX</span>
+                  <a
+                    href={`tel:${siteConfig.brandPhone}`}
+                    className="hover:text-foreground transition-colors"
+                  >
+                    {siteConfig.brandPhone}
+                  </a>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <MapPin className="w-4 h-4 text-primary" />
-                  <span>Itahari, Sunsari, Nepal</span>
+                  <span>{siteConfig.brandAddress}</span>
                 </div>
               </div>
             </div>
@@ -196,19 +185,6 @@ export function Footer() {
               © {new Date().getFullYear()} NEXL. All rights reserved. Made with
               ❤️ in Nepal.
             </p>
-
-            {/* Social Links */}
-            <div className="flex items-center gap-4">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  aria-label={social.label}
-                >
-                  <social.icon className="w-5 h-5 transition-colors group-hover:text-primary-foreground" />
-                </a>
-              ))}
-            </div>
           </div>
         </div>
       </div>

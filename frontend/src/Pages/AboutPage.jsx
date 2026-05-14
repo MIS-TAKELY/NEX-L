@@ -11,15 +11,10 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/common/Footer";
 import Navbar from "../components/common/Navbar";
+import { buildCourseInsights, compactNumber } from "@/lib/siteInsights";
+import { useGetPublicCoursesQuery } from "@/store/slices/siteApi";
 
 /* ─── Data ──────────────────────────────────────────────── */
-const stats = [
-  { icon: <Users className="w-7 h-7" />, value: "50,000+", label: "Students Enrolled" },
-  { icon: <BookOpen className="w-7 h-7" />, value: "500+", label: "Courses Available" },
-  { icon: <Award className="w-7 h-7" />, value: "200+", label: "Expert Instructors" },
-  { icon: <Globe className="w-7 h-7" />, value: "40+", label: "Countries Reached" },
-];
-
 const team = [
   {
     name: "Sachin Sharma",
@@ -62,6 +57,14 @@ const values = [
 /* ─── Component ──────────────────────────────────────────── */
 const AboutPage = () => {
   const navigate = useNavigate();
+  const { data: courses = [] } = useGetPublicCoursesQuery();
+  const insights = buildCourseInsights(courses);
+  const stats = [
+    { icon: <Users className="w-7 h-7" />, value: compactNumber(insights.totalReviews), label: "Learner Reviews" },
+    { icon: <BookOpen className="w-7 h-7" />, value: compactNumber(insights.totalCourses), label: "Courses Available" },
+    { icon: <Award className="w-7 h-7" />, value: compactNumber(insights.totalInstructors), label: "Expert Instructors" },
+    { icon: <Globe className="w-7 h-7" />, value: compactNumber(insights.totalCategories), label: "Active Categories" },
+  ];
 
   useEffect(() => {
     window.scrollTo(0, 0);

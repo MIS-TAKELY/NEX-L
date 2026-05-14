@@ -1,40 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { TrendingUp, Users, BookOpen, Award } from "lucide-react";
-
-const stats = [
-  {
-    icon: Users,
-    value: 12500,
-    suffix: "+",
-    label: "Active Students",
-    description: "Learning on our platform",
-    color: "from-blue-500 to-cyan-500",
-  },
-  {
-    icon: BookOpen,
-    value: 850,
-    suffix: "+",
-    label: "Courses Available",
-    description: "Across various subjects",
-    color: "from-purple-500 to-pink-500",
-  },
-  {
-    icon: Award,
-    value: 450,
-    suffix: "+",
-    label: "Expert Instructors",
-    description: "Teaching on NEXL",
-    color: "from-emerald-500 to-teal-500",
-  },
-  {
-    icon: TrendingUp,
-    value: 98,
-    suffix: "%",
-    label: "Success Rate",
-    description: "Student satisfaction",
-    color: "from-orange-500 to-amber-500",
-  },
-];
+import { buildCourseInsights, compactNumber, formatRating } from "@/lib/siteInsights";
+import { useGetPublicCoursesQuery } from "@/store/slices/siteApi";
 
 function AnimatedNumber({ value, suffix }) {
   const [count, setCount] = useState(0);
@@ -65,6 +32,7 @@ function AnimatedNumber({ value, suffix }) {
     const steps = 60;
     const increment = value / steps;
     let current = 0;
+    const decimals = Number.isInteger(value) ? 0 : 1;
 
     const timer = setInterval(() => {
       current += increment;
@@ -72,7 +40,7 @@ function AnimatedNumber({ value, suffix }) {
         setCount(value);
         clearInterval(timer);
       } else {
-        setCount(Math.floor(current));
+        setCount(Number(current.toFixed(decimals)));
       }
     }, duration / steps);
 
@@ -81,13 +49,51 @@ function AnimatedNumber({ value, suffix }) {
 
   return (
     <span ref={ref}>
-      {count.toLocaleString()}
+      {Number.isInteger(count) ? count.toLocaleString() : count.toFixed(1)}
       {suffix}
     </span>
   );
 }
 
 export function Stats() {
+  const { data: courses = [] } = useGetPublicCoursesQuery();
+  const insights = buildCourseInsights(courses);
+
+  const stats = [
+    {
+      icon: BookOpen,
+      value: insights.totalCourses,
+      suffix: "+",
+      label: "Published Courses",
+      description: "Live on the platform",
+      color: "from-blue-500 to-cyan-500",
+    },
+    {
+      icon: Users,
+      value: insights.totalInstructors,
+      suffix: "+",
+      label: "Expert Instructors",
+      description: "Contributing content",
+      color: "from-purple-500 to-pink-500",
+    },
+    {
+      icon: Award,
+      value: insights.totalCategories,
+      suffix: "+",
+      label: "Active Categories",
+      description: "Across learning tracks",
+      color: "from-emerald-500 to-teal-500",
+    },
+    {
+      icon: TrendingUp,
+      value: Number(formatRating(insights.averageRating) || 0),
+      suffix: "/5",
+      label: "Average Rating",
+      description: `${compactNumber(insights.totalReviews)} learner reviews`,
+      color: "from-orange-500 to-amber-500",
+    },
+  ];
+
   return (
     <section className="relative py-16 lg:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -118,7 +124,7 @@ export function Stats() {
 
               {/* Value */}
               <div className="text-4xl lg:text-5xl font-bold text-foreground mb-2">
-                <AnimatedNumber value={stat.value} suffix={stat.suffix} />
+                <AnimatedNumber value={Number(stat.value || 0)} suffix={stat.suffix} />
               </div>
 
               {/* Label */}

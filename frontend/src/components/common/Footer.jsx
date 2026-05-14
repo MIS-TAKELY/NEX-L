@@ -1,6 +1,7 @@
 import { Icon } from '@iconify/react';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/logoo.png';
+import { siteConfig } from '@/lib/siteConfig';
 
 const Footer = () => {
     return (
@@ -53,15 +54,15 @@ const Footer = () => {
                             <ul className="space-y-4 text-gray-300 text-sm">
                                 <li className="flex items-center gap-3">
                                     <Icon icon="solar:letter-linear" className="text-accent" size={18} />
-                                    <span>nexl6911@gmail.com</span>
+                                    <span>{siteConfig.supportEmail}</span>
                                 </li>
                                 <li className="flex items-center gap-3">
                                     <Icon icon="solar:phone-calling-linear" className="text-accent" size={18} />
-                                    <span>+977 9800000000</span>
+                                    <span>{siteConfig.supportPhone}</span>
                                 </li>
                                 <li className="flex items-center gap-3">
                                     <Icon icon="solar:map-point-linear" className="text-accent" size={18} />
-                                    <span>Itahari, Nepal</span>
+                                    <span>{siteConfig.supportAddress}</span>
                                 </li>
                             </ul>
                             

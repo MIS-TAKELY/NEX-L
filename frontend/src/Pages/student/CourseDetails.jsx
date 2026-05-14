@@ -1,24 +1,27 @@
 import { Icon } from "@iconify/react";
 import { FileText, PlayCircle } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGetCourseByIdQuery, useRecordCourseViewMutation } from "@/store/slices/courseApi";
 import { useGetCourseLiveClassesQuery } from "@/store/slices/liveClassApi";
 import { useAddToCartMutation, useGetCartQuery, useRemoveFromCartMutation } from "@/store/slices/cartApi";
 import dayjs from "dayjs";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
 import { validateCoupon } from "../../apis/coupon.api";
 import { useToast } from "../../context/ToastContext";
 import Footer from "../../components/common/Footer";
 import Navbar from "../../components/common/Navbar";
+import {
+  getBatchesForCourse,
+  getBatchAssignmentMode,
+  getBatchAssignedStudentCount,
+  isStudentAssignedToBatch,
+} from "@/lib/batches";
 
 const CourseDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isLoggedIn, userRole, userData } = useSelector((state) => state.auth);
-  const [selectedPayment, setSelectedPayment] = useState("esewa");
   const { data: courseResp, isLoading: loading } = useGetCourseByIdQuery(id);
   const { data: cartResp } = useGetCartQuery(undefined, { skip: !isLoggedIn || userRole !== 'student' });
   const [addToCartApi] = useAddToCartMutation();
@@ -43,6 +46,11 @@ const CourseDetails = () => {
   }, [id, isLoggedIn, userRole, userData?._id, recordCourseView]);
 
   const course = courseResp?.data;
+  const courseBatches = getBatchesForCourse(id);
+  const assignedBatches =
+    isLoggedIn && userRole === "student"
+      ? courseBatches.filter((batch) => isStudentAssignedToBatch(batch, userData))
+      : [];
 
   useEffect(() => {
     if (course) {
@@ -103,10 +111,6 @@ const CourseDetails = () => {
     },
   ];
 
-  const paymentMethods = [
-    { id: "esewa", name: "eSewa", icon: "logos:esewa" },
-  ];
-
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-background text-foreground font-outfit">
@@ -140,6 +144,68 @@ const CourseDetails = () => {
                   Master the skills with our comprehensive curriculum.
                 </p>
               </div>
+
+              {assignedBatches.length > 0 && isLoggedIn && userRole === "student" && (
+                <section className="glass premium-card rounded-md p-6 md:p-8 border border-emerald-500/20 bg-gradient-to-br from-emerald-500/15 via-emerald-500/8 to-card shadow-xl shadow-emerald-500/10 relative overflow-hidden">
+                  <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute -top-10 -right-10 w-36 h-36 bg-emerald-500/10 rounded-md blur-3xl" />
+                    <div className="absolute -bottom-12 -left-8 w-28 h-28 bg-primary/5 rounded-md blur-3xl" />
+                  </div>
+
+                  <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                    <div className="flex items-start gap-4">
+                      <div className="w-14 h-14 rounded-md bg-background/80 backdrop-blur flex items-center justify-center text-emerald-500 border border-emerald-500/20 shadow-lg">
+                        <Icon icon="solar:verified-check-bold-duotone" size={28} />
+                      </div>
+                      <div className="max-w-2xl">
+                        <p className="text-[10px] font-black uppercase tracking-[0.24em] text-emerald-600 mb-2">
+                          You are in this course cohort
+                        </p>
+                        <h2 className="text-2xl md:text-3xl font-black text-foreground serif leading-tight">
+                          Batch membership is active for this course
+                        </h2>
+                        <p className="text-sm md:text-base text-muted-foreground mt-2">
+                          Your instructor assigned you to {assignedBatches.length} batch{assignedBatches.length === 1 ? "" : "es"} here. The membership badge is shown instantly across your dashboard.
+                        </p>
+
+                        <div className="flex flex-wrap gap-2 mt-4">
+                          {assignedBatches.slice(0, 2).map((batch) => (
+                            <span
+                              key={batch.id}
+                              className="inline-flex items-center gap-2 rounded-md border border-emerald-500/20 bg-background/80 px-3 py-1.5 text-xs font-semibold text-foreground shadow-sm"
+                            >
+                              <span className="text-base">{batch.batchName?.charAt(0)?.toUpperCase() || "B"}</span>
+                              {batch.batchName}
+                            </span>
+                          ))}
+                          {assignedBatches.length > 2 && (
+                            <span className="inline-flex items-center rounded-md border border-border bg-muted px-3 py-1.5 text-xs font-bold text-muted-foreground">
+                              +{assignedBatches.length - 2} more
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-3">
+                      <button
+                        onClick={() => navigate("/student/badges")}
+                        className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald-500 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-500/25 hover:opacity-95 transition-opacity"
+                      >
+                        <Icon icon="solar:medal-ribbons-star-bold" size={18} />
+                        View badge card
+                      </button>
+                      <button
+                        onClick={() => navigate("/student/dashboard")}
+                        className="inline-flex items-center justify-center gap-2 rounded-md border border-emerald-500/20 bg-background/80 px-5 py-3 text-sm font-bold text-foreground hover:bg-background transition-colors"
+                      >
+                        <Icon icon="solar:widget-2-bold" size={18} />
+                        Open dashboard
+                      </button>
+                    </div>
+                  </div>
+                </section>
+              )}
 
             {/* Demo / Preview Video Section */}
             {course.demoVideo && (
@@ -245,6 +311,163 @@ const CourseDetails = () => {
                           Join Now
                         </button>
                       )}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Batch Assignments Section */}
+            {assignedBatches.length > 0 && isLoggedIn && userRole === "student" && (
+              <section className="glass premium-card rounded-md p-8 border border-emerald-500/20 bg-emerald-500/5">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 rounded-md bg-emerald-500/10 flex items-center justify-center">
+                    <Icon icon="solar:verified-check-bold-duotone" className="text-emerald-600 w-6 h-6" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-foreground">Your assigned batch</h2>
+                    <p className="text-sm text-muted-foreground">
+                      These batches already include your student account.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid gap-4">
+                  {assignedBatches.map((batch) => (
+                    <div
+                      key={batch.id}
+                      className="rounded-md border border-emerald-500/20 bg-background/70 p-5"
+                    >
+                      <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                        <div className="space-y-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h3 className="text-lg font-bold text-foreground">{batch.batchName}</h3>
+                            <span className="rounded-md bg-emerald-500/10 px-2 py-1 text-[10px] font-black uppercase tracking-wider text-emerald-600">
+                              {getBatchAssignmentMode(batch).charAt(0).toUpperCase() +
+                                getBatchAssignmentMode(batch).slice(1)}
+                            </span>
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            Code:{" "}
+                            <span className="font-semibold text-foreground">{batch.batchCode}</span>
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            Assigned to:{" "}
+                            <span className="font-semibold text-foreground">
+                              {batch.assignedTeacher || "Current Teacher"}
+                            </span>
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground w-full md:w-auto">
+                          <div>
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">
+                              Students
+                            </p>
+                            <p>{getBatchAssignedStudentCount(batch)}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">
+                              Start
+                            </p>
+                            <p>{batch.startDate || "TBA"}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {courseBatches.length > 0 && (
+              <section className="glass premium-card rounded-md p-8 border border-border/50">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 rounded-md bg-primary/10 flex items-center justify-center">
+                    <Icon
+                      icon="solar:layers-minimalistic-bold-duotone"
+                      className="text-primary w-6 h-6"
+                    />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-foreground">Available Batches</h2>
+                    <p className="text-sm text-muted-foreground">
+                      Batches created by the instructor for this course.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid gap-4">
+                  {courseBatches.map((batch) => (
+                    <div
+                      key={batch.id}
+                      className="rounded-md border border-border/50 bg-card/50 p-5 hover:border-primary/30 transition-colors"
+                    >
+                      <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                        <div className="space-y-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h3 className="text-lg font-bold text-foreground">{batch.batchName}</h3>
+                            <span
+                              className={`rounded-md px-2 py-1 text-[10px] font-black uppercase tracking-wider ${
+                                batch.status === "active"
+                                  ? "bg-emerald-500/10 text-emerald-600"
+                                  : "bg-amber-500/10 text-amber-600"
+                              }`}
+                            >
+                              {batch.status}
+                            </span>
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            Code:{" "}
+                            <span className="font-semibold text-foreground">{batch.batchCode}</span>
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            Assigned to:{" "}
+                            <span className="font-semibold text-foreground">
+                              {batch.assignedTeacher || "Current Teacher"}
+                            </span>
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            Assignment:{" "}
+                            <span className="font-semibold text-foreground">
+                              {getBatchAssignmentMode(batch).charAt(0).toUpperCase() +
+                                getBatchAssignmentMode(batch).slice(1)}
+                            </span>
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            Students:{" "}
+                            <span className="font-semibold text-foreground">
+                              {getBatchAssignedStudentCount(batch)}
+                            </span>
+                          </p>
+                          {batch.description ? (
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                              {batch.description}
+                            </p>
+                          ) : null}
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-4 text-sm text-muted-foreground w-full md:w-auto">
+                          <div>
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">
+                              Start
+                            </p>
+                            <p>{batch.startDate || "TBA"}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">
+                              Capacity
+                            </p>
+                            <p>{batch.capacity || "Unlimited"}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">
+                              Schedule
+                            </p>
+                            <p>{batch.schedule || "TBA"}</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -360,25 +583,22 @@ const CourseDetails = () => {
                 </p>
               </div>
 
-              {/* Payment Method Selection */}
+              {/* Payment Method */}
               <div className="space-y-4 mb-8">
                 <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block mb-3">
-                  Select Payment Method
+                  Payment Method
                 </label>
-                <div className="grid grid-cols-2 gap-3">
-                  {paymentMethods.map((method) => (
-                    <button
-                      key={method.id}
-                      onClick={() => setSelectedPayment(method.id)}
-                      className={`flex items-center justify-center gap-2 p-3 rounded-md border-2 transition-all ${selectedPayment === method.id
-                        ? "border-primary bg-primary/10 shadow-[0_0_15px_rgba(99,102,241,0.2)]"
-                        : "border-border/50 hover:border-border bg-card/50"
-                        }`}
-                    >
-                      <Icon icon={method.icon} className="text-2xl" />
-                      <span className="text-xs font-bold text-foreground">{method.name}</span>
-                    </button>
-                  ))}
+                <div className="flex items-center justify-between gap-3 p-4 rounded-md border-2 border-primary bg-primary/10">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-md flex items-center justify-center bg-white/80 dark:bg-zinc-900/80">
+                      <Icon icon="logos:esewa" className="text-2xl" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-foreground">eSewa</p>
+                      <p className="text-xs text-muted-foreground">The only available payment method</p>
+                    </div>
+                  </div>
+                  <Icon icon="solar:check-circle-bold-duotone" className="text-primary text-2xl" />
                 </div>
               </div>
 
@@ -457,10 +677,10 @@ const CourseDetails = () => {
                 </div>
 
                 <button
-                  onClick={() => navigate(`/payment-gateway?method=${selectedPayment}&amount=${finalPrice}&courseId=${id}${appliedCoupon ? `&couponCode=${appliedCoupon.code}` : ""}`)}
+                  onClick={() => navigate(`/payment-gateway?method=esewa&amount=${finalPrice}&courseId=${id}${appliedCoupon ? `&couponCode=${appliedCoupon.code}` : ""}`)}
                   className="w-full bg-primary text-primary-foreground py-4 rounded-md font-bold text-lg hover:bg-primary-hover transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3 group"
                 >
-                  Pay with {selectedPayment.toUpperCase()}
+                  Pay with eSewa
                   <Icon icon="solar:arrow-right-bold" className="group-hover:translate-x-1 transition-transform" />
                 </button>
 
@@ -538,22 +758,17 @@ const AccordionItem = ({ title, content, colorClass }) => {
         </div>
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="px-6 pb-6 pt-2">
-              <div className="text-muted-foreground leading-relaxed font-medium">
-                {content}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div
+        className={`overflow-hidden transition-all duration-300 ${
+          isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="px-6 pb-6 pt-2">
+          <div className="text-muted-foreground leading-relaxed font-medium">
+            {content}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

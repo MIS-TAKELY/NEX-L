@@ -16,7 +16,7 @@ const PaymentGateway = () => {
   }, [userData, navigate]);
 
 
-  const method = searchParams.get('method') || 'esewa';
+  const requestedMethod = searchParams.get('method')?.toLowerCase();
   const amount = searchParams.get('amount') || 0;
   const courseId = searchParams.get('courseId'); // Single course (legacy)
   const courseIds = searchParams.get('courseIds')?.split(',') || (courseId ? [courseId] : []); // Multiple courses
@@ -52,30 +52,20 @@ const PaymentGateway = () => {
 
     setLoading(true);
     try {
-      if (method === 'esewa') {
-        const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/payments/esewa/initiate`, {
-          amount,
-          courseIds, // Send array of course IDs
-          courseId: courseIds[0], // Legacy support
-          userId: userData.id || userData._id,
-          couponCode: couponCode || undefined
-        });
+      if (requestedMethod && requestedMethod !== 'esewa') {
+        console.warn(`Unsupported payment method "${requestedMethod}" requested. Falling back to eSewa.`);
+      }
 
-        if (response.data.success) {
-          postToEsewa(response.data.paymentData);
-        }
-      } else if (method === 'khalti') {
-        const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/payments/khalti/initiate`, {
-          amount,
-          courseIds, // Send array of course IDs
-          courseId: courseIds[0], // Legacy support
-          userId: userData.id || userData._id,
-          couponCode: couponCode || undefined
-        });
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/payments/esewa/initiate`, {
+        amount,
+        courseIds, // Send array of course IDs
+        courseId: courseIds[0], // Legacy support
+        userId: userData.id || userData._id,
+        couponCode: couponCode || undefined
+      });
 
-        if (response.data.success && response.data.payment_url) {
-          window.location.href = response.data.payment_url;
-        }
+      if (response.data.success) {
+        postToEsewa(response.data.paymentData);
       }
     } catch (error) {
       console.error('Payment initiation failed', error);
@@ -85,7 +75,6 @@ const PaymentGateway = () => {
     }
   };
 
-  // Config based on method
   const config = {
     esewa: {
       name: 'eSewa',
@@ -97,32 +86,10 @@ const PaymentGateway = () => {
         'Ensure your eSewa account is active and has sufficient balance',
         'Enter OTP (one time password) sent to your registered mobile number'
       ]
-    },
-    khalti: {
-      name: 'Khalti',
-      color: '#5c2d91',
-      logoIcon: 'solar:wallet-2-linear',
-      logoText: 'Khalti',
-      instructions: [
-        'Login using your Khalti ID and Password',
-        'Ensure sufficient balance',
-        'Enter OTP sent to your mobile'
-      ]
-    },
-    connectips: {
-      name: 'ConnectIPS',
-      color: '#dc1212ff',
-      logoIcon: 'solar:card-transfer-linear',
-      logoText: 'ConnectIPS',
-      instructions: [
-        'Select your bank and login with your credentials',
-        'Verify the transaction details',
-        'Enter the OTP sent to your mobile or email'
-      ]
     }
   };
 
-  const currentConfig = config[method] || config['esewa'];
+  const currentConfig = config.esewa;
 
   return (
     <div className="min-h-screen bg-muted flex flex-col justify-center items-center p-4 font-sans">
@@ -134,7 +101,7 @@ const PaymentGateway = () => {
               <Icon icon={currentConfig.logoIcon} className="w-10 h-10" style={{ color: currentConfig.color }} />
               <span className="text-3xl font-bold" style={{ color: currentConfig.color }}>{currentConfig.logoText}</span>
             </div>
-            {method === 'khalti' && <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">by IME</span>}
+            <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">eSewa only</span>
           </div>
 
           <div className="text-center mb-8">

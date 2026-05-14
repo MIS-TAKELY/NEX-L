@@ -4,12 +4,24 @@ import { Icon } from "@iconify/react";
 import { Outlet } from "react-router-dom";
 import ProfileDropdown from "../../components/common/ProfileDropdown";
 import Sidebar from "../../components/common/Sidebar";
+import NotificationBell from "../../components/common/NotificationBell";
+import { useGetInstructorStudentsQuery } from "@/store/slices/enrollmentApi";
+import { useGetInstructorCoursesQuery } from "@/store/slices/courseApi";
 
 const Instructor = () => {
   const dispatch = useDispatch();
   const { theme } = useSelector((state) => state.ui);
   const { userData } = useSelector((state) => state.auth);
   const displayName = userData?.name || "Instructor";
+  const { data: coursesData, isLoading: isCoursesLoading } = useGetInstructorCoursesQuery(userData?.id, {
+    skip: !userData?.id,
+  });
+  const { data: studentsData, isLoading: isStudentsLoading } = useGetInstructorStudentsQuery(userData?.id, {
+    skip: !userData?.id,
+  });
+
+  const totalCourses = coursesData?.length || 0;
+  const totalStudents = studentsData?.students?.length || 0;
 
   const menuItems = [
     {
@@ -21,6 +33,11 @@ const Instructor = () => {
       name: "My Courses",
       icon: "solar:notebook-linear",
       path: "/instructor/courses",
+    },
+    {
+      name: "Batches",
+      icon: "solar:layers-minimalistic-linear",
+      path: "/instructor/batches",
     },
     {
       name: "Add Course",
@@ -52,11 +69,15 @@ const Instructor = () => {
       <div className="space-y-2">
         <div className="flex justify-between items-center">
           <span className="text-sm text-muted-foreground">Total Courses</span>
-          <span className="text-lg font-bold text-primary">0</span>
+          <span className="text-lg font-bold text-primary">
+            {isCoursesLoading ? "..." : totalCourses}
+          </span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-sm text-muted-foreground">Students</span>
-          <span className="text-lg font-bold text-primary">0</span>
+          <span className="text-lg font-bold text-primary">
+            {isStudentsLoading ? "..." : totalStudents}
+          </span>
         </div>
       </div>
     </div>
@@ -82,6 +103,7 @@ const Instructor = () => {
           </div>
 
           <div className="flex items-center gap-4">
+            <NotificationBell key={`instructor-${userData?.id || "anonymous"}`} role="instructor" />
             <button
                 onClick={() => dispatch(toggleTheme())}
                 className="w-10 h-10 bg-secondary/50 rounded-md flex items-center justify-center text-muted-foreground hover:text-primary hover:shadow-lg hover:shadow-primary/10 transition-all border border-border/50 group"
