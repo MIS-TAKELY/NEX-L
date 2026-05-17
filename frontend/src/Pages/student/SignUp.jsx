@@ -2,7 +2,6 @@
 import { Label } from "@/components/ui/label";
 import {
     getSession,
-    loginWithGithub,
     loginWithGoogle,
     mergeRole,
     signUp,
@@ -400,16 +399,6 @@ const SignUp = () => {
             <div className="my-6 h-[1px] w-full bg-border" />
 
             <div className="flex flex-col space-y-3">
-              <button
-                onClick={() => loginWithGithub(role)}
-                className="flex h-11 w-full items-center justify-center space-x-2 rounded-md bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
-                type="button"
-              >
-                <Icon icon="mdi:github" className="h-6 w-6 text-foreground" />
-                <span className="text-sm font-medium text-foreground">
-                  GitHub
-                </span>
-              </button>
               <button
                 onClick={() => loginWithGoogle(role)}
                 className="flex h-11 w-full items-center justify-center space-x-2 rounded-md bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"

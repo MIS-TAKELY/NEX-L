@@ -1,0 +1,194 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="860" viewBox="0 0 1200 860">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#000"/>
+    </marker>
+    <marker id="arrowW" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#fff" stroke="#000" stroke-width="0.5"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="860" fill="#fff"/>
+
+  <!-- Title -->
+  <text x="600" y="35" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#000">NEXL Platform — Deployment Diagram</text>
+  <line x1="80" y1="45" x2="1120" y2="45" stroke="#000" stroke-width="1.5"/>
+
+  <!-- ===== NODE: Client / Browser ===== -->
+  <rect x="60" y="65" width="230" height="230" rx="6" fill="#fff" stroke="#000" stroke-width="2"/>
+  <rect x="60" y="65" width="230" height="30" rx="6" fill="#000"/>
+  <text x="62" y="68" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#fff">«device»</text>
+  <text x="175" y="86" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">Client Browser</text>
+
+  <!-- artifact: React SPA -->
+  <rect x="80" y="108" width="190" height="50" rx="3" fill="#f0f0f0" stroke="#555" stroke-width="1.2"/>
+  <text x="175" y="126" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#444" text-anchor="middle">«artifact»</text>
+  <text x="175" y="142" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#000" text-anchor="middle">React + Vite SPA</text>
+  <text x="175" y="155" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#444" text-anchor="middle">Tailwind CSS / JSX</text>
+
+  <!-- artifact: Stream Video SDK -->
+  <rect x="80" y="170" width="190" height="50" rx="3" fill="#f0f0f0" stroke="#555" stroke-width="1.2"/>
+  <text x="175" y="188" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#444" text-anchor="middle">«artifact»</text>
+  <text x="175" y="204" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#000" text-anchor="middle">Stream Video SDK</text>
+  <text x="175" y="217" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#444" text-anchor="middle">Live View / Chat Client</text>
+
+  <text x="175" y="283" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#777" text-anchor="middle">Desktop / Mobile / Tablet</text>
+
+  <!-- ===== NODE: Vercel (Frontend Hosting) ===== -->
+  <rect x="340" y="65" width="240" height="230" rx="6" fill="#fff" stroke="#000" stroke-width="2"/>
+  <rect x="340" y="65" width="240" height="30" rx="6" fill="#333"/>
+  <text x="342" y="68" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#fff">«execution environment»</text>
+  <text x="460" y="86" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">Vercel Edge Network</text>
+
+  <rect x="360" y="108" width="200" height="50" rx="3" fill="#f0f0f0" stroke="#555" stroke-width="1.2"/>
+  <text x="460" y="126" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#444" text-anchor="middle">«artifact»</text>
+  <text x="460" y="142" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#000" text-anchor="middle">Static Build Output</text>
+  <text x="460" y="155" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#444" text-anchor="middle">vite build / dist/</text>
+
+  <rect x="360" y="170" width="200" height="50" rx="3" fill="#f0f0f0" stroke="#555" stroke-width="1.2"/>
+  <text x="460" y="188" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#444" text-anchor="middle">«config»</text>
+  <text x="460" y="204" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#000" text-anchor="middle">vercel.json</text>
+  <text x="460" y="217" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#444" text-anchor="middle">Routing / Redirects / Env</text>
+
+  <text x="460" y="283" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#777" text-anchor="middle">CDN / HTTPS / Global PoP</text>
+
+  <!-- ===== NODE: App Server (Node/Express) ===== -->
+  <rect x="630" y="65" width="250" height="340" rx="6" fill="#fff" stroke="#000" stroke-width="2.5"/>
+  <rect x="630" y="65" width="250" height="30" rx="6" fill="#000"/>
+  <text x="632" y="68" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#fff">«execution environment»</text>
+  <text x="755" y="86" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">Application Server</text>
+
+  <rect x="648" y="108" width="214" height="45" rx="3" fill="#f0f0f0" stroke="#555" stroke-width="1.2"/>
+  <text x="755" y="124" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#444" text-anchor="middle">«runtime»</text>
+  <text x="755" y="140" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#000" text-anchor="middle">Node.js v18+ (Express)</text>
+
+  <rect x="648" y="165" width="214" height="40" rx="3" fill="#f0f0f0" stroke="#555" stroke-width="1.2"/>
+  <text x="755" y="179" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#444" text-anchor="middle">«artifact»</text>
+  <text x="755" y="194" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#000" text-anchor="middle">REST API (index.js)</text>
+
+  <rect x="648" y="217" width="214" height="40" rx="3" fill="#f0f0f0" stroke="#555" stroke-width="1.2"/>
+  <text x="755" y="231" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#444" text-anchor="middle">«component»</text>
+  <text x="755" y="246" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#000" text-anchor="middle">JWT Auth Middleware</text>
+
+  <rect x="648" y="269" width="214" height="40" rx="3" fill="#f0f0f0" stroke="#555" stroke-width="1.2"/>
+  <text x="755" y="283" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#444" text-anchor="middle">«component»</text>
+  <text x="755" y="298" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#000" text-anchor="middle">Recommendation Engine</text>
+
+  <rect x="648" y="321" width="214" height="40" rx="3" fill="#f0f0f0" stroke="#555" stroke-width="1.2"/>
+  <text x="755" y="335" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#444" text-anchor="middle">«component»</text>
+  <text x="755" y="350" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#000" text-anchor="middle">Multer Upload Handler</text>
+
+  <text x="755" y="395" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#777" text-anchor="middle">Port 5000 / HTTPS / CORS</text>
+
+  <!-- ===== NODE: MongoDB Atlas ===== -->
+  <rect x="60" y="390" width="230" height="160" rx="6" fill="#fff" stroke="#000" stroke-width="2"/>
+  <rect x="60" y="390" width="230" height="30" rx="6" fill="#000"/>
+  <text x="62" y="393" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#fff">«database server»</text>
+  <text x="175" y="411" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">MongoDB Atlas</text>
+
+  <rect x="80" y="432" width="190" height="40" rx="3" fill="#f0f0f0" stroke="#555" stroke-width="1.2"/>
+  <text x="175" y="447" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#444" text-anchor="middle">«collection»</text>
+  <text x="175" y="462" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#000" text-anchor="middle">Users / Courses / Payments</text>
+
+  <rect x="80" y="484" width="190" height="40" rx="3" fill="#f0f0f0" stroke="#555" stroke-width="1.2"/>
+  <text x="175" y="499" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#444" text-anchor="middle">«collection»</text>
+  <text x="175" y="514" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="bold" fill="#000" text-anchor="middle">Enrollments / Quizzes</text>
+
+  <text x="175" y="542" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#777" text-anchor="middle">Cloud / TLS / Mongoose ODM</text>
+
+  <!-- ===== EXTERNAL SERVICES CLUSTER ===== -->
+  <rect x="340" y="330" width="800" height="490" rx="8" fill="#fafafa" stroke="#aaa" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="355" y="352" font-family="Helvetica, Arial, sans-serif" font-size="11" font-style="italic" fill="#777">«external services cluster»</text>
+
+  <!-- Cloudinary Node -->
+  <rect x="360" y="365" width="210" height="130" rx="6" fill="#fff" stroke="#000" stroke-width="1.8"/>
+  <rect x="360" y="365" width="210" height="28" rx="6" fill="#444"/>
+  <text x="362" y="368" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#fff">«external system»</text>
+  <text x="465" y="384" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">Cloudinary CDN</text>
+  <rect x="375" y="403" width="180" height="38" rx="3" fill="#f0f0f0" stroke="#555" stroke-width="1"/>
+  <text x="465" y="417" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#444" text-anchor="middle">«service»</text>
+  <text x="465" y="430" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="#000" text-anchor="middle">Media Storage &amp; Delivery</text>
+  <text x="465" y="488" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#777" text-anchor="middle">Image / Video Transforms / CDN</text>
+
+  <!-- eSewa Node -->
+  <rect x="610" y="365" width="210" height="130" rx="6" fill="#fff" stroke="#000" stroke-width="1.8"/>
+  <rect x="610" y="365" width="210" height="28" rx="6" fill="#444"/>
+  <text x="612" y="368" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#fff">«external system»</text>
+  <text x="715" y="384" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">eSewa Payment</text>
+  <rect x="625" y="403" width="180" height="38" rx="3" fill="#f0f0f0" stroke="#555" stroke-width="1"/>
+  <text x="715" y="417" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#444" text-anchor="middle">«service»</text>
+  <text x="715" y="430" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="#000" text-anchor="middle">NPR Payment Gateway</text>
+  <text x="715" y="488" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#777" text-anchor="middle">HMAC-SHA256 / Verify Callback</text>
+
+  <!-- HuggingFace Node -->
+  <rect x="860" y="365" width="250" height="130" rx="6" fill="#fff" stroke="#000" stroke-width="1.8"/>
+  <rect x="860" y="365" width="250" height="28" rx="6" fill="#444"/>
+  <text x="862" y="368" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#fff">«external system»</text>
+  <text x="985" y="384" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">Hugging Face API</text>
+  <rect x="875" y="403" width="220" height="38" rx="3" fill="#f0f0f0" stroke="#555" stroke-width="1"/>
+  <text x="985" y="417" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#444" text-anchor="middle">«service»</text>
+  <text x="985" y="430" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="#000" text-anchor="middle">Inference API (NLP / LLM)</text>
+  <text x="985" y="488" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#777" text-anchor="middle">Metadata Gen / Embeddings / QA</text>
+
+  <!-- Stream Node -->
+  <rect x="360" y="540" width="750" height="130" rx="6" fill="#fff" stroke="#000" stroke-width="1.8"/>
+  <rect x="360" y="540" width="750" height="28" rx="6" fill="#222"/>
+  <text x="362" y="543" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#fff">«external system»</text>
+  <text x="735" y="559" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">Stream SDK (Video + Chat)</text>
+  <rect x="375" y="580" width="340" height="40" rx="3" fill="#f0f0f0" stroke="#555" stroke-width="1"/>
+  <text x="545" y="594" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#444" text-anchor="middle">«service»</text>
+  <text x="545" y="609" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="#000" text-anchor="middle">Live Video Infrastructure</text>
+  <rect x="745" y="580" width="340" height="40" rx="3" fill="#f0f0f0" stroke="#555" stroke-width="1"/>
+  <text x="915" y="594" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#444" text-anchor="middle">«service»</text>
+  <text x="915" y="609" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="#000" text-anchor="middle">Real-Time Chat Messaging</text>
+  <text x="735" y="663" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#777" text-anchor="middle">WebRTC / WSS / Token Auth</text>
+
+  <!-- ===== COMMUNICATION LINKS ===== -->
+  <!-- Client Browser → Vercel -->
+  <line x1="290" y1="180" x2="340" y2="180" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="315" y="172" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#000" text-anchor="middle">HTTPS</text>
+
+  <!-- Vercel SPA → App Server (API Calls) -->
+  <line x1="580" y1="180" x2="630" y2="180" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="605" y="172" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#000" text-anchor="middle">REST/HTTPS</text>
+
+  <!-- App Server → MongoDB Atlas -->
+  <line x1="700" y1="405" x2="290" y2="460" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="490" y="420" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#000" text-anchor="middle">MongoDB URI / TLS</text>
+
+  <!-- App Server → Cloudinary -->
+  <line x1="755" y1="405" x2="465" y2="403" stroke="#000" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+  <text x="615" y="395" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#000" text-anchor="middle">HTTPS SDK</text>
+
+  <!-- App Server → eSewa -->
+  <line x1="755" y1="405" x2="715" y2="365" stroke="#000" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+  <text x="740" y="380" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#000">HTTPS</text>
+
+  <!-- App Server → Hugging Face -->
+  <line x1="880" y1="250" x2="985" y2="365" stroke="#000" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+  <text x="940" y="300" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#000">Inference API</text>
+
+  <!-- App Server → Stream -->
+  <line x1="755" y1="405" x2="735" y2="540" stroke="#000" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+  <text x="760" y="470" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#000">Token / WSS</text>
+
+  <!-- Client → Stream (direct WSS) -->
+  <line x1="175" y1="295" x2="545" y2="580" stroke="#000" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#arrow)"/>
+  <text x="330" y="440" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#555">WebRTC / WSS</text>
+
+  <!-- ===== LEGEND ===== -->
+  <rect x="60" y="780" width="560" height="60" rx="4" fill="#fff" stroke="#ccc" stroke-width="1"/>
+  <text x="75" y="798" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="#000">Legend</text>
+  <rect x="75" y="806" width="18" height="12" rx="2" fill="#000"/>
+  <text x="100" y="816" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#000">Primary Node</text>
+  <rect x="185" y="806" width="18" height="12" rx="2" fill="#444"/>
+  <text x="210" y="816" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#000">External System</text>
+  <rect x="310" y="806" width="18" height="12" rx="2" fill="#f0f0f0" stroke="#555" stroke-width="1"/>
+  <text x="335" y="816" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#000">Artifact / Component</text>
+  <line x1="75" y1="832" x2="110" y2="832" stroke="#000" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="118" y="836" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#000">HTTPS Communication</text>
+  <line x1="250" y1="832" x2="285" y2="832" stroke="#000" stroke-width="1.2" stroke-dasharray="4,2" marker-end="url(#arrow)"/>
+  <text x="293" y="836" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#000">SDK / External Call</text>
+  <line x1="420" y1="832" x2="455" y2="832" stroke="#000" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#arrow)"/>
+  <text x="463" y="836" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#555">WebRTC / WebSocket</text>
+</svg>

@@ -1,5 +1,5 @@
 import { Label } from "@/components/ui/label";
-import { getSession, loginWithGithub, loginWithGoogle, signIn, signOut } from "@/lib/auth.client";
+import { getSession, loginWithGoogle, signIn, signOut } from "@/lib/auth.client";
 import { cn } from "@/lib/utils";
 
 import { setCredentials } from "@/store/slices/authSlice";
@@ -257,14 +257,7 @@ const SignIn = () => {
             </div>
           </form>
 
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => loginWithGithub(role)}
-              className="flex h-11 items-center justify-center rounded-md bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
-              type="button"
-            >
-              <Icon icon="mdi:github" className="h-6 w-6 text-foreground" />
-            </button>
+          <div className="grid grid-cols-1 gap-3">
             <button
               onClick={() => loginWithGoogle(role)}
               className="flex h-11 items-center justify-center rounded-md bg-card border border-border hover:bg-muted transition-all active:scale-[0.98]"
