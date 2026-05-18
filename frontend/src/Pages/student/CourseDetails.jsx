@@ -18,6 +18,10 @@ import {
   isStudentAssignedToBatch,
 } from "@/lib/batches";
 
+// Opens PDFs inline via Google Docs Viewer (bypasses Cloudinary Content-Disposition: attachment)
+const getPdfViewerUrl = (url) =>
+  `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+
 const CourseDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -232,32 +236,48 @@ const CourseDetails = () => {
 
             {/* Syllabus Document Section (if available) */}
             {course.syllabus && (
-              <section className="glass premium-card rounded-md p-8 border border-primary/20 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-primary/5 group-hover:bg-primary/10 transition-colors" />
+              <section className="glass premium-card rounded-md p-8 border border-primary/20 relative overflow-hidden">
+                <div className="absolute inset-0 bg-primary/5" />
                 <div className="relative z-10">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-md bg-primary/10 flex items-center justify-center">
                         <FileText className="text-primary w-6 h-6" />
                       </div>
-                      <h2 className="text-2xl font-bold text-foreground">
-                        Course Syllabus
-                      </h2>
+                      <div>
+                        <h2 className="text-2xl font-bold text-foreground">Course Syllabus</h2>
+                        <p className="text-sm text-muted-foreground">Detailed curriculum overview and learning path.</p>
+                      </div>
                     </div>
-                    <a
-                      href={course.syllabus}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-3 rounded-md font-bold transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 group/btn whitespace-nowrap"
-                    >
-                      Download PDF{" "}
-                      <Icon icon="solar:download-minimalistic-bold" className="group-hover/btn:translate-y-0.5 transition-transform" />
-                    </a>
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                      <a
+                        href={getPdfViewerUrl(course.syllabus)}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="border border-primary/30 hover:border-primary text-primary px-5 py-2.5 rounded-md font-bold transition-all flex items-center justify-center gap-2 text-sm whitespace-nowrap"
+                      >
+                        <Icon icon="solar:eye-bold" />
+                        Open PDF
+                      </a>
+                      <a
+                        href={course.syllabus}
+                        download
+                        className="bg-primary hover:bg-primary-hover text-primary-foreground px-5 py-2.5 rounded-md font-bold transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 text-sm whitespace-nowrap"
+                      >
+                        <Icon icon="solar:download-minimalistic-bold" />
+                        Download
+                      </a>
+                    </div>
                   </div>
-                  <p className="text-muted-foreground md:ml-15">
-                    Detailed curriculum overview and learning path available for
-                    download.
-                  </p>
+                  {/* Inline PDF preview via Google Docs Viewer */}
+                  <div className="rounded-md overflow-hidden border border-border/50 bg-muted/10" style={{ height: '520px' }}>
+                    <iframe
+                      src={getPdfViewerUrl(course.syllabus)}
+                      className="w-full h-full"
+                      title="Course Syllabus"
+                      allow="fullscreen"
+                    />
+                  </div>
                 </div>
               </section>
             )}

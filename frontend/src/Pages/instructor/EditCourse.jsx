@@ -54,6 +54,9 @@ const getYoutubeVideoId = (url) => {
   return (match && match[2].length === 11) ? match[2] : null;
 };
 
+const getPdfViewerUrl = (url) =>
+  `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+
 const EditCourse = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -1150,7 +1153,7 @@ const EditCourse = () => {
                               Syllabus Uploaded
                             </p>
                             <a
-                              href={formData.syllabus}
+                              href={getPdfViewerUrl(formData.syllabus)}
                               target="_blank"
                               rel="noreferrer"
                               className="text-xs text-foreground hover:text-accent hover:underline mt-2 font-medium"

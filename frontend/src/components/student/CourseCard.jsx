@@ -1,11 +1,40 @@
 import { Icon } from '@iconify/react';
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { useRateCourseMutation } from '../../store/slices/courseApi';
+import { useToast } from '../../context/ToastContext';
 
 const CourseCard = ({ enrollment }) => {
   const navigate = useNavigate();
   const { course, progress } = enrollment;
+  const [rateCourse, { isLoading }] = useRateCourseMutation();
+  const { showToast } = useToast();
+  const [rating, setRating] = useState(0);
+  const [review, setReview] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleRate = async (e) => {
+    e.stopPropagation();
+    if (rating === 0) {
+      showToast("Please select a rating", "error");
+      return;
+    }
+    try {
+      await rateCourse({ courseId: course._id, rating, review }).unwrap();
+      showToast("Rating submitted successfully!", "success");
+      setIsOpen(false);
+    } catch (err) {
+      showToast(err.data?.message || "Failed to submit rating", "error");
+    }
+  };
 
   return (
     <motion.div
@@ -14,7 +43,7 @@ const CourseCard = ({ enrollment }) => {
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
       whileHover={{ y: -5 }}
-      onClick={() => navigate(`/student/player/${course._id}`)}
+      onClick={() => !isOpen && navigate(`/student/player/${course._id}`)}
       className="group cursor-pointer glass-card premium-card rounded-md border border-white/10 p-4 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20 flex flex-col h-full relative overflow-hidden w-full max-w-[320px] mx-auto bg-card"
     >
       {/* Background glow effect on hover */}
@@ -84,12 +113,65 @@ const CourseCard = ({ enrollment }) => {
           </div>
         </div>
 
-        <button
-          className="w-10 h-10 rounded-md bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-all duration-300 group/btn shadow-lg shadow-primary/30 active:scale-95"
-          title="Continue Learning"
-        >
-          <Icon icon="solar:play-bold" className="w-5 h-5 group-hover/btn:scale-110 transition-transform ml-0.5" />
-        </button>
+        <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+          <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
+              <button
+                className="w-10 h-10 rounded-md bg-amber-500/10 text-amber-500 flex items-center justify-center hover:bg-amber-500/20 transition-all duration-300 shadow-sm shadow-amber-500/10 active:scale-95"
+                title="Rate Course"
+              >
+                <Icon icon="solar:star-bold" className="w-5 h-5" />
+              </button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]" onClick={(e) => e.stopPropagation()}>
+              <DialogHeader>
+                <DialogTitle>Rate Course</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="flex items-center justify-center gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setRating(star)}
+                      className="focus:outline-none transition-transform hover:scale-110"
+                    >
+                      <Icon
+                        icon={star <= rating ? "solar:star-bold" : "solar:star-outline"}
+                        className={`w-8 h-8 ${star <= rating ? "text-amber-400" : "text-muted-foreground"}`}
+                      />
+                    </button>
+                  ))}
+                </div>
+                <div className="grid gap-2">
+                  <label htmlFor="review" className="text-sm font-medium">Review (Optional)</label>
+                  <textarea
+                    id="review"
+                    value={review}
+                    onChange={(e) => setReview(e.target.value)}
+                    className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    placeholder="What did you think about this course?"
+                  />
+                </div>
+                <button
+                  onClick={handleRate}
+                  disabled={isLoading}
+                  className="w-full bg-primary text-primary-foreground py-2 rounded-md font-bold text-sm hover:bg-primary-hover transition-all"
+                >
+                  {isLoading ? "Submitting..." : "Submit Rating"}
+                </button>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <button
+            className="w-10 h-10 rounded-md bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-all duration-300 group/btn shadow-lg shadow-primary/30 active:scale-95"
+            title="Continue Learning"
+            onClick={() => navigate(`/student/player/${course._id}`)}
+          >
+            <Icon icon="solar:play-bold" className="w-5 h-5 group-hover/btn:scale-110 transition-transform ml-0.5" />
+          </button>
+        </div>
       </div>
     </motion.div>
   );

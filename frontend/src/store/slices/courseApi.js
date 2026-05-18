@@ -105,6 +105,16 @@ export const courseApi = apiSlice.injectEndpoints({
                 body: payload,
             }),
         }),
+        rateCourse: builder.mutation({
+            query: (payload) => ({
+                url: `/courses/${payload.courseId}/rate`,
+                method: 'POST',
+                body: { rating: payload.rating, review: payload.review },
+            }),
+            invalidatesTags: (result, error, { courseId }) => [
+                { type: 'Course', id: courseId },
+            ],
+        }),
     }),
 });
 
@@ -123,4 +133,5 @@ export const {
     useMarkContentCompletedMutation,
     useSummarizeContentMutation,
     useAskAIMutation,
+    useRateCourseMutation,
 } = courseApi;
