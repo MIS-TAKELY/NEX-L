@@ -43,7 +43,6 @@ const SectionList = ({ sections, onSelectContent, activeResourceId }) => {
                         <div className="mt-2 ml-4 space-y-2 border-l-2 border-gray-50 dark:border-border/50 pl-4">
                             {section.contents?.map((lesson) => (
                                 <div key={lesson._id} className="space-y-1">
-                                    {/* Lesson Row */}
                                     <button
                                         onClick={() => {
                                             if (lesson.resources?.length > 1 || lesson.type === 'mixed') {
@@ -52,6 +51,8 @@ const SectionList = ({ sections, onSelectContent, activeResourceId }) => {
                                                 onSelectContent(lesson.resources[0], lesson);
                                             } else if (lesson.url) {
                                                 onSelectContent({ url: lesson.url, type: lesson.type, name: lesson.title }, lesson);
+                                            } else {
+                                                onSelectContent({ type: lesson.type, name: lesson.title, _id: lesson._id }, lesson);
                                             }
                                         }}
                                         className={`w-full flex items-center justify-between gap-3 p-2 rounded-md text-sm transition-all ${(activeResourceId === lesson._id || lesson.resources?.some(r => r._id === activeResourceId || r.url === activeResourceId))

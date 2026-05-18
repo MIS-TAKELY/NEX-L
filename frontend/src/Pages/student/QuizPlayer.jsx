@@ -35,6 +35,14 @@ const QuizPlayer = ({ quizData, courseId, contentId }) => {
         }));
     };
 
+    const handleTextChange = (qIndex, text) => {
+        if (submitted) return;
+        setAnswers(prev => ({
+            ...prev,
+            [qIndex]: text
+        }));
+    };
+
     const handleSubmit = async () => {
         // Validate all questions answered
         if (Object.keys(answers).length < quizData.questions.length) {
@@ -116,34 +124,60 @@ const QuizPlayer = ({ quizData, courseId, contentId }) => {
                         <div key={idx} className="p-4 rounded-md border bg-muted">
                             <p className="font-bold text-foreground mb-3">{idx + 1}. {q.question}</p>
                             <div className="space-y-2">
-                                {q.options.map((opt, optIdx) => {
-                                    const isCorrect = q.correctAnswer === opt;
-                                    const isSelected = answers[idx] === opt;
-                                    
-                                    let ringColor = "border-border";
-                                    let bg = "bg-background";
-                                    let textColor = "text-muted-foreground";
-                                    let icon = null;
-
-                                    if (isCorrect) {
-                                        ringColor = "border-green-500";
-                                        bg = "bg-green-50";
-                                        textColor = "text-green-700 font-bold";
-                                        icon = <Icon icon="solar:check-circle-bold" className="text-green-500" />;
-                                    } else if (isSelected && !isCorrect) {
-                                        ringColor = "border-red-500";
-                                        bg = "bg-red-50";
-                                        textColor = "text-red-700 font-bold";
-                                        icon = <Icon icon="solar:close-circle-bold" className="text-red-500" />;
-                                    }
-
-                                    return (
-                                        <div key={optIdx} className={`px-4 py-3 rounded-md border flex items-center justify-between ${ringColor} ${bg}`}>
-                                            <span className={textColor}>{opt}</span>
-                                            {icon}
+                                {q.type === 'shortanswer' ? (
+                                    <div className="space-y-3">
+                                        <div className={`px-4 py-3 rounded-md border flex items-center justify-between ${
+                                            answers[idx]?.trim().toLowerCase() === q.correctAnswer?.trim().toLowerCase()
+                                                ? 'border-green-500 bg-green-50 text-green-700 font-bold'
+                                                : 'border-red-500 bg-red-50 text-red-700 font-bold'
+                                        }`}>
+                                            <div>
+                                                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-wider leading-none mb-1">Your Answer</p>
+                                                <span>{answers[idx] || <i>No answer provided</i>}</span>
+                                            </div>
+                                            <Icon 
+                                                icon={answers[idx]?.trim().toLowerCase() === q.correctAnswer?.trim().toLowerCase() ? "solar:check-circle-bold" : "solar:close-circle-bold"} 
+                                                className={answers[idx]?.trim().toLowerCase() === q.correctAnswer?.trim().toLowerCase() ? "text-green-500" : "text-red-500"} 
+                                                size={20}
+                                            />
                                         </div>
-                                    )
-                                })}
+                                        {answers[idx]?.trim().toLowerCase() !== q.correctAnswer?.trim().toLowerCase() && (
+                                            <div className="px-4 py-3 rounded-md border border-green-500 bg-green-50 text-green-700 font-bold">
+                                                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-wider leading-none mb-1">Correct Answer</p>
+                                                <span>{q.correctAnswer}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    q.options?.map((opt, optIdx) => {
+                                        const isCorrect = q.correctAnswer === opt;
+                                        const isSelected = answers[idx] === opt;
+                                        
+                                        let ringColor = "border-border";
+                                        let bg = "bg-background";
+                                        let textColor = "text-muted-foreground";
+                                        let icon = null;
+ 
+                                        if (isCorrect) {
+                                            ringColor = "border-green-500";
+                                            bg = "bg-green-50";
+                                            textColor = "text-green-700 font-bold";
+                                            icon = <Icon icon="solar:check-circle-bold" className="text-green-500" />;
+                                        } else if (isSelected && !isCorrect) {
+                                            ringColor = "border-red-500";
+                                            bg = "bg-red-50";
+                                            textColor = "text-red-700 font-bold";
+                                            icon = <Icon icon="solar:close-circle-bold" className="text-red-500" />;
+                                        }
+ 
+                                        return (
+                                            <div key={optIdx} className={`px-4 py-3 rounded-md border flex items-center justify-between ${ringColor} ${bg}`}>
+                                                <span className={textColor}>{opt}</span>
+                                                {icon}
+                                            </div>
+                                        )
+                                    })
+                                )}
                             </div>
                         </div>
                     ))}
@@ -208,29 +242,43 @@ const QuizPlayer = ({ quizData, courseId, contentId }) => {
                             <span className="text-orange-500">{idx + 1}.</span>
                             <span>{q.question}</span>
                         </h3>
-                        <div className="space-y-3">
-                            {q.options.map((opt, optIdx) => {
-                                const isSelected = answers[idx] === opt;
-                                return (
-                                    <button
-                                        key={optIdx}
-                                        onClick={() => handleOptionSelect(idx, optIdx)}
-                                        className={`w-full text-left px-6 py-4 rounded-md border-2 transition-all flex items-center gap-4 ${
-                                            isSelected 
-                                                ? 'border-orange-500 bg-orange-50 text-orange-900' 
-                                                : 'border-border bg-background hover:border-orange-200 hover:bg-orange-50/30 text-foreground'
-                                        }`}
-                                    >
-                                        <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0 ${
-                                            isSelected ? 'border-orange-500' : 'border-border'
-                                        }`}>
-                                            {isSelected && <div className="w-3 h-3 rounded-md bg-orange-500" />}
-                                        </div>
-                                        <span className="font-medium text-lg">{opt}</span>
-                                    </button>
-                                );
-                            })}
-                        </div>
+                        {q.type === 'shortanswer' ? (
+                            <div className="space-y-2">
+                                <input
+                                    type="text"
+                                    disabled={submitted}
+                                    value={answers[idx] || ""}
+                                    onChange={(e) => handleTextChange(idx, e.target.value)}
+                                    placeholder="Type your answer here..."
+                                    className="w-full p-4 rounded-md border-2 border-border bg-muted outline-none focus:bg-background focus:border-orange-500 focus:ring-4 focus:ring-orange-50 transition-all text-foreground font-medium text-lg disabled:opacity-75 disabled:cursor-not-allowed"
+                                />
+                            </div>
+                        ) : (
+                            <div className="space-y-3">
+                                {q.options?.map((opt, optIdx) => {
+                                    const isSelected = answers[idx] === opt;
+                                    return (
+                                        <button
+                                            key={optIdx}
+                                            disabled={submitted}
+                                            onClick={() => handleOptionSelect(idx, optIdx)}
+                                            className={`w-full text-left px-6 py-4 rounded-md border-2 transition-all flex items-center gap-4 ${
+                                                isSelected 
+                                                    ? 'border-orange-500 bg-orange-50 text-orange-900' 
+                                                    : 'border-border bg-background hover:border-orange-200 hover:bg-orange-50/30 text-foreground'
+                                            } disabled:cursor-not-allowed`}
+                                        >
+                                            <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0 ${
+                                                isSelected ? 'border-orange-500' : 'border-border'
+                                            }`}>
+                                                {isSelected && <div className="w-3 h-3 rounded-md bg-orange-500" />}
+                                            </div>
+                                            <span className="font-medium text-lg">{opt}</span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>

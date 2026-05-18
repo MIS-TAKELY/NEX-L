@@ -1137,7 +1137,7 @@ const AddCourse = () => {
                                   </button>
                                   <div className="flex items-center gap-3 flex-1">
                                     <span className="text-[9px] font-bold text-accent bg-accent/10 px-2.5 py-1 rounded-md border border-accent/20 uppercase tracking-widest">
-                                      Lesson {cIdx + 1}
+                                      {content.type === "quiz" ? "Quiz" : content.type === "assignment" ? "Assignment" : "Lesson"} {cIdx + 1}
                                     </span>
                                     <input
                                       type="text"
@@ -1151,7 +1151,7 @@ const AddCourse = () => {
                                         )
                                       }
                                       className="font-bold bg-transparent outline-none flex-1 text-foreground transition-all border-b border-transparent focus:border-primary placeholder:text-muted-foreground/50 px-1"
-                                      placeholder="Lesson Title"
+                                      placeholder={content.type === "quiz" ? "Quiz Title" : content.type === "assignment" ? "Assignment Title" : "Lesson Title"}
                                     />
                                   </div>
                                   {content.resources?.length > 0 && (
