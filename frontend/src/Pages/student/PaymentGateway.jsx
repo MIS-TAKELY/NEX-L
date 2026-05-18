@@ -1,10 +1,12 @@
 import { Icon } from '@iconify/react';
+import { useToast } from '@/context/ToastContext';
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 
 const PaymentGateway = () => {
+  const { showToast } = useToast();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { userData } = useSelector((state) => state.auth);
@@ -46,7 +48,7 @@ const PaymentGateway = () => {
   const handlePayment = async (e) => {
     e.preventDefault();
     if (!userData || courseIds.length === 0) {
-      alert('Missing user or course information');
+      showToast('Missing user or course information', 'error');
       return;
     }
 
@@ -69,7 +71,7 @@ const PaymentGateway = () => {
       }
     } catch (error) {
       console.error('Payment initiation failed', error);
-      alert('Failed to initiate payment. Please try again.');
+      showToast('Failed to initiate payment. Please try again.', 'error');
     } finally {
       setLoading(false);
     }

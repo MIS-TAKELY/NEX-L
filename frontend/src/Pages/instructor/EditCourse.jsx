@@ -47,6 +47,13 @@ const steps = [
   { id: 4, title: "Coupons", desc: "Discount Codes" },
 ];
 
+const getYoutubeVideoId = (url) => {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+};
+
 const EditCourse = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -86,6 +93,8 @@ const EditCourse = () => {
   const [showPublishOverlay, setShowPublishOverlay] = useState(false);
   const [isAttemptingPublish, setIsAttemptingPublish] = useState(false);
   const [tagsInput, setTagsInput] = useState("");
+  const [activeYoutubeInput, setActiveYoutubeInput] = useState(null); // { sectionIndex, contentIndex }
+  const [youtubeUrl, setYoutubeUrl] = useState("");
   const [previews, setPreviews] = useState({
     thumbnail: null,
   });
@@ -347,6 +356,48 @@ const EditCourse = () => {
         });
       }
     });
+  };
+
+  const handleAddYoutubeResource = (sectionIndex, contentIndex) => {
+    if (!youtubeUrl.trim()) {
+      showToast("Please enter a YouTube URL", "error");
+      return;
+    }
+
+    const videoId = getYoutubeVideoId(youtubeUrl);
+    if (!videoId) {
+      showToast("Invalid YouTube URL. Please provide a valid YouTube link.", "error");
+      return;
+    }
+
+    const newResource = {
+      id: `yt-${Date.now()}-${Math.random()}`,
+      name: "YouTube Lecture Video",
+      url: youtubeUrl.trim(),
+      type: "video",
+      size: 0,
+      duration: 0,
+      isUploading: false,
+    };
+
+    const updatedSections = formData.sections.map((sec, sIdx) => {
+      if (sIdx !== sectionIndex) return sec;
+      return {
+        ...sec,
+        contents: sec.contents.map((cont, cIdx) => {
+          if (cIdx !== contentIndex) return cont;
+          return {
+            ...cont,
+            resources: [...(cont.resources || []), newResource],
+          };
+        }),
+      };
+    });
+
+    setFormData((prev) => ({ ...prev, sections: updatedSections }));
+    setYoutubeUrl("");
+    setActiveYoutubeInput(null);
+    showToast("YouTube lecture added!", "success");
   };
 
   const removeResource = (sectionIndex, contentIndex, resourceId) => {
@@ -1360,13 +1411,21 @@ const EditCourse = () => {
                                             <div className="relative flex-shrink-0">
                                               {resource.type === "video" ? (
                                                 <div className="w-14 h-14 bg-muted rounded-md overflow-hidden flex items-center justify-center relative shadow-sm border border-border/50">
-                                                  <video
-                                                    src={resource.url}
-                                                    className="w-full h-full object-cover"
-                                                    muted
-                                                    playsInline
-                                                    preload="metadata"
-                                                  />
+                                                  {getYoutubeVideoId(resource.url) ? (
+                                                    <img
+                                                      src={`https://img.youtube.com/vi/${getYoutubeVideoId(resource.url)}/mqdefault.jpg`}
+                                                      alt="YouTube Preview"
+                                                      className="w-full h-full object-cover"
+                                                    />
+                                                  ) : (
+                                                    <video
+                                                      src={resource.url}
+                                                      className="w-full h-full object-cover"
+                                                      muted
+                                                      playsInline
+                                                      preload="metadata"
+                                                    />
+                                                  )}
                                                   <Play
                                                     size={14}
                                                     className="text-foreground absolute z-10 opacity-70 mix-blend-difference"
@@ -1477,40 +1536,80 @@ const EditCourse = () => {
                                         ))}
 
                                         {/* Add Resource Area */}
-                                        <div className="relative mt-2">
-                                          <input
-                                            type="file"
-                                            multiple
-                                            onChange={(e) => {
-                                              if (e.target.files.length > 0) {
-                                                addResource(
-                                                  sIdx,
-                                                  cIdx,
-                                                  e.target.files,
-                                                );
-                                              }
-                                            }}
-                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                            accept="video/*,image/*,.pdf,.doc,.docx,.txt"
-                                          />
-                                          <div className="border border-dashed border-border/80 rounded-md p-4 text-center hover:bg-primary/10/30 hover:border-primary/30 transition-all">
-                                            <div className="flex items-center justify-center gap-3">
-                                              <div className="w-8 h-8 bg-muted/30 rounded-md flex items-center justify-center">
-                                                <Upload
-                                                  size={14}
-                                                  className="text-muted-foreground/80"
-                                                />
-                                              </div>
-                                              <div className="text-left">
-                                                <p className="text-xs font-bold text-muted-foreground">
-                                                  Add lesson materials
-                                                </p>
-                                                <p className="text-[10px] text-muted-foreground/80 font-medium">
-                                                  Videos, PDFs or Images
-                                                </p>
+                                        <div className="mt-4 p-4 border border-border/50 rounded-md bg-secondary/10 space-y-4 shadow-sm text-left">
+                                          <div className="flex items-center justify-between border-b border-border/20 pb-2">
+                                            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Add Learning Resource</span>
+                                          </div>
+                                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            {/* Upload Local File Option */}
+                                            <div className="relative group cursor-pointer">
+                                              <input
+                                                type="file"
+                                                multiple
+                                                onChange={(e) => {
+                                                  if (e.target.files.length > 0) {
+                                                    addResource(
+                                                      sIdx,
+                                                      cIdx,
+                                                      e.target.files,
+                                                    );
+                                                  }
+                                                }}
+                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                                accept="video/*,image/*,.pdf,.doc,.docx,.txt"
+                                              />
+                                              <div className="border border-dashed border-border/50 rounded-md p-4 text-center group-hover:bg-muted/30 group-hover:border-primary/30 transition-all duration-300 h-full flex flex-col items-center justify-center">
+                                                <Upload size={18} className="text-muted-foreground group-hover:text-primary mb-2 transition-colors" />
+                                                <span className="text-xs font-bold text-muted-foreground group-hover:text-foreground transition-colors block">Upload Local File</span>
+                                                <span className="text-[9px] text-muted-foreground/60 font-medium block mt-0.5">Videos, PDFs, Images</span>
                                               </div>
                                             </div>
+
+                                            {/* YouTube Link Option */}
+                                            <div 
+                                              onClick={() => {
+                                                setActiveYoutubeInput({ sectionIndex: sIdx, contentIndex: cIdx });
+                                                setYoutubeUrl("");
+                                              }}
+                                              className="border border-dashed border-border/50 rounded-md p-4 text-center hover:bg-muted/30 hover:border-primary/30 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group"
+                                            >
+                                              <Video size={18} className="text-muted-foreground group-hover:text-red-500 mb-2 transition-colors animate-pulse" />
+                                              <span className="text-xs font-bold text-muted-foreground group-hover:text-foreground transition-colors block">Add YouTube Link</span>
+                                              <span className="text-[9px] text-muted-foreground/60 font-medium block mt-0.5">Embed lectures from YouTube</span>
+                                            </div>
                                           </div>
+
+                                          {/* Inline YouTube Input Field */}
+                                          {activeYoutubeInput?.sectionIndex === sIdx && activeYoutubeInput?.contentIndex === cIdx && (
+                                            <div className="mt-3 p-3 bg-card border border-border/60 rounded-md shadow-sm space-y-3 animate-in fade-in duration-300">
+                                              <div className="flex justify-between items-center">
+                                                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Paste YouTube Link</label>
+                                                <button 
+                                                  type="button" 
+                                                  onClick={() => setActiveYoutubeInput(null)}
+                                                  className="text-muted-foreground hover:text-foreground transition-colors text-xs font-bold"
+                                                >
+                                                  Cancel
+                                                </button>
+                                              </div>
+                                              <div className="flex gap-2">
+                                                <input
+                                                  type="text"
+                                                  value={youtubeUrl}
+                                                  onChange={(e) => setYoutubeUrl(e.target.value)}
+                                                  placeholder="https://www.youtube.com/watch?v=..."
+                                                  className="flex-1 text-xs px-3 py-2 rounded-md border border-border bg-muted/30 focus:outline-none focus:ring-1 focus:ring-primary text-foreground"
+                                                />
+                                                <button
+                                                  type="button"
+                                                  onClick={() => handleAddYoutubeResource(sIdx, cIdx)}
+                                                  className="px-4 py-2 bg-primary hover:bg-primary/95 text-primary-foreground text-xs font-bold rounded-md transition-colors"
+                                                >
+                                                  Add
+                                                </button>
+                                              </div>
+                                            </div>
+                                          )}
                                         </div>
                                       </div>
                                     </div>

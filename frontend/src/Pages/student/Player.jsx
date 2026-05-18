@@ -16,6 +16,12 @@ import { useToast } from '../../context/ToastContext';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { motion, AnimatePresence } from 'motion/react';
+const getYoutubeVideoId = (url) => {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+};
 
 const Player = () => {
   const formatDisplayName = (name, backupTitle) => {
@@ -437,20 +443,33 @@ const Player = () => {
     const url = activeResource.url || activeLesson?.url;
 
     switch (type) {
-      case 'video':
+      case 'video': {
+        const ytVideoId = getYoutubeVideoId(url);
         return renderTabbedLayout(
           <div className="aspect-video w-full bg-black rounded-md overflow-hidden shadow-2xl border border-white/5 group relative transition-all duration-500 hover:shadow-primary/5">
-            <video
-              key={url}
-              controls
-              className="w-full h-full"
-              src={url}
-              poster={course?.thumbnail}
-            >
-              Your browser does not support the video tag.
-            </video>
+            {ytVideoId ? (
+              <iframe
+                key={url}
+                src={`https://www.youtube.com/embed/${ytVideoId}?autoplay=0&rel=0`}
+                className="w-full h-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                title="YouTube Video Player"
+              />
+            ) : (
+              <video
+                key={url}
+                controls
+                className="w-full h-full"
+                src={url}
+                poster={course?.thumbnail}
+              >
+                Your browser does not support the video tag.
+              </video>
+            )}
           </div>
         );
+      }
       case 'image':
         return renderTabbedLayout(
           <div className="w-full bg-card/50 rounded-md overflow-hidden shadow-2xl border border-border group relative transition-all duration-500 hover:shadow-primary/5 flex items-center justify-center p-4">

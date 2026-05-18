@@ -1,4 +1,5 @@
 import { updateUser } from '@/store/slices/authSlice';
+import { useToast } from '@/context/ToastContext';
 import { Icon } from '@iconify/react';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 const StudentSettings = () => {
   const dispatch = useDispatch();
   const { userData } = useSelector((state) => state.auth);
+  const { showToast } = useToast();
   
   const [name, setName] = useState(userData?.name || '');
   const [email, setEmail] = useState(userData?.email || '');
@@ -34,7 +36,7 @@ const StudentSettings = () => {
   const handleSave = (e) => {
     e.preventDefault();
     dispatch(updateUser({ name, email, image: imagePreview }));
-    alert('Settings updated successfully!');
+    showToast('Settings updated successfully!', 'success');
   };
 
   return (
