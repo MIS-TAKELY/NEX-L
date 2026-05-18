@@ -48,24 +48,6 @@ const CourseCard = ({ course, index }) => {
           <p className="text-[11px] text-muted-foreground font-medium">{course.instructor || "Expert Instructor"}</p>
         </div>
         
-        {/* Stats Grid */}
-        <div className="grid grid-cols-3 gap-1 py-3 border-y border-border/50 mb-4">
-          <div className="flex flex-col items-center gap-0.5 border-r border-border/50">
-            <div className="flex items-center gap-1 text-amber-400">
-              <Star className="w-2.5 h-2.5 fill-current" />
-              <span className="text-[10px] font-bold">{course.rating || "4.8"}</span>
-            </div>
-            <span className="text-[8px] uppercase text-muted-foreground font-bold tracking-tighter">Rating</span>
-          </div>
-          <div className="flex flex-col items-center gap-0.5 border-r border-border/50">
-            <span className="text-[10px] font-bold text-foreground">{course.students || "1.2K"}</span>
-            <span className="text-[8px] uppercase text-muted-foreground font-bold tracking-tighter">Students</span>
-          </div>
-          <div className="flex flex-col items-center gap-0.5">
-            <span className="text-[10px] font-bold text-foreground">{course.duration || "20h"}</span>
-            <span className="text-[8px] uppercase text-muted-foreground font-bold tracking-tighter">Duration</span>
-          </div>
-        </div>
 
         <div className="mt-auto flex items-center justify-between">
           <div className="flex flex-col">

@@ -44,6 +44,9 @@ const getYoutubeVideoId = (url) => {
   return (match && match[2].length === 11) ? match[2] : null;
 };
 
+const getPdfViewerUrl = (url) =>
+  `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+
 const AddCourse = () => {
   const navigate = useNavigate();
   const { userData } = useSelector((state) => state.auth);
@@ -59,6 +62,8 @@ const AddCourse = () => {
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [customCategoryInput, setCustomCategoryInput] = useState("");
+  const [showDemoYoutubeInput, setShowDemoYoutubeInput] = useState(false);
+  const [demoYoutubeUrl, setDemoYoutubeUrl] = useState("");
 
   const [formData, setFormData] = useState({
     title: "",
@@ -403,6 +408,22 @@ const AddCourse = () => {
     } finally {
       setUploadingDemoVideo(false);
     }
+  };
+
+  const handleAddDemoYoutubeUrl = () => {
+    if (!demoYoutubeUrl.trim()) {
+      showToast("Please enter a YouTube URL", "error");
+      return;
+    }
+    const videoId = getYoutubeVideoId(demoYoutubeUrl);
+    if (!videoId) {
+      showToast("Invalid YouTube URL. Please provide a valid YouTube link.", "error");
+      return;
+    }
+    setFormData((prev) => ({ ...prev, demoVideo: demoYoutubeUrl.trim() }));
+    setDemoYoutubeUrl("");
+    setShowDemoYoutubeInput(false);
+    showToast("YouTube demo video added!", "success");
   };
 
   // --- Submit ---
@@ -974,7 +995,7 @@ const AddCourse = () => {
                               Syllabus Uploaded
                             </p>
                             <a
-                              href={formData.syllabus}
+                              href={getPdfViewerUrl(formData.syllabus)}
                               target="_blank"
                               rel="noreferrer"
                               className="text-xs text-foreground hover:text-accent hover:underline mt-2 font-medium"
@@ -1031,54 +1052,118 @@ const AddCourse = () => {
 
                 {formData.demoVideo ? (
                   <div className="relative rounded-md overflow-hidden border border-border/50 bg-black shadow-sm aspect-video">
-                    <video
-                      src={formData.demoVideo}
-                      controls
-                      className="w-full h-full object-contain"
-                    />
+                    {getYoutubeVideoId(formData.demoVideo) ? (
+                      <iframe
+                        src={`https://www.youtube.com/embed/${getYoutubeVideoId(formData.demoVideo)}`}
+                        className="w-full h-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        title="Demo Video Preview"
+                      />
+                    ) : (
+                      <video
+                        src={formData.demoVideo}
+                        controls
+                        className="w-full h-full object-contain"
+                      />
+                    )}
                     <span className="absolute top-3 left-3 bg-green-500 text-foreground text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-wider shadow">
-                      Preview Ready
+                      {getYoutubeVideoId(formData.demoVideo) ? "YouTube · Preview Ready" : "Preview Ready"}
                     </span>
                   </div>
                 ) : (
-                  <div className="relative">
-                    <div
-                      className={`aspect-video rounded-md overflow-hidden border-2 border-dashed flex flex-col items-center justify-center p-8 transition-all duration-300 hover:scale-[1.02] ${
-                        uploadingDemoVideo
-                          ? "border-emerald-500/50 bg-emerald-500/10 shadow-[0_0_30px_rgba(16,185,129,0.2)]"
-                          : "border-border/50 hover:border-emerald-500/50 hover:bg-muted/10 bg-muted/5"
-                      }`}
-                    >
-                      <input
-                        type="file"
-                        onChange={handleDemoVideoUpload}
-                        className="absolute inset-0 opacity-0 cursor-pointer"
-                        accept="video/*"
-                        disabled={uploadingDemoVideo}
-                      />
-                      {uploadingDemoVideo ? (
-                        <>
-                          <div className="relative">
-                            <div className="absolute inset-0 rounded-md bg-green-400/20 blur-xl animate-pulse"></div>
-                            <Loader2 size={36} className="text-green-400 animate-spin mb-4 relative z-10" />
-                          </div>
-                          <p className="text-sm font-bold text-white tracking-wide">Uploading preview video...</p>
-                          <p className="text-xs text-green-400 mt-2 font-medium">This may take a moment for large files</p>
-                        </>
-                      ) : (
-                        <>
-                          <div className="w-16 h-16 bg-gradient-to-br from-emerald-500/20 to-primary/20 rounded-md flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 border border-emerald-500/10 shadow-[inset_0_2px_10px_rgba(16,185,129,0.1)]">
-                            <Video size={28} className="text-emerald-500 group-hover:text-primary transition-colors" />
-                          </div>
-                          <p className="text-sm font-bold text-foreground mb-3 tracking-wide">Drop preview video here</p>
-                          <div className="flex gap-2 justify-center">
-                            <span className="text-[10px] font-bold text-muted-foreground bg-muted/10 px-2 py-1 rounded-md border border-border/50 tracking-widest">MP4</span>
-                            <span className="text-[10px] font-bold text-muted-foreground bg-muted/10 px-2 py-1 rounded-md border border-border/50 tracking-widest">WEBM</span>
-                            <span className="text-[10px] font-bold text-muted-foreground bg-muted/10 px-2 py-1 rounded-md border border-border/50 tracking-widest">MOV</span>
-                          </div>
-                        </>
-                      )}
+                  <div className="space-y-3">
+                    {/* Two-option picker */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {/* Upload Local File */}
+                      <div className="relative group cursor-pointer">
+                        <input
+                          type="file"
+                          onChange={handleDemoVideoUpload}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                          accept="video/*"
+                          disabled={uploadingDemoVideo}
+                        />
+                        <div className={`border-2 border-dashed rounded-md p-6 text-center flex flex-col items-center justify-center transition-all duration-300 group-hover:bg-muted/30 group-hover:border-emerald-500/40 ${
+                          uploadingDemoVideo
+                            ? "border-emerald-500/50 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.15)]"
+                            : "border-border/50 bg-muted/5"
+                        }`}>
+                          {uploadingDemoVideo ? (
+                            <>
+                              <div className="relative mb-3">
+                                <div className="absolute inset-0 rounded-full bg-green-400/20 blur-lg animate-pulse" />
+                                <Loader2 size={28} className="text-green-400 animate-spin relative z-10" />
+                              </div>
+                              <p className="text-xs font-bold text-green-400">Uploading...</p>
+                            </>
+                          ) : (
+                            <>
+                              <div className="w-12 h-12 bg-gradient-to-br from-emerald-500/20 to-primary/20 rounded-md flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 border border-emerald-500/10">
+                                <Upload size={22} className="text-emerald-500 group-hover:text-primary transition-colors" />
+                              </div>
+                              <p className="text-sm font-bold text-foreground mb-1">Upload Local File</p>
+                              <div className="flex gap-1.5 justify-center">
+                                <span className="text-[9px] font-bold text-muted-foreground bg-muted/10 px-1.5 py-0.5 rounded border border-border/50">MP4</span>
+                                <span className="text-[9px] font-bold text-muted-foreground bg-muted/10 px-1.5 py-0.5 rounded border border-border/50">WEBM</span>
+                                <span className="text-[9px] font-bold text-muted-foreground bg-muted/10 px-1.5 py-0.5 rounded border border-border/50">MOV</span>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* YouTube Link */}
+                      <div
+                        onClick={() => { setShowDemoYoutubeInput(true); setDemoYoutubeUrl(""); }}
+                        className="border-2 border-dashed border-border/50 rounded-md p-6 text-center hover:bg-muted/30 hover:border-red-500/40 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group"
+                      >
+                        <div className="w-12 h-12 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-md flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 border border-red-500/10">
+                          <Video size={22} className="text-red-500 group-hover:text-red-400 transition-colors" />
+                        </div>
+                        <p className="text-sm font-bold text-foreground mb-1">Add YouTube Link</p>
+                        <p className="text-[10px] text-muted-foreground font-medium">Embed lecture from YouTube</p>
+                      </div>
                     </div>
+
+                    {/* Inline YouTube URL Input */}
+                    {showDemoYoutubeInput && (
+                      <div className="p-4 bg-card border border-border/60 rounded-md shadow-sm space-y-3 animate-in fade-in duration-300">
+                        <div className="flex justify-between items-center">
+                          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Paste YouTube Link</label>
+                          <button
+                            type="button"
+                            onClick={() => { setShowDemoYoutubeInput(false); setDemoYoutubeUrl(""); }}
+                            className="text-muted-foreground hover:text-foreground transition-colors text-xs font-bold"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={demoYoutubeUrl}
+                            onChange={(e) => setDemoYoutubeUrl(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && handleAddDemoYoutubeUrl()}
+                            placeholder="https://www.youtube.com/watch?v=..."
+                            className="flex-1 text-sm px-3 py-2.5 rounded-md border border-border bg-muted/30 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500/50 text-foreground placeholder:text-muted-foreground/50"
+                            autoFocus
+                          />
+                          <button
+                            type="button"
+                            onClick={handleAddDemoYoutubeUrl}
+                            className="px-4 py-2 bg-red-500 hover:bg-red-500/90 text-white text-sm font-bold rounded-md transition-colors flex items-center gap-1.5"
+                          >
+                            <Video size={14} /> Add
+                          </button>
+                        </div>
+                        {demoYoutubeUrl && getYoutubeVideoId(demoYoutubeUrl) && (
+                          <div className="text-[10px] text-green-500 font-bold flex items-center gap-1">
+                            <CheckCircle2 size={11} /> Valid YouTube URL detected
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

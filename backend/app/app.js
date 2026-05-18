@@ -21,6 +21,7 @@ import tutoringSessionRouter from "../app/routes/tutoring-session.routes.js";
 import badgeRouter from "../app/routes/badge.routes.js";
 import mergeRoleRouter from "../app/routes/merge-role.routes.js";
 import adminRouter from "../app/routes/admin.routes.js";
+import debugRouter from "../app/routes/debug.routes.js";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth.js";
 
@@ -281,6 +282,7 @@ app.use("/api/v1/live-classes", liveClassRouter);
 app.use("/api/v1/tutoring-sessions", tutoringSessionRouter);
 app.use("/api/v1/badges", badgeRouter);
 app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/debug", debugRouter);
 
 // Error logger - MUST BE LAST
 app.use((err, req, res, next) => {

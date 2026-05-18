@@ -97,7 +97,7 @@ const ProfileDropdown = () => {
         { id: 'settings', icon: 'solar:settings-bold-duotone', label: 'Settings', path: settingsPath },
         { id: 'help', icon: 'solar:help-bold-duotone', label: 'Help & support', path: '/help' },
         { id: 'display', icon: 'solar:moon-bold-duotone', label: 'Display' },
-        { id: 'feedback', icon: 'solar:chat-round-line-bold-duotone', label: 'Give feedback', path: '/feedback' },
+
     ];
 
     return (
