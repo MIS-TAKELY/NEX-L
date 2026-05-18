@@ -145,6 +145,8 @@ const Player = () => {
           setActiveResource(firstLesson.resources[0]);
         } else if (firstLesson.url) {
           setActiveResource({ url: firstLesson.url, type: firstLesson.type, name: firstLesson.title });
+        } else {
+          setActiveResource({ type: firstLesson.type, name: firstLesson.title, _id: firstLesson._id });
         }
       }
     }
