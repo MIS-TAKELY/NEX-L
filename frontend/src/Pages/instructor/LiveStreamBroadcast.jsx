@@ -3,6 +3,7 @@
  * Uses @stream-io/video-react-sdk
  */
 import { useEffect, useRef, useState } from "react";
+import { useToast } from "@/context/ToastContext";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
@@ -27,6 +28,7 @@ const API_KEY = import.meta.env.VITE_STREAM_API_KEY || "";
 
 // Inner component – has access to call context
 const BroadcastControls = ({ call, courseId, callType }) => {
+  const { showToast } = useToast();
   const [reactions, setReactions] = useState([]);
   const navigate = useNavigate();
   const { useIsCallLive } = useCallStateHooks();
@@ -156,7 +158,7 @@ const BroadcastControls = ({ call, courseId, callType }) => {
       if (err.message?.includes("shall be called only once") || err.message?.includes("already live")) {
         return;
       }
-      alert("Failed to start live stream (Network or Server Issue): " + err.message);
+      showToast("Failed to start live stream (Network or Server Issue): " + err.message, "error");
     } finally {
       setIsJoining(false);
     }

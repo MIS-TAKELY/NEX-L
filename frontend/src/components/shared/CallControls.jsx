@@ -1,8 +1,10 @@
 import React from "react";
+import { useToast } from '@/context/ToastContext';
 import { useCallStateHooks, useCall } from "@stream-io/video-react-sdk";
 import { Icon } from "@iconify/react";
 
 const CallControls = ({ onLeave }) => {
+  const { showToast } = useToast();
   const {
     useMicrophoneState,
     useCameraState,
@@ -26,10 +28,10 @@ const CallControls = ({ onLeave }) => {
     if (!canSendAudio) {
       try {
         await call.requestPermissions({ permissions: ['send-audio'] });
-        alert("Microphone permission request sent.");
+        showToast("Microphone permission request sent.", "success");
       } catch (err) {
         console.error("Failed to request microphone permission:", err);
-        alert("Unable to request microphone access. Please ask the instructor to grant permissions.");
+        showToast("Unable to request microphone access. Please ask the instructor to grant permissions.", "error");
       }
       return;
     }
@@ -44,10 +46,10 @@ const CallControls = ({ onLeave }) => {
     if (!canSendVideo) {
       try {
         await call.requestPermissions({ permissions: ['send-video'] });
-        alert("Camera permission request sent.");
+        showToast("Camera permission request sent.", "success");
       } catch (err) {
         console.error("Failed to request camera permission:", err);
-        alert("Unable to request camera access. Please ask the instructor to grant permissions.");
+        showToast("Unable to request camera access. Please ask the instructor to grant permissions.", "error");
       }
       return;
     }
@@ -71,10 +73,10 @@ const CallControls = ({ onLeave }) => {
     if (!canScreenShare) {
       try {
         await call.requestPermissions({ permissions: ['screen-share'] });
-        alert("Screen share request sent.");
+        showToast("Screen share request sent.", "success");
       } catch (err) {
         console.error("Failed to request screenshare permission:", err);
-        alert("Unable to request screen share. Please ask the instructor to grant permissions.");
+        showToast("Unable to request screen share. Please ask the instructor to grant permissions.", "error");
       }
       return;
     }

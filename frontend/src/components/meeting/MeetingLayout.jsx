@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useToast } from '@/context/ToastContext';
 import { useCallStateHooks, CallingState } from '@stream-io/video-react-sdk';
 import ControlBar from './ControlBar';
 import SidePanel from './SidePanel';
@@ -20,6 +21,7 @@ const MeetingLayout = ({
   autoJoin = false,
   isCompact,
 }) => {
+  const { showToast } = useToast();
   const { 
     useCallCallingState, 
     useParticipantCount, 
@@ -141,7 +143,7 @@ const MeetingLayout = ({
         }
       } catch (err) {
         console.error("Join failed:", err);
-        alert("Failed to connect to media server. Please check your network and try again.");
+        showToast("Failed to connect to media server. Please check your network and try again.", "error");
       } finally {
         setIsJoining(false);
       }
