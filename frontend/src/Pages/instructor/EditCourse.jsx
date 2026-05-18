@@ -95,9 +95,15 @@ const EditCourse = () => {
   const [tagsInput, setTagsInput] = useState("");
   const [activeYoutubeInput, setActiveYoutubeInput] = useState(null); // { sectionIndex, contentIndex }
   const [youtubeUrl, setYoutubeUrl] = useState("");
-  const [previews, setPreviews] = useState({
-    thumbnail: null,
-  });
+  const [previews, setPreviews] = useState({ thumbnail: null });
+  const [showCustomCategory, setShowCustomCategory] = useState(false);
+  const [customCategoryInput, setCustomCategoryInput] = useState("");
+
+  const PREDEFINED_CATEGORIES = [
+    "Development", "Mobile", "DataScience", "CloudDevOps", "Cybersecurity",
+    "Design", "GraphicDesign", "Business", "Marketing", "Finance",
+    "Photography", "Music", "Health", "Language", "PersonalDev",
+  ];
 
   // Cleanup object URLs to avoid memory leaks
   useEffect(() => {
@@ -146,6 +152,16 @@ const EditCourse = () => {
           : [],
       });
       setTagsInput(data.tags ? data.tags.join(", ") : "");
+
+      // Detect if the loaded category is a custom one not in the predefined list
+      if (data.category && ![
+        "Development", "Mobile", "DataScience", "CloudDevOps", "Cybersecurity",
+        "Design", "GraphicDesign", "Business", "Marketing", "Finance",
+        "Photography", "Music", "Health", "Language", "PersonalDev", ""
+      ].includes(data.category)) {
+        setShowCustomCategory(true);
+        setCustomCategoryInput(data.category);
+      }
 
       // Fetch coupons
       const fetchCoupons = async () => {
@@ -849,25 +865,66 @@ const EditCourse = () => {
                     </label>
                     <select
                       name="category"
-                      value={formData.category}
-                      onChange={handleChange}
+                      value={showCustomCategory ? "__custom__" : formData.category}
+                      onChange={(e) => {
+                        if (e.target.value === "__custom__") {
+                          setShowCustomCategory(true);
+                          setFormData((prev) => ({ ...prev, category: customCategoryInput }));
+                        } else {
+                          setShowCustomCategory(false);
+                          setCustomCategoryInput("");
+                          handleChange(e);
+                        }
+                      }}
                       className="w-full px-5 py-4 rounded-md bg-muted/30 border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200 appearance-none"
-                      required
+                      required={!showCustomCategory}
                     >
-                      <option value="" className="text-muted-foreground">
-                        Select Category
-                      </option>
+                      <option value="" className="text-muted-foreground">Select Category</option>
                       <option value="Development" className="bg-card">Web Development</option>
-                      <option value="Business" className="bg-card">
-                        Business
-                      </option>
-                      <option value="Design" className="bg-card">
-                        Design
-                      </option>
-                      <option value="Marketing" className="bg-card">
-                        Marketing
-                      </option>
+                      <option value="Mobile" className="bg-card">Mobile Development</option>
+                      <option value="DataScience" className="bg-card">Data Science &amp; ML</option>
+                      <option value="CloudDevOps" className="bg-card">Cloud &amp; DevOps</option>
+                      <option value="Cybersecurity" className="bg-card">Cybersecurity</option>
+                      <option value="Design" className="bg-card">UI/UX Design</option>
+                      <option value="GraphicDesign" className="bg-card">Graphic Design</option>
+                      <option value="Business" className="bg-card">Business</option>
+                      <option value="Marketing" className="bg-card">Marketing</option>
+                      <option value="Finance" className="bg-card">Finance &amp; Accounting</option>
+                      <option value="Photography" className="bg-card">Photography &amp; Video</option>
+                      <option value="Music" className="bg-card">Music &amp; Audio</option>
+                      <option value="Health" className="bg-card">Health &amp; Fitness</option>
+                      <option value="Language" className="bg-card">Language Learning</option>
+                      <option value="PersonalDev" className="bg-card">Personal Development</option>
+                      <option value="__custom__" className="bg-card font-semibold text-primary">✏️ Add Custom Category…</option>
                     </select>
+                    {showCustomCategory && (
+                      <div className="mt-2 flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={customCategoryInput}
+                          onChange={(e) => {
+                            setCustomCategoryInput(e.target.value);
+                            setFormData((prev) => ({ ...prev, category: e.target.value }));
+                          }}
+                          placeholder="Type your category name…"
+                          className="flex-1 px-4 py-3 rounded-md bg-muted/30 border border-primary/50 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200 text-sm"
+                          autoFocus
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowCustomCategory(false);
+                            setCustomCategoryInput("");
+                            setFormData((prev) => ({ ...prev, category: "" }));
+                          }}
+                          className="px-3 py-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-md transition-all text-xs font-bold"
+                          title="Cancel custom category"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    )}
                   </div>
                   <div>
                     <label className="block text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.05em] mb-2">
