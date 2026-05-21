@@ -25,7 +25,7 @@ const MyEnrollments = () => {
 
   const { data: upcomingClasses = [], isLoading: loadingClasses } = useGetUpcomingLiveClassesQuery(undefined, {
     skip: !userData?._id && !userData?.id,
-    pollingInterval: 10000 // Poll every 10s to catch new live classes
+    pollingInterval: 10000
   });
 
   useEffect(() => {
@@ -47,14 +47,26 @@ const MyEnrollments = () => {
     fetchEnrollments();
   }, [userData]);
 
+  const totalProgress = enrollments.length > 0
+    ? Math.round(enrollments.reduce((sum, e) => sum + (e.progress || 0), 0) / enrollments.length)
+    : 0;
+
+  const completedCourses = enrollments.filter(e => e.progress >= 100).length;
+  const inProgressCourses = enrollments.filter(e => e.progress > 0 && e.progress < 100).length;
+
   if (loading || loadingClasses) {
     return (
-      <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-12">
-        <div className="space-y-4">
-          <Skeleton className="h-12 w-64 md:h-16" />
-          <Skeleton className="h-6 w-96 max-w-full" />
+      <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8">
+        <div className="space-y-3">
+          <Skeleton className="h-10 w-56 md:h-14" />
+          <Skeleton className="h-5 w-72 max-w-full" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-24 rounded-xl" />
+          ))}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <CourseSkeleton key={i} />
           ))}
@@ -65,154 +77,215 @@ const MyEnrollments = () => {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] text-center px-4">
-        <div className="w-20 h-20 bg-red-50 rounded-md flex items-center justify-center mb-6">
-          <Icon icon="solar:danger-bold" className="text-red-500" size={40} />
-        </div>
-        <h2 className="text-2xl font-bold text-foreground mb-2">Oops! Something went wrong</h2>
-        <p className="text-muted-foreground max-w-md mb-8">{error}</p>
-        <button
-          onClick={() => window.location.reload()}
-          className="px-8 py-3 bg-primary text-foreground rounded-md font-bold hover:bg-primary-hover transition-all shadow-lg"
+      <div className="flex flex-col items-center justify-center min-h-[500px] text-center px-4">
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.4 }}
+          className="glass-card premium-card rounded-2xl p-12 max-w-md"
         >
-          Try Again
-        </button>
+          <div className="w-16 h-16 mx-auto bg-destructive/10 rounded-xl flex items-center justify-center mb-6">
+            <Icon icon="solar:danger-bold" className="text-destructive" size={32} />
+          </div>
+          <h2 className="text-xl font-bold text-foreground mb-2">Something went wrong</h2>
+          <p className="text-muted-foreground text-sm mb-6">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
+          >
+            Try Again
+          </button>
+        </motion.div>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen relative bg-background font-outfit text-foreground overflow-hidden">
-      {/* Background Effects */}
       <div className="gradient-mesh fixed inset-0 pointer-events-none" />
 
-      <div className="relative z-10 p-6 md:p-8 max-w-7xl mx-auto">
+      <div className="relative z-10 p-6 md:p-8 max-w-7xl mx-auto space-y-8">
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.25 }}
+          className="flex flex-col md:flex-row md:items-end md:justify-between gap-4"
         >
-          <h1 className="text-4xl md:text-5xl font-extrabold text-foreground mb-3 tracking-tight">
-            My <span className="text-gradient">Enrollments</span>
-          </h1>
-          <p className="text-muted-foreground font-medium text-lg">
-            You are currently enrolled in <span className="text-primary font-bold">{enrollments.length}</span> course{enrollments.length !== 1 ? 's' : ''}
-          </p>
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+              My <span className="text-gradient">Enrollments</span>
+            </h1>
+            <p className="text-muted-foreground text-base mt-1">
+              Track your progress and continue learning
+            </p>
+          </div>
+          <button
+            onClick={() => window.location.href = '/course-list'}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary/10 text-primary rounded-lg font-semibold text-sm hover:bg-primary/20 transition-colors border border-primary/20"
+          >
+            <Icon icon="solar:add-circle-bold" className="w-4 h-4" />
+            Browse Courses
+          </button>
         </motion.div>
 
-
-      {upcomingClasses.length > 0 && (
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-16"
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.25, delay: 0.05 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-4"
         >
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-md bg-red-500/10 flex items-center justify-center border border-red-500/20 shadow-lg shadow-red-500/5">
-              <Icon icon="solar:videocamera-record-bold-duotone" className="text-red-500 w-7 h-7" />
+          <motion.div whileHover={{ y: -2 }} className="glass-card rounded-xl p-5">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mb-3">
+              <Icon icon="solar:book-bookmark-bold" className="text-primary w-5 h-5" />
             </div>
-            <div>
-              <h2 className="text-2xl font-bold text-foreground tracking-tight">Upcoming Live Classes</h2>
-              <p className="text-sm text-muted-foreground">Don't miss out on your scheduled sessions</p>
+            <p className="text-2xl font-bold text-foreground">{enrollments.length}</p>
+            <p className="text-xs text-muted-foreground font-medium mt-0.5">Total Courses</p>
+          </motion.div>
+
+          <motion.div whileHover={{ y: -2 }} className="glass-card rounded-xl p-5">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 flex items-center justify-center mb-3">
+              <Icon icon="solar:check-circle-bold" className="text-emerald-500 w-5 h-5" />
             </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {upcomingClasses.map((liveClass, index) => (
-              <motion.div 
-                key={liveClass._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-                className="glass-card premium-card rounded-md p-6 relative overflow-hidden group"
-              >
-                <div className="absolute top-0 right-0 p-4">
-                   <div className="flex items-center gap-1.5 bg-red-500 text-white text-[10px] font-black px-3 py-1.5 rounded-md shadow-lg shadow-red-500/30 animate-pulse uppercase tracking-wider">
-                      <div className="w-1.5 h-1.5 bg-card rounded-md" /> {liveClass.status === 'live' ? 'LIVE NOW' : 'LIVE SOON'}
-                   </div>
-                </div>
-                <div className="flex items-center gap-5 mb-6">
-                  <div className="w-14 h-14 rounded-md overflow-hidden border-2 border-white/10 shadow-xl">
-                    <img src={liveClass.course?.thumbnail || '/placeholder-course.png'} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-foreground text-lg group-hover:text-primary transition-colors line-clamp-1">{liveClass.title}</h3>
-                    <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">{liveClass.course?.title}</p>
-                  </div>
-                </div>
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium bg-card/5 p-3 rounded-md border border-white/5">
-                    <Icon icon="solar:calendar-bold" className="text-primary w-5 h-5" />
-                    <span>{dayjs(liveClass.startTime).format('MMM D, YYYY')}</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium bg-card/5 p-3 rounded-md border border-white/5">
-                    <Icon icon="solar:clock-circle-bold" className="text-primary w-5 h-5" />
-                    <span>{dayjs(liveClass.startTime).format('h:mm A')} ({liveClass.duration} min)</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium bg-card/5 p-3 rounded-md border border-white/5">
-                    <div className="w-6 h-6 rounded-md bg-primary/20 flex items-center justify-center">
-                      <Icon icon="solar:user-bold" className="text-primary w-3.5 h-3.5" />
-                    </div>
-                    <span className="text-xs font-bold uppercase tracking-widest">by {liveClass.teacher?.name}</span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => navigate(`/student/live/${liveClass.course?._id}`)}
-                  className="w-full py-4 bg-red-500 text-white font-black rounded-md hover:bg-red-600 transition-all shadow-xl shadow-red-500/20 flex items-center justify-center gap-3 group/btn active:scale-[0.98] uppercase tracking-widest text-xs"
+            <p className="text-2xl font-bold text-foreground">{completedCourses}</p>
+            <p className="text-xs text-muted-foreground font-medium mt-0.5">Completed</p>
+          </motion.div>
+
+          <motion.div whileHover={{ y: -2 }} className="glass-card rounded-xl p-5">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-500/5 flex items-center justify-center mb-3">
+              <Icon icon="solar:clock-circle-bold" className="text-amber-500 w-5 h-5" />
+            </div>
+            <p className="text-2xl font-bold text-foreground">{inProgressCourses}</p>
+            <p className="text-xs text-muted-foreground font-medium mt-0.5">In Progress</p>
+          </motion.div>
+
+          <motion.div whileHover={{ y: -2 }} className="glass-card rounded-xl p-5">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-500/5 flex items-center justify-center mb-3">
+              <Icon icon="solar:chart-bold" className="text-blue-500 w-5 h-5" />
+            </div>
+            <p className="text-2xl font-bold text-foreground">{totalProgress}%</p>
+            <p className="text-xs text-muted-foreground font-medium mt-0.5">Avg. Progress</p>
+          </motion.div>
+        </motion.div>
+
+        {upcomingClasses.length > 0 && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.25, delay: 0.1 }}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
+                <Icon icon="solar:videocamera-record-bold-duotone" className="text-red-500 w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-foreground">Upcoming Live Classes</h2>
+                <p className="text-sm text-muted-foreground">Don't miss your scheduled sessions</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {upcomingClasses.map((liveClass, index) => (
+                <motion.div 
+                  key={liveClass._id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.25, delay: 0.05 + index * 0.03 }}
+                  className="glass-card rounded-xl p-5 relative overflow-hidden"
                 >
-                  <Icon icon="solar:play-bold" className="group-hover/btn:scale-110 transition-transform" />
-                  Join Room
-                </button>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      )}
+                  <div className="absolute top-4 right-4">
+                    <div className="flex items-center gap-1.5 bg-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg shadow-red-500/20 uppercase tracking-wide">
+                      <div className="w-1.5 h-1.5 bg-white rounded-full" /> {liveClass.status === 'live' ? 'LIVE NOW' : 'UPCOMING'}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 mb-5 pr-20">
+                    <div className="w-12 h-12 rounded-lg overflow-hidden border border-border/50 shadow-md flex-shrink-0">
+                      <img src={liveClass.course?.thumbnail || '/placeholder-course.png'} alt="" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="font-semibold text-foreground text-base line-clamp-1">{liveClass.title}</h3>
+                      <p className="text-xs text-muted-foreground truncate">{liveClass.course?.title}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-2.5 mb-5">
+                    <div className="flex items-center gap-2.5 text-sm text-muted-foreground">
+                      <Icon icon="solar:calendar-bold" className="text-primary w-4 h-4 flex-shrink-0" />
+                      <span>{dayjs(liveClass.startTime).format('MMM D, YYYY')}</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-sm text-muted-foreground">
+                      <Icon icon="solar:clock-circle-bold" className="text-primary w-4 h-4 flex-shrink-0" />
+                      <span>{dayjs(liveClass.startTime).format('h:mm A')} · {liveClass.duration} min</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-sm text-muted-foreground">
+                      <Icon icon="solar:user-bold" className="text-primary w-4 h-4 flex-shrink-0" />
+                      <span>{liveClass.teacher?.name}</span>
+                    </div>
+                  </div>
+                    <button
+                    onClick={() => navigate(`/student/live/${liveClass.course?._id}`)}
+                    className="w-full py-2.5 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20 flex items-center justify-center gap-2 text-sm"
+                  >
+                    <Icon icon="solar:play-bold" className="w-4 h-4" />
+                    Join Room
+                  </button>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
-
-      {enrollments.length === 0 ? (
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-col items-center justify-center py-24 glass-card premium-card rounded-[2.5rem] text-center px-4 overflow-hidden relative"
-        >
-          <div className="absolute inset-0 bg-primary/5 pointer-events-none" />
-          <div className="w-28 h-28 bg-primary/10 rounded-md flex items-center justify-center mb-8 border border-primary/20 shadow-2xl relative z-10">
-            <Icon icon="solar:globus-bold-duotone" className="text-primary w-14 h-14" />
-          </div>
-          <div className="relative z-10">
-            <h2 className="text-3xl font-bold text-foreground mb-3 tracking-tight text-gradient">No enrollments yet</h2>
-            <p className="text-muted-foreground max-w-sm mb-10 text-lg font-medium">
+        {enrollments.length === 0 ? (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+            className="flex flex-col items-center justify-center py-20 glass-card rounded-2xl text-center px-4"
+          >
+            <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mb-6">
+              <Icon icon="solar:globus-bold-duotone" className="text-primary w-10 h-10" />
+            </div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">No enrollments yet</h2>
+            <p className="text-muted-foreground max-w-sm mb-8 text-base">
               Start your learning journey today by exploring our wide range of professional courses.
             </p>
             <button
               onClick={() => window.location.href = '/course-list'}
-              className="px-12 py-5 bg-primary text-primary-foreground rounded-md font-black text-xs tracking-[0.2em] uppercase hover:bg-primary/90 transition-all shadow-2xl shadow-primary/20 active:scale-95 flex items-center gap-3 mx-auto group"
+              className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
             >
               Explore Courses 
-              <Icon icon="solar:arrow-right-bold" className="group-hover:translate-x-1 transition-transform" />
+              <Icon icon="solar:arrow-right-bold" className="w-4 h-4" />
             </button>
-          </div>
-        </motion.div>
-      ) : (
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
-        >
-          {enrollments.map((enrollment, index) => (
-            <div key={enrollment._id} className={`stagger-${(index % 5) + 1}`}>
-               <CourseCard enrollment={enrollment} />
+          </motion.div>
+        ) : (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.25, delay: 0.15 }}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Icon icon="solar:book-open-bold" className="text-primary w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-foreground">My Courses</h2>
+                <p className="text-sm text-muted-foreground">Continue where you left off</p>
+              </div>
             </div>
-          ))}
-        </motion.div>
-      )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {enrollments.map((enrollment, index) => (
+                <motion.div 
+                  key={enrollment._id} 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.25, delay: 0.02 * (index % 6) }}
+                >
+                   <CourseCard enrollment={enrollment} />
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </div>
     </div>
-  </div>
-
   );
 };
 

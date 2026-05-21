@@ -18,9 +18,7 @@ import {
   isStudentAssignedToBatch,
 } from "@/lib/batches";
 
-// Opens PDFs inline via Google Docs Viewer (bypasses Cloudinary Content-Disposition: attachment)
-const getPdfViewerUrl = (url) =>
-  `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+// Removed Google Docs Viewer as it is flaky with Cloudinary URLs and often shows "No preview available"
 
 const CourseDetails = () => {
   const { id } = useParams();
@@ -251,7 +249,7 @@ const CourseDetails = () => {
                     </div>
                     <div className="flex items-center gap-3 flex-shrink-0">
                       <a
-                        href={getPdfViewerUrl(course.syllabus)}
+                        href={course.syllabus}
                         target="_blank"
                         rel="noreferrer"
                         className="border border-primary/30 hover:border-primary text-primary px-5 py-2.5 rounded-md font-bold transition-all flex items-center justify-center gap-2 text-sm whitespace-nowrap"
@@ -269,14 +267,21 @@ const CourseDetails = () => {
                       </a>
                     </div>
                   </div>
-                  {/* Inline PDF preview via Google Docs Viewer */}
-                  <div className="rounded-md overflow-hidden border border-border/50 bg-muted/10" style={{ height: '520px' }}>
-                    <iframe
-                      src={getPdfViewerUrl(course.syllabus)}
-                      className="w-full h-full"
-                      title="Course Syllabus"
-                      allow="fullscreen"
-                    />
+                  {/* Native PDF preview */}
+                  <div className="rounded-md overflow-hidden border border-border/50 bg-muted/10 relative" style={{ height: '520px' }}>
+                    <object
+                      data={course.syllabus}
+                      type="application/pdf"
+                      className="w-full h-full absolute inset-0 z-10"
+                    >
+                      <div className="flex flex-col items-center justify-center h-full space-y-4 p-8 text-center bg-card">
+                        <FileText size={48} className="text-muted-foreground" />
+                        <p className="text-muted-foreground font-medium">Your browser doesn't support native PDF preview.</p>
+                        <a href={course.syllabus} target="_blank" rel="noreferrer" className="text-primary hover:underline font-bold">
+                          Click here to download or view the PDF
+                        </a>
+                      </div>
+                    </object>
                   </div>
                 </div>
               </section>
@@ -588,6 +593,107 @@ const CourseDetails = () => {
                   />
                 ))}
               </div>
+            </section>
+
+            {/* Reviews & Ratings Section */}
+            <section className="glass premium-card rounded-md p-8 border border-border/50">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-md bg-amber-500/10 flex items-center justify-center">
+                    <Icon icon="solar:star-bold-duotone" className="text-amber-500 w-6 h-6" />
+                  </div>
+                  <div>
+                    <h2 className="text-3xl md:text-4xl font-black text-foreground">
+                      Reviews & <span className="text-gradient italic">Ratings</span>
+                    </h2>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      What students are saying about this course
+                    </p>
+                  </div>
+                </div>
+
+                {/* Rating Summary Badge */}
+                <div className="flex items-center gap-3 bg-amber-500/10 px-5 py-3 rounded-md border border-amber-500/20">
+                  <span className="text-3xl font-black text-amber-500">{course.ratings?.average || 0}</span>
+                  <div className="space-y-0.5">
+                    <div className="flex items-center gap-0.5">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Icon
+                          key={star}
+                          icon={star <= Math.round(course.ratings?.average || 0) ? "solar:star-bold" : "solar:star-linear"}
+                          className={`w-3.5 h-3.5 ${star <= Math.round(course.ratings?.average || 0) ? "text-amber-500" : "text-muted-foreground/40"}`}
+                        />
+                      ))}
+                    </div>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                      {course.ratings?.count || 0} review{course.ratings?.count !== 1 ? 's' : ''}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {course.reviews && course.reviews.length > 0 ? (
+                <div className="space-y-5">
+                  {course.reviews.map((review, index) => (
+                    <div
+                      key={review._id || index}
+                      className="p-5 rounded-md bg-card/50 border border-border/50 hover:border-amber-500/20 transition-colors"
+                    >
+                      <div className="flex items-start gap-4">
+                        {/* User Avatar */}
+                        <div className="w-11 h-11 rounded-full overflow-hidden bg-muted flex-shrink-0 border border-border/50">
+                          {review.user?.image ? (
+                            <img
+                              src={review.user.image}
+                              alt={review.user.name || "User"}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary font-bold text-sm">
+                              {(review.user?.name || "U").charAt(0).toUpperCase()}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-3 mb-1.5">
+                            <h4 className="font-bold text-foreground text-sm truncate">
+                              {review.user?.name || "Anonymous"}
+                            </h4>
+                            <div className="flex items-center gap-0.5">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <Icon
+                                  key={star}
+                                  icon={star <= review.rating ? "solar:star-bold" : "solar:star-linear"}
+                                  className={`w-3.5 h-3.5 ${star <= review.rating ? "text-amber-500" : "text-muted-foreground/20"}`}
+                                />
+                              ))}
+                            </div>
+                            <span className="text-[10px] text-muted-foreground font-medium ml-auto">
+                              {dayjs(review.createdAt).format('MMM D, YYYY')}
+                            </span>
+                          </div>
+                          {review.comment && (
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                              {review.comment}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-16">
+                  <div className="w-16 h-16 rounded-md bg-muted/30 flex items-center justify-center mx-auto mb-5">
+                    <Icon icon="solar:chat-round-line-bold-duotone" className="text-muted-foreground w-8 h-8" />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">No reviews yet</h3>
+                  <p className="text-muted-foreground text-sm max-w-sm mx-auto">
+                    Be the first to share your experience and help others choose the right course.
+                  </p>
+                </div>
+              )}
             </section>
           </div>
 

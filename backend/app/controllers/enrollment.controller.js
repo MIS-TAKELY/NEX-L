@@ -1,19 +1,25 @@
 import Course from "../models/course.model.js";
 import Enrollment from "../models/enrollment.model.js";
+import { parseRolesFromUser } from "../lib/roles.js";
 
 // Enroll in a course
 export const enrollInCourse = async (req, res) => {
   try {
-    const { studentId, courseId, paymentId } = req.body;
+    const { courseId, paymentId } = req.body;
+    const userId = req.user?.id || req.user?._id;
+    
+    if (!userId) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
 
     // Check if already enrolled
-    const existingEnrollment = await Enrollment.findOne({ student: studentId, course: courseId });
+    const existingEnrollment = await Enrollment.findOne({ student: userId, course: courseId });
     if (existingEnrollment) {
       return res.status(400).json({ message: "Student already enrolled in this course" });
     }
 
     const enrollment = new Enrollment({
-      student: studentId,
+      student: userId,
       course: courseId,
       payment: paymentId || null,
     });
@@ -102,6 +108,7 @@ export const deleteEnrollment = async (req, res) => {
 export const markContentCompleted = async (req, res) => {
   try {
     const { enrollmentId, contentId } = req.body;
+    const userId = req.user?.id || req.user?._id;
 
     const enrollment = await Enrollment.findById(enrollmentId).populate({
       path: 'course',
@@ -115,6 +122,11 @@ export const markContentCompleted = async (req, res) => {
 
     if (!enrollment) {
       return res.status(404).json({ message: "Enrollment not found" });
+    }
+
+    // Ownership check: only the enrolled student can mark content as completed
+    if (enrollment.student.toString() !== userId?.toString()) {
+      return res.status(403).json({ message: "Forbidden: You can only mark your own enrollments" });
     }
 
     // Add content to completedContents if not already there
@@ -174,6 +186,13 @@ export const updateProgress = async (req, res) => {
 export const getUserEnrollments = async (req, res) => {
   try {
     const { userId } = req.params;
+    const currentUserId = req.user?.id || req.user?._id;
+    
+    // Authenticated users can only see their own enrollments
+    if (currentUserId?.toString() !== userId?.toString()) {
+      return res.status(403).json({ message: "Forbidden: You can only view your own enrollments" });
+    }
+    
     const enrollments = await Enrollment.find({ student: userId })
       .populate({
         path: "course",
@@ -194,6 +213,14 @@ export const getUserEnrollments = async (req, res) => {
 export const getInstructorStats = async (req, res) => {
   try {
     const { instructorId } = req.params;
+    
+    // Ownership check: instructors can only view their own stats
+    const currentUserId = req.user?.id || req.user?._id;
+    const userRoles = parseRolesFromUser(req.user);
+    const isAdmin = userRoles.includes("admin");
+    if (currentUserId?.toString() !== instructorId?.toString() && !isAdmin) {
+      return res.status(403).json({ message: "Forbidden: You can only view your own stats" });
+    }
 
     // 1. Get all courses by this instructor
     const courses = await Course.find({ teacher: instructorId });
@@ -239,6 +266,17 @@ export const getInstructorStats = async (req, res) => {
 export const getEnrollmentByCourse = async (req, res) => {
   try {
     const { studentId, courseId } = req.params;
+    const currentUserId = req.user?.id || req.user?._id;
+    
+    // Students can only check their own enrollment; instructors can check their students
+    if (currentUserId?.toString() !== studentId?.toString()) {
+      // Check if the requester is an instructor for this course
+      const course = await Course.findById(courseId).select("teacher");
+      if (!course || course.teacher.toString() !== currentUserId?.toString()) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+    }
+    
     const enrollment = await Enrollment.findOne({ student: studentId, course: courseId });
     
     if (!enrollment) {
@@ -255,6 +293,14 @@ export const getEnrollmentByCourse = async (req, res) => {
 export const getInstructorStudents = async (req, res) => {
   try {
     const { instructorId } = req.params;
+    
+    // Ownership check: instructors can only view their own students
+    const currentUserId = req.user?.id || req.user?._id;
+    const userRoles = parseRolesFromUser(req.user);
+    const isAdmin = userRoles.includes("admin");
+    if (currentUserId?.toString() !== instructorId?.toString() && !isAdmin) {
+      return res.status(403).json({ message: "Forbidden: You can only view your own students" });
+    }
 
     // Get all courses by this instructor
     const courses = await Course.find({ teacher: instructorId });

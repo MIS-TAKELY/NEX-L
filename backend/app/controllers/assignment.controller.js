@@ -2,6 +2,7 @@ import Assignment from "../models/assignment.model.js";
 import Course from "../models/course.model.js";
 import getEmbedding from "../utils/embedding.js";
 import { checkAndAwardBadges } from "../utils/badge.service.js";
+import { parseRolesFromUser } from "../lib/roles.js";
 
 // Helper for cosine similarity
 const cosineSimilarity = (vecA, vecB) => {
@@ -15,8 +16,21 @@ const cosineSimilarity = (vecA, vecB) => {
 export const createAssignment = async (req, res) => {
   try {
     const { title, description, dueDate, courseId, autoGrade, gradingCriteria, maxScore } = req.body;
+    const userId = req.user?.id || req.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    // Verify course exists and instructor owns it (or is admin)
     const course = await Course.findById(courseId);
     if (!course) return res.status(400).json({ message: "Course not found" });
+
+    const userRoles = parseRolesFromUser(req.user);
+    const isAdmin = userRoles.includes("admin");
+    if (!isAdmin && course.teacher.toString() !== userId.toString()) {
+      return res.status(403).json({ message: "Forbidden: You can only create assignments for your own courses" });
+    }
 
     const assignment = await Assignment.create({
       title,
@@ -27,7 +41,6 @@ export const createAssignment = async (req, res) => {
       gradingCriteria,
       maxScore
     });
-    
 
     res.status(201).json(assignment);
   } catch (err) {

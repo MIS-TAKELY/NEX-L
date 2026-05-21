@@ -164,7 +164,7 @@
 }
 
 .premium-card {
-  @apply transition-all duration-300 border border-border/40 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1 bg-card/30 backdrop-blur-sm rounded-md;
+  @apply transition-all duration-300 border border-border/40 hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1 bg-card/30 backdrop-blur-sm rounded-md;
 }
 
 .border-subtle {
