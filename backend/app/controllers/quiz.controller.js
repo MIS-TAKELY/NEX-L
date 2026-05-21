@@ -2,16 +2,28 @@ import Quiz from "../models/quiz.model.js";
 import QuizSubmission from "../models/submission.model.js";
 import Course from "../models/course.model.js";
 import { checkAndAwardBadges } from "../utils/badge.service.js";
+import { parseRolesFromUser } from "../lib/roles.js";
 
 // Create a new quiz
 export const createQuiz = async (req, res) => {
   try {
     const { title, courseId, sectionId, questions, timeLimit, autoGrade } = req.body;
+    const userId = req.user?.id || req.user?._id;
 
-    // Verify course exists
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Authentication required" });
+    }
+
+    // Verify course exists and instructor owns it (or is admin)
     const course = await Course.findById(courseId);
     if (!course) {
       return res.status(404).json({ success: false, message: "Course not found" });
+    }
+
+    const userRoles = parseRolesFromUser(req.user);
+    const isAdmin = userRoles.includes("admin");
+    if (!isAdmin && course.teacher.toString() !== userId.toString()) {
+      return res.status(403).json({ success: false, message: "Forbidden: You can only create quizzes for your own courses" });
     }
 
     const quiz = new Quiz({
@@ -132,6 +144,29 @@ export const submitQuiz = async (req, res) => {
 export const getQuizSubmissions = async (req, res) => {
     try {
         const { quizId } = req.params;
+        const userId = req.user?.id || req.user?._id;
+
+        if (!userId) {
+            return res.status(401).json({ success: false, message: "Authentication required" });
+        }
+
+        // Verify the instructor owns the course this quiz belongs to (or is admin)
+        const quiz = await Quiz.findById(quizId);
+        if (!quiz) {
+            return res.status(404).json({ success: false, message: "Quiz not found" });
+        }
+
+        const course = await Course.findById(quiz.course).select("teacher");
+        if (!course) {
+            return res.status(404).json({ success: false, message: "Course not found" });
+        }
+
+        const userRoles = parseRolesFromUser(req.user);
+        const isAdmin = userRoles.includes("admin");
+        if (!isAdmin && course.teacher.toString() !== userId.toString()) {
+            return res.status(403).json({ success: false, message: "Forbidden: You can only view submissions for your own courses" });
+        }
+
         const submissions = await QuizSubmission.find({ quiz: quizId }).populate('student', 'name email');
         
         res.status(200).json({ success: true, data: submissions });

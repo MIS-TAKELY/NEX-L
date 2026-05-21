@@ -10,6 +10,6 @@ const router = express.Router();
 
 router.get("/me", requireAuth, getMyProfile);
 router.put("/me", requireAuth, updateUser);
-router.get("/:id", getUserById);
+router.get("/:id", requireAuth, getUserById);
 
 export default router;

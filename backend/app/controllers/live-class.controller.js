@@ -1,6 +1,7 @@
 import LiveClass from "../models/live-class.model.js";
 import Course from "../models/course.model.js";
 import Enrollment from "../models/enrollment.model.js";
+import { parseRolesFromUser } from "../lib/roles.js";
 
 // ─── Helper: check enrollment ───────────────────────────────────────────────
 const isEnrolled = async (studentId, courseId) => {
@@ -60,18 +61,20 @@ const autoCompleteStaleClasses = async (courseId) => {
 export const createLiveClass = async (req, res) => {
   try {
     const { courseId, title, description, startTime, duration } = req.body;
-    const teacherId = req.user.id;
+    const userId = req.user.id;
+    const userRoles = parseRolesFromUser(req.user);
+    const isAdmin = userRoles.includes("admin");
 
     const course = await Course.findById(courseId);
     if (!course) return res.status(404).json({ message: "Course not found" });
 
-    if (String(course.teacher) !== teacherId) {
+    if (String(course.teacher) !== userId && !isAdmin) {
       return res.status(403).json({ message: "Only the course instructor can schedule live classes" });
     }
 
     const liveClass = new LiveClass({
       course: courseId,
-      teacher: teacherId,
+      teacher: userId,
       title,
       description,
       startTime,
@@ -153,13 +156,23 @@ export const updateLiveClass = async (req, res) => {
   try {
     const { classId } = req.params;
     const { title, description, startTime, duration, status } = req.body;
-    const teacherId = req.user.id;
+    const userId = req.user.id;
+    const userRoles = parseRolesFromUser(req.user);
+    const isAdmin = userRoles.includes("admin");
 
     const liveClass = await LiveClass.findById(classId);
     if (!liveClass) return res.status(404).json({ message: "Live class not found" });
 
-    if (String(liveClass.teacher) !== teacherId) {
+    // Verify ownership: only the class teacher or an admin can update
+    if (String(liveClass.teacher) !== userId && !isAdmin) {
       return res.status(403).json({ message: "Access denied" });
+    }
+
+    // Also verify the instructor owns the course (defense in depth)
+    const course = await Course.findById(liveClass.course);
+    if (!course) return res.status(404).json({ message: "Course not found" });
+    if (String(course.teacher) !== userId && !isAdmin) {
+      return res.status(403).json({ message: "Only the course instructor can modify live classes" });
     }
 
     if (status === "completed") {
@@ -191,13 +204,23 @@ export const updateLiveClass = async (req, res) => {
 export const deleteLiveClass = async (req, res) => {
   try {
     const { classId } = req.params;
-    const teacherId = req.user.id;
+    const userId = req.user.id;
+    const userRoles = parseRolesFromUser(req.user);
+    const isAdmin = userRoles.includes("admin");
 
     const liveClass = await LiveClass.findById(classId);
     if (!liveClass) return res.status(404).json({ message: "Live class not found" });
 
-    if (String(liveClass.teacher) !== teacherId) {
+    // Verify ownership: only the class teacher or an admin can delete
+    if (String(liveClass.teacher) !== userId && !isAdmin) {
       return res.status(403).json({ message: "Access denied" });
+    }
+
+    // Also verify the instructor owns the course (defense in depth)
+    const course = await Course.findById(liveClass.course);
+    if (!course) return res.status(404).json({ message: "Course not found" });
+    if (String(course.teacher) !== userId && !isAdmin) {
+      return res.status(403).json({ message: "Only the course instructor can delete live classes" });
     }
 
     await liveClass.deleteOne();
@@ -212,12 +235,14 @@ export const deleteLiveClass = async (req, res) => {
 export const endAllCourseLiveClasses = async (req, res) => {
   try {
     const { courseId } = req.params;
-    const teacherId = req.user.id;
+    const userId = req.user.id;
+    const userRoles = parseRolesFromUser(req.user);
+    const isAdmin = userRoles.includes("admin");
 
     const course = await Course.findById(courseId);
     if (!course) return res.status(404).json({ message: "Course not found" });
 
-    if (String(course.teacher) !== teacherId) {
+    if (String(course.teacher) !== userId && !isAdmin) {
       return res.status(403).json({ message: "Only the instructor can end live sessions" });
     }
 

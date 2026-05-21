@@ -4,7 +4,12 @@ import Course from "../models/course.model.js";
 // Create a new coupon
 export const createCoupon = async (req, res) => {
   try {
-    const { code, discount, type, courseId, expiry, maxUses, teacherId } = req.body;
+    const { code, discount, type, courseId, expiry, maxUses } = req.body;
+    const userId = req.user?.id || req.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
 
     // Verify course exists and teacher owns it
     const course = await Course.findById(courseId);
@@ -12,7 +17,7 @@ export const createCoupon = async (req, res) => {
       return res.status(404).json({ message: "Course not found" });
     }
 
-    if (course.teacher.toString() !== teacherId) {
+    if (course.teacher.toString() !== userId.toString()) {
       return res.status(403).json({ message: "You are not authorized to create coupons for this course" });
     }
 
@@ -23,7 +28,7 @@ export const createCoupon = async (req, res) => {
       course: courseId,
       expiry,
       maxUses,
-      createdBy: teacherId,
+      createdBy: userId,
     });
 
     res.status(201).json(coupon);
@@ -47,14 +52,19 @@ export const getCourseCoupons = async (req, res) => {
 export const updateCoupon = async (req, res) => {
   try {
     const { id } = req.params;
-    const { code, discount, type, expiry, maxUses, teacherId } = req.body;
+    const { code, discount, type, expiry, maxUses } = req.body;
+    const userId = req.user?.id || req.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
 
     const coupon = await Coupon.findById(id);
     if (!coupon) {
       return res.status(404).json({ message: "Coupon not found" });
     }
 
-    if (coupon.createdBy.toString() !== teacherId) {
+    if (coupon.createdBy.toString() !== userId.toString()) {
       return res.status(403).json({ message: "You are not authorized to update this coupon" });
     }
 
@@ -75,14 +85,18 @@ export const updateCoupon = async (req, res) => {
 export const deleteCoupon = async (req, res) => {
   try {
     const { id } = req.params;
-    const { teacherId } = req.query; // Or from body/header
+    const userId = req.user?.id || req.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
 
     const coupon = await Coupon.findById(id);
     if (!coupon) {
       return res.status(404).json({ message: "Coupon not found" });
     }
 
-    if (coupon.createdBy.toString() !== teacherId) {
+    if (coupon.createdBy.toString() !== userId.toString()) {
       return res.status(403).json({ message: "You are not authorized to delete this coupon" });
     }
 

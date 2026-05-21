@@ -3,6 +3,7 @@ import Content from "../models/content.model.js";
 import Course from "../models/course.model.js";
 import Enrollment from "../models/enrollment.model.js";
 import RecentlyViewed from "../models/recently-viewed.model.js";
+import Review from "../models/review.model.js";
 import Section from "../models/section.model.js";
 import User from "../models/user.model.js";
 import Quiz from "../models/quiz.model.js";
@@ -10,6 +11,7 @@ import Assignment from "../models/assignment.model.js";
 import getEmbedding from "../utils/embedding.js";
 import { cosineSimilarity, getAggregateVector } from "../utils/vector-utils.js";
 import { generateCourseContent as generateAIContent, summarizeText, askQuestionToAI } from "../utils/ai-generator.js";
+import { parseRolesFromUser } from "../lib/roles.js";
 
 const CATEGORY_ALIASES = new Map([
   ["web development", "Development"],
@@ -81,7 +83,6 @@ export const createCourse = async (req, res) => {
     const {
       title,
       description,
-      teacherId,
       tags,
       category,
       level,
@@ -95,9 +96,18 @@ export const createCourse = async (req, res) => {
       status,
     } = req.body;
 
-    // Check if teacher exists
-    const teacher = await User.findById(teacherId);
+    // Use authenticated user as the teacher
+    const userId = req.user?.id || req.user?._id;
+    if (!userId) return res.status(401).json({ message: "Authentication required" });
+    
+    const teacher = await User.findById(userId);
     if (!teacher) return res.status(400).json({ message: "Teacher not found" });
+    
+    // Check that the user has instructor or admin role
+    const userRoles = parseRolesFromUser(req.user);
+    if (!userRoles.some(r => r === "instructor" || r === "admin")) {
+      return res.status(403).json({ message: "Only instructors can create courses" });
+    }
 
     const normalizedCategory = normalizeCategory(category);
     const normalizedLevel = normalizeLevel(level) || "Beginner";
@@ -124,11 +134,10 @@ export const createCourse = async (req, res) => {
     }
 
     // Approval Flow: If status is 'published' and user is not admin, set to 'pending'
+    const isAdmin = userRoles.includes("admin");
+    
     let finalStatus = status || 'draft';
-    if (finalStatus === 'published') {
-      // In a real app, check req.user.role here. 
-      // For now, since requireAuth might not be consistently applied, 
-      // let's assume all instructor submissions need approval.
+    if (finalStatus === 'published' && !isAdmin) {
       finalStatus = 'pending';
     }
 
@@ -241,7 +250,9 @@ export const getAllCourses = async (req, res) => {
 // Record course view
 export const recordCourseView = async (req, res) => {
   try {
-    const { courseId, userId } = req.body;
+    const { courseId } = req.body;
+    const userId = req.user?.id || req.user?._id;
+    
     if (!courseId || !userId) {
       return res
         .status(400)
@@ -665,9 +676,16 @@ export const getCourseById = async (req, res) => {
       .select("-embedding")
       .populate({
         path: "teacher",
-        select: "name email _id",
+        select: "name email _id image",
       })
-      // .populate("enrollments")
+      .populate({
+        path: "reviews",
+        populate: {
+          path: "user",
+          select: "name image",
+        },
+        options: { sort: { createdAt: -1 } },
+      })
       .populate({
         path: "sections",
         populate: {
@@ -760,6 +778,15 @@ export const updateCourse = async (req, res) => {
 
     const course = await Course.findById(id);
     if (!course) return res.status(404).json({ message: "Course not found" });
+
+    // Ownership check: only the course teacher or an admin can update
+    const userId = req.user?.id || req.user?._id;
+    const userRoles = parseRolesFromUser(req.user);
+    const isAdmin = userRoles.includes("admin");
+    const isOwner = course.teacher.toString() === userId.toString();
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ message: "Forbidden: You can only update your own courses" });
+    }
 
     // Generate embedding if content changed or is missing
     let embedding = course.embedding || [];
@@ -914,6 +941,15 @@ export const deleteCourse = async (req, res) => {
     const course = await Course.findById(id);
     if (!course) return res.status(404).json({ message: "Course not found" });
 
+    // Ownership check: only the course teacher or an admin can delete
+    const userId = req.user?.id || req.user?._id;
+    const userRoles = parseRolesFromUser(req.user);
+    const isAdmin = userRoles.includes("admin");
+    const isOwner = course.teacher.toString() === userId.toString();
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ message: "Forbidden: You can only delete your own courses" });
+    }
+
     // Delete associated sections and contents
     for (const sectionId of course.sections) {
       const section = await Section.findById(sectionId);
@@ -955,6 +991,15 @@ export const generateContent = async (req, res) => {
 export const getInstructorAnalytics = async (req, res) => {
   try {
     const { teacherId } = req.params;
+
+    // Ownership check: instructors can only view their own analytics; admins can view any
+    const userId = req.user?.id || req.user?._id;
+    const userRoles = parseRolesFromUser(req.user);
+    const isAdmin = userRoles.includes("admin");
+    const isOwner = userId.toString() === teacherId.toString();
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ message: "Forbidden: You can only view your own analytics" });
+    }
 
     const courses = await Course.find({ teacher: teacherId });
     if (!courses || courses.length === 0) {
@@ -1072,6 +1117,65 @@ export const summarizeContent = async (req, res) => {
     });
   }
 };
+// Rate a course
+export const rateCourse = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rating, review } = req.body;
+    const userId = req.user?.id || req.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    if (!rating || rating < 1 || rating > 5) {
+      return res.status(400).json({ message: "Rating must be between 1 and 5" });
+    }
+
+    const course = await Course.findById(id);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    // Check if user already reviewed this course
+    const existingReview = await Review.findOne({ user: userId, course: id });
+
+    if (existingReview) {
+      // Update the existing review
+      existingReview.rating = rating;
+      existingReview.comment = review || existingReview.comment;
+      await existingReview.save();
+    } else {
+      // Create a new review
+      const newReview = await Review.create({
+        user: userId,
+        course: id,
+        rating,
+        comment: review || "",
+      });
+      course.reviews.push(newReview._id);
+    }
+
+    // Recalculate average rating
+    const allReviews = await Review.find({ course: id });
+    const totalRating = allReviews.reduce((sum, r) => sum + r.rating, 0);
+    course.ratings = {
+      average: Math.round((totalRating / allReviews.length) * 10) / 10,
+      count: allReviews.length,
+    };
+
+    await course.save();
+
+    res.json({
+      message: existingReview ? "Rating updated" : "Rating submitted",
+      ratings: course.ratings,
+    });
+  } catch (err) {
+    console.error("[rateCourse] error:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // Ask AI about lesson content
 export const askAIContent = async (req, res) => {
   try {

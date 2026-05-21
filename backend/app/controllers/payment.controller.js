@@ -16,8 +16,13 @@ const ESEWA_CONFIG = {
 // Initiate eSewa Payment
 export const initiateEsewaPayment = async (req, res) => {
     try {
-        const { amount, courseId, courseIds, userId } = req.body;
+        const { amount, courseId, courseIds } = req.body;
+        const userId = req.user?.id || req.user?._id;
         const numAmount = Number(amount);
+
+        if (!userId) {
+            return res.status(200).json({ success: false, message: "Authentication required" });
+        }
 
         // Support both single course and multiple courses
         const coursesArray = courseIds || (courseId ? [courseId] : []);
@@ -196,7 +201,12 @@ export const verifyEsewaPayment = async (req, res) => {
 // Khalti Logic (Fixed 401 by using sandbox URL for test keys)
 export const initiateKhaltiPayment = async (req, res) => {
     try {
-        const { amount, courseId, courseIds, userId } = req.body;
+        const { amount, courseId, courseIds } = req.body;
+        const userId = req.user?.id || req.user?._id;
+
+        if (!userId) {
+            return res.status(200).json({ success: false, message: "Authentication required" });
+        }
 
         // Support both single course and multiple courses
         const coursesArray = courseIds || (courseId ? [courseId] : []);
