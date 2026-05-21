@@ -61,14 +61,15 @@ const SectionList = ({ sections, onSelectContent, activeResourceId }) => {
                                             }`}
                                     >
                                         <div className="flex items-center gap-2 truncate">
-                                            <Icon
-                                                icon={
+                                            <Icon                                            icon={
                                                     lesson.type === 'video'
                                                         ? 'solar:play-bold'
                                                         : lesson.type === 'quiz'
                                                             ? 'solar:checklist-bold'
-                                                            : 'solar:document-text-bold'
-                                                }
+                                                            : lesson.type === 'assignment'
+                                                                ? 'solar:file-check-bold'
+                                                                : 'solar:document-text-bold'
+                                            }
                                                 className={(activeResourceId === lesson._id || lesson.resources?.some(r => r._id === activeResourceId || r.url === activeResourceId)) ? 'text-primary' : 'text-muted-foreground'}
                                             />
                                             <span className="truncate">{lesson.title}</span>

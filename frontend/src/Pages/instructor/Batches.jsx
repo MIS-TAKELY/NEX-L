@@ -21,9 +21,13 @@ const Batches = () => {
   const { showToast } = useToast();
 
   const teacherId = userData?.id;
-  const { data: courses = [], isLoading } = useGetInstructorCoursesQuery(teacherId, {
-    skip: !teacherId,
-  });
+  const { data: coursesData, isLoading } = useGetInstructorCoursesQuery(
+    { instructorId: teacherId, page: 1, limit: 100 },
+    {
+      skip: !teacherId,
+    }
+  );
+  const courses = coursesData?.courses || [];
   const { data: studentsData = {}, isLoading: isLoadingStudents } = useGetInstructorStudentsQuery(
     teacherId,
     {
