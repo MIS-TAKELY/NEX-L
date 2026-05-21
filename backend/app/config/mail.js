@@ -4,12 +4,14 @@ import dotenv from "dotenv";
 dotenv.config();
 
 
+export const SUPPORT_EMAIL = "mailitttome@gmail.com";
+
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
   secure: false,
   auth: {
-    user: "mailitttome@gmail.com",
+    user: SUPPORT_EMAIL,
     pass: "cqxaeszfinflvqot",
   },
 });
@@ -19,7 +21,7 @@ export async function sendEmail({ to, subject, html }) {
 
   try {
     const info = await transporter.sendMail({
-      from: `"NEX-L Support" <${process.env.MAIL_USER}>`,
+      from: `"NEX-L Support" <${process.env.MAIL_USER || SUPPORT_EMAIL}>`,
       to: Array.isArray(to) ? to.join(", ") : to,
       subject,
       html,

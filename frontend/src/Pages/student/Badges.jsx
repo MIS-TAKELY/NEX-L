@@ -61,9 +61,6 @@ export default function Badges() {
     return matchType && matchLevel;
   });
 
-  const byLevel = (level) => earnedBadges.filter((ub) => ub.badge?.level === level).length;
-  const totalVisibleBadges = earnedBadges.length + batchBadges.length;
-
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Hero Header */}
@@ -96,14 +93,10 @@ export default function Badges() {
             {[
               { label: "Earned", value: earnedBadges.length, icon: "solar:medal-star-bold", color: "text-primary" },
               { label: "Batches", value: batchBadges.length, icon: "solar:layers-minimalistic-bold-duotone", color: "text-emerald-500" },
-              { label: "Visible", value: totalVisibleBadges, icon: "solar:bell-bing-bold", color: "text-cyan-500" },
-              { label: "Gold", value: byLevel("gold"), icon: "🥇", emoji: true, color: "text-yellow-400" },
-              { label: "Silver", value: byLevel("silver"), icon: "🥈", emoji: true, color: "text-slate-400" },
-              { label: "Bronze", value: byLevel("bronze"), icon: "🥉", emoji: true, color: "text-amber-600" },
             ].map((stat) => (
               <div key={stat.label} className="bg-card/60 backdrop-blur border border-border rounded-md px-5 py-4 text-center min-w-[80px]">
                 <div className={`text-2xl font-black ${stat.color} serif`}>
-                  {stat.emoji ? stat.icon : <Icon icon={stat.icon} className={stat.color} size={24} />}
+                  <Icon icon={stat.icon} className={stat.color} size={24} />
                 </div>
                 <div className="text-xl font-black text-foreground">{stat.value}</div>
                 <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">{stat.label}</div>
