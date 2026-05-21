@@ -195,6 +195,13 @@ const MyCourses = () => {
                                     Students
                                 </button>
                                 <button
+                                    onClick={() => navigate(`/instructor/assignments-review?courseId=${course._id}`)}
+                                    className="px-4 py-2 rounded-md bg-secondary text-secondary-foreground hover:bg-amber-500/10 hover:text-amber-500 transition-all text-sm font-medium flex items-center gap-2 border border-transparent hover:border-amber-500/20"
+                                >
+                                    <Icon icon="solar:file-check-bold-duotone" className="w-4 h-4" />
+                                    Assignments
+                                </button>
+                                <button
                                     onClick={() => handleManageScheduleClick(course)}
                                     className="px-4 py-2 rounded-md bg-secondary text-secondary-foreground hover:bg-primary/10 hover:text-primary transition-all text-sm font-medium flex items-center gap-2 border border-transparent hover:border-primary/20"
                                 >

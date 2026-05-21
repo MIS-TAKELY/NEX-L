@@ -130,3 +130,102 @@ export const getAssignmentById = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+// Get submissions for an assignment (instructor only)
+export const getSubmissions = async (req, res) => {
+  try {
+    const { assignmentId } = req.params;
+    const userId = req.user?.id || req.user?._id;
+
+    const assignment = await Assignment.findById(assignmentId).populate({
+      path: "submissions.student",
+      select: "name email image",
+    });
+
+    if (!assignment) {
+      return res.status(404).json({ success: false, message: "Assignment not found" });
+    }
+
+    // Verify the instructor owns the course this assignment belongs to
+    const course = await Course.findById(assignment.course);
+    if (!course) {
+      return res.status(404).json({ success: false, message: "Course not found" });
+    }
+
+    const userRoles = parseRolesFromUser(req.user);
+    const isAdmin = userRoles.includes("admin");
+    const isOwner = course.teacher.toString() === userId.toString();
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ success: false, message: "Forbidden: You can only view submissions for your own courses" });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        assignment: {
+          _id: assignment._id,
+          title: assignment.title,
+          description: assignment.description,
+          dueDate: assignment.dueDate,
+          maxScore: assignment.maxScore,
+          autoGrade: assignment.autoGrade,
+          gradingCriteria: assignment.gradingCriteria,
+        },
+        submissions: assignment.submissions,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// Grade a submission (instructor only)
+export const gradeSubmission = async (req, res) => {
+  try {
+    const { assignmentId, submissionId } = req.params;
+    const { grade } = req.body;
+    const userId = req.user?.id || req.user?._id;
+
+    if (grade === undefined || grade === null) {
+      return res.status(400).json({ success: false, message: "Grade is required" });
+    }
+
+    const assignment = await Assignment.findById(assignmentId);
+    if (!assignment) {
+      return res.status(404).json({ success: false, message: "Assignment not found" });
+    }
+
+    // Verify the instructor owns the course
+    const course = await Course.findById(assignment.course);
+    if (!course) {
+      return res.status(404).json({ success: false, message: "Course not found" });
+    }
+
+    const userRoles = parseRolesFromUser(req.user);
+    const isAdmin = userRoles.includes("admin");
+    const isOwner = course.teacher.toString() === userId.toString();
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ success: false, message: "Forbidden: You can only grade submissions for your own courses" });
+    }
+
+    // Find and update the specific submission
+    const submission = assignment.submissions.id(submissionId);
+    if (!submission) {
+      return res.status(404).json({ success: false, message: "Submission not found" });
+    }
+
+    submission.grade = Number(grade);
+    await assignment.save();
+
+    res.json({
+      success: true,
+      message: "Submission graded successfully",
+      data: {
+        submissionId: submission._id,
+        grade: submission.grade,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
