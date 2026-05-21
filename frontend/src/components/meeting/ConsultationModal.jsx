@@ -5,8 +5,15 @@ import { useState } from "react";
 
 const ConsultationModal = ({ sessionId, onClose, isInstructor }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [consultationInfo, setConsultationInfo] = useState(null);
 
   if (!sessionId) return null;
+
+  const headerTitle = consultationInfo
+    ? `Consultation with ${consultationInfo.studentName || "Student"}`
+    : "One-on-One Consultation";
+
+  const headerSubtitle = consultationInfo?.courseTitle || "";
 
   return (
     <div className={`fixed z-[9999] pointer-events-none transition-all duration-300 ${isExpanded ? 'inset-0' : 'bottom-6 right-6'}`}>
@@ -29,16 +36,23 @@ const ConsultationModal = ({ sessionId, onClose, isInstructor }) => {
           className="flex items-center justify-between px-5 py-2.5 flex-shrink-0"
           style={{ background: "var(--card)", borderBottom: "1px solid var(--border)" }}
         >
-          <div className="flex items-center gap-2">
-            <span className="flex h-2.5 w-2.5 relative">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="flex h-2.5 w-2.5 relative shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-md bg-green-400 opacity-75" />
               <span className="relative inline-flex rounded-md h-2.5 w-2.5 bg-green-500" />
             </span>
-            <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>
-              One-on-One Consultation
-            </span>
+            <div className="min-w-0">
+              <span className="text-[10px] font-bold uppercase tracking-widest truncate block" style={{ color: "var(--muted-foreground)" }}>
+                {headerTitle}
+              </span>
+              {headerSubtitle && (
+                <span className="text-[8px] font-semibold uppercase tracking-wider opacity-60 truncate block" style={{ color: "var(--muted-foreground)" }}>
+                  {headerSubtitle}
+                </span>
+              )}
+            </div>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 shrink-0">
             <button
                onClick={() => setIsExpanded(!isExpanded)}
                className="w-8 h-8 rounded-md flex items-center justify-center transition-all active:scale-95"
@@ -65,6 +79,7 @@ const ConsultationModal = ({ sessionId, onClose, isInstructor }) => {
             onLeave={onClose} 
             isInstructor={isInstructor}
             isExpanded={isExpanded}
+            onInfoLoaded={setConsultationInfo}
           />
         </div>
       </motion.div>

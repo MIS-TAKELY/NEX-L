@@ -60,7 +60,8 @@ const PaymentSuccess = () => {
 
                         // Call backend
                         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/payments/esewa/verify`, {
-                            params: { product_code, total_amount, transaction_uuid }
+                            params: { product_code, total_amount, transaction_uuid },
+                            withCredentials: true
                         });
 
                         console.log('DEBUG - Backend Response:', response.data);

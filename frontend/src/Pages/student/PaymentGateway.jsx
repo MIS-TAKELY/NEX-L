@@ -64,7 +64,7 @@ const PaymentGateway = () => {
         courseId: courseIds[0], // Legacy support
         userId: userData.id || userData._id,
         couponCode: couponCode || undefined
-      });
+      }, { withCredentials: true });
 
       if (response.data.success) {
         postToEsewa(response.data.paymentData);

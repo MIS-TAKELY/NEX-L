@@ -59,7 +59,7 @@ const ScheduleClassModal = ({ isOpen, onClose, courseId, courseTitle, editClass 
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
             <div className="bg-background w-full max-w-lg rounded-md shadow-2xl border border-border overflow-hidden animate-in fade-in zoom-in duration-200">
                 <div className="flex items-center justify-between p-6 border-b border-border">
                     <div>

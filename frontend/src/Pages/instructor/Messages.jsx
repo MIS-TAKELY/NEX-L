@@ -8,12 +8,12 @@ import {
   Chat,
   Channel,
   ChannelList,
-  ChannelPreviewMessenger,
   MessageInput,
   MessageList,
   Thread,
   Window,
 } from "stream-chat-react";
+import CustomChannelPreview from "@/components/instructor/CustomChannelPreview";
 import "stream-chat-react/dist/css/v2/index.css";
 import { Icon } from "@iconify/react";
 import { useStream } from "@/context/StreamContext";
@@ -65,7 +65,7 @@ const Messages = () => {
                 sort={sort}
                 options={options}
                 Preview={(props) => (
-                  <ChannelPreviewMessenger
+                  <CustomChannelPreview
                     {...props}
                     onSelect={() => setSelectedChannel(props.channel)}
                   />

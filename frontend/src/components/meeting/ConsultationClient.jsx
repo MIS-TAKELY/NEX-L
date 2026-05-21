@@ -16,7 +16,7 @@ const API_KEY = import.meta.env.VITE_STREAM_API_KEY || "";
 
 import { useStream } from "@/context/StreamContext";
 
-const CallUI = ({ onLeave, call, sessionId, isInstructor, isExpanded }) => {
+const CallUI = ({ onLeave, call, sessionId, isInstructor, isExpanded, courseTitle, studentName }) => {
   const { useCallCallingState } = useCallStateHooks();
   const callingState = useCallCallingState();
 
@@ -36,10 +36,14 @@ const CallUI = ({ onLeave, call, sessionId, isInstructor, isExpanded }) => {
     );
   }
 
+  const displayName = studentName
+    ? `Consultation with ${studentName}`
+    : "One-on-One Consultation";
+
   return (
     <StreamTheme className="h-full w-full flex flex-col flex-1">
       <MeetingLayout
-        courseName="One-on-One Consultation"
+        courseName={displayName}
         courseId={sessionId}
         call={call}
         onLeave={onLeave}
@@ -52,11 +56,12 @@ const CallUI = ({ onLeave, call, sessionId, isInstructor, isExpanded }) => {
   );
 };
 
-const ConsultationClient = ({ sessionId, onLeave, isInstructor, isExpanded }) => {
+const ConsultationClient = ({ sessionId, onLeave, isInstructor, isExpanded, onInfoLoaded }) => {
   const { videoClient } = useStream();
   const [call, setCall] = useState(null);
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("Initializing...");
+  const [consultationMeta, setConsultationMeta] = useState({ studentName: "", courseTitle: "" });
 
   useEffect(() => {
     if (!sessionId || !videoClient) return;
@@ -71,9 +76,15 @@ const ConsultationClient = ({ sessionId, onLeave, isInstructor, isExpanded }) =>
         const { data } = await axios.get(`${BACKEND}/api/v1/stream/consultation/${sessionId}`, { withCredentials: true });
         if (!isMounted) return;
 
-        const { callId, callType, studentId, teacherId } = data;
+        const { callId, callType, studentId, teacherId, studentName, courseTitle } = data;
         const members = [studentId, teacherId];
-        console.log("Consultation data fetched:", { callId, callType, members });
+        console.log("Consultation data fetched:", { callId, callType, members, studentName, courseTitle });
+
+        // Store & notify parent with consultation info for the header
+        setConsultationMeta({ studentName: studentName || "", courseTitle: courseTitle || "" });
+        if (onInfoLoaded) {
+          onInfoLoaded({ studentName, courseTitle });
+        }
 
         const videoCall = videoClient.call(callType, callId);
         localCall = videoCall;
@@ -193,6 +204,8 @@ const ConsultationClient = ({ sessionId, onLeave, isInstructor, isExpanded }) =>
           sessionId={sessionId} 
           isInstructor={isInstructor}
           isExpanded={isExpanded}
+          courseTitle={consultationMeta.courseTitle}
+          studentName={consultationMeta.studentName}
         />
       </StreamCall>
     </StreamVideo>

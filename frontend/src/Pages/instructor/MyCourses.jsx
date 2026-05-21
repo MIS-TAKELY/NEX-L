@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useGetInstructorCoursesQuery, useDeleteCourseMutation } from '@/store/slices/courseApi';
@@ -13,20 +13,46 @@ import {
 
 import { Skeleton } from '@/components/ui/skeleton';
 import CourseSkeleton from '@/components/skeletons/CourseSkeleton';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationPrevious,
+    PaginationNext,
+    PaginationEllipsis,
+} from '@/components/ui/pagination';
 
 const MyCourses = () => {
     const navigate = useNavigate();
     const { userData } = useSelector((state) => state.auth);
     const { showToast } = useToast();
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 10;
+
     const {
-        data: courses = [],
+        data: paginatedData,
         isLoading,
         isError,
         refetch
-    } = useGetInstructorCoursesQuery(userData?.id, {
-        skip: !userData?.id
-    });
+    } = useGetInstructorCoursesQuery(
+        { instructorId: userData?.id, page: currentPage, limit: ITEMS_PER_PAGE },
+        {
+            skip: !userData?.id
+        }
+    );
+
+    const courses = paginatedData?.courses || [];
+    const totalPages = paginatedData?.totalPages || 0;
+    const totalCourses = paginatedData?.totalCourses || 0;
+
+    // Reset to page 1 if current page exceeds available pages (e.g. after deletion)
+    useEffect(() => {
+        if (totalPages > 0 && currentPage > totalPages) {
+            setCurrentPage(1);
+        }
+    }, [totalPages, currentPage]);
 
     const [deleteCourse] = useDeleteCourseMutation();
     const { data: activeClasses = [] } = useGetInstructorActiveClassesQuery(undefined, {
@@ -226,6 +252,70 @@ const MyCourses = () => {
                     </div>
                 )}
             </div>
+
+            {totalPages > 1 && (
+                <div className="flex flex-col items-center gap-3 pt-4">
+                    <p className="text-sm text-muted-foreground font-medium">
+                        Page {currentPage} of {totalPages} ({totalCourses} total courses)
+                    </p>
+                    <Pagination>
+                        <PaginationContent>
+                            <PaginationItem>
+                                <PaginationPrevious
+                                    href="#"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (currentPage > 1) setCurrentPage(currentPage - 1);
+                                    }}
+                                    className={currentPage <= 1 ? 'pointer-events-none opacity-50' : ''}
+                                />
+                            </PaginationItem>
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                                if (
+                                    page === 1 ||
+                                    page === totalPages ||
+                                    (page >= currentPage - 1 && page <= currentPage + 1)
+                                ) {
+                                    return (
+                                        <PaginationItem key={page}>
+                                            <PaginationLink
+                                                href="#"
+                                                isActive={page === currentPage}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    setCurrentPage(page);
+                                                }}
+                                            >
+                                                {page}
+                                            </PaginationLink>
+                                        </PaginationItem>
+                                    );
+                                } else if (
+                                    page === currentPage - 2 ||
+                                    page === currentPage + 2
+                                ) {
+                                    return (
+                                        <PaginationItem key={page}>
+                                            <PaginationEllipsis />
+                                        </PaginationItem>
+                                    );
+                                }
+                                return null;
+                            })}
+                            <PaginationItem>
+                                <PaginationNext
+                                    href="#"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+                                    }}
+                                    className={currentPage >= totalPages ? 'pointer-events-none opacity-50' : ''}
+                                />
+                            </PaginationItem>
+                        </PaginationContent>
+                    </Pagination>
+                </div>
+            )}
 
             <ConfirmModal
                 isOpen={isConfirmOpen}

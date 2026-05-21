@@ -7,6 +7,8 @@ import DashboardSkeleton from "@/components/skeletons/DashboardSkeleton";
 const Dashboard = () => {
     const navigate = useNavigate();
     const { userData } = useSelector((state) => state.auth);
+    const displayName = userData?.name || "Instructor";
+
     const { data, isLoading } = useGetInstructorStatsQuery(userData?.id, {
         skip: !userData?.id
     });
@@ -30,35 +32,58 @@ const Dashboard = () => {
         ? [...studentsData.students].sort((a, b) => b.progress - a.progress).slice(0, 3) 
         : [];
 
+    const quickActions = [
+        { label: "Add New Course", icon: "solar:add-circle-bold", path: "/instructor/add-course", color: "bg-primary/10 text-primary border-primary/20" },
+        { label: "View Analytics", icon: "solar:graph-up-bold", path: "/instructor/analytics", color: "bg-accent/10 text-accent border-accent/20" },
+        { label: "My Courses", icon: "solar:notebook-bold", path: "/instructor/courses", color: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" },
+        { label: "Messages", icon: "solar:chat-round-dots-bold", path: "/instructor/messages", color: "bg-amber-500/10 text-amber-500 border-amber-500/20" },
+    ];
+
     return (
         <div className="space-y-8 font-outfit text-foreground">
             
-            {/* Top Stats Section - Mix of Large Card and Smaller Cards */}
+            {/* Top Stats Section */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
-                {/* Visits Card - Large Gradient Card */}
+                {/* Welcome Card - Large Gradient Card */}
                 <div className="lg:col-span-2 bg-gradient-to-br from-primary to-accent rounded-md p-8 text-primary-foreground relative overflow-hidden min-h-[300px] flex flex-col justify-center premium-card shadow-lg shadow-primary/20">
                     <div className="relative z-10 w-full md:w-1/2">
-                        <p className="text-primary-foreground/80 text-sm font-medium mb-1">Visits for today</p>
-                        <h2 className="text-7xl font-bold mb-6">0</h2>
+                        <p className="text-primary-foreground/80 text-sm font-medium mb-1 tracking-wide uppercase">
+                            Welcome back,
+                        </p>
+                        <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                            {displayName} 👋
+                        </h2>
                         
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             <div className="flex items-center gap-3">
-                                <span className="p-1 rounded bg-card/20">
-                                    <Icon icon="solar:star-bold" />
+                                <span className="p-1.5 rounded-md bg-card/20 backdrop-blur-sm">
+                                    <Icon icon="solar:notebook-bold" className="w-4 h-4" />
                                 </span>
                                 <div>
-                                    <p className="text-xs text-primary-foreground/80">Popularity</p>
-                                    <p className="font-bold">{stats.totalEnrollments}</p>
+                                    <p className="text-[10px] text-primary-foreground/70 uppercase tracking-wider font-semibold">Total Courses</p>
+                                    <p className="font-bold text-lg">{stats.totalCourses}</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
-                                <span className="p-1 rounded bg-card/20">
-                                    <Icon icon="solar:graph-up-bold" />
+                                <span className="p-1.5 rounded-md bg-card/20 backdrop-blur-sm">
+                                    <Icon icon="solar:users-group-rounded-bold" className="w-4 h-4" />
                                 </span>
                                 <div>
-                                    <p className="text-xs text-primary-foreground/80">Average Rating</p>
-                                    <p className="font-bold">{stats.averageRating}</p>
+                                    <p className="text-[10px] text-primary-foreground/70 uppercase tracking-wider font-semibold">Total Students</p>
+                                    <p className="font-bold text-lg">{stats.totalStudents}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <span className="p-1.5 rounded-md bg-card/20 backdrop-blur-sm">
+                                    <Icon icon="solar:graph-up-bold" className="w-4 h-4" />
+                                </span>
+                                <div>
+                                    <p className="text-[10px] text-primary-foreground/70 uppercase tracking-wider font-semibold">Average Rating</p>
+                                    <p className="font-bold text-lg">
+                                        {stats.averageRating}
+                                        <span className="text-sm text-primary-foreground/80 ml-1">/ 5</span>
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -71,30 +96,51 @@ const Dashboard = () => {
                         VIEW FULL STATISTIC <Icon icon="solar:alt-arrow-right-linear" />
                     </button>
 
-                    {/* Illustration Placeholder */}
+                    {/* Illustration */}
                     <div className="absolute top-8 right-8 w-1/2 h-full pointer-events-none hidden md:block">
-                         {/* Circle/Character Illustration placeholder */}
                          <div className="w-full h-full bg-contain bg-no-repeat bg-center opacity-90" style={{ backgroundImage: 'url("https://cdn3d.iconscout.com/3d/premium/thumb/man-working-on-laptop-2996954-2492508.png")' }}></div>
                     </div>
                 </div>
 
-                {/* Popularity Rate Card */}
-                <div className="bg-card rounded-md p-8 relative flex flex-col justify-between premium-card border border-border shadow-sm">
-                    <div>
-                        <div className="flex justify-between items-start">
-                             <p className="font-bold text-foreground">Popularity rate</p>
-                             <span className="bg-primary/10 text-primary border border-primary/20 px-2 py-1 rounded-md text-xs font-bold shadow-sm">+0</span>
-                        </div>
-                        <h2 className="text-6xl font-bold text-foreground mt-2">{stats.totalStudents}<span className="text-2xl align-top text-muted-foreground"> Students</span></h2>
+                {/* Performance Summary Card */}
+                <div className="bg-card rounded-md p-8 relative flex flex-col premium-card border border-border shadow-sm">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">Performance</h3>
+                        <span className="bg-primary/10 text-primary border border-primary/20 px-2.5 py-1 rounded-md text-[10px] font-bold shadow-sm">
+                            {stats.totalEnrollments} enrolled
+                        </span>
                     </div>
 
-                    {/* Gauge Chart Placeholder */}
-                    <div className="absolute top-1/2 right-4 -translate-y-1/2 w-24 h-24 border-8 border-primary/10 rounded-md border-t-transparent border-l-transparent rotate-45 opacity-50"></div>
+                    {/* Revenue - Big Number */}
+                    <div className="mb-6">
+                        <p className="text-xs text-muted-foreground font-medium mb-1">Total Revenue</p>
+                        <h2 className="text-4xl font-bold text-foreground">
+                            Rs {stats.totalRevenue.toLocaleString()}
+                        </h2>
+                    </div>
 
-                    <div className="mt-8">
-                        <p className="text-xs text-muted-foreground leading-relaxed mb-4 font-medium">
-                            Your Rate has increased because of your recent update activity. <span className="font-bold text-primary">Keep moving</span> forward and get more points!
-                        </p>
+                    {/* Rating Display */}
+                    <div className="flex items-center justify-between p-3 bg-muted/30 rounded-md border border-border/50">
+                        <div className="flex items-center gap-2">
+                            <Icon icon="solar:star-bold" className="text-amber-500 w-5 h-5" />
+                            <span className="text-sm font-bold text-foreground">Average Rating</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <span className="text-2xl font-extrabold text-foreground">{stats.averageRating}</span>
+                            <span className="text-xs text-muted-foreground font-medium">/ 5</span>
+                        </div>
+                    </div>
+
+                    {/* Mini stat row */}
+                    <div className="grid grid-cols-2 gap-3 mt-4">
+                        <div className="p-3 bg-muted/20 rounded-md border border-border/40">
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Courses</p>
+                            <p className="text-xl font-bold text-foreground mt-1">{stats.totalCourses}</p>
+                        </div>
+                        <div className="p-3 bg-muted/20 rounded-md border border-border/40">
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Students</p>
+                            <p className="text-xl font-bold text-foreground mt-1">{stats.totalStudents}</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -112,7 +158,7 @@ const Dashboard = () => {
                         <div className="flex items-center gap-3">
                              <div className="w-10 h-10 rounded-md bg-primary flex items-center justify-center text-primary-foreground font-bold">Rs</div>
                              <div>
-                                 <h4 className="text-2xl font-bold text-foreground">{stats.totalRevenue}</h4>
+                                 <h4 className="text-2xl font-bold text-foreground">Rs {stats.totalRevenue.toLocaleString()}</h4>
                                  <p className="text-xs text-muted-foreground font-medium">Total revenue</p>
                              </div>
                         </div>
@@ -177,6 +223,35 @@ const Dashboard = () => {
                                 <p className="text-muted-foreground text-sm font-medium italic">No enrollments yet</p>
                             </div>
                         )}
+                    </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="bg-card rounded-md p-8 shadow-sm premium-card border border-border">
+                    <h3 className="font-bold text-foreground mb-6 uppercase tracking-wider text-sm">Quick Actions</h3>
+                    
+                    <div className="space-y-3">
+                        {quickActions.map((action, idx) => (
+                            <button
+                                key={idx}
+                                onClick={() => navigate(action.path)}
+                                className={`w-full flex items-center gap-3 p-4 rounded-md border ${action.color} hover:shadow-md transition-all duration-200 group text-left`}
+                            >
+                                <span className="p-2 rounded-md bg-background/50">
+                                    <Icon icon={action.icon} className="w-5 h-5" />
+                                </span>
+                                <span className="text-sm font-bold text-foreground flex-1 group-hover:translate-x-0.5 transition-transform">
+                                    {action.label}
+                                </span>
+                                <Icon icon="solar:alt-arrow-right-linear" className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all" />
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="mt-6 p-4 bg-gradient-to-br from-primary/5 to-accent/5 rounded-md border border-primary/10">
+                        <p className="text-xs text-muted-foreground font-medium leading-relaxed">
+                            💡 <span className="font-bold text-foreground">Pro tip:</span> Keep your courses updated with fresh content to boost student engagement and ratings!
+                        </p>
                     </div>
                 </div>
             </div>

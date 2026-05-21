@@ -353,12 +353,18 @@ export const createConsultationCall = async (req, res) => {
     const { sessionId } = req.params;
     const user = req.user;
 
-    const session = await TutoringSession.findById(sessionId);
+    const session = await TutoringSession.findById(sessionId)
+      .populate("student", "name")
+      .populate("course", "title");
     if (!session) return res.status(404).json({ message: "Session not found" });
 
+    // Extract IDs (student is populated, teacher is not)
+    const studentId = String(session.student._id || session.student);
+    const teacherId = String(session.teacher);
+
     // Check if user is part of this session
-    const isTeacher = String(session.teacher) === user.id;
-    const isStudent = String(session.student) === user.id;
+    const isTeacher = teacherId === user.id;
+    const isStudent = studentId === user.id;
 
     if (!isTeacher && !isStudent) {
       return res.status(403).json({ message: "Access denied. You are not part of this session." });
@@ -367,11 +373,11 @@ export const createConsultationCall = async (req, res) => {
     const callId = `consult-${sessionId}`;
     
     // For consultation, we use the DM channel between student and teacher
-    const channelId = `dm-${[String(session.student), String(session.teacher)].sort().join("-")}`;
+    const channelId = `dm-${[studentId, teacherId].sort().join("-")}`;
     const client = getStreamClient();
     const chatChannel = client.channel("messaging", channelId, {
-      members: [String(session.student), String(session.teacher)],
-      name: `Consultation: ${sessionId}`,
+      members: [studentId, teacherId],
+      name: `Consultation with ${session.student?.name || "Student"}${session.course?.title ? ` — ${session.course.title}` : ""}`,
       created_by_id: user.id,
     });
     await chatChannel.create();
@@ -380,8 +386,10 @@ export const createConsultationCall = async (req, res) => {
       callId, 
       callType: "default", 
       sessionId,
-      studentId: String(session.student),
-      teacherId: String(session.teacher),
+      studentId,
+      studentName: session.student?.name,
+      teacherId,
+      courseTitle: session.course?.title,
       channelId,
       channelType: "messaging"
     });

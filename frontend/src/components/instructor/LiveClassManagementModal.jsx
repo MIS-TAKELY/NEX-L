@@ -52,7 +52,7 @@ const LiveClassManagementModal = ({ isOpen, onClose, courseId, courseTitle }) =>
 
     return (
         <>
-            <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+            <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
                 <div className="bg-background w-full max-w-3xl rounded-md shadow-2xl border border-border/50 overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[90vh]">
                     {/* Header */}
                     <div className="flex items-center justify-between p-6 border-b border-border/50 shrink-0">

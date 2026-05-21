@@ -45,7 +45,7 @@ const CourseCard = ({ course, index }) => {
           <div className="w-5 h-5 rounded-md bg-primary/10 flex items-center justify-center">
             <Users className="w-2.5 h-2.5 text-primary" />
           </div>
-          <p className="text-[11px] text-muted-foreground font-medium">{course.instructor || "Expert Instructor"}</p>
+          <p className="text-[11px] text-muted-foreground font-medium">{course?.teacher?.name || course.instructor || "Instructor"}</p>
         </div>
         
 

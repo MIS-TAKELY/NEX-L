@@ -5,6 +5,7 @@ import { Icon } from '@iconify/react';
 import { useGetCartQuery } from '@/store/slices/cartApi';
 import ProfileDropdown from '../common/ProfileDropdown';
 import NotificationBell from '../common/NotificationBell';
+import { useState } from 'react';
 
 const StudentTopbar = () => {
     const navigate = useNavigate();
@@ -13,6 +14,13 @@ const StudentTopbar = () => {
     const { isLoggedIn, userRole, userData } = useSelector((state) => state.auth);
     const { data: cartResp } = useGetCartQuery(undefined, { skip: !isLoggedIn || userRole !== 'student' });
     const cartCount = cartResp?.data?.items?.length || 0;
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const handleSearch = (e) => {
+        if (e.key === 'Enter' && searchQuery.trim()) {
+            navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+        }
+    };
 
     return (
         <div className="flex justify-between items-center py-4 mb-8">
@@ -25,7 +33,10 @@ const StudentTopbar = () => {
                     </span>
                     <input
                         type="text"
-                        placeholder="Search your course..."
+                        placeholder="Search course..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onKeyDown={handleSearch}
                         className="w-full pl-12 pr-4 py-3 bg-card border border-border/60 focus:border-primary/30 focus:bg-card rounded-md text-sm outline-none transition-all shadow-sm text-foreground placeholder:text-muted-foreground"
                     />
                 </div>

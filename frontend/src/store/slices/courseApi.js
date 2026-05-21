@@ -3,11 +3,12 @@ import { apiSlice } from "./apiSlice";
 export const courseApi = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getInstructorCourses: builder.query({
-            query: (instructorId) => `/courses/instructor/${instructorId}`,
+            query: ({ instructorId, page = 1, limit = 10 }) =>
+                `/courses/instructor/${instructorId}?page=${page}&limit=${limit}`,
             providesTags: (result) =>
-                result
+                result?.courses
                     ? [
-                        ...result.map(({ _id }) => ({ type: 'Course', id: _id })),
+                        ...result.courses.map(({ _id }) => ({ type: 'Course', id: _id })),
                         { type: 'Course', id: 'LIST' },
                     ]
                     : [{ type: 'Course', id: 'LIST' }],
