@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getUserEnrollments } from '../../apis/enrollment.api';
 import CourseCard from '../../components/student/CourseCard';
@@ -21,6 +21,7 @@ const MyEnrollments = () => {
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
   const { data: upcomingClasses = [], isLoading: loadingClasses } = useGetUpcomingLiveClassesQuery(undefined, {
@@ -53,6 +54,39 @@ const MyEnrollments = () => {
 
   const completedCourses = enrollments.filter(e => e.progress >= 100).length;
   const inProgressCourses = enrollments.filter(e => e.progress > 0 && e.progress < 100).length;
+
+  const filteredEnrollments = useMemo(() => {
+    console.log('[Search Debug] searchQuery:', searchQuery);
+    console.log('[Search Debug] enrollments count:', enrollments.length);
+    if (enrollments.length > 0) {
+      console.log('[Search Debug] first course title:', enrollments[0]?.course?.title);
+    }
+    if (!searchQuery.trim()) {
+      console.log('[Search Debug] no query, returning all');
+      return enrollments;
+    }
+    const query = searchQuery.toLowerCase().trim();
+    const filtered = enrollments.filter((enrollment) => {
+      const { course } = enrollment;
+      if (!course) return false;
+      const title = (course.title || '').toLowerCase();
+      const description = (course.description || '').toLowerCase();
+      const category = (course.category || '').toLowerCase();
+      const instructor = (course.teacher?.name || '').toLowerCase();
+      const matches = (
+        title.includes(query) ||
+        description.includes(query) ||
+        category.includes(query) ||
+        instructor.includes(query)
+      );
+      if (matches) {
+        console.log('[Search Debug] matched:', course.title);
+      }
+      return matches;
+    });
+    console.log('[Search Debug] filtered count:', filtered.length);
+    return filtered;
+  }, [enrollments, searchQuery]);
 
   if (loading || loadingClasses) {
     return (
@@ -233,7 +267,29 @@ const MyEnrollments = () => {
           </motion.div>
         )}
 
-        {enrollments.length === 0 ? (
+        {filteredEnrollments.length === 0 && enrollments.length > 0 ? (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+            className="flex flex-col items-center justify-center py-20 glass-card rounded-2xl text-center px-4"
+          >
+            <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-500/5 flex items-center justify-center mb-6">
+              <Icon icon="solar:minimalistic-magnifer-bold-duotone" className="text-amber-500 w-10 h-10" />
+            </div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">No results found</h2>
+            <p className="text-muted-foreground max-w-sm mb-8 text-base">
+              No courses match "<span className="font-semibold text-foreground">{searchQuery}</span>". Try a different search term.
+            </p>
+            <button
+              onClick={() => setSearchQuery('')}
+              className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
+            >
+              Clear Search
+              <Icon icon="solar:close-circle-bold" className="w-4 h-4" />
+            </button>
+          </motion.div>
+        ) : enrollments.length === 0 ? (
           <motion.div 
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -261,20 +317,48 @@ const MyEnrollments = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.25, delay: 0.15 }}
           >
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                <svg className="text-primary w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                </svg>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <svg className="text-primary w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-foreground">My Courses</h2>
+                  <p className="text-sm text-muted-foreground">Continue where you left off</p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-xl font-bold text-foreground">My Courses</h2>
-                <p className="text-sm text-muted-foreground">Continue where you left off</p>
+
+              <div className="relative w-full sm:w-72">
+                <Icon icon="solar:minimalistic-magnifer-bold-duotone" className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4 pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="Search your courses..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full h-10 pl-10 pr-10 bg-background/80 border border-border/50 rounded-lg text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Icon icon="solar:close-circle-bold" className="w-4 h-4" />
+                  </button>
+                )}
               </div>
             </div>
+
+            {searchQuery && (
+              <p className="text-sm text-muted-foreground mb-4">
+                Showing {filteredEnrollments.length} of {enrollments.length} course{enrollments.length !== 1 ? 's' : ''}
+              </p>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {enrollments.map((enrollment, index) => (
+              {filteredEnrollments.map((enrollment, index) => (
                 <motion.div 
                   key={enrollment._id} 
                   initial={{ opacity: 0 }}
