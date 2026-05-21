@@ -6,7 +6,7 @@ export function normalizeRole(r) {
   return r;
 }
 
-export function isAppRole(r) {1234567890
+export function isAppRole(r) {
   const n = normalizeRole(r);
   return n === "student" || n === "instructor" || n === "admin";
 }

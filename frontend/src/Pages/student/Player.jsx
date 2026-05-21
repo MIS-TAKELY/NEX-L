@@ -1,7 +1,7 @@
 import { Icon } from '@iconify/react';
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getCourseById } from '../../apis/course.api';
+import { resolveAssignmentByContent } from '../../apis/course.api';
 import SectionList from '../../components/student/SectionList';
 import Loading from '../../components/student/Loading';
 import QuizPlayer from './QuizPlayer';
@@ -61,9 +61,58 @@ const Player = () => {
   const [aiChatAnswer, setAiChatAnswer] = useState(null);
   const [copied, setCopied] = useState(false);
   const [isAiPanelOpen, setIsAiPanelOpen] = useState(false);
+  const [resolvedAssignment, setResolvedAssignment] = useState(null);
+  const [assignmentLoading, setAssignmentLoading] = useState(false);
 
   const course = courseRes?.data;
   const enrollment = enrollmentRes?.enrollment;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadAssignment = async () => {
+      if (activeLesson?.type !== 'assignment') {
+        setResolvedAssignment(null);
+        setAssignmentLoading(false);
+        return;
+      }
+
+      if (activeLesson?.assignment && typeof activeLesson.assignment === 'object') {
+        setResolvedAssignment(activeLesson.assignment);
+        setAssignmentLoading(false);
+        return;
+      }
+
+      if (!activeLesson?._id) {
+        setResolvedAssignment(null);
+        setAssignmentLoading(false);
+        return;
+      }
+
+      setAssignmentLoading(true);
+      try {
+        const response = await resolveAssignmentByContent(activeLesson._id);
+        if (!cancelled) {
+          setResolvedAssignment(response?.data || null);
+        }
+      } catch (error) {
+        console.warn("Unable to resolve assignment details:", error);
+        if (!cancelled) {
+          setResolvedAssignment(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setAssignmentLoading(false);
+        }
+      }
+    };
+
+    loadAssignment();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeLesson?._id, activeLesson?.type, activeLesson?.assignment]);
 
   const isLikelyImageUrl = (value = '') =>
     /\.(png|jpe?g|gif|webp|bmp|svg|avif|heic|heif)(\?|#|$)/i.test(value);
@@ -299,6 +348,128 @@ const Player = () => {
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
         {mainContent}
 
+        {/* AI Learning Tools - Available for all content types */}
+        {activeResource && (
+          <div className="bg-gradient-to-br from-primary/[0.04] via-card to-accent/[0.04] rounded-xl border border-border/60 shadow-sm hover:shadow-md overflow-hidden transition-all duration-500 group/ai">
+            {/* Header */}
+            <div className="px-6 py-4 flex items-center justify-between bg-background/40 border-b border-border/30 flex-wrap gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-md shadow-violet-500/20 group-hover/ai:scale-105 transition-transform">
+                  <Icon icon="solar:magic-stick-3-bold-duotone" className="text-white w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-foreground tracking-tight">AI Learning Tools</h3>
+                  <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest">Generate summaries & study notes</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap">
+                {(activeLesson?.description || activeLesson?.summary) && (
+                  <button
+                    onClick={() => handleSummarize('short')}
+                    disabled={summarizing}
+                    className="px-4 py-2 bg-violet-500/10 text-violet-600 hover:bg-violet-500/20 dark:text-violet-400 dark:hover:bg-violet-500/30 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-200 active:scale-90 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 border border-violet-500/20 hover:border-violet-500/40 shadow-sm"
+                  >
+                    {summarizing ? (
+                      <Icon icon="solar:restart-bold" className="animate-spin w-3.5 h-3.5" />
+                    ) : (
+                      <Icon icon="solar:text-align-left-bold-duotone" className="w-3.5 h-3.5" />
+                    )}
+                    Quick Summary
+                  </button>
+                )}
+                {(activeLesson?.description || activeLesson?.summary) && (
+                  <button
+                    onClick={() => handleSummarize('elaborated')}
+                    disabled={summarizing}
+                    className="px-4 py-2 bg-indigo-500/10 text-indigo-600 hover:bg-indigo-500/20 dark:text-indigo-400 dark:hover:bg-indigo-500/30 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-200 active:scale-90 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 border border-indigo-500/20 hover:border-indigo-500/40 shadow-sm"
+                  >
+                    {summarizing ? (
+                      <Icon icon="solar:restart-bold" className="animate-spin w-3.5 h-3.5" />
+                    ) : (
+                      <Icon icon="solar:document-text-bold-duotone" className="w-3.5 h-3.5" />
+                    )}
+                    Detailed Notes
+                  </button>
+                )}
+                {(!activeLesson?.description && !activeLesson?.summary) && (
+                  <button
+                    onClick={() => handleSummarize('short')}
+                    disabled={summarizing}
+                    className="px-4 py-2 bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 dark:text-amber-400 dark:hover:bg-amber-500/30 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-200 active:scale-90 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 border border-amber-500/20 hover:border-amber-500/40 shadow-sm"
+                  >
+                    {summarizing ? (
+                      <Icon icon="solar:restart-bold" className="animate-spin w-3.5 h-3.5" />
+                    ) : (
+                      <Icon icon="solar:magic-stick-3-bold-duotone" className="w-3.5 h-3.5" />
+                    )}
+                    Generate AI Notes
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Summary Display */}
+            <AnimatePresence>
+              {aiSummary && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                  className="overflow-hidden"
+                >
+                  <div className="p-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <span className="relative flex h-2.5 w-2.5">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                        </span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400">
+                          {aiSummary.mode === 'elaborated' ? 'Detailed Study Notes' : 'Quick Summary'} Generated
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={handleCopy}
+                          className="p-2 hover:bg-secondary/80 rounded-lg transition-all text-muted-foreground hover:text-foreground active:scale-90 relative"
+                          title="Copy to clipboard"
+                        >
+                          <Icon
+                            icon={copied ? 'solar:check-circle-bold' : 'solar:copy-bold'}
+                            size={16}
+                            className={copied ? 'text-emerald-500' : ''}
+                          />
+                        </button>
+                        <button
+                          onClick={handlePrint}
+                          className="p-2 hover:bg-secondary/80 rounded-lg transition-all text-muted-foreground hover:text-foreground active:scale-90"
+                          title="Print"
+                        >
+                          <Icon icon="solar:printer-minimalistic-bold" size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleSummarize(aiSummary.mode || 'short')}
+                          className="p-2 hover:bg-secondary/80 rounded-lg transition-all text-muted-foreground hover:text-foreground active:scale-90"
+                          title="Regenerate"
+                        >
+                          <Icon icon="solar:restart-bold" size={16} />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="prose prose-sm dark:prose-invert max-w-none bg-card/60 p-6 rounded-xl border border-border/40 shadow-sm leading-relaxed">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {aiSummary.text}
+                      </ReactMarkdown>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
+
         {/* Tab Navigation */}
         <div className="flex items-center gap-2 p-1.5 bg-card/80 backdrop-blur-xl rounded-md border border-border/50 w-full sm:w-fit shadow-sm overflow-x-auto no-scrollbar">
           {[
@@ -324,7 +495,7 @@ const Player = () => {
         <div className="transition-all duration-500 min-h-[500px]">
           {activeTab === 'lesson' && (
             <div className="animate-in fade-in slide-in-from-left-4 space-y-8">
-              {/* Note Content Header & AI Tools */}
+              {/* Note Content Header */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-2">
                 <div className="flex flex-col">
                   <span className="text-[10px] text-primary font-black uppercase tracking-[0.25em] leading-none mb-2 opacity-80">Lesson Resources</span>
@@ -332,48 +503,8 @@ const Player = () => {
                     {formatDisplayName(activeResource?.name, activeLesson?.title)}
                   </h2>
                 </div>
-                
-                <div className="flex items-center gap-3">
-                  {/* AI Summarizer / Generator Button */}
-                  <div className="relative group">
-                    <button
-                      disabled={summarizing}
-                      onClick={() => handleSummarize('short')}
-                      className={`flex items-center gap-2.5 px-6 py-3 rounded-md text-[10px] font-black uppercase tracking-widest transition-all duration-300 shadow-lg active:scale-95 disabled:opacity-70 ${
-                        !activeLesson?.description && !activeLesson?.summary
-                          ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-orange-500/20 hover:shadow-orange-500/40'
-                          : 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-indigo-500/20 hover:shadow-indigo-500/40'
-                      }`}
-                    >
-                      {summarizing ? (
-                        <Icon icon="solar:restart-bold-duotone" className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Icon icon="solar:magic-stick-3-bold-duotone" className="w-4 h-4" />
-                      )}
-                      {activeLesson?.description || activeLesson?.summary ? 'AI Summarize' : 'Generate AI Notes'}
-                    </button>
-                    
-                    {/* Dropdown Options - Only show if we have text to summarize */}
-                    {(activeLesson?.description || activeLesson?.summary) && (
-                      <div className="absolute top-full right-0 mt-2 w-48 bg-card border border-border/80 rounded-md shadow-2xl py-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 scale-95 group-hover:scale-100 origin-top-right">
-                        <button
-                          onClick={() => handleSummarize('short')}
-                          className="w-full h-full p-4 flex items-center gap-3 hover:bg-secondary transition-colors text-xs font-bold text-foreground text-left"
-                        >
-                          <Icon icon="solar:text-align-left-bold-duotone" className="text-primary shrink-0" />
-                          Short Summary
-                        </button>
-                        <button
-                          onClick={() => handleSummarize('elaborated')}
-                          className="w-full h-full p-4 flex items-center gap-3 hover:bg-secondary transition-colors text-xs font-bold text-foreground text-left"
-                        >
-                          <Icon icon="solar:document-text-bold-duotone" className="text-accent shrink-0" />
-                          Elaborated Summary
-                        </button>
-                      </div>
-                    )}
-                  </div>
 
+                <div className="flex items-center gap-3">
                   {enrollment && (
                     <button
                       onClick={handleMarkAsCompleted}
@@ -410,7 +541,7 @@ const Player = () => {
                     <Icon icon="solar:document-text-bold" size={32} className="text-primary/40" />
                    </div>
                    <p className="text-foreground font-black uppercase tracking-widest text-[10px] mb-2">No Instructor Notes</p>
-                   <p className="text-muted-foreground font-medium text-sm max-w-xs">Use the <span className="text-orange-500 font-bold">Generate AI Notes</span> tool above to create study materials for this lesson!</p>
+                   <p className="text-muted-foreground font-medium text-sm max-w-xs">Use the <span className="text-orange-500 font-bold">AI Learning Tools</span> above to create study materials for this lesson!</p>
                 </div>
               )}
             </div>
@@ -443,6 +574,18 @@ const Player = () => {
 
     const type = activeResource.type || activeLesson?.type;
     const url = activeResource.url || activeLesson?.url;
+    const assignmentData = resolvedAssignment
+      || (activeLesson?.assignment && typeof activeLesson.assignment === 'object' ? activeLesson.assignment : null)
+      || (activeLesson?.type === 'assignment'
+        ? {
+            _id: activeLesson?._id,
+            title: activeLesson?.title || 'Assignment',
+            description: activeLesson?.description || activeLesson?.summary || 'Assignment details are being loaded.',
+            dueDate: null,
+            maxScore: 100,
+            instructions: '',
+          }
+        : null);
 
     switch (type) {
       case 'video': {
@@ -527,11 +670,21 @@ const Player = () => {
             />
         );
       case 'assignment':
+        if (assignmentLoading && !assignmentData) {
+          return renderTabbedLayout(
+            <div className="flex flex-col items-center justify-center py-20 bg-card rounded-md border border-border shadow-sm">
+              <div className="w-14 h-14 rounded-md bg-primary/10 flex items-center justify-center mb-4">
+                <Icon icon="solar:restart-bold" className="text-primary animate-spin" size={28} />
+              </div>
+              <p className="text-sm font-bold text-foreground">Loading assignment details...</p>
+            </div>
+          );
+        }
         return renderTabbedLayout(
             <AssignmentPlayer 
-                assignmentData={activeLesson?.assignment} 
+                assignmentData={assignmentData} 
                 courseId={courseId}
-                contentId={activeLesson?.assignment?._id}
+                contentId={activeLesson?._id}
             />
         );
       default:
@@ -709,17 +862,22 @@ const Player = () => {
             </div>
 
             <div className="flex-1 overflow-y-auto p-8 custom-scrollbar space-y-10">
-              {/* Context Action */}
+              {/* Context Action - Generate summary from sidebar too */}
               {!aiSummary && (
-                <div className="p-8 rounded-md bg-secondary/30 border border-border/50 text-center space-y-4">
-                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest italic">No notes generated yet</p>
+                <div className="p-8 rounded-md bg-gradient-to-br from-primary/[0.03] to-accent/[0.03] border border-border/50 text-center space-y-4">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center mx-auto shadow-lg shadow-violet-500/20">
+                    <Icon icon="solar:magic-stick-3-bold-duotone" className="text-white w-7 h-7" />
+                  </div>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">No notes generated yet</p>
+                  <p className="text-[10px] text-muted-foreground/60 font-medium leading-relaxed max-w-xs mx-auto">
+                    Use the AI tools in the lesson area to generate quick summaries or detailed study notes.
+                  </p>
                   <button 
-                    onClick={() => handleSummarize('short')}
-                    disabled={summarizing}
-                    className="w-full py-4 bg-primary text-primary-foreground rounded-md font-black text-[10px] uppercase tracking-widest hover:shadow-xl hover:shadow-primary/20 transition-all flex items-center justify-center gap-2"
+                    onClick={() => { setIsAiPanelOpen(false); }}
+                    className="w-full py-3 bg-secondary/60 text-muted-foreground hover:text-foreground rounded-lg font-bold text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 border border-border/40"
                   >
-                    {summarizing ? <Icon icon="solar:restart-bold" className="animate-spin" /> : <Icon icon="solar:document-text-bold" />}
-                    Generate Lesson Notes
+                    <Icon icon="solar:round-alt-arrow-left-bold" />
+                    Back to Lesson
                   </button>
                 </div>
               )}
@@ -728,13 +886,22 @@ const Player = () => {
               {aiSummary && (
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Lesson Summary</h4>
-                    <div className="flex gap-2">
-                       <button onClick={handleCopy} className="p-2 hover:bg-primary/10 rounded-md text-primary transition-colors transition-all active:scale-90"><Icon icon="solar:copy-bold" size={16} /></button>
-                       <button onClick={handlePrint} className="p-2 hover:bg-primary/10 rounded-md text-primary transition-colors transition-all active:scale-90"><Icon icon="solar:printer-minimalistic-bold" size={16} /></button>
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400">
+                        {aiSummary.mode === 'elaborated' ? 'Detailed Study Notes' : 'Quick Summary'}
+                      </h4>
+                    </div>
+                    <div className="flex gap-1">
+                       <button onClick={handleCopy} className="p-2 hover:bg-primary/10 rounded-lg text-primary transition-all active:scale-90" title="Copy">
+                         <Icon icon={copied ? 'solar:check-circle-bold' : 'solar:copy-bold'} size={16} className={copied ? 'text-emerald-500' : ''} />
+                       </button>
+                       <button onClick={handlePrint} className="p-2 hover:bg-primary/10 rounded-lg text-primary transition-all active:scale-90" title="Print">
+                         <Icon icon="solar:printer-minimalistic-bold" size={16} />
+                       </button>
                     </div>
                   </div>
-                  <div className="prose prose-sm dark:prose-invert max-w-none text-foreground/90 bg-card/40 p-6 rounded-md border border-border/50 shadow-sm leading-relaxed">
+                  <div className="prose prose-sm dark:prose-invert max-w-none text-foreground/90 bg-card/40 p-6 rounded-xl border border-border/40 shadow-sm leading-relaxed">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {aiSummary.text}
                     </ReactMarkdown>

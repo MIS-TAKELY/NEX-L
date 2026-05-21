@@ -135,3 +135,13 @@ export const submitAssignment = async (assignmentId, submissionData) => {
     }
 };
 
+export const resolveAssignmentByContent = async (contentId) => {
+    try {
+        const response = await axios.get(`${API_URL}/assignments/resolve/${contentId}`, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};

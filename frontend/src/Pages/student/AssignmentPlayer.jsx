@@ -55,15 +55,22 @@ const AssignmentPlayer = ({ assignmentData, courseId, contentId }) => {
             });
             
             if (response?.success) {
-                setSubmitted(true);
-                setResult(response.data || response);
+                // Use the submissionGrade returned by the backend directly
+                setResult({
+                    grade: response.submissionGrade,
+                    maxScore: response.maxScore || assignmentData?.maxScore || 100,
+                });
                 // Show badge notification if any were earned
-                if (response.data?.newBadges?.length) {
-                    setNewBadges(response.data.newBadges);
-                } else if (response.newBadges?.length) {
-                    setNewBadges(response.newBadges);
+                const badges = response.data?.newBadges || response.newBadges || [];
+                if (badges.length) {
+                    setNewBadges(badges);
                 }
-                showToast("Assignment submitted and graded successfully!", "success");
+                showToast(
+                    response.submissionGrade !== null && response.submissionGrade !== undefined
+                        ? `Assignment submitted and graded successfully! Score: ${response.submissionGrade}/${response.maxScore || assignmentData?.maxScore || 100}`
+                        : "Assignment submitted successfully!",
+                    "success"
+                );
             }
         } catch (err) {
             console.error(err);
@@ -124,7 +131,7 @@ const AssignmentPlayer = ({ assignmentData, courseId, contentId }) => {
                         <div className="flex items-center gap-4 mt-2">
                             <span className="text-sm font-bold text-muted-foreground flex items-center gap-1">
                                 <Icon icon="solar:star-bold" className="text-yellow-500" />
-                                {assignmentData.totalMarks || 100} Points
+                                {assignmentData.maxScore || 100} Points
                             </span>
                             {assignmentData.dueDate && (
                                 <span className="text-sm font-bold text-muted-foreground flex items-center gap-1">

@@ -13,14 +13,17 @@ const Instructor = () => {
   const { theme } = useSelector((state) => state.ui);
   const { userData } = useSelector((state) => state.auth);
   const displayName = userData?.name || "Instructor";
-  const { data: coursesData, isLoading: isCoursesLoading } = useGetInstructorCoursesQuery(userData?.id, {
-    skip: !userData?.id,
-  });
+  const { data: coursesData, isLoading: isCoursesLoading } = useGetInstructorCoursesQuery(
+    { instructorId: userData?.id, page: 1, limit: 100 },
+    {
+      skip: !userData?.id,
+    }
+  );
   const { data: studentsData, isLoading: isStudentsLoading } = useGetInstructorStudentsQuery(userData?.id, {
     skip: !userData?.id,
   });
 
-  const totalCourses = coursesData?.length || 0;
+  const totalCourses = coursesData?.courses?.length || 0;
   const totalStudents = studentsData?.students?.length || 0;
 
   const menuItems = [
@@ -33,6 +36,11 @@ const Instructor = () => {
       name: "My Courses",
       icon: "solar:notebook-linear",
       path: "/instructor/courses",
+    },
+    {
+      name: "Assignments",
+      icon: "solar:file-check-linear",
+      path: "/instructor/assignments-review",
     },
     {
       name: "Batches",

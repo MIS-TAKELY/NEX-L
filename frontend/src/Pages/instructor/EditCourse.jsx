@@ -118,6 +118,14 @@ const EditCourse = () => {
     };
   }, [previews.thumbnail]);
 
+  // Handle error state - navigate away in effect, not during render
+  useEffect(() => {
+    if (isError) {
+      showToast("Failed to load course details.", "error");
+      navigate("/instructor/courses");
+    }
+  }, [isError]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     if (courseData?.data) {
       const data = courseData.data;
@@ -179,11 +187,6 @@ const EditCourse = () => {
       fetchCoupons();
     }
   }, [courseData, id]);
-
-  if (isError) {
-    showToast("Failed to load course details.", "error");
-    navigate("/instructor/courses");
-  }
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -566,6 +569,8 @@ const EditCourse = () => {
             title: cont.title,
             type: cont.type,
             description: cont.description,
+            quizId: cont.quizId || cont.quiz?._id || cont.quiz,
+            assignmentId: cont.assignmentId || cont.assignment?._id || cont.assignment,
             quizData: cont.quizData,
             assignmentData: cont.assignmentData,
             resources: cont.resources.map((r) => ({
@@ -647,6 +652,10 @@ const EditCourse = () => {
             title: cont.title,
             type: cont.type,
             description: cont.description,
+            quizId: cont.quizId || cont.quiz?._id || cont.quiz,
+            assignmentId: cont.assignmentId || cont.assignment?._id || cont.assignment,
+            quizData: cont.quizData,
+            assignmentData: cont.assignmentData,
             resources: cont.resources.map((r) => ({
               name: r.name,
               url: r.url,
@@ -727,6 +736,14 @@ const EditCourse = () => {
     return (
       <div className="p-8 text-center text-muted-foreground">
         Loading course data...
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="p-8 text-center text-muted-foreground">
+        Failed to load course details. Redirecting...
       </div>
     );
   }

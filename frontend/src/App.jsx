@@ -43,6 +43,7 @@ import InstructorSettings from "./Pages/instructor/Settings";
 import Statistics from "./Pages/instructor/Statistics";
 import LiveStreamBroadcast from "./Pages/instructor/LiveStreamBroadcast";
 import StudentsEnrolled from "./Pages/instructor/StudentsEnrolled";
+import AssignmentsReview from "./Pages/instructor/AssignmentsReview";
 import Consultations from "./Pages/instructor/Consultations";
 import StudentConsultations from "./Pages/student/StudentConsultations";
 
@@ -222,6 +223,7 @@ export default function App() {
           <Route path="statistics" element={<Statistics />} />
           <Route path="livestream/:courseId" element={<LiveStreamBroadcast />} />
           <Route path="students-enrolled" element={<StudentsEnrolled />} />
+          <Route path="assignments-review" element={<AssignmentsReview />} />
           <Route path="consultations" element={<Consultations />} />
         </Route>
 
