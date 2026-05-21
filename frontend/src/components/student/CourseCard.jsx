@@ -52,9 +52,13 @@ const CourseCard = ({ enrollment }) => {
 
       <div className="relative aspect-[16/9] overflow-hidden rounded-t-xl">
         <img
-          src={course.thumbnail || "https://via.placeholder.com/400x225?text=No+Thumbnail"}
+          src={course.thumbnail || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=600&auto=format&fit=crop"}
           alt={course.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=600&auto=format&fit=crop";
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
         

@@ -732,8 +732,8 @@ const EditCourse = () => {
   }
 
   return (
-    <div className="bg-background text-foreground p-6 md:p-10 min-h-screen font-sans border-0">
-      <div className="max-w-[1200px] mx-auto mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="space-y-8 font-outfit text-foreground">
+      <div className="max-w-[1200px] mx-auto mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate("/instructor/courses")}

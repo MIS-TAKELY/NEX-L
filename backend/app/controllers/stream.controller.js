@@ -311,6 +311,7 @@ export const createVideoCall = async (req, res) => {
   try {
     const { courseId } = req.params;
     const user = req.user;
+    const client = getStreamClient();
 
     const course = await Course.findById(courseId);
     if (!course) return res.status(404).json({ message: "Course not found" });
