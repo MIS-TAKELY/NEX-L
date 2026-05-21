@@ -834,8 +834,8 @@ const AddCourse = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#A0A0B8] uppercase tracking-[0.05em] mb-2">
-                    Description <span className="text-pink-500">*</span>
+                  <label className="block text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.05em] mb-2">
+                    Description <span className="text-destructive">*</span>
                   </label>
                   <textarea
                     name="description"
@@ -884,7 +884,7 @@ const AddCourse = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#A0A0B8] uppercase tracking-[0.05em] mb-2">
+                  <label className="block text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.05em] mb-2">
                     Tags
                   </label>
                   <input
@@ -902,7 +902,7 @@ const AddCourse = () => {
                     placeholder="React, Frontend, JavaScript"
                     className="w-full px-5 py-4 rounded-md bg-muted/30 border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200 placeholder:text-muted-foreground/50"
                   />
-                  <p className="text-[10px] text-[#A0A0B8] mt-2 font-medium">
+                  <p className="text-[10px] text-muted-foreground mt-2 font-medium">
                     Separate tags with commas
                   </p>
                 </div>
@@ -922,7 +922,7 @@ const AddCourse = () => {
               <div className="bg-card/40 backdrop-blur-md rounded-md p-6 md:p-8 border border-border/50 shadow-[0_10px_40px_rgba(0,0,0,0.03)] space-y-8 premium-card">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-4">
-                    <label className="block text-[11px] font-semibold text-[#A0A0B8] uppercase tracking-[0.05em] mb-3">
+                    <label className="block text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.05em] mb-3">
                       Course Thumbnail
                     </label>
                     <div className="relative group">
@@ -972,10 +972,10 @@ const AddCourse = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <label className="block text-[11px] font-semibold text-[#A0A0B8] uppercase tracking-[0.05em] mb-3">
+                    <label className="block text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.05em] mb-3">
                       Course Syllabus{" "}
                       {formData.courseType === "syllabus" && (
-                        <span className="text-pink-500">*</span>
+                        <span className="text-destructive">*</span>
                       )}
                     </label>
                     <div className="relative group">
@@ -1480,7 +1480,7 @@ const AddCourse = () => {
                                                     resource.id,
                                                   )
                                                 }
-                                                className="p-2 text-[#6B6B80] hover:text-pink-500 hover:bg-pink-500/10 rounded-md transition-all"
+                                                className="p-2 text-muted-foreground/70 hover:text-destructive hover:bg-destructive/10 rounded-md transition-all"
                                               >
                                                 <Trash2 size={16} />
                                               </button>

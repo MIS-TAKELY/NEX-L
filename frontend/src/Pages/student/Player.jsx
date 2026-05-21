@@ -592,7 +592,7 @@ const Player = () => {
               <div className="overflow-hidden">
                 <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.15em] mb-0.5 opacity-60">Instructor</p>
                 <p className="text-sm font-black text-foreground truncate tracking-tight">
-                  {course?.teacher?.name || "Expert Instructor"}
+                  {course?.teacher?.name || "Instructor"}
                 </p>
               </div>
             </div>

@@ -742,15 +742,30 @@ export const enrollStudent = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-// Get instructor courses
+// Get instructor courses (paginated, newest first)
 export const getInstructorCourses = async (req, res) => {
   try {
     const { teacherId } = req.params;
+    const { page = 1, limit = 10 } = req.query;
+    const pageNum = Number(page);
+    const limitNum = Number(limit);
+
+    const totalCourses = await Course.countDocuments({ teacher: teacherId });
+    const totalPages = Math.ceil(totalCourses / limitNum);
+
     const courses = await Course.find({ teacher: teacherId })
+      .sort({ createdAt: -1 })
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum)
       .populate("teacher")
       .populate("enrollments");
 
-    res.json(courses);
+    res.json({
+      courses,
+      totalPages,
+      currentPage: pageNum,
+      totalCourses,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
