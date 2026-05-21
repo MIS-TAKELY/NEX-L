@@ -192,7 +192,7 @@ const PaymentMethodSelection = () => {
                     <div className="w-full bg-background dark:bg-zinc-900 rounded-md border-2 border-primary p-6">
                         <div className="flex items-center gap-6">
                             <div className="w-16 h-16 rounded-md flex items-center justify-center bg-[#60bb4615]">
-                                <Icon icon="solar:wallet-money-bold-duotone" size={32} style={{ color: '#60bb46' }} />
+                                <img src="/esewa.webp" alt="eSewa" className="w-10 h-10 object-contain" />
                             </div>
                             <div className="flex-1 text-left">
                                 <h3 className="text-xl font-bold text-foreground dark:text-foreground mb-1 flex items-center gap-2">

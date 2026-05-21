@@ -36,9 +36,9 @@ const Analytics = () => {
   const courseStats = analyticsResponse?.data?.courseStats || [];
 
   return (
-    <div className="bg-background text-foreground p-6 md:p-10 min-h-screen font-sans border-0 w-full">
+    <div className="space-y-8 font-outfit text-foreground">
       {/* Header */}
-      <div className="max-w-7xl mx-auto mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="max-w-7xl mx-auto mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent tracking-tight drop-shadow-sm mb-2">Analytics & Reports</h1>
           <p className="text-muted-foreground font-medium tracking-wide">Track your course performance and student engagement.</p>
@@ -48,7 +48,7 @@ const Analytics = () => {
       {/* Overview Stats */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-6 mb-10">
         {[
-          { label: 'Total Views', value: overview.totalViews.toLocaleString(), icon: 'solar:eye-bold', color: 'bg-blue-500/10 text-blue-400 ring-blue-500/20' },
+          { label: 'Enrolled Students', value: overview.totalViews.toLocaleString(), icon: 'solar:user-plus-bold', color: 'bg-blue-500/10 text-blue-400 ring-blue-500/20' },
           { label: 'Completions', value: overview.totalCompletions.toLocaleString(), icon: 'solar:graph-up-bold', color: 'bg-emerald-500/10 text-emerald-400 ring-emerald-500/20' },
           { label: 'Active Students', value: overview.activeStudents.toLocaleString(), icon: 'solar:users-group-rounded-bold', color: 'bg-violet-500/10 text-violet-400 ring-violet-500/20' },
           { label: 'Avg. Rating', value: overview.avgRating, icon: 'solar:star-bold', color: 'bg-orange-500/10 text-orange-400 ring-orange-500/20' },
@@ -75,7 +75,7 @@ const Analytics = () => {
             <thead className="bg-muted/50 text-muted-foreground font-bold text-[11px] uppercase tracking-wider rounded-md overflow-hidden shadow-inner">
               <tr>
                 <th className="text-left px-6 py-4 rounded-tl-lg">Course Name</th>
-                <th className="text-center px-6 py-4">Views</th>
+                <th className="text-center px-6 py-4">Enrolled</th>
                 <th className="text-center px-6 py-4">Completions</th>
                 <th className="text-center px-6 py-4">Income</th>
                 <th className="text-center px-6 py-4">Rating</th>

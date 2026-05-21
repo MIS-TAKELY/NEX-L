@@ -717,7 +717,7 @@ const CourseDetails = () => {
                 <div className="flex items-center justify-between gap-3 p-4 rounded-md border-2 border-primary bg-primary/10">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-md flex items-center justify-center bg-white/80 dark:bg-zinc-900/80">
-                      <Icon icon="logos:esewa" className="text-2xl" />
+                      <img src="/esewa.webp" alt="eSewa" className="w-8 h-8 object-contain" />
                     </div>
                     <div>
                       <p className="text-sm font-bold text-foreground">eSewa</p>

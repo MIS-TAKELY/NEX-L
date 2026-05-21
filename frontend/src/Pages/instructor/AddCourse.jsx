@@ -604,8 +604,8 @@ const AddCourse = () => {
   };
 
   return (
-    <div className="bg-background text-foreground p-6 md:p-10 min-h-screen font-sans border-0">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+    <div className="space-y-8 font-outfit text-foreground">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
           <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent tracking-tight drop-shadow-sm mb-2">
             Create New Course
@@ -814,11 +814,11 @@ const AddCourse = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#A0A0B8] uppercase tracking-[0.05em] mb-2">
+                    <label className="block text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.05em] mb-2">
                       Price (Rs)
                     </label>
                     <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#A0A0B8] font-bold">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-bold">
                         रू
                       </span>
                       <input
@@ -826,7 +826,7 @@ const AddCourse = () => {
                         name="price"
                         value={formData.price}
                         onChange={handleChange}
-                        className="w-full pl-12 pr-5 py-4 rounded-md bg-[#1A1A2E] border border-white/5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)] text-white placeholder:text-[#6B6B80] focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-500 transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]"
+                        className="w-full pl-12 pr-5 py-4 rounded-md bg-muted/30 border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200 text-foreground placeholder:text-muted-foreground/50"
                         placeholder="0 for free"
                       />
                     </div>

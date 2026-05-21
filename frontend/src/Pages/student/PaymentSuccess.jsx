@@ -108,32 +108,32 @@ const PaymentSuccess = () => {
     }, [searchParams, navigate]);
 
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center p-6 font-sans text-slate-800">
-            <div className="bg-background p-12 rounded-md shadow-[0_40px_100px_-20px_rgba(0,0,0,0.08)] max-w-xl w-full text-center border border-slate-50">
+        <div className="min-h-screen bg-muted flex flex-col justify-center items-center p-6 font-sans text-foreground">
+            <div className="bg-card p-12 rounded-md shadow-soft max-w-xl w-full text-center border border-border/50">
                 {verifying ? (
                     <div className="py-16">
                         <div className="w-24 h-24 mx-auto mb-10 relative">
-                            <div className="absolute inset-0 rounded-md border-[8px] border-blue-50"></div>
-                            <div className="absolute inset-0 rounded-md border-[8px] border-blue-600 border-t-transparent animate-spin"></div>
-                            <Icon icon="solar:shield-check-bold-duotone" className="absolute inset-0 m-auto w-12 h-12 text-blue-600" />
+                            <div className="absolute inset-0 rounded-md border-[8px] border-primary/10"></div>
+                            <div className="absolute inset-0 rounded-md border-[8px] border-primary border-t-transparent animate-spin"></div>
+                            <Icon icon="solar:shield-check-bold-duotone" className="absolute inset-0 m-auto w-12 h-12 text-primary" />
                         </div>
                         <h2 className="text-4xl font-black mb-4 tracking-tighter">Securing Enrollment</h2>
-                        <p className="text-slate-400 font-bold px-10">Talking to payment servers...</p>
+                        <p className="text-muted-foreground font-bold px-10">Talking to payment servers...</p>
                     </div>
                 ) : status === 'success' ? (
                     <div className="py-10">
-                        <div className="w-32 h-32 bg-green-50 rounded-md flex items-center justify-center mx-auto mb-10 border-[10px] border-white shadow-2xl">
-                            <Icon icon="solar:check-circle-bold" className="w-16 h-16 text-green-500" />
+                        <div className="w-32 h-32 bg-emerald-500/10 rounded-md flex items-center justify-center mx-auto mb-10 border-[10px] border-card shadow-2xl">
+                            <Icon icon="solar:check-circle-bold" className="w-16 h-16 text-emerald-500" />
                         </div>
                         <h2 className="text-5xl font-black mb-4 tracking-tighter">You're In!</h2>
-                        <p className="text-slate-500 font-bold mb-12">Your payment was confirmed. Welcome to the NEXL family.</p>
+                        <p className="text-muted-foreground font-bold mb-12">Your payment was confirmed. Welcome to the NEXL family.</p>
                         <div className="relative">
-                            <div className="absolute -top-6 left-0 right-0 h-1.5 bg-slate-100 rounded-md overflow-hidden">
-                                <div className="h-full bg-blue-600 animate-[progress_3s_linear]"></div>
+                            <div className="absolute -top-6 left-0 right-0 h-1.5 bg-muted rounded-md overflow-hidden">
+                                <div className="h-full bg-primary animate-[progress_3s_linear]"></div>
                             </div>
                             <button
                                 onClick={() => navigate('/student/my-enrollments')}
-                                className="w-full py-6 bg-slate-900 text-foreground font-black rounded-md hover:bg-black transition-all transform active:scale-95 shadow-2xl shadow-slate-200"
+                                className="w-full py-6 bg-primary text-primary-foreground font-black rounded-md hover:opacity-90 transition-all transform active:scale-95 shadow-xl shadow-primary/20"
                             >
                                 START LEARNING NOW
                             </button>
@@ -141,30 +141,30 @@ const PaymentSuccess = () => {
                     </div>
                 ) : (
                     <div className="py-8">
-                        <div className="w-24 h-24 bg-red-50 rounded-md flex items-center justify-center mx-auto mb-8 border-[8px] border-white shadow-xl">
-                            <Icon icon="solar:shield-warning-bold" className="w-12 h-12 text-red-500" />
+                        <div className="w-24 h-24 bg-destructive/10 rounded-md flex items-center justify-center mx-auto mb-8 border-[8px] border-card shadow-xl">
+                            <Icon icon="solar:shield-warning-bold" className="w-12 h-12 text-destructive" />
                         </div>
                         <h2 className="text-4xl font-black mb-6 tracking-tighter">Verification Issue</h2>
 
-                        <div className="bg-slate-50 p-8 rounded-md mb-10 text-left border border-slate-100 shadow-inner overflow-hidden">
+                        <div className="bg-muted/50 p-8 rounded-md mb-10 text-left border border-border/50 shadow-inner overflow-hidden">
                             <div className="flex items-center gap-2 mb-6">
-                                <span className="px-3 py-1 bg-red-100 text-red-600 text-[10px] font-black rounded-md uppercase tracking-widest">Diagnostic Report</span>
+                                <span className="px-3 py-1 bg-destructive/10 text-destructive text-[10px] font-black rounded-md uppercase tracking-widest border border-destructive/20">Diagnostic Report</span>
                             </div>
 
-                            <p className="text-slate-800 font-black text-xl mb-4 leading-tight">
+                            <p className="text-foreground font-black text-xl mb-4 leading-tight">
                                 {errorDetails?.message || 'Something went wrong during auto-verification.'}
                             </p>
 
                             <div className="space-y-4">
-                                <div className="bg-background/60 p-6 rounded-md border border-slate-200 shadow-sm">
-                                    <p className="text-[10px] font-black text-slate-300 uppercase mb-3 tracking-widest">Technical Data</p>
-                                    <pre className="text-[11px] font-mono text-slate-500 max-h-64 overflow-y-auto whitespace-pre-wrap leading-relaxed">
+                                <div className="bg-card/60 p-6 rounded-md border border-border/50 shadow-sm">
+                                    <p className="text-[10px] font-black text-muted-foreground/60 uppercase mb-3 tracking-widest">Technical Data</p>
+                                    <pre className="text-[11px] font-mono text-muted-foreground max-h-64 overflow-y-auto whitespace-pre-wrap leading-relaxed">
                                         {JSON.stringify(errorDetails || { info: 'No details available' }, null, 2)}
                                     </pre>
                                 </div>
 
                                 {errorDetails?.hint && (
-                                    <p className="text-xs text-slate-400 font-medium italic">
+                                    <p className="text-xs text-muted-foreground font-medium italic">
                                         💡 Tip: {errorDetails.hint}
                                     </p>
                                 )}
@@ -174,24 +174,24 @@ const PaymentSuccess = () => {
                         <div className="flex flex-col gap-4">
                             <button
                                 onClick={() => window.location.reload()}
-                                className="w-full py-6 bg-blue-600 text-foreground font-bold rounded-md hover:bg-blue-700 transition-all shadow-xl shadow-blue-100"
+                                className="w-full py-6 bg-primary text-primary-foreground font-bold rounded-md hover:opacity-95 transition-all shadow-xl shadow-primary/20"
                             >
                                 Try Refreshing
                             </button>
                             <button
                                 onClick={() => navigate('/')}
-                                className="w-full py-4 text-slate-400 font-bold rounded-md hover:bg-slate-50 transition-all text-sm"
+                                className="w-full py-4 text-muted-foreground font-bold rounded-md hover:bg-muted transition-all text-sm"
                             >
                                 Back to Home
                             </button>
                         </div>
-                        <p className="mt-8 text-[10px] text-slate-400 font-medium px-10">
+                        <p className="mt-8 text-[10px] text-muted-foreground font-medium px-10">
                             If money was deducted from your account, please send a screenshot of this page to our support team.
                         </p>
                     </div>
                 )}
             </div>
-            <p className="mt-12 text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">Secure Node 02V2</p>
+            <p className="mt-12 text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.4em]">Secure Node 02V2</p>
             <style>{`
                 @keyframes progress {
                     from { width: 0%; }

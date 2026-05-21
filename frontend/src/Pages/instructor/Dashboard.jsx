@@ -125,7 +125,16 @@ const Dashboard = () => {
                     <div className="flex justify-between items-end h-32 px-2">
                         {[40, 60, 30, 80, 50, 90].map((height, i) => (
                             <div key={i} className="group flex flex-col items-center gap-2 w-full">
-                                <div className={`w-2 rounded-md transition-all duration-300 group-hover:w-3 ${i === 5 ? 'bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]' : 'bg-muted'}`} style={{ height: `${height}%` }}></div>
+                                <div className="h-24 w-full flex items-end justify-center">
+                                    <div 
+                                        className={`w-2 rounded-md transition-all duration-300 group-hover:w-3 ${
+                                            i === 5 
+                                                ? 'bg-primary shadow-[0_0_10px_rgba(99,102,241,0.5)]' 
+                                                : 'bg-primary/20 hover:bg-primary/40'
+                                        }`} 
+                                        style={{ height: `${height}%` }}
+                                    ></div>
+                                </div>
                                 <span className="text-[10px] text-muted-foreground font-bold">{['DEC', 'JAN', 'FEB', 'MAR', 'APR', 'MAY'][i]}</span>
                             </div>
                         ))}

@@ -62,7 +62,9 @@ const DashboardSkeleton = () => {
           <div className="flex justify-between items-end h-32 px-2">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className="flex flex-col items-center gap-2 w-full">
-                <Skeleton className="w-2 rounded-md h-full" style={{ height: `${Math.random() * 50 + 30}%` }} />
+                <div className="h-24 w-full flex items-end justify-center">
+                  <Skeleton className="w-2 rounded-md" style={{ height: `${Math.random() * 50 + 30}%` }} />
+                </div>
                 <Skeleton className="h-2 w-6" />
               </div>
             ))}
