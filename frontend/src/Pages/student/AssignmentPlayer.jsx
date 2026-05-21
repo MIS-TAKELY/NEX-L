@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Icon } from '@iconify/react';
-import { submitAssignment } from '../../apis/course.api';
+import { submitAssignment, uploadMedia } from '../../apis/course.api';
 import { useSelector } from 'react-redux';
 import { useToast } from '../../context/ToastContext';
 import BadgeNotification from '../../components/student/BadgeNotification';
@@ -41,8 +41,17 @@ const AssignmentPlayer = ({ assignmentData, courseId, contentId }) => {
 
         setIsSubmitting(true);
         try {
+            let fileUrl = '';
+            if (file) {
+                const uploadRes = await uploadMedia(file);
+                if (uploadRes?.url) {
+                    fileUrl = uploadRes.url;
+                }
+            }
+
             const response = await submitAssignment(contentId, {
                 text: submissionText,
+                fileUrl,
             });
             
             if (response?.success) {

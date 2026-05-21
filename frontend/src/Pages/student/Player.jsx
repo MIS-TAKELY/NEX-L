@@ -531,7 +531,7 @@ const Player = () => {
             <AssignmentPlayer 
                 assignmentData={activeLesson?.assignment} 
                 courseId={courseId}
-                contentId={activeLesson?._id}
+                contentId={activeLesson?.assignment?._id}
             />
         );
       default:
