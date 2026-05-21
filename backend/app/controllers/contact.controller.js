@@ -1,4 +1,4 @@
-import { sendEmail } from "../config/mail.js";
+import { sendEmail, SUPPORT_EMAIL } from "../config/mail.js";
 
 export const handleContactForm = async (req, res) => {
     try {
@@ -26,7 +26,7 @@ export const handleContactForm = async (req, res) => {
     `;
 
         await sendEmail({
-            to: process.env.MAIL_USER,
+            to: process.env.MAIL_USER || SUPPORT_EMAIL,
             subject: `Contact Form: ${subject}`,
             html: htmlContent,
         });

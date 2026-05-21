@@ -721,7 +721,6 @@ const CourseDetails = () => {
                     </div>
                     <div>
                       <p className="text-sm font-bold text-foreground">eSewa</p>
-                      <p className="text-xs text-muted-foreground">The only available payment method</p>
                     </div>
                   </div>
                   <Icon icon="solar:check-circle-bold-duotone" className="text-primary text-2xl" />
